@@ -20,31 +20,37 @@ public class ClientsController {
     @Autowired
     private ClientService service;
 
-    private final ClientRepository clientRepository;
+    @PostMapping("/register")
+    public Client register(@RequestBody Client user){
+        return service.register(user);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody Client user){
+        System.out.println(user);
+        return "Success";
+    }
+
+    /*private final ClientRepository clientRepository;
 
     public ClientsController(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
-    }
+    }*/
 
-    @GetMapping
+    /*@GetMapping
     public List<Client> getClients() {
         return clientRepository.findAll();
-    }
+    }*/
 
     /*@GetMapping("/{id}")
     public Client getClient(@PathVariable Long id) {
         return clientRepository.findById(id).orElseThrow(RuntimeException::new);
     }*/
 
-    @GetMapping("/csrf-token")
+    /*@GetMapping("/csrf-token")
     public CsrfToken getCsrfToken(HttpServletRequest request){
         return (CsrfToken) request.getAttribute("_csrf");
-    }
-
-    @PostMapping("/register")
-    public Client register(@RequestBody Client user){
-        return service.register(user);
-    }
+    }*/
 
     /*@PostMapping
     public ResponseEntity createClient(@RequestBody Client client) throws URISyntaxException {
