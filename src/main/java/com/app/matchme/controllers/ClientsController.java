@@ -27,20 +27,19 @@ public class ClientsController {
 
     @PostMapping("/login")
     public String login(@RequestBody Client user){
-        System.out.println(user);
-        return "Success";
+        return service.verify(user);
     }
 
-    /*private final ClientRepository clientRepository;
+    private final ClientRepository clientRepository;
 
     public ClientsController(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
-    }*/
+    }
 
-    /*@GetMapping
+    @GetMapping("/clients")
     public List<Client> getClients() {
         return clientRepository.findAll();
-    }*/
+    }
 
     /*@GetMapping("/{id}")
     public Client getClient(@PathVariable Long id) {
