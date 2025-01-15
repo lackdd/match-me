@@ -23,7 +23,6 @@ function App() {
                 {clients.map(client =>
                     <div key={client.id}>
                         <br/>
-                        Name: {client.name} <br/>
                         Email: {client.email}
                     </div>
                 )}
