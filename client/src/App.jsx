@@ -23,6 +23,8 @@ function App() {
                 {users.map(user =>
                     <div key={user.id}>
                         <br/>
+                        Name: {user.username}
+                        <br/>
                         Email: {user.email}
                     </div>
                 )}
