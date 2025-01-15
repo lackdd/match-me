@@ -6,13 +6,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-public class ClientPrincipal implements UserDetails {
+public class UserPrincipal implements UserDetails {
 
-    private Client user;
+    private Users user;
 
-    public ClientPrincipal(Client user) {
+    public UserPrincipal(Users user) {
         this.user = user;
     }
 

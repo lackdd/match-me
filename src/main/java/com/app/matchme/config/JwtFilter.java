@@ -1,7 +1,7 @@
 package com.app.matchme.config;
 
 import com.app.matchme.services.JWTService;
-import com.app.matchme.services.MyUserDetailsService;
+import com.app.matchme.services.UserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
 
-            UserDetails userDetails = context.getBean(MyUserDetailsService.class).loadUserByUsername(email);
+            UserDetails userDetails = context.getBean(UserDetailsService.class).loadUserByUsername(email);
 
             if(jwtService.validateToken(token, userDetails)){
                 UsernamePasswordAuthenticationToken authToken =

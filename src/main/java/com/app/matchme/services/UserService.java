@@ -1,7 +1,7 @@
 package com.app.matchme.services;
 
-import com.app.matchme.entities.Client;
-import com.app.matchme.repositories.ClientRepository;
+import com.app.matchme.entities.Users;
+import com.app.matchme.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,10 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ClientService {
+public class UserService {
 
     @Autowired
-    private ClientRepository repo;
+    private UserRepository repo;
 
     @Autowired
     private JWTService jwtService;
@@ -23,12 +23,12 @@ public class ClientService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public Client register(Client user){
+    public Users register(Users user){
         user.setPassword(encoder.encode(user.getPassword()));
         return repo.save(user);
     }
 
-    public String verify(Client user) {
+    public String verify(Users user) {
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 

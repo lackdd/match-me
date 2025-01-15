@@ -2,14 +2,14 @@ import './App.css'
 import {useEffect, useState} from "react";
 
 function App() {
-    const [clients, setClients] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
 
-        fetch('api/clients')
+        fetch('api/users')
             .then(response => response.json())
             .then(data => {
-                setClients(data);
+                setUsers(data);
             })
     }, []);
 
@@ -20,10 +20,10 @@ function App() {
                 <h1>
                     match me
                 </h1>
-                {clients.map(client =>
-                    <div key={client.id}>
+                {users.map(user =>
+                    <div key={user.id}>
                         <br/>
-                        Email: {client.email}
+                        Email: {user.email}
                     </div>
                 )}
             </div>

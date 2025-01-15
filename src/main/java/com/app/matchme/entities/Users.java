@@ -1,19 +1,19 @@
 package com.app.matchme.entities;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "clients")
-public class Client {
+@Table(name = "users")
+public class Users {
 
     @Id
     private Long id;
 
     private String email;
     private String password;
+    private String username;
 
     // ei tea kas vaja constructorit siia
 
@@ -40,4 +40,8 @@ public class Client {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public String getUsername() {return username;}
+
+    public void setUsername(String username) {this.username = username;}
 }
