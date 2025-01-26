@@ -1,0 +1,86 @@
+@use '../../variables';
+
+* {
+  box-sizing: border-box;
+}
+
+.homepage-container {
+  @include variables.whole-page;
+  //height: calc(100vh - 80px);
+  @include variables.centered-column;
+  background-color: white;
+  background: url('../../../public/bg_photo_cropped.jpg') no-repeat top center;
+  background-size: cover;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .hero-container {
+    // todo dynamic positioning is fucked
+    //padding-top: 5.625rem;
+    //padding-top: clamp(1rem, 5vw, 10rem);
+    //padding-left: 2.5rem;
+    //padding-left: clamp(2rem, 2vw, 45rem);
+    padding-top: clamp(0rem, 10vw, 20rem);
+    padding-left: clamp(2rem, 5vw, 45rem);
+    padding-right: 2.5rem;
+    width: clamp(30rem, 85vw, 50rem); // Container width scales with viewport
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+
+    //padding-left: 2.5rem;
+    //padding-left: clamp(0rem, 8vw, 70rem);
+    //padding-right: 2.5rem;
+    //width: clamp(30rem, 160vw, 80rem); // Container width scales with viewport
+
+    .hero-text {
+      width: 100%;
+      text-align: center;
+      //font-size: 1.875rem;
+      font-size: clamp(0.5rem, 4vw, 1.875rem);
+      letter-spacing: 0.1rem;
+      line-height: 2.5rem;
+      text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+
+    }
+
+    .cta-button-container {
+      padding-top: 2rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+
+      .cta-button {
+        background-color: variables.$main-pink;
+        color: white;
+        border-radius: 100px;
+        font-size: variables.$font-size-large-button;
+        font-weight: variables.$font-weight-large-button;
+        padding: 10px 20px 10px 20px;
+        text-align: center;
+        box-shadow: variables.$default-button-shadow;
+      }
+
+      .cta-button:hover {
+        cursor: pointer;
+        background-color: variables.$main-pink-80;
+        box-shadow: variables.$upper-inset-shadow-hover;
+      }
+
+      .cta-button:active {
+        background-color: variables.$main-pink-20;
+        box-shadow: variables.$upper-inset-shadow-click;
+      }
+
+    }
+
+  }
+
+}
+
