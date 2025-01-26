@@ -1,0 +1,28 @@
+//:root {
+//  --main-pink: #FE6E79;
+//  --main-blue: #2343A3;
+//  --background-gradient: linear-gradient(rgba(255, 181, 187, 1) 14%, rgba(167, 182, 226, 1) 90%); //#FFB5BB, #A7B6E2
+//}
+
+@use 'variables';
+
+#root {
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", serif;
+  //display: flex;
+  //flex-direction: column;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: variables.$background-gradient;
+}
+
