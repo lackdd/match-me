@@ -1,0 +1,22 @@
+@use '../../variables';
+
+.homepage-footer {
+  background-color: variables.$main-blue-80;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  height: 3.375rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8rem;
+
+  .icon {
+
+  }
+
+  .icon:hover {
+    filter: invert(100%);
+  }
+}
