@@ -1,0 +1,15 @@
+@use '../../variables';
+
+.support-container {
+  @include variables.whole-page;
+  @include variables.centered-column;
+
+  .coming-soon {
+    justify-self: center;
+  }
+}
+
+.support {
+  color: variables.$main-pink;
+}
+
