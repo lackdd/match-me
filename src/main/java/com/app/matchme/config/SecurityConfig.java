@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,10 +38,24 @@ public class SecurityConfig {
         http
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("register", "login")
+                        .requestMatchers(
+                                "/get-started",
+                                "/login",
+                                "/features",
+                                "/about",
+                                "/support",
+                                "/")
                         .permitAll()
                         .anyRequest().authenticated())
-                //.formLogin(Customizer.withDefaults())
+//                .formLogin(Customizer.withDefaults())
+                .formLogin(formLogin -> formLogin
+//                        .disable()
+                        .loginPage("/login")  // Specify custom login page URL
+                        .defaultSuccessUrl("/home", true)  // Redirect after successful login
+                        .permitAll() // Allow everyone to access the login page
+                )
+                .logout(LogoutConfigurer::permitAll // Allow everyone to access logout functionality
+                )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
