@@ -8,8 +8,7 @@
   @include variables.whole-page;
   //height: calc(100vh - 80px);
   @include variables.centered-column;
-  background-color: white;
-  background: url('../../../public/bg_photo_cropped.jpg') no-repeat top center;
+  background: white url('/bg_photo_cropped.jpg') no-repeat top center; // despite of error this works
   background-size: cover;
   overflow: hidden;
   display: flex;
