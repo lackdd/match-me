@@ -1,0 +1,144 @@
+@use '../../variables';
+
+.login-container {
+  @include variables.whole-page;
+  @include variables.centered-column;
+  //justify-items: center; // works as well now instead of flexbox
+  //align-content: center;
+
+  .login-form {
+    @extend .login-container; // same as .login-container
+    justify-content: center;
+    align-items: flex-start;
+    width: 25.25rem;
+    height: 36.25rem;
+    gap: 1.2rem;
+
+    h1 {
+      font-size: variables.$font-size-h1;
+      letter-spacing: 0.1rem;
+    }
+
+    h2 {
+      font-size: variables.$font-size-h2;
+    }
+
+    .form-title {
+      margin-bottom: 2.5rem;
+    }
+
+
+
+    label {
+      width: 100%;
+    }
+
+    #label-password {
+      display: flex;
+      flex-direction: row;
+    }
+
+    input {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid variables.$input-border-grey;
+      height: 2rem;
+      padding-left: 0.75rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.1s ease;
+      outline: none;
+
+      &:focus {
+        border-color: variables.$main-pink;
+      }
+      //
+      //&:invalid {
+      //  border-color: red;
+      //}
+
+    }
+
+    #password-input {
+      margin: 0;
+    }
+
+    #forgot-password {
+      font-size: 0.85rem;
+      text-decoration: none;
+      color: variables.$main-blue;
+
+      &:hover {
+        color: variables.$main-blue-80;
+      }
+
+      &:active {
+        color: variables.$main-blue-20;
+      }
+
+    }
+
+    #remember-me-input {
+      cursor: pointer;
+      border-radius: 100px;
+      font-size: 0.6rem;
+      margin: 0;
+      width: 1.25rem;
+
+      &:checked {
+        accent-color: variables.$main-pink;
+      }
+    }
+
+    #remember-me-label {
+      font-size: 0.85rem;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .login-button {
+      width: 100%;
+      background-color: variables.$main-blue;
+      box-shadow: variables.$default-button-shadow;
+      font-weight: variables.$font-weight-small-button;
+      font-size: variables.$font-size-small-button;
+      color: white;
+      border: 1px variables.$main-blue;
+      height: 2rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+
+      &:hover {
+        background-color: variables.$main-blue-80;
+        box-shadow: variables.$upper-inset-shadow-hover;
+      }
+
+      &:active {
+        background-color: variables.$main-blue-20;
+        box-shadow: variables.$upper-inset-shadow-click;
+      }
+    }
+  }
+
+  #no-account-label {
+    text-align: center;
+    transition: 0.1s all ease;
+
+    a {
+      text-decoration: none;
+      color: variables.$main-pink;
+
+      &:hover {
+        color: variables.$main-pink-80;
+      }
+
+      &:active {
+        color: variables.$main-pink-20;
+      }
+
+    }
+  }
+}
