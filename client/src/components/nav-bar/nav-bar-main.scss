@@ -1,9 +1,5 @@
 @use '../../variables';
 
-* {
-  box-sizing: border-box;
-}
-
 .nav-container {
   z-index: 5;
   height: 5rem; // todo maybe less?
