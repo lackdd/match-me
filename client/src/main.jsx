@@ -11,6 +11,7 @@ import NotFound from './components/not-found/not-found.jsx';
 import SignUp from './components/signup/signup.jsx';
 import Login from './components/login/login.jsx';
 import Navigator from './components/nav-bar/nav-bar-main.jsx'
+import ForgotPassword from './components/forgot-password/forgot-password.jsx';
 
 const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
             {
                 path: '/login',
                 element: <Login />,
+            },
+            {
+                path: '/forgot-password',
+                element: <ForgotPassword />,
             },
         ]
     },
