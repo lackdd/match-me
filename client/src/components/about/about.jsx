@@ -1,5 +1,5 @@
 import './about.scss'
-import Navigator from '../nav-bar/nav-bar-main.jsx';
+import Navigator from '../nav-bar-guest/nav-bar-guest.jsx';
 
 function About() {
 	return (
