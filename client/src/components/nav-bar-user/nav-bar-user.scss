@@ -1,0 +1,141 @@
+@use '../../variables';
+
+.nav-container-user {
+  z-index: 5;
+  height: 5rem; // todo maybe less?
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  //padding-left: 120px;
+  //padding-right: 120px;
+  padding-left: clamp(0.2rem, 6vw, 8rem);
+  padding-right: clamp(0.2rem, 6vw, 8rem);
+
+  .profile-container {
+    display: flex;
+    flex-direction: row;
+    width: 10.625rem;
+    align-items: center;
+
+    .profile-link {
+      gap: 1rem;
+      display: flex;
+      justify-content: center; /* Centers horizontally */
+      align-items: center; /* Centers vertically */
+      text-align: center;
+      color: white;
+      text-decoration: none;
+      height: 100%; /* Ensures it takes full height */
+    }
+
+    .profile-picture {
+      width: 3.75rem;
+      border-radius: 100px;
+      text-align: center;
+    }
+
+    &:hover {
+
+      .profile-link {
+        color: variables.$main-pink-80;
+      }
+
+      .profile-picture {
+        border: 1px solid variables.$main-pink;
+      }
+
+    }
+  }
+
+  .links-container {
+    display: flex;
+    flex-direction: row;
+    //gap: 0.625rem;
+    //gap: 5rem; // todo make dynamic
+    //gap: clamp(0.2rem, 5vw, 5rem); // todo not working
+    //width: auto; // 25rem
+    width: 37.85rem;
+    justify-content: space-between;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    font-weight: 600;
+
+    a:focus, a:active, a:visited, a:link {
+      color: white;
+      text-decoration: none;
+    }
+
+    a:hover,
+    {
+      color: variables.$main-pink;
+      cursor: pointer;
+    }
+
+  }
+
+  .buttons-container {
+    border: 1px solid black;
+    border-radius: 100px;
+    display: flex;
+    justify-content: center;
+    width: 9.5rem;
+    height: 3.125rem;
+    background-color: black;
+    box-shadow: variables.$default-button-shadow;
+
+    &:has(.signup:hover),
+    &:has(.login:hover) {
+      box-shadow: none; // Remove shadow when either button is hovered
+    }
+
+    .logout-link {
+      width: 100%;
+    }
+
+
+    .button {
+      border: none;
+      border-radius: 100px;
+      padding: 0.625rem 0.625rem * 2;
+      font-size: variables.$font-size-large-button;
+      font-weight: variables.$font-weight-large-button;
+      transition: all 0.1s ease;
+      //text-overflow: ellipsis;
+      //overflow: hidden;
+      //white-space: nowrap;
+      //position: absolute;
+
+    }
+
+    .logout {
+      cursor: pointer;
+      color: variables.$main-blue;
+      background-color: white;
+      //width: 9.5rem;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+      //top: 50%; // Align the top edge of the button to the middle
+      //transform: translateY(-50%); // Move the button up by half its height
+    }
+
+    .logout:hover {
+      background-color: variables.$main-blue;
+      color: white;
+      z-index: 2;
+      box-shadow: variables.$upper-inset-shadow-hover;
+    }
+
+    .logout:active {
+      box-shadow: variables.$upper-inset-shadow-click;
+    }
+
+  }
+
+}
