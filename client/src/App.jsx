@@ -1,6 +1,7 @@
 import './App.scss'
 import {useEffect, useState} from "react";
-import Navigator from './components/nav-bar/nav-bar-main.jsx';
+import NavigatorGuest from './components/nav-bar-guest/nav-bar-guest.jsx';
+import NavigatorUser from './components/nav-bar-user/nav-bar-user.jsx';
 import "@fontsource/poppins"; // Defaults to weight 400
 import "@fontsource/poppins/400.css"; // Specify weight
 import "@fontsource/poppins/400-italic.css"; // Specify weight and style
@@ -18,12 +19,21 @@ function App() {
             })
     }, []);
 
+    // todo show nav bar based in authentication state (y/n) instead of just route
+    // Define routes where the guest NavBar should be shown
+    const guestRoutes = ["/", "/login", "/forgot-password", "/features", "/about", "/support", "/forgot-password"];
+    const userRoutes = ["/dashboard", "/chats", "/recommendations", "/connections", "/support", "/settings"];
+
+    // Check if the current route is in guestRoutes
+    const isGuestRoute = guestRoutes.includes(location.pathname);
+    const isUserRoute = userRoutes.includes(location.pathname);
+
 
     return (
         <div>
             {/* Navigator renders on every route */}
-            {/* todo make dynamic so when not logged in show one nav bar and when logged in show the other*/}
-            <Navigator />
+            {isGuestRoute && <NavigatorGuest />}
+            {isUserRoute && <NavigatorUser />}
             {/* This is where the current route's component will be displayed */}
             <Outlet />
         </div>
