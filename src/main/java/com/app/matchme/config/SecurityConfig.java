@@ -39,24 +39,25 @@ public class SecurityConfig {
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                "/get-started",
+                                "/",
+                                "/register",
                                 "/login",
                                 "/features",
                                 "/about",
                                 "/support",
-                                "/")
+                                "/forgot-password")
                         .permitAll()
                         .anyRequest().authenticated())
 //                .formLogin(Customizer.withDefaults())
                 .formLogin(formLogin -> formLogin
-//                        .disable()
-                        .loginPage("/login")  // Specify custom login page URL
-                        .defaultSuccessUrl("/home", true)  // Redirect after successful login
+//                       .disable()
+                        .loginPage("http://localhost:5173/login")
+                        .defaultSuccessUrl("/dashboard", true)  // Redirect after successful login // todo redirect to user's profile
                         .permitAll() // Allow everyone to access the login page
                 )
                 .logout(LogoutConfigurer::permitAll // Allow everyone to access logout functionality
                 )
-                .httpBasic(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
