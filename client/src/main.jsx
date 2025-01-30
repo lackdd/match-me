@@ -8,10 +8,10 @@ import Features from './components/features/features.jsx';
 import About from './components/about/about.jsx';
 import Support from './components/support/support.jsx';
 import NotFound from './components/not-found/not-found.jsx';
-import SignUp from './components/signup/signup.jsx';
+import Register from './components/register/register.jsx';
 import Login from './components/login/login.jsx';
-import Navigator from './components/nav-bar/nav-bar-main.jsx'
 import ForgotPassword from './components/forgot-password/forgot-password.jsx';
+import Dashboard from './components/dashboard/dashboard.jsx';
 
 const router = createBrowserRouter([
     {
@@ -36,8 +36,8 @@ const router = createBrowserRouter([
                 element: <Support />,
             },
             {
-                path: '/get-started',
-                element: <SignUp />,
+                path: '/register',
+                element: <Register />,
             },
             {
                 path: '/login',
@@ -46,6 +46,10 @@ const router = createBrowserRouter([
             {
                 path: '/forgot-password',
                 element: <ForgotPassword />,
+            },
+            {
+                path: '/dashboard',
+                element: <Dashboard />,
             },
         ]
     },
