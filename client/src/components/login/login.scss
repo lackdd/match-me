@@ -38,27 +38,13 @@
       flex-direction: row;
     }
 
-    input {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid variables.$input-border-grey;
-      height: 2rem;
-      padding-left: 0.75rem;
-      margin-bottom: 0.5rem;
-      transition: all 0.1s ease;
-      outline: none;
 
-      &:focus {
-        border-color: variables.$main-pink;
-      }
-      //
-      //&:invalid {
-      //  border-color: red;
-      //}
-
+    .error-border {
+      border-color: red;
+      text-align: left;
     }
 
-    #password-input {
+    .password-input {
       margin: 0;
     }
 
@@ -95,32 +81,36 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-top: 1rem;
+      margin-top: 2rem;
     }
 
     .login-button {
-      width: 100%;
       background-color: variables.$main-blue;
-      box-shadow: variables.$default-button-shadow;
-      font-weight: variables.$font-weight-small-button;
-      font-size: variables.$font-size-small-button;
-      color: white;
       border: 1px variables.$main-blue;
-      height: 2rem;
-      border-radius: 100px;
-      cursor: pointer;
-      transition: all 0.1s ease;
 
       &:hover {
         background-color: variables.$main-blue-80;
-        box-shadow: variables.$upper-inset-shadow-hover;
       }
 
       &:active {
         background-color: variables.$main-blue-20;
-        box-shadow: variables.$upper-inset-shadow-click;
       }
     }
+  }
+
+  .error-message {
+    color: red;
+    text-align: center;
+    height: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .hidden {
+    opacity: 0;
+  }
+
+  .visible {
+    opacity: 100%;
   }
 
   #no-account-label {
@@ -128,7 +118,6 @@
     transition: 0.1s all ease;
 
     a {
-      text-decoration: none;
       color: variables.$main-pink;
 
       &:hover {
