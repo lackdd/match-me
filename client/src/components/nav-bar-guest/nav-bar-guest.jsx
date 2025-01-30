@@ -1,10 +1,10 @@
-import './nav-bar-main.scss'
+import './nav-bar-guest.scss'
 import {NavLink} from 'react-router-dom'
 
 
-function Navigator() {
+function NavigatorGuest() {
 	return (
-		<nav className='nav-container'>
+		<nav className='nav-container-guest'>
 			<div className='logo-container'>
 				{/*<a href='/' title='Home'>*/}
 				{/*	<img src='logo_black.png' alt='Jammer' className='nav-bar-logo'/>*/}
@@ -25,11 +25,12 @@ function Navigator() {
 				</NavLink>
 			</div>
 			<div className='buttons-container'>
-				<NavLink to='/get-started'>
+				{/* again a tag to force rerender of nav bar*/}
+				<a href='/register'>
 					<button className='button signup' title='Get started'>
 						Get started
 					</button>
-				</NavLink>
+				</a>
 				<NavLink to='/login'>
 					<button className='button login' title='Log in'>
 						Log in
@@ -41,5 +42,5 @@ function Navigator() {
 	);
 }
 
-export default Navigator;
+export default NavigatorGuest;
 
