@@ -21,11 +21,13 @@ function HomePage() {
 						</span>
 					</h1>
 					<div className={'cta-button-container'}>
-						<Link to={'/get-started'}>
+						{/* again a tag to force rerender of nav bar*/}
+						{/* todo need better solution so not everything gets rendered */}
+						<a href={'/register'} title={"Get started"}>
 							<button className={'cta-button'}>
 								Get started now!
 							</button>
-						</Link>
+						</a>
 					</div>
 				</div>
 				<HomePageFooter/>

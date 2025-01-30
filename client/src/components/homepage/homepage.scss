@@ -56,12 +56,13 @@
 
 
       .cta-button {
+        height: 3.5rem;
         background-color: variables.$main-pink;
         color: white;
         border-radius: 100px;
         font-size: variables.$font-size-large-button;
         font-weight: variables.$font-weight-large-button;
-        padding: 10px 20px 10px 20px;
+        padding: 10px 25px 10px 25px;
         text-align: center;
         box-shadow: variables.$default-button-shadow;
       }
