@@ -1,0 +1,95 @@
+@use '../../variables';
+
+.register-container {
+  @include variables.whole-page;
+  @include variables.centered-column;
+  justify-content: flex-start;
+
+  .forms-container {
+    justify-content: center;
+    align-items: flex-start;
+    width: 25.25rem;
+    height: 36.25rem;
+    gap: 1.2rem;
+
+    .line {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+    }
+
+    #tc-input {
+      cursor: pointer;
+      border-radius: 100px;
+      font-size: 0.6rem;
+      margin: 0;
+      width: 1.25rem;
+
+      &:checked {
+        accent-color: variables.$main-pink;
+      }
+    }
+
+    #tc-label {
+      font-size: 0.85rem;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-top: 2rem;
+    }
+  }
+
+  .next {
+    background-color: variables.$button-green;
+    border: 1px solid variables.$button-green;
+
+    &:hover {
+      background-color: variables.$button-green-80;
+      //box-shadow: variables.$upper-inset-shadow-hover;
+      border-color: variables.$button-green-80;
+    }
+    &:active {
+      background-color: variables.$button-green-20;
+      //box-shadow: variables.$upper-inset-shadow-click;
+      border-color: variables.$button-green-20;
+    }
+  }
+
+  .exit-container {
+    align-self: flex-start;
+    margin-left: 2.5rem;
+    margin-top: 1.5rem;
+
+
+
+    .exit {
+      width: 8.75rem;
+      height: 2rem;
+      color: white;
+      background-color: variables.$button-red;
+      border: 1px solid variables.$button-red;
+      //box-shadow: variables.$default-button-shadow;
+      border-radius: 100px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: variables.$button-red-80;
+        //box-shadow: variables.$upper-inset-shadow-hover;
+        border-color: variables.$button-red-80;
+      }
+
+      &:active {
+        background-color: variables.$button-red-20;
+        //box-shadow: variables.$upper-inset-shadow-click;
+        border-color: variables.$button-red-20;
+      }
+    }
+  }
+
+  .account-creation {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+}
