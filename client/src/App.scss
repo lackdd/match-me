@@ -6,6 +6,7 @@
 
 @use 'variables';
 
+// base
 *,
 *:after,
 *:before {
@@ -28,3 +29,97 @@ html, body {
   background: variables.$background-gradient;
 }
 
+// forms
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 25.25rem;
+  height: 36.25rem;
+  gap: 1.2rem;
+
+  label {
+    width: 100%;
+
+    .short {
+      width: 12rem;
+    }
+
+    .large {
+      width: 25.25rem;
+    }
+  }
+
+  input {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid variables.$input-border-grey;
+    height: 2rem;
+    padding-left: 0.75rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.1s ease;
+    outline: none;
+
+    &:focus {
+      border-color: variables.$main-pink;
+    }
+    //
+    //&:invalid {
+    //  border-color: red;
+    //}
+
+    .short {
+      width: 12rem;
+    }
+
+    .large {
+      width: 25.25rem;
+    }
+
+  }
+
+}
+
+.large {
+  width: 100%;
+}
+
+
+// links
+a {
+  text-decoration: none;
+}
+
+
+// buttons
+button {
+  color: white;
+  height: 2rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: variables.$default-button-shadow;
+
+  &:hover {
+    box-shadow: variables.$upper-inset-shadow-hover;
+  }
+
+  &:active {
+    box-shadow: variables.$upper-inset-shadow-click;
+  }
+
+  &.wide {
+    width: 100%;
+  }
+
+  &.narrow {
+    width: 8.75rem;
+  }
+
+  &.small {
+    font-weight: variables.$font-weight-small-button;
+    font-size: variables.$font-size-small-button;
+  }
+
+}
