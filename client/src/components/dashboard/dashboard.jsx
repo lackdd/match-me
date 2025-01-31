@@ -1,13 +1,17 @@
 // WelcomeDashboard.js
-import React from 'react';
-import { useNavigate} from 'react-router-dom'; // Import useHistory hook
+import React, {useContext} from 'react';
+import { useNavigate} from 'react-router-dom';
+import {AuthContext} from "../../App.jsx"; // Import useHistory hook
 
 function WelcomeDashboard({ username }) {
+	const { setIsUserLoggedIn } = useContext(AuthContext);
 	const history = useNavigate();
 
 	const handleLogout = () => {
 		// Perform logout actions here (e.g., clear session, remove authentication token)
 		// After logout, redirect to the login page
+		sessionStorage.removeItem("token");
+		setIsUserLoggedIn(false);
 		history('/');
 	};
 

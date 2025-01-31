@@ -1,8 +1,17 @@
 import './homepage.scss'
 import HomePageFooter from './homepage_footer.jsx'
-import {Link} from 'react-router-dom';
+import {Link, Navigate, useOutletContext} from 'react-router-dom';
+import {useContext} from "react";
+import {AuthContext} from "../../App.jsx";
 
 function HomePage() {
+
+	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
+
+	if (isUserLoggedIn == true) {
+		return <Navigate to="/dashboard" replace />;
+	}
+
 	return (
 		<>
 			<div className='homepage-container'>
@@ -23,11 +32,11 @@ function HomePage() {
 					<div className={'cta-button-container'}>
 						{/* again a tag to force rerender of nav bar*/}
 						{/* todo need better solution so not everything gets rendered */}
-						<a href={'/register'} title={"Get started"}>
+						<Link to={{pathname:'/register'}} title={"Get started"}>
 							<button className={'cta-button'}>
 								Get started now!
 							</button>
-						</a>
+						</Link>
 					</div>
 				</div>
 				<HomePageFooter/>

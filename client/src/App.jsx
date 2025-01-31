@@ -1,23 +1,35 @@
 import './App.scss'
-import {useEffect, useState} from "react";
+import {createContext, useEffect, useState} from "react";
 import NavigatorGuest from './components/nav-bar-guest/nav-bar-guest.jsx';
 import NavigatorUser from './components/nav-bar-user/nav-bar-user.jsx';
 import "@fontsource/poppins"; // Defaults to weight 400
 import "@fontsource/poppins/400.css"; // Specify weight
 import "@fontsource/poppins/400-italic.css"; // Specify weight and style
-import {Outlet} from 'react-router-dom';
+import {Outlet, useLocation} from 'react-router-dom';
+
+export const AuthContext = createContext();
 
 function App() {
-    const [users, setUsers] = useState([]);
+    const location = useLocation();
+
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
     useEffect(() => {
+        const token = sessionStorage.getItem("token");
+
+        if (token) {
+            setIsUserLoggedIn(true);
+        }
+    }, []);
+
+    /*useEffect(() => {
 
         fetch('api/users')
             .then(response => response.json())
             .then(data => {
                 setUsers(data);
             })
-    }, []);
+    }, []);*/
 
     // todo show nav bar based in authentication state (y/n) instead of just route
     // Define routes where the guest NavBar should be shown
@@ -27,16 +39,19 @@ function App() {
     // Check if the current route is in guestRoutes
     const isGuestRoute = guestRoutes.includes(location.pathname);
     const isUserRoute = userRoutes.includes(location.pathname);
+    const hideNavBar = location.pathname === "/register";
 
 
     return (
-        <div>
-            {/* Navigator renders on every route */}
-            {isGuestRoute && <NavigatorGuest />}
-            {isUserRoute && <NavigatorUser />}
-            {/* This is where the current route's component will be displayed */}
-            <Outlet />
-        </div>
+        <AuthContext.Provider value={{isUserLoggedIn, setIsUserLoggedIn}}>
+            <div>
+                {/* Navigator renders on every route */}
+                {isGuestRoute && !hideNavBar && <NavigatorGuest/>}
+                {isUserRoute && !hideNavBar && isUserLoggedIn && <NavigatorUser/>}
+                {/* This is where the current route's component will be displayed */}
+                <Outlet/>
+            </div>
+        </AuthContext.Provider>
     );
             {/*<div>*/}
             {/*    {users.map(user =>*/}

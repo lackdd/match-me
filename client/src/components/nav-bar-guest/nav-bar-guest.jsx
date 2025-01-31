@@ -26,11 +26,11 @@ function NavigatorGuest() {
 			</div>
 			<div className='buttons-container'>
 				{/* again a tag to force rerender of nav bar*/}
-				<a href='/register'>
+				<NavLink to='/register'>
 					<button className='button signup' title='Get started'>
 						Get started
 					</button>
-				</a>
+				</NavLink>
 				<NavLink to='/login'>
 					<button className='button login' title='Log in'>
 						Log in
@@ -43,4 +43,3 @@ function NavigatorGuest() {
 }
 
 export default NavigatorGuest;
-

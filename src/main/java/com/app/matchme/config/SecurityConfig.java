@@ -49,14 +49,14 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated())
 //                .formLogin(Customizer.withDefaults())
-                .formLogin(formLogin -> formLogin
+                /*.formLogin(formLogin -> formLogin
 //                       .disable()
                         .loginPage("http://localhost:5173/login")
                         .defaultSuccessUrl("/dashboard", true)  // Redirect after successful login // todo redirect to user's profile
                         .permitAll() // Allow everyone to access the login page
                 )
                 .logout(LogoutConfigurer::permitAll // Allow everyone to access logout functionality
-                )
+                )*/
 //                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
