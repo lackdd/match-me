@@ -4,6 +4,7 @@
   @include variables.whole-page;
   @include variables.centered-column;
   justify-content: flex-start;
+  position: relative;
 
   .forms-container {
     justify-content: center;
@@ -18,12 +19,71 @@
       gap: 20px;
     }
 
+    //.basic-single {
+    //  font-size: 0.875rem;
+    //
+    //  .select__control {
+    //    border-radius: 10px;
+    //    height: 10px;
+    //    font-size: 1px;
+    //    width: 12rem;
+    //
+    //    .select__value-container {
+    //
+    //    }
+    //  }
+    //
+    //
+    //}
+
+
+    .buttons-container {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-self: center;
+      justify-content: space-between;
+
+      .next {
+        background-color: variables.$button-green;
+        border: 1px solid variables.$button-green;
+
+        &:hover {
+          background-color: variables.$button-green-80;
+          //box-shadow: variables.$upper-inset-shadow-hover;
+          border-color: variables.$button-green-80;
+        }
+        &:active {
+          background-color: variables.$button-green-20;
+          //box-shadow: variables.$upper-inset-shadow-click;
+          border-color: variables.$button-green-20;
+        }
+      }
+
+      .previous {
+        background-color: variables.$button-yellow;
+        border: 1px solid variables.$button-yellow;
+
+        &:hover {
+          background-color: variables.$button-yellow-80;
+          //box-shadow: variables.$upper-inset-shadow-hover;
+          border-color: variables.$button-yellow-80;
+        }
+        &:active {
+          background-color: variables.$button-yellow-20;
+          //box-shadow: variables.$upper-inset-shadow-click;
+          border-color: variables.$button-yellow-20;
+        }
+      }
+    }
+
     #tc-input {
       cursor: pointer;
       border-radius: 100px;
       font-size: 0.6rem;
       margin: 0;
       width: 1.25rem;
+      height: 1.25rem;
 
       &:checked {
         accent-color: variables.$main-pink;
@@ -36,23 +96,7 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      margin-top: 2rem;
-    }
-  }
-
-  .next {
-    background-color: variables.$button-green;
-    border: 1px solid variables.$button-green;
-
-    &:hover {
-      background-color: variables.$button-green-80;
-      //box-shadow: variables.$upper-inset-shadow-hover;
-      border-color: variables.$button-green-80;
-    }
-    &:active {
-      background-color: variables.$button-green-20;
-      //box-shadow: variables.$upper-inset-shadow-click;
-      border-color: variables.$button-green-20;
+      margin-top: 1rem;
     }
   }
 
@@ -91,5 +135,24 @@
     margin-top: 2rem;
     margin-bottom: 2rem;
     text-align: center;
+  }
+
+  #have-account {
+    display: block;
+    position: absolute;
+    bottom: 0;
+
+    a {
+      color: variables.$main-pink;
+
+      &:hover {
+        color: variables.$main-pink-80;
+      }
+
+      &:active {
+        color: variables.$main-pink-20;
+      }
+
+    }
   }
 }
