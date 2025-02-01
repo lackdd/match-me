@@ -6,9 +6,6 @@ function NavigatorGuest() {
 	return (
 		<nav className='nav-container-guest'>
 			<div className='logo-container'>
-				{/*<a href='/' title='Home'>*/}
-				{/*	<img src='logo_black.png' alt='Jammer' className='nav-bar-logo'/>*/}
-				{/*</a>*/}
 				<NavLink to='/'>
 					<img src='logo_black.png' alt='Jammer' className='nav-bar-logo'/>
 				</NavLink>
