@@ -2,7 +2,7 @@ import './login.scss'
 import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import {AuthContext} from "../../App.jsx";
+import {AuthContext} from "../../main.jsx";
 
 function Login() {
 	const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ function Login() {
 
 	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
 
-	if (isUserLoggedIn == true) {
+	if (isUserLoggedIn === true) {
 		return <Navigate to="/dashboard" replace />;
 	}
 
@@ -26,7 +26,7 @@ function Login() {
 			const response = await
 				axios.post('http://localhost:8080/login', {email, password});
 			console.log('Login successful: ', response.data);
-			sessionStorage.setItem("token", response.data.token);
+			sessionStorage.setItem("token", response.data);
 			setIsUserLoggedIn(true);
 			history('/dashboard')
 		} catch (error) {
@@ -50,7 +50,7 @@ function Login() {
 						type='email'
 						id='email-input'
 						placeholder='Enter your email'
-						className={`${error ? 'error-border' : ''}`}
+						className={`focus-highlight ${error ? 'error-border' : ''}`}
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						required
@@ -62,7 +62,7 @@ function Login() {
 					<input
 						type='password'
 						id='password-input'
-						className={`${error ? 'error-border' : ''}`}
+						className={`focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your password'
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
@@ -75,6 +75,7 @@ function Login() {
 				</label>
 				<label id='remember-me-label'>
 					<input
+						className={"focus-highlight"}
 						type='checkbox'
 						name='remember'
 						id='remember-me-input'/>
