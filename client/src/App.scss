@@ -41,6 +41,7 @@ form {
 
   label {
     width: 100%;
+    font-size: 0.875rem;
 
     .short {
       width: 12rem;
@@ -61,28 +62,44 @@ form {
     transition: all 0.1s ease;
     outline: none;
 
+
     &:focus {
       border-color: variables.$main-pink;
+      //box-shadow: variables.$input-shadow-focused;
     }
+
+
     //
     //&:invalid {
     //  border-color: red;
     //}
 
-    .short {
-      width: 12rem;
-    }
-
-    .large {
-      width: 25.25rem;
-    }
+    //.short {
+    //  width: 12rem;
+    //}
+    //
+    //.large {
+    //  width: 25.25rem;
+    //}
 
   }
 
 }
 
+.focus-highlight:focus {
+  box-shadow: variables.$input-shadow-focused;
+}
+
 .large {
   width: 100%;
+}
+
+.short {
+  width: 12rem;
+}
+
+.large {
+  width: 25.25rem;
 }
 
 
