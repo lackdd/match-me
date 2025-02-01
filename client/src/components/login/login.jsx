@@ -26,7 +26,7 @@ function Login() {
 			const response = await
 				axios.post('http://localhost:8080/login', {email, password});
 			console.log('Login successful: ', response.data);
-			sessionStorage.setItem("token", response.data.token);
+			sessionStorage.setItem("token", response.data);
 			setIsUserLoggedIn(true);
 			history('/dashboard')
 		} catch (error) {
