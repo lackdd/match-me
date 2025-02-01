@@ -5,6 +5,7 @@
   @include variables.centered-column;
   //justify-items: center; // works as well now instead of flexbox
   //align-content: center;
+  position: relative;
 
   .login-form {
     @extend .login-container; // same as .login-container
@@ -69,6 +70,7 @@
       font-size: 0.6rem;
       margin: 0;
       width: 1.25rem;
+      height: 1.25rem;
 
       &:checked {
         accent-color: variables.$main-pink;
@@ -116,6 +118,9 @@
   #no-account-label {
     text-align: center;
     transition: 0.1s all ease;
+    display: block;
+    position: absolute;
+    bottom: 3rem;
 
     a {
       color: variables.$main-pink;

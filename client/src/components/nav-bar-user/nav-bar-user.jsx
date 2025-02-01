@@ -1,6 +1,6 @@
 import './nav-bar-user.scss'
 import {NavLink, useNavigate} from 'react-router-dom'
-import {AuthContext} from "../../App.jsx";
+import {AuthContext} from "../../main.jsx";
 import {useContext} from "react";
 
 
@@ -9,6 +9,7 @@ function NavigatorUser() {
 	const navigate = useNavigate();
 
 	const handleLogout = async () => {
+		console.log('Logout successful');
 		sessionStorage.removeItem("token");
 		setIsUserLoggedIn(false);
 		navigate("/");
@@ -34,7 +35,6 @@ function NavigatorUser() {
 				</NavLink>
 			</div>
 			<div className='buttons-container'>
-				{/* use <a> tag here to force a rerender so the nav bar changes back to NavigatorGuest. <Link> doesn't force rerender*/}
 					<button className='button logout' title='Log out' onClick={handleLogout}>
 						Log out
 					</button>
