@@ -1,11 +1,17 @@
 import './register.scss'
 import {useState} from 'react';
 import {Link} from 'react-router-dom';
+import Step1 from './register-step-1.jsx';
+import Step2 from './register-step-2.jsx';
 
+
+// todo input validation https://www.freecodecamp.org/news/how-to-validate-forms-in-react/#heading-how-to-implement-input-validation-in-react
+// https://www.npmjs.com/package/react-inputs-validation
 function Register() {
 	const [currentStep, setCurrentStep] = useState(1)
 	const [error, setError] = useState('');
 
+	// step 1 data
 	const [firstName, setFirstName] = useState("")
 	const [lastName, setLastName] = useState("")
 	const [gender, setGender] = useState("")
@@ -13,7 +19,19 @@ function Register() {
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 
-	function AddStep() {
+	// step 2 data
+	const [goal, setGoal] = useState("")
+	const [experience, setExperience] = useState("")
+	const [location, setLocation] = useState("")
+	const [musicLink, setMusicLink] = useState("")
+	const [additionalInterests, setAdditionalInterests] = useState("")
+	const [personalityTraits, setPersonalityTraits] = useState("")
+	const [preferredMethods, setPreferredMethods] = useState("")
+	const [preferredGenres, setPreferredGenres] = useState("")
+	const [description, setDescription] = useState("")
+
+	function AddStep(e) {
+		e.preventDefault();
 		setCurrentStep(currentStep + 1)
 	}
 
@@ -21,271 +39,48 @@ function Register() {
 		setCurrentStep(currentStep - 1)
 	}
 
-	function Step1() {
-
-
-		return (
-
-			<form className='step-one'>
-				<div className='form-title'>
-					<h1>Get started!</h1>
-				</div>
-				<div className={'line'}>
-					<label id='first-name-label' className={'short'}>
-						First name*
-						<br/>
-						<input
-							type='text'
-							id='first-name-input'
-							placeholder='Enter your first name'
-							className={`short ${error ? 'error-border' : ''}`}
-							value={firstName}
-							onChange={(e) => setFirstName(e.target.value)}
-							required
-						/>
-					</label>
-					<label id='last-name-label' className={'short'}>
-						Last name*
-						<br/>
-						<input
-							type='text'
-							id='last-name-input'
-							className={`short ${error ? 'error-border' : ''}`}
-							placeholder='Enter your last name'
-							value={lastName}
-							onChange={(e) => setLastName(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<div className={'line'}>
-					<label id='gender-label' className={'short'}>
-						Gender*
-						<br/>
-						<input
-							type='text'
-							id='gender-input'
-							className={`short ${error ? 'error-border' : ''}`}
-							placeholder='Enter your gender'
-							value={gender}
-							onChange={(e) => setGender(e.target.value)}
-							required
-						/>
-					</label>
-					<label id='age-label' className={'short'}>
-						Age*
-						<br/>
-						<input
-							type='number'
-							id='age-input'
-							className={`short ${error ? 'error-border' : ''}`}
-							placeholder='Enter your age'
-							value={age}
-							onChange={(e) => setAge(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<div className={'line large'}>
-					<label id='email-label'>
-						Email address*
-						<br/>
-						<input
-							type='email'
-							id='email-input'
-							className={`${error ? 'error-border' : ''}`}
-							placeholder='Enter your email address'
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<div className={'line large'}>
-					<label id='password-label'>
-						Password*
-						<br/>
-						<input
-							type='password'
-							id='password-input'
-							className={`${error ? 'error-border' : ''}`}
-							placeholder='Enter a password'
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<label id='tc-label'>
-					<input
-						type='checkbox'
-						name='terms and conditions'
-						id='tc-input'
-						required/>
-					&nbsp;
-					I agree to the terms and conditions*
-				</label>
-				<label>
-					<button
-						className='next wide small'
-						onClick={AddStep}>
-						Next
-					</button>
-				</label>
-			</form>
-		);
-	}
-
-
-	function Step2() {
-/*		const [firstName, setFirstName] = useState("")
-		const [lastName, setLastName] = useState("")
-		const [gender, setGender] = useState("")
-		const [age, setAge] = useState("")
-		const [email, setEmail] = useState("")
-		const [password, setPassword] = useState("")*/
-
-		return (
-
-			<form className='step-one'>
-				<div className='form-title'>
-					<h1>Get started!</h1>
-				</div>
-				<div className={'line'}>
-					<label id='first-name-label' className={'short'}>
-						First name*
-						<br/>
-						<input
-							type='text'
-							id='first-name-input'
-							placeholder='Enter your first name'
-							className={`short ${error ? 'error-border' : ''}`}
-							value={firstName}
-							onChange={(e) => setFirstName(e.target.value)}
-							required
-						/>
-					</label>
-					<label id='last-name-label' className={'short'}>
-						Last name*
-						<br/>
-						<input
-							type='text'
-							id='last-name-input'
-							className={`short ${error ? 'error-border' : ''}`}
-							placeholder='Enter your last name'
-							value={lastName}
-							onChange={(e) => setLastName(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<div className={'line'}>
-					<label id='gender-label' className={'short'}>
-						Gender*
-						<br/>
-						<input
-							type='text'
-							id='gender-input'
-							className={`short ${error ? 'error-border' : ''}`}
-							placeholder='Enter your gender'
-							value={gender}
-							onChange={(e) => setGender(e.target.value)}
-							required
-						/>
-					</label>
-					<label id='age-label' className={'short'}>
-						Age*
-						<br/>
-						<input
-							type='number'
-							id='age-input'
-							className={`short ${error ? 'error-border' : ''}`}
-							placeholder='Enter your age'
-							value={age}
-							onChange={(e) => setAge(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<div className={'line large'}>
-					<label id='email-label'>
-						Email address*
-						<br/>
-						<input
-							type='email'
-							id='email-input'
-							className={`${error ? 'error-border' : ''}`}
-							placeholder='Enter your email address'
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<div className={'line large'}>
-					<label id='password-label'>
-						Password*
-						<br/>
-						<input
-							type='password'
-							id='password-input'
-							className={`${error ? 'error-border' : ''}`}
-							placeholder='Enter a password'
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							required
-						/>
-					</label>
-				</div>
-				<label id='tc-label'>
-					<input
-						type='checkbox'
-						name='terms and conditions'
-						id='tc-input'
-						required/>
-					&nbsp;
-					I agree to the terms and conditions*
-				</label>
-				<label>
-					<button
-						className='previous wide narrow'
-						onClick={DeductStep}>
-						Previous
-					</button>
-				</label>
-				<label>
-					<button
-						className='next wide narrow'
-						onClick={AddStep}>
-						Next
-					</button>
-				</label>
-			</form>
-		);
-	}
-
-
 	return (
 		<>
 			<div className='register-container'>
 				<div className={'exit-container'}>
 					{/* again a tag to force rerender of nav bar*/}
-					<a href={'/'}>
+					<Link to={'/'}>
 						<button className={'button exit'}>Exit</button>
-					</a>
+					</Link>
 				</div>
 				<div className={'account-creation'}>
 					Account creation {currentStep}/5
 				</div>
 				<div className={'forms-container'}>
-					{currentStep === 1 && <Step1/>}
-					{currentStep === 2 && <Step2/>}
-					{currentStep === 3 && <Step3/>}
-					{currentStep === 4 && <Step4/>}
-					{currentStep === 5 && <Step5/>}
+					{currentStep === 1 && (
+						<Step1
+							firstName={firstName} setFirstName={setFirstName}
+							lastName={lastName} setLastName={setLastName}
+							gender={gender} setGender={setGender}
+							age={age} setAge={setAge}
+							email={email} setEmail={setEmail}
+							password={password} setPassword={setPassword}
+							error={error} setError={setError}
+							AddStep={AddStep}
+						/>
+					)}
+					{currentStep === 2 && (
+						<Step2
+							goal={goal} setGoal={setGoal}
+							experience={experience} setExperience={setExperience}
+							location={location} setLocation={setLocation}
+							musicLink={musicLink} setMusicLink={setMusicLink}
+							additionalInterests={additionalInterests} setAdditionalInterests={setAdditionalInterests}
+							personalityTraits={personalityTraits} setPersonalityTraits={setPersonalityTraits}
+							preferredMethods={preferredMethods} setPreferredMethods={setPreferredMethods}
+							preferredGenres={preferredGenres} setPreferredGenres={setPreferredGenres}
+							description={description} setDescription={setDescription}
+							error={error} setError={setError}
+							DeductStep={DeductStep} AddStep={AddStep}/>
+					)}
 				</div>
-				<div id='no-account-label'>
-					Already have an account
+				<div id='have-account'>
+					Already have an account?
 					&nbsp;
 					<Link to='/login'>Sign in</Link>
 				</div>
