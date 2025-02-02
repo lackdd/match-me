@@ -1,6 +1,7 @@
 import './register.scss'
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {isRouteErrorResponse, Link} from 'react-router-dom';
+import axios from "axios";
 
 function Register() {
 	const [currentStep, setCurrentStep] = useState(1)
@@ -20,6 +21,19 @@ function Register() {
 	function DeductStep() {
 		setCurrentStep(currentStep - 1)
 	}
+
+	const Submit = async () => {
+		event.preventDefault();
+		const username = firstName + " " + lastName;
+		const userDetails = {email,  password, username,  gender,  age};
+		try{
+			const response = await
+			axios.post("http://localhost:8080/register", userDetails);
+			console.log("User created successfully");
+		} catch (error) {
+			console.log("Failed to register");
+		}
+	};
 
 	function Step1() {
 
@@ -130,6 +144,9 @@ function Register() {
 						className='next wide small'
 						onClick={AddStep}>
 						Next
+					</button>
+					<button className='next wide small' onClick={Submit}>
+						Register
 					</button>
 				</label>
 			</form>
