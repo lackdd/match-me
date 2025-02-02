@@ -38,14 +38,6 @@ function App() {
         validateToken();
     }, []);
 
-    /*useEffect(() => {
-
-        fetch('api/users')
-            .then(response => response.json())
-            .then(data => {
-                setUsers(data);
-            })
-    }, []);*/
 
     // todo show nav bar based in authentication state (y/n) instead of just route
     // Define routes where the guest NavBar should be shown

@@ -55,10 +55,12 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    /*@GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        return user.findById(id).orElseThrow(RuntimeException::new);
-    }*/
+    @GetMapping("/users/{id}")
+    public ResponseEntity<Users> getUser(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     /*@GetMapping("/csrf-token")
     public CsrfToken getCsrfToken(HttpServletRequest request){
