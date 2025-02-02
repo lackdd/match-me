@@ -43,7 +43,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
         }
     }
-''
+
     private final UserRepository userRepository;
 
     public UserController(UserRepository userRepository) {
