@@ -4,6 +4,9 @@ import com.app.matchme.entities.Users;
 import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +29,21 @@ public class UserController {
         return service.verify(user);
     }
 
+    @PostMapping("/validateToken")
+    public ResponseEntity<?> validate(@RequestHeader(value = "Authorization", required = false) String authHeader){
+        if (authHeader == null || !authHeader.startsWith("Bearer ")){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+        }
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid");
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+    }
+''
     private final UserRepository userRepository;
 
     public UserController(UserRepository userRepository) {

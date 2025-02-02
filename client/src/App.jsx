@@ -6,6 +6,7 @@ import "@fontsource/poppins"; // Defaults to weight 400
 import "@fontsource/poppins/400.css"; // Specify weight
 import "@fontsource/poppins/400-italic.css"; // Specify weight and style
 import {Outlet, useLocation} from 'react-router-dom';
+import axios from "axios";
 
 export const AuthContext = createContext();
 
@@ -15,11 +16,26 @@ function App() {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
     useEffect(() => {
-        const token = sessionStorage.getItem("token");
+        const validateToken = async () => {
+            const token = sessionStorage.getItem("token");
+            if (token){
+                try {
+                    const response = await
+                        axios.post('http://localhost:8080/validateToken', {},
+                            {
+                                headers: { Authorization: `Bearer ${token}` },
+                            }
+                        );
+                    console.log("Token is valid. Logging in")
+                    setIsUserLoggedIn(true);
+                } catch (error) {
+                    "Failed to validate token. Token either missing or not correct."
+                    setIsUserLoggedIn(false);
+                }
+            }
+        };
 
-        if (token) {
-            setIsUserLoggedIn(true);
-        }
+        validateToken();
     }, []);
 
     /*useEffect(() => {
