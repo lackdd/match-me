@@ -1,21 +1,30 @@
 package com.app.matchme.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
 public class Users {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
     private String password;
     private String username;
+    private String gender;
+    private Integer age;
 
-    // ei tea kas vaja constructorit siia
+    public Users() {}
+
+    public Users(String email, String password, String username, int age, String gender) {
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.age = age;
+        this.gender = gender;
+    }
 
     public Long getId() {
         return id;
@@ -44,4 +53,12 @@ public class Users {
     public String getUsername() {return username;}
 
     public void setUsername(String username) {this.username = username;}
+
+    public String getGender() {return gender;}
+
+    public void setGender(String gender){this.gender = gender;}
+
+    public Integer getAge() {return age;}
+
+    public void setAge(Integer age) {this.age = age;}
 }

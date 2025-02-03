@@ -6,15 +6,38 @@ import "@fontsource/poppins"; // Defaults to weight 400
 import "@fontsource/poppins/400.css"; // Specify weight
 import "@fontsource/poppins/400-italic.css"; // Specify weight and style
 import {Outlet, useLocation} from 'react-router-dom';
+import axios from "axios";
 import {AuthContext} from './main.jsx';
 
 // export const AuthContext = createContext();
 
 function App() {
     const location = useLocation();
-    const { isUserLoggedIn } = useContext(AuthContext);
+    const { isUserLoggedIn, setIsUserLoggedIn } = useContext(AuthContext);
 
 
+    useEffect(() => {
+        const validateToken = async () => {
+            const token = sessionStorage.getItem("token");
+            if (token){
+                try {
+                    const response = await
+                        axios.post('http://localhost:8080/validateToken', {},
+                            {
+                                headers: { Authorization: `Bearer ${token}` },
+                            }
+                        );
+                    console.log("Token is valid. Logging in")
+                    setIsUserLoggedIn(true);
+                } catch (error) {
+                    "Failed to validate token. Token either missing or not correct."
+                    setIsUserLoggedIn(false);
+                }
+            }
+        };
+
+        validateToken();
+    }, []);
     // useEffect(() => {
     //     const token = sessionStorage.getItem("token");
     //
@@ -27,14 +50,6 @@ function App() {
     //     return sessionStorage.getItem("token") ? true : false;
     // });
 
-    /*useEffect(() => {
-
-        fetch('api/users')
-            .then(response => response.json())
-            .then(data => {
-                setUsers(data);
-            })
-    }, []);*/
 
     // Define routes where the guest NavBar should be shown
     const guestRoutes = ["/", "/login", "/forgot-password", "/features", "/about", "/support", "/forgot-password"];
