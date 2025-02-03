@@ -18,6 +18,66 @@ function Step2({goal, setGoal,
 			<div className='form-title'>
 				<h1>Tell us about yourself</h1>
 			</div>
+			<div className={'line large'}>
+				<label id='genres'>
+					Preferred music genres*
+					<br/>
+					<input
+						type='text'
+						id='genres'
+						className={`${error ? 'error-border' : ''}`}
+						placeholder='Choose 1-3 genres'
+						value={preferredGenres}
+						onChange={(e) => setPreferredGenres(e.target.value)}
+						// required
+					/>
+				</label>
+			</div>
+			<div className={'line large'}>
+				<label id='methods'>
+					Preferred methods*
+					<br/>
+					<input
+						type='text'
+						id='methods'
+						className={`${error ? 'error-border' : ''}`}
+						placeholder='Choose 1-3 methods'
+						value={preferredMethods}
+						onChange={(e) => setPreferredMethods(e.target.value)}
+						// required
+					/>
+				</label>
+			</div>
+			<div className={'line large'}>
+				<label id='interests'>
+					Additional interests*
+					<br/>
+					<input
+						type='text'
+						id='interests'
+						className={`${error ? 'error-border' : ''}`}
+						placeholder='Choose 1-3 interests'
+						value={additionalInterests}
+						onChange={(e) => setAdditionalInterests(e.target.value)}
+						// required
+					/>
+				</label>
+			</div>
+			<div className={'line large'}>
+				<label id='personality'>
+					Personality traits*
+					<br/>
+					<input
+						type='text'
+						id='personality'
+						className={`${error ? 'error-border' : ''}`}
+						placeholder='Choose 1-3 traits'
+						value={personalityTraits}
+						onChange={(e) => setPersonalityTraits(e.target.value)}
+						// required
+					/>
+				</label>
+			</div>
 			<div className={'line'}>
 				<label id='goal' className={'short'}>
 					What is your goal?*
@@ -74,36 +134,21 @@ function Step2({goal, setGoal,
 					/>
 				</label>
 			</div>
-			{/*<div className={'line large'}>*/}
-			{/*	<label id='email'>*/}
-			{/*		Email address**/}
-			{/*		<br/>*/}
-			{/*		<input*/}
-			{/*			type='email'*/}
-			{/*			id='email'*/}
-			{/*			className={`${error ? 'error-border' : ''}`}*/}
-			{/*			placeholder='Enter your email address'*/}
-			{/*			value={email}*/}
-			{/*			onChange={(e) => setEmail(e.target.value)}*/}
-			{/*			required*/}
-			{/*		/>*/}
-			{/*	</label>*/}
-			{/*</div>*/}
-			{/*<div className={'line large'}>*/}
-			{/*	<label id='password'>*/}
-			{/*		Password**/}
-			{/*		<br/>*/}
-			{/*		<input*/}
-			{/*			type='password'*/}
-			{/*			id='password'*/}
-			{/*			className={`${error ? 'error-border' : ''}`}*/}
-			{/*			placeholder='Enter a password'*/}
-			{/*			value={password}*/}
-			{/*			onChange={(e) => setPassword(e.target.value)}*/}
-			{/*			required*/}
-			{/*		/>*/}
-			{/*	</label>*/}
-			{/*</div>*/}
+			<div className={'line large'}>
+				<label id='description'>
+					Personality traits*
+					<br/>
+					<input
+						type='text'
+						id='description'
+						className={`${error ? 'error-border' : ''}`}
+						placeholder='Choose 1-3 traits'
+						value={description}
+						onChange={(e) => setDescription(e.target.value)}
+						// required
+					/>
+				</label>
+			</div>
 			<div className={'buttons-container'}>
 				{/*<label>*/}
 				<button

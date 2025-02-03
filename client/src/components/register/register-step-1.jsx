@@ -1,6 +1,7 @@
 import Select from 'react-select';
 import {genderOptions} from './inputOptions.jsx';
 import {customStyles} from './customInputStyles.jsx';
+import {useState} from 'react';
 
 // step 1 of registration
 function Step1({ firstName, setFirstName,
@@ -12,11 +13,30 @@ function Step1({ firstName, setFirstName,
 				   AddStep,
 			   	error, setError}) {
 
+	const [genderError, setGenderError] = useState('');
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		// Check if gender is selected
+		if (!gender) {
+			setGenderError('Please select a gender');
+			return; // Stop form submission
+		} else {
+			setGenderError('');
+		}
+
+		// If everything is valid, move to next step
+		AddStep(e);
+	};
+
+
 	return (
 
-		<form className='step-one'onSubmit={(e) => {
-			e.preventDefault();
+		<form className='step-one' onSubmit={(e) => {
+			// e.preventDefault();
 			AddStep(e);
+			// handleSubmit(e);
 		}}>
 			<div className='form-title'>
 				<h1>Get started!</h1>
@@ -32,7 +52,7 @@ function Step1({ firstName, setFirstName,
 						className={`short focus-highlight ${error ? 'error-border' : ''}`}
 						value={firstName}
 						onChange={(e) => setFirstName(e.target.value)}
-						required
+						// required
 					/>
 				</label>
 				<label id='last-name' className={'short'}>
@@ -45,7 +65,7 @@ function Step1({ firstName, setFirstName,
 						placeholder='Enter your last name'
 						value={lastName}
 						onChange={(e) => setLastName(e.target.value)}
-						required
+						// required
 					/>
 				</label>
 			</div>
@@ -67,6 +87,7 @@ function Step1({ firstName, setFirstName,
 						value={gender}
 						onChange={setGender}
 					/>
+					{genderError && <p className="error-text">{genderError}</p>}
 				</label>
 				<label id='age' className={'short'}>
 					Age*
@@ -79,7 +100,9 @@ function Step1({ firstName, setFirstName,
 						placeholder='Enter your age'
 						value={age}
 						onChange={(e) => setAge(e.target.value)}
-						required
+						min={16}
+						max={120}
+						// required
 					/>
 				</label>
 			</div>
@@ -94,7 +117,7 @@ function Step1({ firstName, setFirstName,
 						placeholder='Enter your email address'
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
-						required
+						// required
 					/>
 				</label>
 			</div>
@@ -109,7 +132,7 @@ function Step1({ firstName, setFirstName,
 						placeholder='Enter a password'
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
-						required
+						// required
 					/>
 				</label>
 			</div>
@@ -135,7 +158,8 @@ function Step1({ firstName, setFirstName,
 					type='checkbox'
 					name='terms and conditions'
 					id='tc-input'
-					required/>
+					// required
+				/>
 				&nbsp;
 				I agree to the terms and conditions*
 			</label>
