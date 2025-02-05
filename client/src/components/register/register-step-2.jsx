@@ -13,11 +13,13 @@ function Step2({additionalInterests, setAdditionalInterests,
 				   goal, setGoal,
 			   error, setError}) {
 
-	const selectRef = useRef(null);
+	// const selectRef = useRef(null);
 
 	const handleCloseMenu = (selected) => {
-		if (selected.length >= 3 && selectRef.current) {
-			selectRef.current.blur();
+		console.log(selected.length);
+		if (selected.length >= 3) {
+			// selectRef.current.blur();
+			document.activeElement.blur()
 		}
 	};
 
@@ -47,16 +49,16 @@ function Step2({additionalInterests, setAdditionalInterests,
 					{/*	// required*/}
 					{/*/>*/}
 					<Select
-						ref={selectRef}
+						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						isMulti='true'
-						menuWidth="large"
-						closeMenuOnSelect={false}
 						components={makeAnimated()}
+						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
+						isMulti={true}
 						containerExpand={true}
+						wideMenu={true}
 						defaultValue={'Other'}
 						name='genres'
 						placeholder='Choose 1-3 genres'
@@ -90,16 +92,16 @@ function Step2({additionalInterests, setAdditionalInterests,
 					{/*	// required*/}
 					{/*/>*/}
 					<Select
-						ref={selectRef}
+						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						isMulti='true'
-						menuWidth="large"
-						closeMenuOnSelect={false}
 						components={makeAnimated()}
+						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
+						isMulti={true}
 						containerExpand={true}
+						wideMenu={true}
 						defaultValue={'Other'}
 						name='methods'
 						placeholder='Choose 1-3 methods'
@@ -132,16 +134,16 @@ function Step2({additionalInterests, setAdditionalInterests,
 					{/*	// required*/}
 					{/*/>*/}
 					<Select
-						ref={selectRef}
+						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						isMulti='true'
-						menuWidth="large"
-						closeMenuOnSelect={false}
 						components={makeAnimated()}
+						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
+						isMulti={true}
 						containerExpand={true}
+						wideMenu={true}
 						defaultValue={'Other'}
 						name='interests'
 						placeholder='Choose 1-3 interests'
@@ -174,16 +176,16 @@ function Step2({additionalInterests, setAdditionalInterests,
 					{/*	// required*/}
 					{/*/>*/}
 					<Select
-						ref={selectRef}
+						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						isMulti='true'
-						wideMenu={true}
-						closeMenuOnSelect={false}
 						components={makeAnimated()}
+						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
+						isMulti={true}
 						containerExpand={true}
+						wideMenu={true}
 						defaultValue={'Other'}
 						name='interests'
 						placeholder='Choose 1-3 traits'
@@ -193,11 +195,13 @@ function Step2({additionalInterests, setAdditionalInterests,
 						value={personalityTraits}
 						onChange={(selected) => {
 							setPersonalityTraits(selected);
+							console.log(personalityTraits);
 							handleCloseMenu(selected);
 							// if (selected.length >= 3 && selectRef.current) {
 							// 	selectRef.current.blur();
 							// }
 						}}
+						on
 					/>
 				</label>
 			</div>
@@ -206,24 +210,26 @@ function Step2({additionalInterests, setAdditionalInterests,
 					What are your goals with music?*
 					<br/>
 					<Select
-						ref={selectRef}
+						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						isMulti={true}
-						menuWidth="large"
-						containerExpand={true}
-						closeMenuOnSelect={false}
 						components={makeAnimated()}
+						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
+						isMulti={true}
+						containerExpand={true}
+						wideMenu={true}
 						defaultValue={'Other'}
 						name='goals'
 						placeholder='Choose 1-3 goals'
 						options={goalsOptions}
 						styles={customStyles}
 						value={goal}
+						isOptionDisabled={() => goal.length >= 3}
 						onChange={(selected) => {
 							setGoal(selected);
+							console.log(goal);
 							handleCloseMenu(selected);
 						}}
 					/>
