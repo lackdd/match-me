@@ -56,6 +56,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 						components={makeAnimated()}
 						isClearable={true}
 						isSearchable={true}
+						containerExpand={true}
 						defaultValue={'Other'}
 						name='genres'
 						placeholder='Choose 1-3 genres'
@@ -98,6 +99,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 						components={makeAnimated()}
 						isClearable={true}
 						isSearchable={true}
+						containerExpand={true}
 						defaultValue={'Other'}
 						name='methods'
 						placeholder='Choose 1-3 methods'
@@ -139,6 +141,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 						components={makeAnimated()}
 						isClearable={true}
 						isSearchable={true}
+						containerExpand={true}
 						defaultValue={'Other'}
 						name='interests'
 						placeholder='Choose 1-3 interests'
@@ -175,11 +178,12 @@ function Step2({additionalInterests, setAdditionalInterests,
 						className='basic-multi-select long'
 						classNamePrefix='select'
 						isMulti='true'
-						menuWidth="large"
+						wideMenu={true}
 						closeMenuOnSelect={false}
 						components={makeAnimated()}
 						isClearable={true}
 						isSearchable={true}
+						containerExpand={true}
 						defaultValue={'Other'}
 						name='interests'
 						placeholder='Choose 1-3 traits'
@@ -207,6 +211,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 						classNamePrefix='select'
 						isMulti={true}
 						menuWidth="large"
+						containerExpand={true}
 						closeMenuOnSelect={false}
 						components={makeAnimated()}
 						isClearable={true}
