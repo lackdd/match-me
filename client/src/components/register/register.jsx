@@ -8,6 +8,10 @@ import {isRouteErrorResponse, Link} from 'react-router-dom';
 import axios from "axios";
 import Step5 from './register-step-5.jsx';
 import Step6 from './register-step-6.jsx';
+import {LoadScript} from '@react-google-maps/api';
+
+const GOOGLE_API_KEY = "***REMOVED***";
+const libraries = ["places"];
 
 
 // todo input validation https://www.freecodecamp.org/news/how-to-validate-forms-in-react/#heading-how-to-implement-input-validation-in-react
@@ -41,6 +45,13 @@ function Register() {
 
 	// step 4 data
 	const [image, setImage] = useState(null)
+
+	const [isLoaded, setIsLoaded] = useState(false);
+
+	const handleScriptLoad = () => {
+		setIsLoaded(true);  // Set to true when the script is successfully loaded
+	};
+
 
 	const onImageChange = (event) => {
 		if (event.target.files && event.target.files[0]) {
@@ -318,6 +329,9 @@ function Register() {
 
 
 	return (
+		<LoadScript googleMapsApiKey={GOOGLE_API_KEY} libraries={libraries}
+					onLoad={handleScriptLoad}  // Call this when the script is loaded
+			>
 		<>
 			<div className='register-container'>
 				<div className={'exit-container'}>
@@ -391,7 +405,7 @@ function Register() {
 				)}
 			</div>
 		</>
-
+		</LoadScript>
 	);
 }
 

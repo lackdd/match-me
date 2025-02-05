@@ -3,6 +3,8 @@
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {customStyles} from './customInputStyles.jsx';
+import { LoadScript } from "@react-google-maps/api";
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 function Step3({experience, setExperience,
 			   location, setLocation,
@@ -15,10 +17,87 @@ function Step3({experience, setExperience,
 			   error, setError}) {
 
 
-	return (
+	const [inputValue, setInputValue] = useState("");
+	const [options, setOptions] = useState([]);
+	const autocompleteServiceRef = useRef(null);
+	const [isLoaded, setIsLoaded] = useState(false); // Track if the script has loaded
 
+	// Effect to check if the Google Maps API script has loaded
+	// useEffect(() => {
+	// 	const script = document.createElement("script");
+	// 	script.src = `***REMOVED***api/js?key=${GOOGLE_API_KEY}&libraries=places`;
+	// 	script.async = true;
+	// 	script.defer = true;
+	//
+	// 	script.onload = () => {
+	// 		setIsLoaded(true); // Update state when the script is loaded
+	// 	};
+	//
+	// 	document.head.appendChild(script);
+	//
+	// 	return () => {
+	// 		document.head.removeChild(script); // Clean up the script tag
+	// 	};
+	// }, []);
+
+// Initialize the autocomplete service only when the API is loaded
+	useEffect(() => {
+		if (window.google && window.google.maps && window.google.maps.places) {
+			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+		}
+	}, []);
+
+	const fetchPlaces = useCallback((input) => {
+		if (!input || !autocompleteServiceRef.current) return;
+
+		autocompleteServiceRef.current.getPlacePredictions(
+			{ input, types: ["(cities)"] },
+			// { input },
+			(predictions, status) => {
+				if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+					setOptions(
+						predictions.map((place) => ({
+							value: place.place_id,
+							label: place.description,
+						}))
+					);
+				} else {
+					setOptions([]);
+				}
+			}
+		);
+	}, []);
+
+	// const [inputValue, setInputValue] = useState("");
+	// const [options, setOptions] = useState([]);
+	// const autocompleteServiceRef = useRef(null);
+	//
+	// const fetchPlaces = useCallback((input) => {
+	// 	if (!input || !autocompleteServiceRef.current) return;
+	//
+	// 	autocompleteServiceRef.current.getPlacePredictions(
+	// 		{ input, types: ["(cities)"] },
+	// 		(predictions, status) => {
+	// 			if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+	// 				setOptions(
+	// 					predictions.map((place) => ({
+	// 						value: place.place_id,
+	// 						label: place.description,
+	// 					}))
+	// 				);
+	// 			} else {
+	// 				setOptions([]);
+	// 			}
+	// 		}
+	// 	);
+	// }, []);
+
+
+	return (
 		<form className='step-three'
-			  onSubmit={(e) => {AddStep(e);}}
+			  onSubmit={(e) => {
+				  AddStep(e);
+			  }}
 			  autoComplete={"on"}
 		>
 			<div className='form-title'>
@@ -114,25 +193,47 @@ function Step3({experience, setExperience,
 				</label>
 
 			</div>
-			<div className={'line'}>
+			<div className={'line large'}>
 				{/* todo searchable location https://www.npmjs.com/package/react-select-places*/}
 
-				<label id='country' className={'short'}>
-					Country*
+				<label id='location' className={'long'}>
+					Location*
 					<br/>
-					{/*<Select>*/}
-				</label>
-				<label id='city' className={'short'}>
-					City*
-					<br/>
-					<input
-						type='text'
-						id='city'
-						className={`not-react-select focus-highlight short ${error ? 'error-border' : ''}`}
-						placeholder='Choose city'
+					{/*<input*/}
+					{/*	type='text'*/}
+					{/*	id='location'*/}
+					{/*	className={`not-react-select focus-highlight short ${error ? 'error-border' : ''}`}*/}
+					{/*	placeholder='Choose location'*/}
+					{/*	value={location}*/}
+					{/*	onChange={(e) => setLocation(e.target.value)}*/}
+					{/*	// required*/}
+					{/*/>*/}
+					<Select
+						options={options}
+						onInputChange={(val) => {
+							setInputValue(val);
+							fetchPlaces(val);
+						}}
+						onChange={(selected) => {
+							setLocation(selected);
+						}}
+						placeholder="Search for your city"
+						isClearable={true}
+						styles={customStyles}
+						wideMenu={true}
+						closeMenuOnSelect={true}
 						value={location}
-						onChange={(e) => setLocation(e.target.value)}
-						// required
+						// styles={{customStyles
+						// 	// control: (provided) => ({
+						// 	// 	...provided,
+						// 	// 	width: "100%",
+						// 	// 	minHeight: "2rem",
+						// 	// 	borderRadius: "10px",
+						// 	// 	borderColor: "rgb(97, 97, 97)",
+						// 	// 	boxShadow: "none",
+						// 	// 	"&:hover": {borderColor: "rgb(254, 110, 121)"},
+						// 	// }),
+						// }}
 					/>
 				</label>
 			</div>
