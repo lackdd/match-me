@@ -2,6 +2,8 @@ import Select from 'react-select';
 import {genderOptions} from './inputOptions.jsx';
 import {customStyles} from './customInputStyles.jsx';
 import {useState} from 'react';
+import makeAnimated from 'react-select/animated';
+import {Link} from 'react-router-dom';
 
 // step 1 of registration
 function Step1({ firstName, setFirstName,
@@ -37,7 +39,9 @@ function Step1({ firstName, setFirstName,
 			// e.preventDefault();
 			AddStep(e);
 			// handleSubmit(e);
-		}}>
+		}}
+		autoComplete={"on"}
+		>
 			<div className='form-title'>
 				<h1>Get started!</h1>
 			</div>
@@ -49,10 +53,11 @@ function Step1({ firstName, setFirstName,
 						type='text'
 						id='first-name'
 						placeholder='Enter your first name'
-						className={`short focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select short focus-highlight ${error ? 'error-border' : ''}`}
 						value={firstName}
 						onChange={(e) => setFirstName(e.target.value)}
 						// required
+						autoComplete={"on"}
 					/>
 				</label>
 				<label id='last-name' className={'short'}>
@@ -61,7 +66,7 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='text'
 						id='last-name'
-						className={`short focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select short focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your last name'
 						value={lastName}
 						onChange={(e) => setLastName(e.target.value)}
@@ -77,8 +82,10 @@ function Step1({ firstName, setFirstName,
 					<Select
 						className='basic-single short'
 						classNamePrefix='select'
+						menuWidth="short"
 						isClearable={true}
 						isSearchable={true}
+						components={makeAnimated()}
 						defaultValue={'Other'}
 						name='gender'
 						placeholder='Select gender'
@@ -96,7 +103,7 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='number'
 						id='age'
-						className={`short focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select short focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your age'
 						value={age}
 						onChange={(e) => setAge(e.target.value)}
@@ -113,10 +120,11 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='email'
 						id='email'
-						className={`focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your email address'
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
+						autoComplete={"on"}
 						// required
 					/>
 				</label>
@@ -128,10 +136,11 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='password'
 						id='password'
-						className={`focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter a password'
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
+						autoComplete={"off"}
 						// required
 					/>
 				</label>
