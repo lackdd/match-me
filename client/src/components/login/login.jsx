@@ -50,7 +50,7 @@ function Login() {
 						type='email'
 						id='email-input'
 						placeholder='Enter your email'
-						className={`focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						required
@@ -62,7 +62,7 @@ function Login() {
 					<input
 						type='password'
 						id='password-input'
-						className={`focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your password'
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
