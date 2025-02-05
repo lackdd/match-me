@@ -44,14 +44,35 @@ export const customStyles = {
 	}),
 	option: (provided, state) => ({
 		...provided,
-		backgroundColor: state.isSelected ? 'rgb(254, 110, 121)' : 'white',
+		tabIndex: 0,  // Ensures the option is focusable
+		backgroundColor: state.isFocused
+			? '#D1D1D1'
+			: state.isSelected
+				? '#E0E0E0'  // Highlight on focus
+				: 'white',
 		color: state.isSelected ? 'black' : 'black',
 		borderRadius: '0',
 		padding: '5px 10px',
 		cursor: 'pointer',
 		alignItems: 'center',
 		width: state.selectProps.wideMenu === true ? '25.25rem' : '12rem', // Ensuring menu width matches control
-		'&:hover': { backgroundColor: '#E0E0E0' },
+		// '&:hover': {
+		// 	backgroundColor: '#E0E0E0',
+		// },
+		// '&:focus': {
+		// 	backgroundColor: '#E0E0E0', // Highlight focused option
+		// 	outline: 'none', // Ensure there's no outline if you want a custom effect
+		// },
+		'&:active': {
+			backgroundColor: 'rgb(254, 110, 121)',  // Active state style when clicked
+		},
+		// '&:active': {
+		// 	backgroundColor: '#E0E0E0',  // Ensure active state is handled
+		// },
+		// '&:focus-visible': {
+		// 	backgroundColor: '#E0E0E0',  // Highlight on keyboard focus
+		// 	outline: 'none', // Optional: Remove outline and apply custom focus effect
+		// },
 		// boxShadow: 'none !important',
 	}),
 	valueContainer: (provided, state) => ({
