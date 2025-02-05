@@ -1,158 +1,235 @@
+import {genreOptions, methodsOptions, interestsOptions, personalityTraitsOptions, goalsOptions} from './inputOptions.jsx';
+import {customStyles} from './customInputStyles.jsx';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import {useRef} from 'react';
 
 // step 2 of registration
-function Step2({goal, setGoal,
-			   experience, setExperience,
-			   location, setLocation,
-               musicLink, setMusicLink,
-               additionalInterests, setAdditionalInterests,
+function Step2({additionalInterests, setAdditionalInterests,
                personalityTraits, setPersonalityTraits,
                preferredMethods, setPreferredMethods,
 			   preferredGenres, setPreferredGenres,
-               description, setDescription,
                DeductStep, AddStep,
+				   goal, setGoal,
 			   error, setError}) {
+
+	const selectRef = useRef(null);
+
+	const handleCloseMenu = (selected) => {
+		if (selected.length >= 3 && selectRef.current) {
+			selectRef.current.blur();
+		}
+	};
 
 	return (
 
-		<form className='step-two'>
+		<form className='step-two'
+			  onSubmit={(e) => {
+				  AddStep(e);
+			  }}
+			  autoComplete={"on"}>
+
 			<div className='form-title'>
 				<h1>Tell us about yourself</h1>
 			</div>
+
 			<div className={'line large'}>
 				<label id='genres'>
 					Preferred music genres*
 					<br/>
-					<input
-						type='text'
-						id='genres'
-						className={`${error ? 'error-border' : ''}`}
+					{/*<input*/}
+					{/*	type='text'*/}
+					{/*	id='genres'*/}
+					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
+					{/*	placeholder='Choose 1-3 genres'*/}
+					{/*	value={preferredGenres}*/}
+					{/*	onChange={(e) => setPreferredGenres(e.target.value)}*/}
+					{/*	// required*/}
+					{/*/>*/}
+					<Select
+						ref={selectRef}
+						className='basic-multi-select long'
+						classNamePrefix='select'
+						isMulti='true'
+						menuWidth="large"
+						closeMenuOnSelect={false}
+						components={makeAnimated()}
+						isClearable={true}
+						isSearchable={true}
+						defaultValue={'Other'}
+						name='genres'
 						placeholder='Choose 1-3 genres'
+						options={genreOptions}
+						isOptionDisabled={() => preferredGenres.length >= 3}
+						styles={customStyles}
 						value={preferredGenres}
-						onChange={(e) => setPreferredGenres(e.target.value)}
-						// required
+						onChange={(selected) => {
+							setPreferredGenres(selected);
+							handleCloseMenu(selected);
+							// if (selected.length >= 3 && selectRef.current) {
+							// 	selectRef.current.blur();
+							// }
+						}}
 					/>
 				</label>
+
 			</div>
+
 			<div className={'line large'}>
 				<label id='methods'>
 					Preferred methods*
 					<br/>
-					<input
-						type='text'
-						id='methods'
-						className={`${error ? 'error-border' : ''}`}
+					{/*<input*/}
+					{/*	type='text'*/}
+					{/*	id='methods'*/}
+					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
+					{/*	placeholder='Choose 1-3 methods'*/}
+					{/*	value={preferredMethods}*/}
+					{/*	onChange={(e) => setPreferredMethods(e.target.value)}*/}
+					{/*	// required*/}
+					{/*/>*/}
+					<Select
+						ref={selectRef}
+						className='basic-multi-select long'
+						classNamePrefix='select'
+						isMulti='true'
+						menuWidth="large"
+						closeMenuOnSelect={false}
+						components={makeAnimated()}
+						isClearable={true}
+						isSearchable={true}
+						defaultValue={'Other'}
+						name='methods'
 						placeholder='Choose 1-3 methods'
+						options={methodsOptions}
+						isOptionDisabled={() => preferredMethods.length >= 3}
+						styles={customStyles}
 						value={preferredMethods}
-						onChange={(e) => setPreferredMethods(e.target.value)}
-						// required
+						onChange={(selected) => {
+							setPreferredMethods(selected);
+							handleCloseMenu(selected);
+							// if (selected.length >= 3 && selectRef.current) {
+							// 	selectRef.current.blur();
+							// }
+						}}
 					/>
 				</label>
 			</div>
+
 			<div className={'line large'}>
 				<label id='interests'>
 					Additional interests*
 					<br/>
-					<input
-						type='text'
-						id='interests'
-						className={`${error ? 'error-border' : ''}`}
+					{/*<input*/}
+					{/*	type='text'*/}
+					{/*	id='interests'*/}
+					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
+					{/*	placeholder='Choose 1-3 interests'*/}
+					{/*	value={additionalInterests}*/}
+					{/*	onChange={(e) => setAdditionalInterests(e.target.value)}*/}
+					{/*	// required*/}
+					{/*/>*/}
+					<Select
+						ref={selectRef}
+						className='basic-multi-select long'
+						classNamePrefix='select'
+						isMulti='true'
+						menuWidth="large"
+						closeMenuOnSelect={false}
+						components={makeAnimated()}
+						isClearable={true}
+						isSearchable={true}
+						defaultValue={'Other'}
+						name='interests'
 						placeholder='Choose 1-3 interests'
+						options={interestsOptions}
+						isOptionDisabled={() => additionalInterests.length >= 3}
+						styles={customStyles}
 						value={additionalInterests}
-						onChange={(e) => setAdditionalInterests(e.target.value)}
-						// required
+						onChange={(selected) => {
+							setAdditionalInterests(selected);
+							handleCloseMenu(selected);
+							// if (selected.length >= 3 && selectRef.current) {
+							// 	selectRef.current.blur();
+							// }
+						}}
 					/>
 				</label>
 			</div>
+
 			<div className={'line large'}>
 				<label id='personality'>
 					Personality traits*
 					<br/>
-					<input
-						type='text'
-						id='personality'
-						className={`${error ? 'error-border' : ''}`}
+					{/*<input*/}
+					{/*	type='text'*/}
+					{/*	id='personality'*/}
+					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
+					{/*	placeholder='Choose 1-3 traits'*/}
+					{/*	value={personalityTraits}*/}
+					{/*	onChange={(e) => setPersonalityTraits(e.target.value)}*/}
+					{/*	// required*/}
+					{/*/>*/}
+					<Select
+						ref={selectRef}
+						className='basic-multi-select long'
+						classNamePrefix='select'
+						isMulti='true'
+						menuWidth="large"
+						closeMenuOnSelect={false}
+						components={makeAnimated()}
+						isClearable={true}
+						isSearchable={true}
+						defaultValue={'Other'}
+						name='interests'
 						placeholder='Choose 1-3 traits'
+						options={personalityTraitsOptions}
+						isOptionDisabled={() => personalityTraits.length >= 3}
+						styles={customStyles}
 						value={personalityTraits}
-						onChange={(e) => setPersonalityTraits(e.target.value)}
-						// required
-					/>
-				</label>
-			</div>
-			<div className={'line'}>
-				<label id='goal' className={'short'}>
-					What is your goal?*
-					<br/>
-					<input
-						type='text'
-						id='goal'
-						placeholder='Choose a goal'
-						className={`short ${error ? 'error-border' : ''}`}
-						value={goal}
-						onChange={(e) => setGoal(e.target.value)}
-						required
-					/>
-				</label>
-				<label id='experience' className={'short'}>
-					Years of music experience*
-					<br/>
-					<input
-						type='text'
-						id='experience'
-						className={`short ${error ? 'error-border' : ''}`}
-						placeholder='Enter number of years'
-						value={experience}
-						onChange={(e) => setExperience(e.target.value)}
-						required
-					/>
-				</label>
-			</div>
-			<div className={'line'}>
-				{/* todo searchable location https://www.npmjs.com/package/react-select-places*/}
-				<label id='location' className={'short'}>
-					Location*
-					<br/>
-					<input
-						type='text'
-						id='location'
-						className={`short ${error ? 'error-border' : ''}`}
-						placeholder='Set your location'
-						value={location}
-						onChange={(e) => setLocation(e.target.value)}
-						required
-					/>
-				</label>
-				<label id='music' className={'short'}>
-					Link to your music
-					<br/>
-					<input
-						type='url'
-						id='music'
-						className={`short ${error ? 'error-border' : ''}`}
-						placeholder='Link to tour Spotify etc'
-						value={musicLink}
-						onChange={(e) => setMusicLink(e.target.value)}
+						onChange={(selected) => {
+							setPersonalityTraits(selected);
+							handleCloseMenu(selected);
+							// if (selected.length >= 3 && selectRef.current) {
+							// 	selectRef.current.blur();
+							// }
+						}}
 					/>
 				</label>
 			</div>
 			<div className={'line large'}>
-				<label id='description'>
-					Personality traits*
+				<label id='goal'>
+					What are your goals with music?*
 					<br/>
-					<input
-						type='text'
-						id='description'
-						className={`${error ? 'error-border' : ''}`}
-						placeholder='Choose 1-3 traits'
-						value={description}
-						onChange={(e) => setDescription(e.target.value)}
-						// required
+					<Select
+						ref={selectRef}
+						className='basic-multi-select long'
+						classNamePrefix='select'
+						isMulti={true}
+						menuWidth="large"
+						closeMenuOnSelect={false}
+						components={makeAnimated()}
+						isClearable={true}
+						isSearchable={true}
+						defaultValue={'Other'}
+						name='goals'
+						placeholder='Choose 1-3 goals'
+						options={goalsOptions}
+						styles={customStyles}
+						value={goal}
+						onChange={(selected) => {
+							setGoal(selected);
+							handleCloseMenu(selected);
+						}}
 					/>
 				</label>
 			</div>
+
 			<div className={'buttons-container'}>
 				{/*<label>*/}
 				<button
 					className='previous wide narrow'
+					type={'button'}
 					onClick={DeductStep}>
 					Previous
 				</button>
@@ -160,7 +237,9 @@ function Step2({goal, setGoal,
 				{/*<label>*/}
 				<button
 					className='next wide narrow'
-					onClick={AddStep}>
+					type={'submit'}
+					// onClick={AddStep}
+				>
 					Next
 				</button>
 				{/*</label>*/}
