@@ -24,7 +24,7 @@ export const customStyles = {
 	}),
 	menu: (provided, state) => ({
 		...provided,
-		width: state.selectProps.menuWidth === 'large' ? '25.25rem' : '12rem',
+		width: state.selectProps.wideMenu === true ? '25.25rem' : '12rem',
 		borderRadius: '0 0 10px 10px',
 		display: 'flex',
 		alignItems: 'center',
@@ -50,14 +50,14 @@ export const customStyles = {
 		padding: '5px 10px',
 		cursor: 'pointer',
 		alignItems: 'center',
-		width: state.selectProps.menuWidth === 'large' ? '25.25rem' : '12rem', // Ensuring menu width matches control
+		width: state.selectProps.wideMenu === true ? '25.25rem' : '12rem', // Ensuring menu width matches control
 		'&:hover': { backgroundColor: '#E0E0E0' },
 		// boxShadow: 'none !important',
 	}),
 	valueContainer: (provided, state) => ({
 		...provided,
 		minHeight: '2rem',  // Ensure it starts with a height of 2rem
-		height: state.selectProps.menuWidth === 'large' ? 'auto' : '2rem',  // Ensures alignment inside the control
+		height: state.selectProps.containerExpand === true ? 'auto' : '2rem',  // Ensures alignment inside the control
 		display: 'flex',
 		// flexWrap: 'wrap',  // Enable wrapping of content
 		alignItems: 'center',  // Align items to the top
