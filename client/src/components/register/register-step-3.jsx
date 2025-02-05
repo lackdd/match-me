@@ -40,6 +40,19 @@ function Step3({experience, setExperience,
 	// 	};
 	// }, []);
 
+	const isMounted = useRef(true);
+
+	useEffect(() => {
+		// Set isMounted to true when the component mounts
+		isMounted.current = true;
+
+		return () => {
+			// Set isMounted to false when the component unmounts
+			isMounted.current = false;
+		};
+	}, []);
+
+
 // Initialize the autocomplete service only when the API is loaded
 	useEffect(() => {
 		if (window.google && window.google.maps && window.google.maps.places) {
@@ -54,6 +67,7 @@ function Step3({experience, setExperience,
 			{ input, types: ["(cities)"] },
 			// { input },
 			(predictions, status) => {
+				console.log(predictions); // Log predictions to inspect the structure
 				if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
 					setOptions(
 						predictions.map((place) => ({

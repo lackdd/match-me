@@ -329,9 +329,9 @@ function Register() {
 
 
 	return (
-		<LoadScript googleMapsApiKey={GOOGLE_API_KEY} libraries={libraries}
-					onLoad={handleScriptLoad}  // Call this when the script is loaded
-			>
+		// <LoadScript googleMapsApiKey={GOOGLE_API_KEY} libraries={libraries}
+		// 			onLoad={handleScriptLoad}  // Call this when the script is loaded
+		// 	>
 		<>
 			<div className='register-container'>
 				<div className={'exit-container'}>
@@ -405,7 +405,7 @@ function Register() {
 				)}
 			</div>
 		</>
-		</LoadScript>
+		// </LoadScript>
 	);
 }
 

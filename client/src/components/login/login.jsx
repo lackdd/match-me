@@ -53,6 +53,7 @@ function Login() {
 						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
+						autoComplete={"on"}
 						required
 					/>
 				</label>
@@ -66,6 +67,7 @@ function Login() {
 						placeholder='Enter your password'
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
+						autoComplete={"on"}
 						required
 					/>
 					<Link to='/forgot-password' id='forgot-password'>forgot password?</Link>
