@@ -33,6 +33,8 @@ export const genreOptions = [
 
 // method options
 export const methodsOptions = [
+	{ value: 'singing', label: 'Singing' },
+	{ value: 'djing', label: 'Live DJing/Remixing' },
 	{ value: 'piano', label: 'Piano' },
 	{ value: 'guitar', label: 'Guitar' },
 	{ value: 'bass', label: 'Bass Guitar' },
@@ -54,9 +56,7 @@ export const methodsOptions = [
 	{ value: 'vocoder', label: 'Vocoder' },
 	{ value: 'electronic_drums', label: 'Electronic Drums' },
 	{ value: 'beatboxing', label: 'Beatboxing' },
-	{ value: 'djing', label: 'Live DJing/Remixing' },
 	{ value: 'acapella', label: 'Acapella' },
-	{ value: 'singing', label: 'Singing' },
 	{ value: 'rapping', label: 'Rapping' },
 	{ value: 'screaming', label: 'Screaming/Harsh Vocals' },
 	{ value: 'falsetto', label: 'Falsetto' },
@@ -70,11 +70,10 @@ export const methodsOptions = [
 	{ value: 'sound_collage', label: 'Sound Collage' },
 	{ value: 'live_instrumentation', label: 'Live Instrumentation' },
 	{ value: 'foley', label: 'Foley' },
-	{value: 'other', label: 'Other'}
+	{ value: 'other', label: 'Other'}
 ];
 // interest options
 export const interestsOptions = [
-	{ value: 'music', label: 'Music' },
 	{ value: 'sports', label: 'Sports' },
 	{ value: 'movies', label: 'Movies' },
 	{ value: 'books', label: 'Books' },
@@ -244,10 +243,57 @@ export const goalsOptions = [
 	{ value: 'explore_music_collaborations', label: 'Explore Music Collaborations' }
 ];
 
-// location options
-export const locationOptions = [
+// matchLocations options
+export const matchLocationsOptions = [
+	{value: 'anywhere', label: 'Anywhere'},
+	{value: 'same_city', label: 'Same city'},
+	{value: 'same_country', label: 'Same country'},
+]
+
+// matchAge (gap) options
+export const matchAgeOptions = [
+	{ value: "any", label: "Any" },
+	{ value: "12-21", label: "12-21" },
+	{ value: "22-31", label: "22-31" },
+	{ value: "32-41", label: "32-41" },
+	{ value: "42-51", label: "42-51" },
+	{ value: "52-61", label: "52-61" },
+	{ value: "62-71", label: "62-71" },
+	{ value: "72-81", label: "72-81" },
+	{ value: "82-91", label: "82-91" },
+	{ value: "92-101", label: "92-101" },
+	{ value: "102-111", label: "102-111" },
+	{ value: "112-120", label: "112-120" },
+	{ value: "120+", label: "120+" }
+]
+
+// matchGender options
+export const matchGenderOptions = [
+	{ value: "any", label: "Any" },
 	{value: 'male', label: 'Male'},
 	{value: 'female', label: 'Female'},
 	{value: 'other', label: 'Other'}
 ]
 
+// matchExperience (gap) options
+export const matchExperienceOptions = [
+	{ value: "any", label: "Any" },
+	{ value: "0-2", label: "0-2" },
+	{ value: "3-5", label: "3-5" },
+	{ value: "6-8", label: "6-8" },
+	{ value: "9-11", label: "9-11" },
+	{ value: "12-14", label: "12-14" },
+	{ value: "15-17", label: "15-17" },
+	{ value: "18-20", label: "18-20" },
+	{ value: "21-23", label: "21-23" },
+	{ value: "24-26", label: "24-26" },
+	{ value: "27-29", label: "27-29" },
+	{ value: "30-32", label: "30-32" },
+	{ value: "33-35", label: "33-35" },
+	{ value: "36-38", label: "36-38" },
+	{ value: "39-41", label: "39-41" },
+	{ value: "42-44", label: "42-44" },
+	{ value: "45-47", label: "45-47" },
+	{ value: "48-50", label: "48-50" },
+	{ value: "50+", label: "50+" }
+]
