@@ -151,7 +151,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 				</label>
 			</div>
 			<div className={'line'}>
-				{/*todo make gender field required https://github.com/JedWatson/react-select/issues/3140*/}
 				<label id='gender' className={'short'}>
 					Gender*
 					<br/>
@@ -175,7 +174,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 				<label id='age' className={'short'}>
 					Age*
 					<br/>
-					{/* todo custom field so increment and decrement buttons look better https://mui.com/base-ui/react-number-input/?srsltid=AfmBOoovlV0RQShKkZZdwfAY3yERi9pxgndUhHf-hAPsO6Noo8Tc3W_B*/}
 					<Select
 						className='basic-single short'
 						classNamePrefix='select'
