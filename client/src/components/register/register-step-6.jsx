@@ -11,6 +11,7 @@ function Step6({DeductStep, AddStep}) {
 		>
 			<div className='form-title'>
 				<h1>Account created!</h1>
+				<p>cool animation for 3-5 seconds -> give token -> redirect to /dashboard </p>
 			</div>
 			<div className={'buttons-container'}>
 				<button

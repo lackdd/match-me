@@ -54,6 +54,7 @@ function Login() {
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						autoComplete={"on"}
+						autoFocus={true}
 						required
 					/>
 				</label>
