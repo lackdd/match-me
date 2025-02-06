@@ -11,7 +11,7 @@ export const customStyles = {
 		padding: '0 0',  // Adjust padding for proper spacing
 		margin: '0 0',
 		boxSizing: 'border-box', // Make sure border is inside
-		borderRadius: state.isFocused ? '10px 10px 0 0' : '10px', // Rounded corners
+		borderRadius: state.isFocused && state.selectProps.menuIsOpen ? '10px 10px 0 0' : '10px', // Rounded corners
 		borderColor: state.isFocused ? 'rgb(254, 110, 121)' : 'rgb(97, 97, 97)', // Change border on focus
 		boxShadow: state.isFocused ? '0 0 5px rgb(254, 110, 121)' : 'none',
 		'&:hover': { borderColor: '#rgb(254, 110, 121)' }, // Hover effect
@@ -40,7 +40,7 @@ export const customStyles = {
 		...provided,
 		padding: '0',  // ⬅️ Remove padding from the menu list
 		margin: '0',
-		maxHeight: '13rem',
+		maxHeight: '11rem',
 	}),
 	option: (provided, state) => ({
 		...provided,
