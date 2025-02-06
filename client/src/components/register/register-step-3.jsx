@@ -5,8 +5,37 @@ import makeAnimated from 'react-select/animated';
 import {customStyles} from './customInputStyles.jsx';
 import {useCallback, useEffect, useRef, useState} from 'react';
 
-function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeDataReactSelect, handleChangeDataDefault, error, setError}) {
 
+// for testing
+const CustomNumberInput = ({ value, onChange, min = 0, max = 100 }) => {
+	const handleIncrement = () => {
+		if (value < max) onChange(value + 1);
+	};
+
+	const handleDecrement = () => {
+		if (value > min) onChange(value - 1);
+	};
+
+	return (
+		<div className="custom-number-input">
+			<button onClick={handleDecrement} className="decrement">
+				▼
+			</button>
+			<input
+				type="number"
+				value={value}
+				onChange={(e) => onChange(Number(e.target.value))}
+			/>
+			<button onClick={handleIncrement} className="increment">
+				▲
+			</button>
+		</div>
+	);
+};
+
+
+function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeDataReactSelect, handleChangeDataDefault, error, setError}) {
+	const [number, setNumber] = useState(10);
 
 	const [inputValue, setInputValue] = useState("");
 	const [options, setOptions] = useState([]);
@@ -64,6 +93,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 				<h1>A little bit more...</h1>
 			</div>
 
+
 			<div className={'line'}>
 				<label id='experience' className={'short'}>
 					Years of music experience*
@@ -78,6 +108,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 						onChange={(e) => handleChangeDataDefault(e, setFormThreeData)}
 						min={0}
 						max={formThreeData.age}
+						autoFocus={true}
 						// required
 					/>
 				</label>
