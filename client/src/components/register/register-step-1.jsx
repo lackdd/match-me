@@ -3,17 +3,8 @@ import {genderOptions} from './inputOptions.jsx';
 import {customStyles} from './customInputStyles.jsx';
 import {useState} from 'react';
 import makeAnimated from 'react-select/animated';
-import {Link} from 'react-router-dom';
 
-// step 1 of registration
-function Step1({ firstName, setFirstName,
-				   lastName, setLastName,
-				   gender, setGender,
-				   age, setAge,
-				   email, setEmail,
-				   password, setPassword,
-				   AddStep,
-			   	error, setError}) {
+function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleChangeDataReactSelect, stepFunctions, error, setError}) {
 
 	const [genderError, setGenderError] = useState('');
 
@@ -21,7 +12,7 @@ function Step1({ firstName, setFirstName,
 		e.preventDefault();
 
 		// Check if gender is selected
-		if (!gender) {
+		if (!formOneData.gender) {
 			setGenderError('Please select a gender');
 			return; // Stop form submission
 		} else {
@@ -29,7 +20,7 @@ function Step1({ firstName, setFirstName,
 		}
 
 		// If everything is valid, move to next step
-		AddStep(e);
+		stepFunctions.AddStep(e);
 	};
 
 
@@ -37,7 +28,7 @@ function Step1({ firstName, setFirstName,
 
 		<form className='step-one' onSubmit={(e) => {
 			// e.preventDefault();
-			AddStep(e);
+			stepFunctions.AddStep(e);
 			// handleSubmit(e);
 		}}
 		autoComplete={"on"}
@@ -52,10 +43,11 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='text'
 						id='first-name'
+						name={"firstName"}
 						placeholder='Enter your first name'
 						className={`not-react-select short focus-highlight ${error ? 'error-border' : ''}`}
-						value={firstName}
-						onChange={(e) => setFirstName(e.target.value)}
+						value={formOneData.firstName}
+						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
 						// required
 						autoComplete={"on"}
 					/>
@@ -66,10 +58,11 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='text'
 						id='last-name'
+						name={"lastName"}
 						className={`not-react-select short focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your last name'
-						value={lastName}
-						onChange={(e) => setLastName(e.target.value)}
+						value={formOneData.lastName}
+						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
 						// required
 					/>
 				</label>
@@ -86,13 +79,13 @@ function Step1({ firstName, setFirstName,
 						isClearable={true}
 						isSearchable={true}
 						components={makeAnimated()}
-						defaultValue={'Other'}
-						name='gender'
+						name={"gender"}
 						placeholder='Select gender'
 						options={genderOptions}
 						styles={customStyles}
-						value={gender}
-						onChange={setGender}
+						value={formOneData.gender}
+						onChange={(selectedOption) => handleChangeDataReactSelect('gender', selectedOption, setFormOneData)}
+						// required
 					/>
 					{genderError && <p className="error-text">{genderError}</p>}
 				</label>
@@ -103,10 +96,11 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='number'
 						id='age'
+						name={'age'}
 						className={`not-react-select short focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your age'
-						value={age}
-						onChange={(e) => setAge(e.target.value)}
+						value={formOneData.age}
+						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
 						min={16}
 						max={120}
 						// required
@@ -120,10 +114,13 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='email'
 						id='email'
+						name={'email'}
 						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your email address'
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						value={formOneData.email}
+						// onChange={(e) => setFormOneData.email(e.target.value)}
+						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
+						// required
 						autoComplete={"on"}
 						// required
 					/>
@@ -136,31 +133,18 @@ function Step1({ firstName, setFirstName,
 					<input
 						type='password'
 						id='password'
+						name={'password'}
 						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter a password'
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
+						value={formOneData.password}
+						// onChange={(e) => setFormOneData.password(e.target.value)}
+						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
 						autoComplete={"off"}
 						// required
 					/>
 				</label>
 			</div>
-			{/*<div className={'line large'}>*/}
 			{/*	/!* todo make sure password matches*!/*/}
-			{/*	<label id='password-again'>*/}
-			{/*		Password again**/}
-			{/*		<br/>*/}
-			{/*		<input*/}
-			{/*			type='password'*/}
-			{/*			id='password-again'*/}
-			{/*			className={`${error ? 'error-border' : ''}`}*/}
-			{/*			placeholder='Reenter the password'*/}
-			{/*			value={password}*/}
-			{/*			// onChange={(e) => setPassword(e.target.value)}*/}
-			{/*			required*/}
-			{/*		/>*/}
-			{/*	</label>*/}
-			{/*</div>*/}
 			<label id='tc-label'>
 				<input
 					className='focus-highlight'
@@ -177,10 +161,6 @@ function Step1({ firstName, setFirstName,
 					<button
 						className='next wide small'
 						type={'submit'}
-						// onClick={(e) => {
-						// 	// e.preventDefault();
-						// 	AddStep(e);
-						// }}
 					>
 						Next
 					</button>

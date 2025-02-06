@@ -2,32 +2,15 @@ import {genreOptions, methodsOptions, interestsOptions, personalityTraitsOptions
 import {customStyles} from './customInputStyles.jsx';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import {useRef} from 'react';
 
-// step 2 of registration
-function Step2({additionalInterests, setAdditionalInterests,
-               personalityTraits, setPersonalityTraits,
-               preferredMethods, setPreferredMethods,
-			   preferredGenres, setPreferredGenres,
-               DeductStep, AddStep,
-				   goal, setGoal,
-			   error, setError}) {
 
-	// const selectRef = useRef(null);
-
-	const handleCloseMenu = (selected) => {
-		console.log(selected.length);
-		if (selected.length >= 3) {
-			// selectRef.current.blur();
-			document.activeElement.blur()
-		}
-	};
+function Step2({formTwoData, setFormTwoData, stepFunctions, handleChangeDataReactSelect, handleCloseMenu, error, setError}) {
 
 	return (
 
 		<form className='step-two'
 			  onSubmit={(e) => {
-				  AddStep(e);
+				  stepFunctions.AddStep(e);
 			  }}
 			  autoComplete={"on"}>
 
@@ -39,17 +22,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 				<label id='genres'>
 					Preferred music genres*
 					<br/>
-					{/*<input*/}
-					{/*	type='text'*/}
-					{/*	id='genres'*/}
-					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
-					{/*	placeholder='Choose 1-3 genres'*/}
-					{/*	value={preferredGenres}*/}
-					{/*	onChange={(e) => setPreferredGenres(e.target.value)}*/}
-					{/*	// required*/}
-					{/*/>*/}
 					<Select
-						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
 						components={makeAnimated()}
@@ -59,19 +32,15 @@ function Step2({additionalInterests, setAdditionalInterests,
 						isMulti={true}
 						containerExpand={true}
 						wideMenu={true}
-						defaultValue={'Other'}
-						name='genres'
+						name={'preferredGenres'}
 						placeholder='Choose 1-3 genres'
 						options={genreOptions}
-						isOptionDisabled={() => preferredGenres.length >= 3}
+						isOptionDisabled={() => formTwoData.preferredGenres.length >= 3}
 						styles={customStyles}
-						value={preferredGenres}
-						onChange={(selected) => {
-							setPreferredGenres(selected);
-							handleCloseMenu(selected);
-							// if (selected.length >= 3 && selectRef.current) {
-							// 	selectRef.current.blur();
-							// }
+						value={formTwoData.preferredGenres}
+						onChange={(selectedOption) => {
+							handleChangeDataReactSelect('preferredGenres', selectedOption, setFormTwoData);
+							handleCloseMenu(selectedOption);
 						}}
 					/>
 				</label>
@@ -82,17 +51,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 				<label id='methods'>
 					Preferred methods*
 					<br/>
-					{/*<input*/}
-					{/*	type='text'*/}
-					{/*	id='methods'*/}
-					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
-					{/*	placeholder='Choose 1-3 methods'*/}
-					{/*	value={preferredMethods}*/}
-					{/*	onChange={(e) => setPreferredMethods(e.target.value)}*/}
-					{/*	// required*/}
-					{/*/>*/}
 					<Select
-						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
 						components={makeAnimated()}
@@ -102,19 +61,15 @@ function Step2({additionalInterests, setAdditionalInterests,
 						isMulti={true}
 						containerExpand={true}
 						wideMenu={true}
-						defaultValue={'Other'}
-						name='methods'
+						name={'preferredMethods'}
 						placeholder='Choose 1-3 methods'
 						options={methodsOptions}
-						isOptionDisabled={() => preferredMethods.length >= 3}
+						isOptionDisabled={() => formTwoData.preferredMethods.length >= 3}
 						styles={customStyles}
-						value={preferredMethods}
-						onChange={(selected) => {
-							setPreferredMethods(selected);
-							handleCloseMenu(selected);
-							// if (selected.length >= 3 && selectRef.current) {
-							// 	selectRef.current.blur();
-							// }
+						value={formTwoData.preferredMethods}
+						onChange={(selectedOption) => {
+							handleChangeDataReactSelect('preferredMethods', selectedOption, setFormTwoData);
+							handleCloseMenu(selectedOption);
 						}}
 					/>
 				</label>
@@ -124,17 +79,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 				<label id='interests'>
 					Additional interests*
 					<br/>
-					{/*<input*/}
-					{/*	type='text'*/}
-					{/*	id='interests'*/}
-					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
-					{/*	placeholder='Choose 1-3 interests'*/}
-					{/*	value={additionalInterests}*/}
-					{/*	onChange={(e) => setAdditionalInterests(e.target.value)}*/}
-					{/*	// required*/}
-					{/*/>*/}
 					<Select
-						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
 						components={makeAnimated()}
@@ -144,19 +89,15 @@ function Step2({additionalInterests, setAdditionalInterests,
 						isMulti={true}
 						containerExpand={true}
 						wideMenu={true}
-						defaultValue={'Other'}
-						name='interests'
+						name={'additionalInterests'}
 						placeholder='Choose 1-3 interests'
 						options={interestsOptions}
-						isOptionDisabled={() => additionalInterests.length >= 3}
+						isOptionDisabled={() => formTwoData.additionalInterests.length >= 3}
 						styles={customStyles}
-						value={additionalInterests}
-						onChange={(selected) => {
-							setAdditionalInterests(selected);
-							handleCloseMenu(selected);
-							// if (selected.length >= 3 && selectRef.current) {
-							// 	selectRef.current.blur();
-							// }
+						value={formTwoData.additionalInterests}
+						onChange={(selectedOption) => {
+							handleChangeDataReactSelect('additionalInterests', selectedOption, setFormTwoData);
+							handleCloseMenu(selectedOption);
 						}}
 					/>
 				</label>
@@ -166,17 +107,7 @@ function Step2({additionalInterests, setAdditionalInterests,
 				<label id='personality'>
 					Personality traits*
 					<br/>
-					{/*<input*/}
-					{/*	type='text'*/}
-					{/*	id='personality'*/}
-					{/*	className={`focus-highlight ${error ? 'error-border' : ''}`}*/}
-					{/*	placeholder='Choose 1-3 traits'*/}
-					{/*	value={personalityTraits}*/}
-					{/*	onChange={(e) => setPersonalityTraits(e.target.value)}*/}
-					{/*	// required*/}
-					{/*/>*/}
 					<Select
-						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
 						components={makeAnimated()}
@@ -186,22 +117,16 @@ function Step2({additionalInterests, setAdditionalInterests,
 						isMulti={true}
 						containerExpand={true}
 						wideMenu={true}
-						defaultValue={'Other'}
-						name='interests'
+						name={'personalityTraits'}
 						placeholder='Choose 1-3 traits'
 						options={personalityTraitsOptions}
-						isOptionDisabled={() => personalityTraits.length >= 3}
+						isOptionDisabled={() => formTwoData.personalityTraits.length >= 3}
 						styles={customStyles}
-						value={personalityTraits}
-						onChange={(selected) => {
-							setPersonalityTraits(selected);
-							console.log(personalityTraits);
-							handleCloseMenu(selected);
-							// if (selected.length >= 3 && selectRef.current) {
-							// 	selectRef.current.blur();
-							// }
+						value={formTwoData.personalityTraits}
+						onChange={(selectedOption) => {
+							handleChangeDataReactSelect('personalityTraits', selectedOption, setFormTwoData);
+							handleCloseMenu(selectedOption);
 						}}
-						on
 					/>
 				</label>
 			</div>
@@ -210,7 +135,6 @@ function Step2({additionalInterests, setAdditionalInterests,
 					What are your goals with music?*
 					<br/>
 					<Select
-						// ref={selectRef}
 						className='basic-multi-select long'
 						classNamePrefix='select'
 						components={makeAnimated()}
@@ -220,40 +144,33 @@ function Step2({additionalInterests, setAdditionalInterests,
 						isMulti={true}
 						containerExpand={true}
 						wideMenu={true}
-						defaultValue={'Other'}
-						name='goals'
+						name={'goals'}
 						placeholder='Choose 1-3 goals'
 						options={goalsOptions}
 						styles={customStyles}
-						value={goal}
-						isOptionDisabled={() => goal.length >= 3}
-						onChange={(selected) => {
-							setGoal(selected);
-							console.log(goal);
-							handleCloseMenu(selected);
+						value={formTwoData.goals}
+						isOptionDisabled={() => formTwoData.goals.length >= 3}
+						onChange={(selectedOption) => {
+							handleChangeDataReactSelect('goals', selectedOption, setFormTwoData);
+							handleCloseMenu(selectedOption);
 						}}
 					/>
 				</label>
 			</div>
 
 			<div className={'buttons-container'}>
-				{/*<label>*/}
 				<button
 					className='previous wide narrow'
 					type={'button'}
-					onClick={DeductStep}>
+					onClick={stepFunctions.DeductStep}>
 					Previous
 				</button>
-				{/*</label>*/}
-				{/*<label>*/}
 				<button
 					className='next wide narrow'
 					type={'submit'}
-					// onClick={AddStep}
 				>
 					Next
 				</button>
-				{/*</label>*/}
 			</div>
 		</form>
 	);
