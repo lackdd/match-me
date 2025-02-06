@@ -8,6 +8,14 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 
 	const [genderError, setGenderError] = useState('');
 
+
+	// validate inputs before moving to the next step
+	// show errors if needed
+	// todo input validation https://www.freecodecamp.org/news/how-to-validate-forms-in-react/#heading-how-to-implement-input-validation-in-react
+	// https://www.npmjs.com/package/react-inputs-validation
+	// make gender field required https://github.com/JedWatson/react-select/issues/3140
+	// todo make sure password matches
+	// todo make sure email is not already in use
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -24,6 +32,11 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 	};
 
 
+	const validatePassword = (e) => {
+	    // todo implement password validation logic
+
+	}
+
 	return (
 
 		<form className='step-one' onSubmit={(e) => {
@@ -31,7 +44,7 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 			stepFunctions.AddStep(e);
 			// handleSubmit(e);
 		}}
-		autoComplete={"on"}
+			  autoComplete={"on"}
 		>
 			<div className='form-title'>
 				<h1>Get started!</h1>
@@ -50,6 +63,7 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
 						// required
 						autoComplete={"on"}
+						autoFocus={true}
 					/>
 				</label>
 				<label id='last-name' className={'short'}>
@@ -62,13 +76,15 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 						className={`not-react-select short focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Enter your last name'
 						value={formOneData.lastName}
-						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
+						onChange={(e) => {
+							console.log(e.target.value);
+							handleChangeDataDefault(e, setFormOneData);
+						}}
 						// required
 					/>
 				</label>
 			</div>
 			<div className={'line'}>
-				{/*todo make gender field required https://github.com/JedWatson/react-select/issues/3140*/}
 				<label id='gender' className={'short'}>
 					Gender*
 					<br/>
@@ -144,7 +160,24 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 					/>
 				</label>
 			</div>
-			{/*	/!* todo make sure password matches*!/*/}
+			<div className={'line large'}>
+				<label id='re-password'>
+					Re-enter password*
+					<br/>
+					<input
+						type='password'
+						id='re-password'
+						name={'re-password'}
+						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
+						placeholder='Re-enter password'
+						value={formOneData.password}
+						// onChange={(e) => setFormOneData.password(e.target.value)}
+						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
+						autoComplete={"off"}
+						// required
+					/>
+				</label>
+			</div>
 			<label id='tc-label'>
 				<input
 					className='focus-highlight'
