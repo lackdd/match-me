@@ -8,6 +8,7 @@ import {isRouteErrorResponse, Link} from 'react-router-dom';
 import axios from "axios";
 import Step5 from './register-step-5.jsx';
 import Step6 from './register-step-6.jsx';
+import {genderOptions} from "./inputOptions.jsx";
 
 const GOOGLE_API_KEY = "***REMOVED***";
 const libraries = ["places"];
@@ -111,7 +112,9 @@ function Register() {
 		setCurrentStep(currentStep + 1)
 		event.preventDefault();
 		const username = formOneData.firstName + " " + formOneData.lastName;
-		const userDetails = {email: formOneData.email, pw: formOneData.password, username: username,  gender: formOneData.gender,  age: formOneData.age};
+		const genderValue = formOneData.gender.value;
+		const userDetails = {email: formOneData.email, password: formOneData.password, username: username,  gender: genderValue,  age: formOneData.age};
+		console.log("Sending:", JSON.stringify(userDetails, null, 2));
 		try{
 			const response = await
 			axios.post("http://localhost:8080/register", userDetails);
