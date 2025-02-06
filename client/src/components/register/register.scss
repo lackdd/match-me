@@ -56,14 +56,18 @@
       padding-top: 0.5rem;
     }
 
-    .submit-picture {
+    .submit-picture, .like-me-container {
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
 
-      & > label {
+      .like-me {
+        margin-bottom: 0.5rem;
+      }
+
+      & > label, .like-me {
         @include variables.centered-column;
         background-color: variables.$main-pink;
         width: 12rem;
@@ -89,7 +93,6 @@
       }
 
     }
-
 
     .buttons-container {
       width: 100%;
