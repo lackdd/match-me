@@ -120,7 +120,9 @@ function Register() {
 			axios.post("http://localhost:8080/register", userDetails);
 			console.log("User created successfully");
 		} catch (error) {
-			console.log("Failed to register");
+			if (error.response.status === 400) {
+				console.log("Failed to register:", error.response.data);
+			}
 		}
 	};
 
