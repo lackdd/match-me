@@ -4,16 +4,11 @@ import Step1 from './register-step-1.jsx';
 import Step2 from './register-step-2.jsx';
 import Step3 from './register-step-3.jsx';
 import Step4 from './register-step-4.jsx';
-import {isRouteErrorResponse, Link} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import axios from "axios";
 import Step5 from './register-step-5.jsx';
 import Step6 from './register-step-6.jsx';
 
-const GOOGLE_API_KEY = "***REMOVED***";
-const libraries = ["places"];
-
-// todo input validation https://www.freecodecamp.org/news/how-to-validate-forms-in-react/#heading-how-to-implement-input-validation-in-react
-// https://www.npmjs.com/package/react-inputs-validation
 function Register() {
 	const [currentStep, setCurrentStep] = useState(1)
 	const [error, setError] = useState('');
@@ -28,7 +23,6 @@ function Register() {
         password: "",
 	})
 
-
 	// step 2 data
 	const [formTwoData, setFormTwoData] = useState({
 		additionalInterests: "",
@@ -37,7 +31,6 @@ function Register() {
         preferredGenres: "",
 		goals: "",
 	})
-
 
 	// step 3 data
 	const [formThreeData, setFormThreeData] = useState({
