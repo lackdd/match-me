@@ -38,6 +38,7 @@ function Step2({formTwoData, setFormTwoData, stepFunctions, handleChangeDataReac
 						isOptionDisabled={() => formTwoData.preferredGenres.length >= 3}
 						styles={customStyles}
 						value={formTwoData.preferredGenres}
+						autoFocus={true}
 						onChange={(selectedOption) => {
 							handleChangeDataReactSelect('preferredGenres', selectedOption, setFormTwoData);
 							handleCloseMenu(selectedOption);
