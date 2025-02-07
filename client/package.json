@@ -11,9 +11,12 @@
     "start": "concurrently \"npm run dev\" \"cd .. && mvn spring-boot:run\""
   },
   "dependencies": {
+    "@cloudinary/react": "^1.13.1",
+    "@cloudinary/url-gen": "^1.21.0",
     "@fontsource/poppins": "^5.1.1",
     "@react-google-maps/api": "^2.20.5",
     "axios": "^1.7.9",
+    "firebase": "^11.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.3",
