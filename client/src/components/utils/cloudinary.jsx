@@ -6,7 +6,7 @@ import { AdvancedImage } from '@cloudinary/react';
 // Initialize Cloudinary instance
 const cld = new Cloudinary({
     cloud: {
-        cloudName: 'your-cloudinary-cloud-name' // Replace with your Cloudinary cloud name
+        cloudName: 'djfqpfthj' // Replace with your Cloudinary cloud name
     }
 });
 

@@ -164,7 +164,7 @@ function Register() {
 		event.preventDefault();
 		const username = formOneData.firstName + " " + formOneData.lastName;
 		const genderValue = formOneData.gender.value;
-		const userDetails = {email: formOneData.email, password: formOneData.password, username: username,  gender: genderValue,  age: formOneData.age};
+		const userDetails = {email: formOneData.email, password: formOneData.password, username: username,  gender: genderValue,  age: formOneData.age, profilePicture: imageUrl};
 		console.log("Sending:", JSON.stringify(userDetails, null, 2));
 		try{
 			const response = await
