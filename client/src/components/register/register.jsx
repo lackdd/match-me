@@ -4,11 +4,10 @@ import Step1 from './register-step-1.jsx';
 import Step2 from './register-step-2.jsx';
 import Step3 from './register-step-3.jsx';
 import Step4 from './register-step-4.jsx';
-import {Link} from 'react-router-dom';
-import axios from "axios";
 import Step5 from './register-step-5.jsx';
 import Step6 from './register-step-6.jsx';
-import {genderOptions} from "./inputOptions.jsx";
+import {Link} from 'react-router-dom';
+import axios from "axios";
 
 function Register() {
 	const [currentStep, setCurrentStep] = useState(1)
@@ -22,6 +21,7 @@ function Register() {
         age: "",
         email: "",
         password: "",
+		rePassword: "",
 	})
 
 	// step 2 data

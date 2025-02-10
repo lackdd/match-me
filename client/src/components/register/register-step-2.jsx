@@ -33,6 +33,7 @@ function Step2({formTwoData, setFormTwoData, stepFunctions, handleChangeDataReac
 						containerExpand={true}
 						wideMenu={true}
 						name={'preferredGenres'}
+						required
 						placeholder='Choose 1-3 genres'
 						options={genreOptions}
 						isOptionDisabled={() => formTwoData.preferredGenres.length >= 3}

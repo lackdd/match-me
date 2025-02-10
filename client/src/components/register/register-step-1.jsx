@@ -31,9 +31,58 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 		stepFunctions.AddStep(e);
 	};
 
+	// const validatePasswordMatch = (e) =>
+	//
+    //     if (password!== rePassword) {
+    //         setError('Passwords do not match');
+    //         console.error("Error: " + error);
+    //     } else {
+    //         validatePassword(e);
+    //     }
+	//
+	// }
+
+	const validatePasswordMatch = (e) => {
+
+		if (formOneData.password!== formOneData.rePassword) {
+			setError('Passwords do not match');
+			console.error("Error: " + error);
+		} else {
+			setError('');
+		}
+
+	}
 
 	const validatePassword = (e) => {
 	    // todo implement password validation logic
+		// password = e.target.value;
+        // rePassword = document.getElementById('re-password').value;
+
+		if (!formOneData.password && !formOneData.rePassword) {
+			setError('');
+            return; // Stop form submission
+		}
+
+        if (formOneData.password.length < 3) {
+            setError('Password must be at least 3 characters long');
+			console.error('Error: ' + error);
+        } else if (!/[A-Z]/.test(formOneData.password)) {
+            setError('Password must contain at least one uppercase letter');
+			console.error("Error: " + error);
+        } else if (!/[a-z]/.test(formOneData.password)) {
+            setError('Password must contain at least one lowercase letter');
+			console.error("Error: " + error);
+        } else if (!/[0-9]/.test(formOneData.password)) {
+            setError('Password must contain at least one number');
+			console.error("Error: " + error);
+        } else if (formOneData.password!== formOneData.rePassword) {
+            setError('Passwords do not match');
+			console.error("Error: " + error);
+        } else {
+            handleChangeDataDefault(e, setFormOneData)
+			setError('');
+			console.log("Password valid: " + formOneData.password);
+        }
 
 	}
 
@@ -136,7 +185,6 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 						value={formOneData.email}
 						// onChange={(e) => setFormOneData.email(e.target.value)}
 						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
-						// required
 						autoComplete={"on"}
 						// required
 					/>
@@ -154,25 +202,31 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 						placeholder='Enter a password'
 						value={formOneData.password}
 						// onChange={(e) => setFormOneData.password(e.target.value)}
-						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
+						onChange={(e) => {
+							 handleChangeDataDefault(e, setFormOneData);
+							validatePassword()
+						}}
 						autoComplete={"off"}
 						// required
 					/>
 				</label>
 			</div>
 			<div className={'line large'}>
-				<label id='re-password'>
+				<label id='rePassword'>
 					Re-enter password*
 					<br/>
 					<input
 						type='password'
-						id='re-password'
-						name={'re-password'}
+						id='rePassword'
+						name={'rePassword'}
 						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
 						placeholder='Re-enter password'
-						value={formOneData.password}
+						value={formOneData.rePassword}
 						// onChange={(e) => setFormOneData.password(e.target.value)}
-						onChange={(e) => handleChangeDataDefault(e, setFormOneData)}
+						onChange={(e) => {
+							handleChangeDataDefault(e, setFormOneData);
+							validatePasswordMatch()
+						}}
 						autoComplete={"off"}
 						// required
 					/>
@@ -189,11 +243,15 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 				&nbsp;
 				I agree to the terms and conditions*
 			</label>
+			<div className={'error-container'} style={{height: "1rem", width:"100%", color: "red", fontSize: "0.8rem"}}>
+                {error && <p className="error-text">{error}</p>}
+            </div>
 			<div className={'buttons-container'}>
 				<label>
 					<button
 						className='next wide small'
 						type={'submit'}
+						// disabled={true}
 					>
 						Next
 					</button>
