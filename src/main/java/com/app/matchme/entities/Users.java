@@ -15,15 +15,17 @@ public class Users {
     private String username;
     private String gender;
     private Integer age;
+    private String profilePicture;
 
     public Users() {}
 
-    public Users(String email, String password, String username, int age, String gender) {
+    public Users(String email, String password, String username, int age, String gender, String profilePicture) {
         this.email = email;
         this.password = password;
         this.username = username;
         this.age = age;
         this.gender = gender;
+        this.profilePicture = profilePicture;
     }
 
     public Long getId() {
@@ -61,4 +63,12 @@ public class Users {
     public Integer getAge() {return age;}
 
     public void setAge(Integer age) {this.age = age;}
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 }

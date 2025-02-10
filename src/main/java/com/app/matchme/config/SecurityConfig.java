@@ -42,7 +42,8 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(customizer -> customizer.disable())
+                //.csrf(customizer -> customizer.disable())
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
                                 "/",
@@ -52,20 +53,11 @@ public class SecurityConfig {
                                 "/features",
                                 "/about",
                                 "/support",
+                                "/error",
                                 "/forgot-password",
                                 "/validateToken")
                         .permitAll()
                         .anyRequest().authenticated())
-//                .formLogin(Customizer.withDefaults())
-                /*.formLogin(formLogin -> formLogin
-//                       .disable()
-                        .loginPage("http://localhost:5173/login")
-                        .defaultSuccessUrl("/dashboard", true)  // Redirect after successful login
-                        .permitAll() // Allow everyone to access the login page
-                )
-                .logout(LogoutConfigurer::permitAll // Allow everyone to access logout functionality
-                )*/
-//                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
