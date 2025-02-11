@@ -30,7 +30,7 @@ public class UserService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public Users register(Users user){
+    public Users register(Users user) {
         if (repo.existsByEmail(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
@@ -38,7 +38,11 @@ public class UserService {
         return repo.save(user);
     }
 
-    public boolean validate(String token){
+    public boolean checkEmail(String email) {
+        return repo.existsByEmail(email);
+    }
+
+    public boolean validate(String token) {
         String email = jwtService.extractUserName(token);
         UserDetails userdetails = userDetailsService.loadUserByUsername(email);
         return jwtService.validateToken(token, userdetails);
@@ -48,7 +52,7 @@ public class UserService {
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
-        if(authentication.isAuthenticated())
+        if (authentication.isAuthenticated())
             return jwtService.generateToken(user.getEmail());
 
         return "fail";

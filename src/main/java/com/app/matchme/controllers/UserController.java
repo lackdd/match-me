@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -20,18 +22,25 @@ public class UserController {
     private UserService service;
 
     @PostMapping("/register")
-    public Users register(@RequestBody Users user){
+    public Users register(@RequestBody Users user) {
         return service.register(user);
     }
 
+    @PostMapping("/check-email")
+    public Map<String, Boolean> checkEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        boolean exists = service.checkEmail(email);
+        return Collections.singletonMap("exists", exists);
+    }
+
     @PostMapping("/login")
-    public String login(@RequestBody Users user){
+    public String login(@RequestBody Users user) {
         return service.verify(user);
     }
 
     @PostMapping("/validateToken")
-    public ResponseEntity<?> validate(@RequestHeader(value = "Authorization", required = false) String authHeader){
-        if (authHeader == null || !authHeader.startsWith("Bearer ")){
+    public ResponseEntity<?> validate(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
         }
         String token = authHeader.substring(7);

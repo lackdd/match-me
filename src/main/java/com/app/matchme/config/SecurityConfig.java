@@ -53,6 +53,7 @@ public class SecurityConfig {
                                 "/features",
                                 "/about",
                                 "/support",
+                                "/check-email",
                                 "/error",
                                 "/forgot-password",
                                 "/validateToken")

@@ -3,6 +3,7 @@ import {genderOptions} from './inputOptions.jsx';
 import {customStyles} from './customInputStyles.jsx';
 import {useState} from 'react';
 import makeAnimated from 'react-select/animated';
+import axios from "axios";
 
 function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleChangeDataReactSelect, stepFunctions, error, setError}) {
 
@@ -16,7 +17,7 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 	// make gender field required https://github.com/JedWatson/react-select/issues/3140
 	// todo make sure password matches
 	// todo make sure email is not already in use
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 
 		// Check if gender is selected
@@ -25,6 +26,21 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 			return; // Stop form submission
 		} else {
 			setGenderError('');
+		}
+
+		// check if email is already in use in database
+		try {
+			const response = await
+				axios.post("http://localhost:8080/check-email", {email: formOneData.email});
+			if (response.data.exists) {
+				console.log("Email already exists");
+				setError("Email is already in use");
+				return;
+			} else {
+				console.log("Email is not in use");
+			}
+		} catch (error) {
+			console.log("Failed to request data from backend: ", error.response);
 		}
 
 		// If everything is valid, move to next step
@@ -88,14 +104,15 @@ function Step1({ formOneData, setFormOneData, handleChangeDataDefault, handleCha
 
 	return (
 
-		<form className='step-one' onSubmit={(e) => {
+		/*<form className='step-one' onSubmit={(e) => {
 			// e.preventDefault();
 			stepFunctions.AddStep(e);
-			// handleSubmit(e);
+			 // handleSubmit(e);
 		}}
 			  autoComplete={"on"}
-		>
-			<div className='form-title'>
+		>*/
+		<form className='step-one' onSubmit={handleSubmit} autoComplete="on">
+		<div className='form-title'>
 				<h1>Get started!</h1>
 			</div>
 			<div className={'line'}>
