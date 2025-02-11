@@ -158,7 +158,7 @@ function Register() {
 		event.preventDefault();
 		const username = formOneData.firstName + " " + formOneData.lastName;
 		const genderValue = formOneData.gender.value;
-		const userDetails = {email: formOneData.email, password: formOneData.password, username: username,  gender: genderValue,  age: formOneData.age, profilePicture: imageUrl};
+		const userDetails = {email: formOneData.email, password: formOneData.password, username: username,  gender: genderValue,  age: formOneData.age, profilePicture: imageUrl, preferredMethods: formTwoData.preferredMethods, additionalInterests: formTwoData.additionalInterests, preferredMusicGenres: formTwoData.preferredGenres, goalsWithMusic: formTwoData.goals, personalityTraits: formTwoData.personalityTraits, linkToMusic: formThreeData.musicLink, yearsOfMusicExperience: formThreeData.experience, description: formThreeData.description, location: formThreeData.location, idealMatchMethods: formFiveData.matchPreferredMethods, idealMatchGender: formFiveData.matchGender, idealMatchGenres: formFiveData.matchPreferredGenres, idealMatchGoals: formFiveData.matchGoals, idealMatchAge: formFiveData.matchAge, idealMatchLocation: formFiveData.matchLocation, idealMatchYearsOfExperience: formFiveData.matchExperience};
 		console.log("Sending:", JSON.stringify(userDetails, null, 2));
 		try{
 			const response = await
