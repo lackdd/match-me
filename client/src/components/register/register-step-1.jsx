@@ -7,8 +7,6 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {stepOneSchema} from './validationSchema.jsx';
 import {ErrorElement} from './errorElement.jsx';
 import axios from "axios";
-import {FiEye, FiMinus, FiPlus} from 'react-icons/fi';
-import { FiEyeOff } from "react-icons/fi";
 import {useState} from 'react';
 import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx';
 import {ShowPasswordButton} from './showPasswordButton.jsx';
@@ -135,7 +133,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 								max={120}
 								onBlur={() => trigger('age')} // Trigger validation when user leaves the field
 							/>
-						<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger}/>
+						<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger} setFormData={setFormOneData}/>
 						</div>
 
 						<ErrorElement errors={errors} id={'age'}/>

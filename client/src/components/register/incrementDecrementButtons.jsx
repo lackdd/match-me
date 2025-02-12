@@ -1,6 +1,6 @@
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 
-export function IncrementDecrementButtons({id, watch, setValue, trigger}) {
+export function IncrementDecrementButtons({id, watch, setValue, trigger, setFormData}) {
 	return (
 		<div
 			className={'number-buttons'}
@@ -18,11 +18,15 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger}) {
 					if (document.activeElement.id !== id) {
 						document.getElementById(id).focus();
 					}
-					if (!watch(id)) {
-						setValue(id, 1);
-					} else {
-						setValue(id, parseInt(watch(id)) + 1);
-					}
+					// if (!watch(id)) {
+					// 	setValue(id, 1);
+					// } else {
+					// 	setValue(id, parseInt(watch(id)) + 1);
+					// }
+					const currentValue = watch(id) ? parseInt(watch(id)) : 0;
+					const newValue = currentValue + 1;
+					setValue(id, newValue, { shouldValidate: true });
+					setFormData((prev) => ({ ...prev, [id]: newValue }));
 					console.log(watch(id));
 				}}>
 				<IoIosArrowUp/>
@@ -36,11 +40,15 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger}) {
 					if (document.activeElement.id !== id) {
 						document.getElementById(id).focus();
 					}
-					if (!watch(id)) {
-						setValue(id, 1);
-					} else {
-						setValue(id, parseInt(watch(id)) - 1);
-					}
+					// if (!watch(id)) {
+					// 	setValue(id, 1);
+					// } else {
+					// 	setValue(id, parseInt(watch(id)) - 1);
+					// }
+					const currentValue = watch(id) ? parseInt(watch(id)) : 0;
+					const newValue = Math.max(0, currentValue - 1);
+					setValue(id, newValue, { shouldValidate: true });
+					setFormData((prev) => ({ ...prev, [id]: newValue }));
 					console.log(watch(id));
 				}}>
 				<IoIosArrowDown/>

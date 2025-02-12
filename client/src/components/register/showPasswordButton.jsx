@@ -1,6 +1,7 @@
 import {FiEye, FiEyeOff} from 'react-icons/fi';
 
-export function ShowPasswordButton(showPassword, setShowPassword) {
+
+export function ShowPasswordButton({showPassword, setShowPassword}) {
 	return (
 		<button
 			tabIndex={-1}

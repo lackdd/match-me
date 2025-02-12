@@ -97,7 +97,8 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							autoComplete={'off'}
 							min={0}
 							max={formOneData.age}
-							value={formThreeData.experience || ''}
+							// value={formThreeData.experience || ''}
+							value={watch('experience')}
 							onChange={(e) => {
 								const value = e.target.value ? parseInt(e.target.value, 10) : 0;
 								setValue('experience', value, {shouldValidate: true});
@@ -105,7 +106,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							}}
 							onBlur={() => trigger('experience')} // Trigger validation when user leaves the field
 						/>
-						<IncrementDecrementButtons id={'experience'} watch={watch} setValue={setValue} trigger={trigger}/>
+						<IncrementDecrementButtons id={'experience'} watch={watch} setValue={setValue} trigger={trigger} setFormData={setFormThreeData}/>
 					</div>
 
 					<ErrorElement errors={errors} id={'experience'}/>
