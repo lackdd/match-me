@@ -187,6 +187,7 @@ function Register() {
 							setFormOneData={setFormOneData}
 							stepFunctions={stepFunctions}
 							error={error} setError={setError}
+							onSubmit={onSubmit}
 						/>
 					)}
 					{currentStep === 2 && (
@@ -205,6 +206,7 @@ function Register() {
 							onSubmit={onSubmit}
 							stepFunctions={stepFunctions}
 							error={error} setError={setError}
+							formOneData={formOneData}
 						/>
 					)}
 					{currentStep === 4 && (
@@ -238,6 +240,7 @@ function Register() {
 					</div>
 				)}
 			</div>
+			)}
 		</>
 		// </LoadScript>
 	);
