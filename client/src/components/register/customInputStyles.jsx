@@ -13,7 +13,7 @@ export const customStyles = {
 		backgroundColor: state.selectProps.isValid
 			? '#d4f5d9' // light green if isValid is true
 			: state.selectProps.isError
-				? '#ffbebe' // light red if isError is true
+				? '#fbcaca' // light red if isError is true
 				: 'white', // default to white
 		borderRadius:
 			state.isFocused && state.selectProps.menuIsOpen
