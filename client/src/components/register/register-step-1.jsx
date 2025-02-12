@@ -14,36 +14,6 @@ import axios from "axios";
 
 function Step1({ formOneData, setFormOneData, onSubmit}) {
 
-	// const handleSubmit = async (e) => {
-	// 	e.preventDefault();
-	//
-	// 	// Check if gender is selected
-	// 	if (!formOneData.gender) {
-	// 		setGenderError('Please select a gender');
-	// 		return; // Stop form submission
-	// 	} else {
-	// 		setGenderError('');
-	// 	}
-	//
-	// 	// check if email is already in use in database
-	// 	try {
-	// 		const response = await
-	// 			axios.post("http://localhost:8080/check-email", {email: formOneData.email});
-	// 		if (response.data.exists) {
-	// 			console.log("Email already exists");
-	// 			setError("Email is already in use");
-	// 			return;
-	// 		} else {
-	// 			console.log("Email is not in use");
-	// 		}
-	// 	} catch (error) {
-	// 		console.log("Failed to request data from backend: ", error.response);
-	// 	}
-	//
-	// 	// If everything is valid, move to next step
-	// 	stepFunctions.AddStep(e);
-	// };
-
 	// Initialize react-hook-form with Yup schema
 	const {
 		register,
@@ -51,18 +21,22 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 		setValue,
 		watch,
 		clearErrors,
+		setError,
 		trigger,
 		formState: { errors },
 	} = useForm({
 		defaultValues: formOneData,
-		resolver: yupResolver(stepOneSchema),
+		resolver: yupResolver(stepOneSchema(formOneData)),
 		mode: 'onChange',
 	});
 
 
 		return (
 			<form className="step-one"
-				  onSubmit={handleSubmit((data) => onSubmit(data, formOneData, setFormOneData))}
+				  onSubmit={handleSubmit((data) => {
+					  onSubmit(data, formOneData, setFormOneData);
+					  console.log("Errors on submit: ", errors);
+				  })}
 				  autoComplete={'off'}
 				  noValidate>
 				<div className="form-title">
@@ -167,7 +141,25 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							${!errors.email && watch('email') ? 'valid' : ''}`}
 							{...register('email')}
 							autoComplete={'off'}
-							onBlur={() => trigger('email')} // Trigger validation when user leaves the field
+							onBlur={async() => {
+								// check if email is already in use
+								try {
+								 	const response = await
+								 	axios.post("http://localhost:8080/check-email", {email: watch('email')});
+								 	if (response.data.exists) {
+								 		// console.log("Email already exists");
+										setError("email", { type: "manual", message: "Email is already in use" });
+										return;
+								 	}
+									//  else {
+								 	// 	console.log("Email is not in use");
+									// 	 //clearErrors("email")
+								 	// }
+								 } catch (error) {
+									console.log("Failed to request data from backend: ", error.response?.data || error.message);
+								 }
+								await trigger('email'); // ✅ Re-run validation after setting an error
+							}}// Trigger validation when user leaves the field
 						/>
 						<ErrorElement errors={errors} id={'email'}/>
 					</label>
@@ -222,7 +214,9 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 				{/* Submit Button */}
 				<div className="buttons-container">
 					<button className={`next wide small ${Object.keys(errors).length > 0 ? "disabled" : ""}`}
-							type="submit">
+							type="submit"
+							disabled={Object.keys(errors).length > 0}
+					>
 						Next
 					</button>
 				</div>

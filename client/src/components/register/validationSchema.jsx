@@ -1,56 +1,40 @@
 import * as yup from 'yup';
+import axios from 'axios';
 
-export const stepOneSchema = yup.object().shape({
-	firstName: yup.string()
-		.required("Required")
-		.matches(/[a-zA-Z]+/g, "Must use letters")
-		.max(30, "Max 30 characters"),
-	lastName: yup.string()
-		.required("Required")
-		.matches(/[a-zA-Z]+/g, "Must use letters")
-		.max(30, "Max 30 characters"),
-	gender: yup.object()
-		.shape({
-		label: yup.string(),
-		value: yup.string()
-	})
-		.required("Required")
-		.typeError("Required"),
-	age: yup.number()
-		.required("Required")
-		.typeError("Required")
-		.min(16, "Minimum age is 16")
-		.max(120, "Maximum age is 120"),
-	email: yup.string()
-		.email("Enter a valid email address")
-		.required("Required"),
-		// todo check if email already exists in database
-		// .test("checkEmailExists", "Email already exists", async (email) => {
-		// 	// Call the backend API to check if the email already exists
-		// 	try {
-		// 		const response = await fetch(`/api/users/check-email?email=${email}`);
-		// 		if (response.ok) {
-		// 			const data = await response.json();
-		// 			// If the email exists, the backend will send a response with `exists: true`
-		// 			if (data.exists) {
-		// 				return false;  // Email exists, trigger error
-		// 			}
-		// 		}
-		// 		return true;  // Email doesn't exist, pass validation
-		// 	} catch (error) {
-		// 		console.error("Error checking email:", error);
-		// 		return false;  // Handle network or server errors
-		// 	}
-		// }),
-	password: yup.string()
-		.required("Required")
-		.min(3, "Must contain at least 3 characters including 1 number")
-		.matches(/[0-9]/, "Must contain at least one number"),
-	rePassword: yup.string()
-		.oneOf([yup.ref("password"), null], "Passwords must match")
-		.required("Re-enter password"),
-	terms: yup.boolean().oneOf([true], "You must accept the terms and conditions"),
-});
+export const stepOneSchema = (formOneData) =>
+	yup.object().shape({
+		firstName: yup.string()
+			.required("Required")
+			.matches(/[a-zA-Z]+/g, "Must use letters")
+			.max(30, "Max 30 characters"),
+		lastName: yup.string()
+			.required("Required")
+			.matches(/[a-zA-Z]+/g, "Must use letters")
+			.max(30, "Max 30 characters"),
+		gender: yup.object()
+			.shape({
+				label: yup.string(),
+				value: yup.string()
+			})
+			.required("Required")
+			.typeError("Required"),
+		age: yup.number()
+			.required("Required")
+			.typeError("Required")
+			.min(16, "Minimum age is 16")
+			.max(120, "Maximum age is 120"),
+		email: yup.string()
+			.email("Enter a valid email address")
+			.required("Required"),
+		password: yup.string()
+			.required("Required")
+			.min(3, "Must contain at least 3 characters including 1 number")
+			.matches(/[0-9]/, "Must contain at least one number"),
+		rePassword: yup.string()
+			.oneOf([yup.ref("password"), null], "Passwords must match")
+			.required("Re-enter password"),
+		terms: yup.boolean().oneOf([true], "You must accept the terms and conditions"),
+	});
 
 export const stepTwoSchema = (formThreeData) =>
 	yup.object().shape({
