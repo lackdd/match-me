@@ -7,12 +7,16 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {stepOneSchema} from './validationSchema.jsx';
 import {ErrorElement} from './errorElement.jsx';
 import axios from "axios";
+import { FiEye } from "react-icons/fi";
+import { FiEyeOff } from "react-icons/fi";
+import {useState} from 'react';
 
 
 
 
 
 function Step1({ formOneData, setFormOneData, onSubmit}) {
+	const [showPassword, setShowPassword] = useState(true);
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -167,53 +171,72 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 				</div>
 
 				{/* Password */}
-				<div className='line large'>
+				<div className='line large with-button'>
 					<label>
 						Password*
 						<input
+							id={'password'}
 							type='password'
 							placeholder='Enter a password'
-							className={`not-react-select focus-highlight 
-							${errors.password ? "error" : ""}
-							${!errors.password && watch('password') ? "valid" : ""}`}
-							{...register("password")}
-							autoComplete={"off"}
+							className={`not-react-select focus-highlight
+							${errors.password ? 'error' : ''}
+							${!errors.password && watch('password') ? 'valid' : ''}`}
+							{...register('password')}
+							autoComplete={'off'}
 							onBlur={() => trigger('password')} // Trigger validation when user leaves the field
 						/>
-						<ErrorElement errors={errors}  id={'password'}/>
+						<button
+							type={'button'}
+							onClick={
+							() => {
+                                document.getElementById('password').type = document.getElementById('password').type === 'password'? 'text' : 'password';
+								document.getElementById('rePassword').type = document.getElementById('rePassword').type === 'password'? 'text' : 'password';
+								setShowPassword(!showPassword);
+							}
+							}
+						>
+							{showPassword ? (
+								<FiEye />
+							) :
+								(<FiEyeOff/> )}
+						</button>
+						<ErrorElement errors={errors} id={'password'}/>
 					</label>
+
 				</div>
 
 				{/* Confirm Password */}
 				<div className="line large">
-					<label>
-						Re-enter password*
-						<input
-							type="password"
-							placeholder="Re-enter password"
-							className={`not-react-select focus-highlight 
-							${errors.rePassword ? "error" : ""}
-							${!errors.rePassword && watch('rePassword') ? "valid" : ""}`}
-							{...register("rePassword")}
-							autoComplete={"off"}
-							onBlur={() => trigger('rePassword')} // Trigger validation when user leaves the field
-						/>
-						<ErrorElement errors={errors}  id={'rePassword'}/>
-					</label>
+						<label>
+							Re-enter password*
+							<input
+								id={'rePassword'}
+								type='password'
+								placeholder='Re-enter password'
+								className={`not-react-select focus-highlight 
+							${errors.rePassword ? 'error' : ''}
+							${!errors.rePassword && watch('rePassword') ? 'valid' : ''}`}
+								{...register('rePassword')}
+								autoComplete={'off'}
+								onBlur={() => trigger('rePassword')} // Trigger validation when user leaves the field
+							/>
+							<ErrorElement errors={errors} id={'rePassword'}/>
+						</label>
+
 				</div>
 
 				{/* Terms and Conditions */}
-				<label id="tc-label">
-					<input className="focus-highlight" type="checkbox" id='tc-input' {...register("terms")} />
+				<label id='tc-label'>
+					<input className='focus-highlight' type='checkbox' id='tc-input' {...register('terms')} />
 					&nbsp; I agree to the terms and conditions*
 				</label>
 
-				<ErrorElement errors={errors}  id={'terms'}/>
+				<ErrorElement errors={errors} id={'terms'}/>
 
 				{/* Submit Button */}
-				<div className="buttons-container">
-					<button className={`next wide small ${Object.keys(errors).length > 0 ? "disabled" : ""}`}
-							type="submit"
+				<div className='buttons-container'>
+					<button className={`next wide small ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
+							type='submit'
 							disabled={Object.keys(errors).length > 0}
 					>
 						Next
