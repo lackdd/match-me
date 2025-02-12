@@ -160,6 +160,11 @@ function Register() {
 	return (
 
 		<>
+			{currentStep === 6 && (
+				<Step6/>
+			)}
+
+			{currentStep !== 6 && (
 			<div className='register-container'>
 
 				{currentStep !== 6 &&
@@ -169,9 +174,12 @@ function Register() {
 						<button className={'button exit'}>Exit</button>
 					</Link>
 				</div>
+				)}
+				{currentStep !== 6 && (
 				<div className={'account-creation'}>
 					Account creation {currentStep}/6
 				</div>
+				)}
 				<div className={'forms-container'}>
 					{currentStep === 1 && (
 						<Step1
@@ -220,10 +228,6 @@ function Register() {
 							handleCloseMenu={handleCloseMenu}
 							onSubmit={onSubmit}
 						/>
-					)}
-					{currentStep === 6 && (
-						<Step6
-							DeductStep={DeductStep} AddStep={AddStep}/>
 					)}
 				</div>
 				{currentStep === 1 && (
