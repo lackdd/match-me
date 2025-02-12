@@ -6,7 +6,8 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {stepThreeSchema} from './validationSchema.jsx';
-import {ErrorElement} from './error-element.jsx';
+import {ErrorElement} from './errorElement.jsx';
+import {PreviousNextButtons} from './previousNextButtons.jsx';
 
 
 function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
@@ -187,20 +188,10 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 					<ErrorElement errors={errors}  id={'description'}/>
 				</label>
 			</div>
-			<div className={'buttons-container'}>
-				<button
-					className='previous wide narrow'
-					type={'button'}
-					onClick={stepFunctions.DeductStep}>
-					Previous
-				</button>
-				<button
-					className={`next wide narrow ${Object.keys(errors).length > 0 ? "disabled" : ""}`}
-					type={'submit'}
-				>
-					Next
-				</button>
-			</div>
+			<PreviousNextButtons
+				DeductStep={stepFunctions.DeductStep}
+				errors={errors}
+			/>
 		</form>
 	);
 }

@@ -14,8 +14,8 @@ import {customStyles} from './customInputStyles.jsx';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {stepFiveSchema} from './validationSchema.jsx';
-import {ErrorElement} from './error-element.jsx';
-import {PreviousNextButtons} from './previous-next-buttons.jsx';
+import {ErrorElement} from './errorElement.jsx';
+import {PreviousNextButtons} from './previousNextButtons.jsx';
 
 const matchAgeToRange = (age) => {
 	age = parseInt(age)

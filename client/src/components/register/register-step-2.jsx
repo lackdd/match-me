@@ -12,8 +12,8 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {stepTwoSchema} from './validationSchema.jsx';
 import {handleCloseMenu} from './register.jsx';
-import {ErrorElement} from './error-element.jsx';
-import {PreviousNextButtons} from './previous-next-buttons.jsx';
+import {ErrorElement} from './errorElement.jsx';
+import {PreviousNextButtons} from './previousNextButtons.jsx';
 
 
 const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData }) => {

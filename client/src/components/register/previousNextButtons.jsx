@@ -10,6 +10,7 @@ export const PreviousNextButtons = ({DeductStep, text = "Next", errors = {} }) =
 			<button
 				className={`next wide narrow ${Object.keys(errors).length > 0 ? "disabled" : ""}`}
 				type={'submit'}
+				disabled={Object.keys(errors).length > 0}
 			>
 				{text}
 			</button>

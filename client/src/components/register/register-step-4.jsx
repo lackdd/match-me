@@ -2,7 +2,7 @@
 // step 4 of registration
 import {AdvancedImage} from '@cloudinary/react';
 import {getOptimizedImage} from '../utils/cloudinary.jsx';
-import {PreviousNextButtons} from './previous-next-buttons.jsx';
+import {PreviousNextButtons} from './previousNextButtons.jsx';
 
 function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 

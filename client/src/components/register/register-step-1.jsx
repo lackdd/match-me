@@ -5,7 +5,7 @@ import makeAnimated from 'react-select/animated';
 import { useForm } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {stepOneSchema} from './validationSchema.jsx';
-import {ErrorElement} from './error-element.jsx';
+import {ErrorElement} from './errorElement.jsx';
 import axios from "axios";
 
 
@@ -157,6 +157,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 								 	// }
 								 } catch (error) {
 									console.log("Failed to request data from backend: ", error.response?.data || error.message);
+									setError("email", { type: "manual", message: "Oops! Failed to check email availability" });
 								 }
 								await trigger('email'); // ✅ Re-run validation after setting an error
 							}}// Trigger validation when user leaves the field
@@ -207,9 +208,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 					&nbsp; I agree to the terms and conditions*
 				</label>
 
-				<div className={'error-line'}>
-                    {errors.terms && <p className="error-text">{errors.terms.message}</p>}
-                </div>
+				<ErrorElement errors={errors}  id={'terms'}/>
 
 				{/* Submit Button */}
 				<div className="buttons-container">
