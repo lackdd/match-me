@@ -7,8 +7,7 @@ import Step4 from './register-step-4.jsx';
 import Step5 from './register-step-5.jsx';
 import Step6 from './register-step-6.jsx';
 import { Cloudinary } from '@cloudinary/url-gen';
-import { AdvancedImage, responsive, placeholder } from '@cloudinary/react';
-import { uploadToCloudinary, getOptimizedImage } from '../utils/cloudinary';
+import { uploadToCloudinary } from '../utils/cloudinary';
 
 import CloudinaryUploadWidget from '../utils/CloudinaryUploadWidget';
 import {Link} from 'react-router-dom';
@@ -186,21 +185,9 @@ function Register() {
 
 		<>
 			<div className='register-container'>
-				<div className="upload-section">
-					<h3>Upload Profile Picture</h3>
 
-					{/* Upload Button */}
-					<input type="file" onChange={onImageChange} accept="image/*"/>
-
-					{/* Show Image Preview After Upload */}
-					{imageUrl && (
-						<div className="image-preview">
-							<h4>Preview:</h4>
-							<AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>
-						</div>
-					)}
-				</div>
-				<div className={'exit-container'}>
+				{currentStep !== 6 &&
+				(<div className={'exit-container'}>
 					{/* again a tag to force rerender of nav bar*/}
 					<Link to={'/'}>
 						<button className={'button exit'}>Exit</button>
