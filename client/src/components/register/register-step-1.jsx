@@ -6,10 +6,43 @@ import { useForm } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {stepOneSchema} from './validationSchema.jsx';
 import {ErrorElement} from './error-element.jsx';
+import axios from "axios";
+
+
 
 
 
 function Step1({ formOneData, setFormOneData, onSubmit}) {
+
+	// const handleSubmit = async (e) => {
+	// 	e.preventDefault();
+	//
+	// 	// Check if gender is selected
+	// 	if (!formOneData.gender) {
+	// 		setGenderError('Please select a gender');
+	// 		return; // Stop form submission
+	// 	} else {
+	// 		setGenderError('');
+	// 	}
+	//
+	// 	// check if email is already in use in database
+	// 	try {
+	// 		const response = await
+	// 			axios.post("http://localhost:8080/check-email", {email: formOneData.email});
+	// 		if (response.data.exists) {
+	// 			console.log("Email already exists");
+	// 			setError("Email is already in use");
+	// 			return;
+	// 		} else {
+	// 			console.log("Email is not in use");
+	// 		}
+	// 	} catch (error) {
+	// 		console.log("Failed to request data from backend: ", error.response);
+	// 	}
+	//
+	// 	// If everything is valid, move to next step
+	// 	stepFunctions.AddStep(e);
+	// };
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -195,7 +228,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 				</div>
 			</form>
 		);
-	};
+	}
 
 
 export default Step1;

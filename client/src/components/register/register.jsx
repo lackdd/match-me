@@ -21,53 +21,53 @@ export const handleCloseMenu = (selected) => {
 
 
 function Register() {
-	// cloudinary code from: https://cloudinary.com/documentation/react_image_and_video_upload
+    // cloudinary code from: https://cloudinary.com/documentation/react_image_and_video_upload
 
-	// Configuration
-	const cloudName = 'hzxyensd5';
-	const uploadPreset = 'aoh4fpwm';
+    // Configuration
+    const cloudName = 'hzxyensd5';
+    const uploadPreset = 'aoh4fpwm';
 
-	// State
-	const [publicId, setPublicId] = useState('');
+    // State
+    const [publicId, setPublicId] = useState('');
 
-	// Cloudinary configuration
-	const cld = new Cloudinary({
-		cloud: {
-			cloudName,
-		},
-	});
+    // Cloudinary configuration
+    const cld = new Cloudinary({
+        cloud: {
+            cloudName,
+        },
+    });
 
-	// Upload Widget Configuration
-	const uwConfig = {
-		cloudName,
-		uploadPreset,
-		// Uncomment and modify as needed:
-		// cropping: true,
-		// showAdvancedOptions: true,
-		// sources: ['local', 'url'],
-		// multiple: false,
-		// folder: 'user_images',
-		// tags: ['users', 'profile'],
-		// context: { alt: 'user_uploaded' },
-		// clientAllowedFormats: ['images'],
-		// maxImageFileSize: 2000000,
-		// maxImageWidth: 2000,
-		// theme: 'purple',
-	};
+    // Upload Widget Configuration
+    const uwConfig = {
+        cloudName,
+        uploadPreset,
+        // Uncomment and modify as needed:
+        // cropping: true,
+        // showAdvancedOptions: true,
+        // sources: ['local', 'url'],
+        // multiple: false,
+        // folder: 'user_images',
+        // tags: ['users', 'profile'],
+        // context: { alt: 'user_uploaded' },
+        // clientAllowedFormats: ['images'],
+        // maxImageFileSize: 2000000,
+        // maxImageWidth: 2000,
+        // theme: 'purple',
+    };
 
-	const [currentStep, setCurrentStep] = useState(1)
-	const [error, setError] = useState('');
+    const [currentStep, setCurrentStep] = useState(1)
+    const [error, setError] = useState('');
 
-	// step 1 data
-	const [formOneData, setFormOneData] = useState({
-		firstName: "",
+    // step 1 data
+    const [formOneData, setFormOneData] = useState({
+        firstName: "",
         lastName: "",
         gender: "",
         age: "",
         email: "",
         password: "",
-		rePassword: "",
-	})
+        rePassword: "",
+    })
 
 	// step 2 data
 	const [formTwoData, setFormTwoData] = useState({
@@ -78,17 +78,17 @@ function Register() {
 		goals: [],
 	})
 
-	// step 3 data
-	const [formThreeData, setFormThreeData] = useState({
+    // step 3 data
+    const [formThreeData, setFormThreeData] = useState({
         experience: "",
         location: [],
         musicLink: "",
         description: "",
-	})
+    })
 
-	// step 4 data
-	const [image, setImage] = useState(null)
-	const [imageUrl, setImageUrl] = useState(null);
+    // step 4 data
+    const [image, setImage] = useState(null)
+    const [imageUrl, setImageUrl] = useState(null);
 
 	// step 5 data
 	const [formFiveData, setFormFiveData] = useState({
@@ -97,9 +97,9 @@ function Register() {
         matchGoals: [],
         matchGender: "",
         matchAge: "",
-		matchExperience: "",
+        matchExperience: "",
         matchLocation: "",
-	})
+    })
 
 	// Handle form submission
 	const onSubmit = (data, form, setForm) => {
@@ -109,52 +109,86 @@ function Register() {
 	};
 
 
-	const onImageChange = async (event) => {
-		if (event.target.files && event.target.files[0]) {
-			setImage(URL.createObjectURL(event.target.files[0])); // show local preview before upload
+    const onImageChange = async (event) => {
+        if (event.target.files && event.target.files[0]) {
+            setImage(URL.createObjectURL(event.target.files[0])); // show local preview before upload
 
-			// upload to cloudinary
-			const uploadedUrl = await uploadToCloudinary(event.target.files[0]);
-			if (uploadedUrl) {
-				const publicId = uploadedUrl.split('/').pop().split('.')[0]; // Extract only the public ID
-				setImageUrl(publicId); // Store only the Cloudinary image public ID
-				console.log("Cloudinary image public ID:", publicId);
-				/*setImageUrl(uploadedUrl); // store the uploaded image url
-				console.log("Cloudinary image url:", uploadedUrl);*/
-			} else {
-				setError("Failed to upload image.");
-			}
-		}
-	};
+            // upload to cloudinary
+            const uploadedUrl = await uploadToCloudinary(event.target.files[0]);
+            if (uploadedUrl) {
+                const publicId = uploadedUrl.split('/').pop().split('.')[0]; // Extract only the public ID
+                setImageUrl(publicId); // Store only the Cloudinary image public ID
+                console.log("Cloudinary image public ID:", publicId);
+                /*setImageUrl(uploadedUrl); // store the uploaded image url
+                console.log("Cloudinary image url:", uploadedUrl);*/
+            } else {
+                setError("Failed to upload image.");
+            }
+        }
+    };
 
 	function AddStep(e) {
 		// e.preventDefault();
 		setCurrentStep(currentStep + 1)
 	}
 
-	function DeductStep() {
-		setCurrentStep(currentStep - 1)
-	}
+    function DeductStep() {
+        setCurrentStep(currentStep - 1)
+    }
 
-	const stepFunctions = {AddStep: AddStep, DeductStep: DeductStep}
+    const stepFunctions = {AddStep: AddStep, DeductStep: DeductStep}
 
-	const Submit = async () => {
-		setCurrentStep(currentStep + 1)
-		event.preventDefault();
-		const username = formOneData.firstName + " " + formOneData.lastName;
-		const genderValue = formOneData.gender.value;
-		const userDetails = {email: formOneData.email, password: formOneData.password, username: username,  gender: genderValue,  age: formOneData.age, profilePicture: imageUrl};
-		console.log("Sending:", JSON.stringify(userDetails, null, 2));
-		try{
-			const response = await
-			axios.post("http://localhost:8080/register", userDetails);
-			console.log("User created successfully");
-		} catch (error) {
-			if (error.response.status === 400) {
-				console.log("Failed to register:", error.response.data);
-			}
-		}
-	};
+    const Submit = async () => {
+        setCurrentStep(currentStep + 1)
+        event.preventDefault();
+        const username = formOneData.firstName + " " + formOneData.lastName;
+        const genderValue = formOneData.gender.value;
+        const preferredMethodsValues = formTwoData.preferredMethods.map(item => item.value);
+        const additionalInterestsValues = formTwoData.additionalInterests.map(item => item.value);
+        const preferredMusicGenresValues = formTwoData.preferredGenres.map(item => item.value);
+        const goalsWithMusicValues = formTwoData.goals.map(item => item.value);
+        const personalityTraitsValues = formTwoData.personalityTraits.map(item => item.value);
+        const idealMatchMethodsValues = formFiveData.matchPreferredMethods.map(item => item.value);
+        const idealMatchGenresValues = formFiveData.matchPreferredGenres.map(item => item.value);
+        const idealMatchGoalsValues = formFiveData.matchGoals.map(item => item.value);
+        const idealMatchAgeValue = formFiveData.matchAge.value;
+        const idealMatchLocationValue = formFiveData.matchLocation.value;
+        const idealMatchYearsOfExperienceValue = formFiveData.matchExperience.value;
+        const userDetails = {
+            email: formOneData.email,
+            password: formOneData.password,
+            username: username,
+            gender: genderValue,
+            age: formOneData.age,
+            profilePicture: imageUrl,
+            preferredMethods: preferredMethodsValues,
+            additionalInterests: additionalInterestsValues,
+            preferredMusicGenres: preferredMusicGenresValues,
+            goalsWithMusic: goalsWithMusicValues,
+            personalityTraits: personalityTraitsValues,
+            linkToMusic: formThreeData.musicLink,
+            yearsOfMusicExperience: formThreeData.experience,
+            description: formThreeData.description,
+            location: formThreeData.location.value,
+            idealMatchMethods: idealMatchMethodsValues,
+            idealMatchGender: formFiveData.matchGender.value,
+            idealMatchGenres: idealMatchGenresValues,
+            idealMatchGoals: idealMatchGoalsValues,
+            idealMatchAge: idealMatchAgeValue,
+            idealMatchLocation: idealMatchLocationValue,
+            idealMatchYearsOfExperience: idealMatchYearsOfExperienceValue
+        };
+        console.log("Sending:", JSON.stringify(userDetails, null, 2));
+        try {
+            const response = await
+                axios.post("http://localhost:8080/register", userDetails);
+            console.log("User created successfully");
+        } catch (error) {
+            if (error.response.status === 400) {
+                console.log("Failed to register:", error.response.data);
+            }
+        }
+    };
 
 
 	return (
