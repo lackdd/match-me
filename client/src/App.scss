@@ -51,17 +51,17 @@ form {
       width: 25.25rem;
     }
   }
-  // for testing
-  //input[type="number"] {
-  //  appearance: textfield; /* Removes default arrows */
-  //  -moz-appearance: textfield; /* Removes arrows in Firefox */
-  //}
-  //
-  //input[type="number"]::-webkit-inner-spin-button,
-  //input[type="number"]::-webkit-outer-spin-button {
-  //  appearance: none; /* Removes arrows in WebKit browsers */
-  //  margin: 0;
-  //}
+   //for testing
+  input[type="number"] {
+    appearance: textfield; /* Removes default arrows */
+    -moz-appearance: textfield; /* Removes arrows in Firefox */
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    appearance: none; /* Removes arrows in WebKit browsers */
+    margin: 0;
+  }
 
   input, textarea {
     width: 100%;

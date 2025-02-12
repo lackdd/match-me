@@ -7,9 +7,12 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {stepOneSchema} from './validationSchema.jsx';
 import {ErrorElement} from './errorElement.jsx';
 import axios from "axios";
-import { FiEye } from "react-icons/fi";
+import {FiEye, FiMinus, FiPlus} from 'react-icons/fi';
 import { FiEyeOff } from "react-icons/fi";
 import {useState} from 'react';
+import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx';
+import {ShowPasswordButton} from './showPasswordButton.jsx';
+
 
 
 
@@ -59,6 +62,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							${!errors.firstName && watch('firstName') ? "valid" : ""}`}
 							{...register("firstName")}
 							autoComplete={"off"}
+							// autoFocus={'on'}
 							onBlur={() => trigger('firstName')} // Trigger validation when user leaves the field
 						/>
 						<ErrorElement errors={errors}  id={'firstName'}/>
@@ -117,24 +121,29 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 
 					<label className="short">
 						Age*
-						<input
-							type="number"
-							placeholder="Enter your age"
-							className={`not-react-select short focus-highlight 
-							${errors.age ? "error" : ""}
-							${!errors.age && watch('age') ? "valid" : ""}`}
-							{...register("age")}
-							autoComplete={"off"}
-							min={0}
-							max={120}
-							onBlur={() => trigger('age')} // Trigger validation when user leaves the field
-						/>
-						<ErrorElement errors={errors}  id={'age'}/>
+						<div className={'with-button'}>
+							<input
+								id={'age'}
+								type='number'
+								placeholder='Enter your age'
+								className={`not-react-select short focus-highlight 
+							${errors.age ? 'error' : ''}
+							${!errors.age && watch('age') ? 'valid' : ''}`}
+								{...register('age')}
+								autoComplete={'off'}
+								min={0}
+								max={120}
+								onBlur={() => trigger('age')} // Trigger validation when user leaves the field
+							/>
+						<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger}/>
+						</div>
+
+						<ErrorElement errors={errors} id={'age'}/>
 					</label>
 				</div>
 
 				{/* Email */}
-				<div className="line large">
+				<div className='line large'>
 					<label>
 						Email address*
 						<input
@@ -147,23 +156,26 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							autoComplete={'off'}
 							onBlur={async() => {
 								// check if email is already in use
-								try {
-								 	const response = await
-								 	axios.post("http://localhost:8080/check-email", {email: watch('email')});
-								 	if (response.data.exists) {
-								 		// console.log("Email already exists");
-										setError("email", { type: "manual", message: "Email is already in use" });
-										return;
-								 	}
-									//  else {
-								 	// 	console.log("Email is not in use");
-									// 	 //clearErrors("email")
-								 	// }
-								 } catch (error) {
-									console.log("Failed to request data from backend: ", error.response?.data || error.message);
-									setError("email", { type: "manual", message: "Oops! Failed to check email availability" });
-								 }
-								await trigger('email'); // ✅ Re-run validation after setting an error
+								if (watch('email')) {
+									try {
+										const response = await
+											axios.post("http://localhost:8080/check-email", {email: watch('email')});
+										if (response.data.exists) {
+											// console.log("Email already exists");
+											setError("email", { type: "manual", message: "Email is already in use" });
+											return;
+										}
+										//  else {
+										// 	console.log("Email is not in use");
+										// 	 //clearErrors("email")
+										// }
+									} catch (error) {
+										console.log("Failed to request data from backend: ", error.response?.data || error.message);
+										setError("email", { type: "manual", message: "Oops! Failed to check email availability" });
+									}
+									await trigger('email');
+								}
+								trigger('email');
 							}}// Trigger validation when user leaves the field
 						/>
 						<ErrorElement errors={errors} id={'email'}/>
@@ -171,67 +183,63 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 				</div>
 
 				{/* Password */}
-				<div className='line large with-button'>
+				<div className='line large'>
 					<label>
 						Password*
-						<input
-							id={'password'}
-							type='password'
-							placeholder='Enter a password'
-							className={`not-react-select focus-highlight
+						<div className={'with-button'}>
+							<input
+								id={'password'}
+								type='password'
+								placeholder='Enter a password'
+								className={`not-react-select focus-highlight
 							${errors.password ? 'error' : ''}
 							${!errors.password && watch('password') ? 'valid' : ''}`}
-							{...register('password')}
-							autoComplete={'off'}
-							onBlur={() => trigger('password')} // Trigger validation when user leaves the field
-						/>
-						<button
-							type={'button'}
-							onClick={
-							() => {
-                                document.getElementById('password').type = document.getElementById('password').type === 'password'? 'text' : 'password';
-								document.getElementById('rePassword').type = document.getElementById('rePassword').type === 'password'? 'text' : 'password';
-								setShowPassword(!showPassword);
-							}
-							}
-						>
-							{showPassword ? (
-								<FiEye />
-							) :
-								(<FiEyeOff/> )}
-						</button>
+								{...register('password')}
+								autoComplete={'off'}
+								onBlur={() => trigger('password')} // Trigger validation when user leaves the field
+							/>
+						<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}/>
+						</div>
 						<ErrorElement errors={errors} id={'password'}/>
 					</label>
 
 				</div>
 
 				{/* Confirm Password */}
-				<div className="line large">
-						<label>
-							Re-enter password*
-							<input
-								id={'rePassword'}
-								type='password'
-								placeholder='Re-enter password'
-								className={`not-react-select focus-highlight 
+				<div className='line large'>
+					<label>
+						Re-enter password*
+						<input
+							id={'rePassword'}
+							type='password'
+							placeholder='Re-enter password'
+							className={`not-react-select focus-highlight 
 							${errors.rePassword ? 'error' : ''}
 							${!errors.rePassword && watch('rePassword') ? 'valid' : ''}`}
-								{...register('rePassword')}
-								autoComplete={'off'}
-								onBlur={() => trigger('rePassword')} // Trigger validation when user leaves the field
-							/>
-							<ErrorElement errors={errors} id={'rePassword'}/>
-						</label>
+							{...register('rePassword')}
+							autoComplete={'off'}
+							onBlur={() => trigger('rePassword')} // Trigger validation when user leaves the field
+						/>
+						<ErrorElement errors={errors} id={'rePassword'}/>
+					</label>
 
 				</div>
 
 				{/* Terms and Conditions */}
 				<label id='tc-label'>
-					<input className='focus-highlight' type='checkbox' id='tc-input' {...register('terms')} />
+					<input
+						className={`focus-highlight 
+							${errors.terms ? 'error-checkbox' : ''}`}
+						type='checkbox'
+						id='tc-input'
+						{...register('terms')}
+						onBlur={() => trigger('terms')} // Trigger validation when user leaves the field
+					/>
 					&nbsp; I agree to the terms and conditions*
 				</label>
-
-				<ErrorElement errors={errors} id={'terms'}/>
+				<div className={'terms-error'}>
+					<ErrorElement errors={errors} id={'terms'}/>
+				</div>
 
 				{/* Submit Button */}
 				<div className='buttons-container'>

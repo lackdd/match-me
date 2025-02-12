@@ -8,6 +8,7 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {stepThreeSchema} from './validationSchema.jsx';
 import {ErrorElement} from './errorElement.jsx';
 import {PreviousNextButtons} from './previousNextButtons.jsx';
+import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx';
 
 
 function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
@@ -82,28 +83,32 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 				<label id='experience' className={'short'}>
 					Years of music experience*
 					<br/>
-					<input
-						type='number'
-						id='experience'
-						name={'experience'}
-						className={`not-react-select focus-highlight short 
-						${errors.experience ? "error" : ""}
-						${!errors.experience && watch('experience') ? "valid" : ""}`}
-						placeholder='Enter number of years'
-						autoFocus={true}
-						{...register("experience")}
-						autoComplete={"off"}
-						min={0}
-						max={formOneData.age}
-						value={formThreeData.experience || ""}
-						onChange={(e) => {
-							const value = e.target.value ? parseInt(e.target.value, 10) : 0;
-							setValue('experience', value, { shouldValidate: true });
-							setFormThreeData((prev) => ({ ...prev, experience: value }));
-						}}
-						onBlur={() => trigger('experience')} // Trigger validation when user leaves the field
-					/>
-					<ErrorElement errors={errors}  id={'experience'}/>
+					<div className={'with-button'}>
+						<input
+							type='number'
+							id='experience'
+							name={'experience'}
+							className={`not-react-select focus-highlight short 
+						${errors.experience ? 'error' : ''}
+						${!errors.experience && watch('experience') ? 'valid' : ''}`}
+							placeholder='Enter number of years'
+							autoFocus={true}
+							{...register('experience')}
+							autoComplete={'off'}
+							min={0}
+							max={formOneData.age}
+							value={formThreeData.experience || ''}
+							onChange={(e) => {
+								const value = e.target.value ? parseInt(e.target.value, 10) : 0;
+								setValue('experience', value, {shouldValidate: true});
+								setFormThreeData((prev) => ({...prev, experience: value}));
+							}}
+							onBlur={() => trigger('experience')} // Trigger validation when user leaves the field
+						/>
+						<IncrementDecrementButtons id={'experience'} watch={watch} setValue={setValue} trigger={trigger}/>
+					</div>
+
+					<ErrorElement errors={errors} id={'experience'}/>
 				</label>
 				<label id='music' className={'short'}>
 					Link to your music
@@ -121,8 +126,8 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 						autoComplete={'off'}
 						onChange={(e) => {
 							const selectedValue = e.target.value;
-							setValue('musicLink', selectedValue, { shouldValidate: true });
-							setFormThreeData((prev) => ({ ...prev, musicLink: selectedValue }));
+							setValue('musicLink', selectedValue, {shouldValidate: true});
+							setFormThreeData((prev) => ({...prev, musicLink: selectedValue}));
 						}}
 						onBlur={() => trigger('musicLink')} // Trigger validation when user leaves the field
 					/>
