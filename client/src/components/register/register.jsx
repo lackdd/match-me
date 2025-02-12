@@ -270,7 +270,7 @@ function Register() {
 					<div id='have-account'>
 						Already have an account?
 						&nbsp;
-						<Link to='/login'>Sign in</Link>
+						<Link to='/login' tabIndex={-1}>Sign in</Link>
 					</div>
 				)}
 			</div>

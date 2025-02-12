@@ -71,7 +71,7 @@ function Login() {
 						autoComplete={"on"}
 						required
 					/>
-					<Link to='/forgot-password' id='forgot-password'>forgot password?</Link>
+					<Link to='/forgot-password' id='forgot-password' tabIndex={-1}>forgot password?</Link>
 					<p className={`error-message ${error ? 'visible' : 'hidden'}`}>
 						{error}
 					</p>
@@ -97,7 +97,7 @@ function Login() {
 			<div id='no-account-label'>
 				Don't have an account?
 				&nbsp;
-				<Link to='/register'>Sign up</Link>
+				<Link to='/register' tabIndex={-1}>Sign up</Link>
 			</div>
 		</div>
 	);
