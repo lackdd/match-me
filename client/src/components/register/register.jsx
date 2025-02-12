@@ -14,6 +14,13 @@ import CloudinaryUploadWidget from '../utils/CloudinaryUploadWidget';
 import {Link} from 'react-router-dom';
 import axios from "axios";
 
+export const handleCloseMenu = (selected) => {
+	if (selected.length >= 3) {
+		document.activeElement.blur()
+	}
+};
+
+
 function Register() {
 	// cloudinary code from: https://cloudinary.com/documentation/react_image_and_video_upload
 
