@@ -109,22 +109,6 @@ function Register() {
 	};
 
 
-	const handleChangeDataReactSelect = (name, value, setData) => {
-		setData((prev) => ({
-			...prev,
-			[name]: value // Store name and value properly
-		}));
-	};
-
-	const handleChangeDataDefault = (e, setData) => {
-		const { name, value } = e.target;
-		setData((prev) => ({
-			...prev,
-			[name]: value // Store name and value properly
-		}));
-	};
-
-
 	const onImageChange = async (event) => {
 		if (event.target.files && event.target.files[0]) {
 			setImage(URL.createObjectURL(event.target.files[0])); // show local preview before upload
@@ -144,7 +128,7 @@ function Register() {
 	};
 
 	function AddStep(e) {
-		e.preventDefault();
+		// e.preventDefault();
 		setCurrentStep(currentStep + 1)
 	}
 
@@ -174,9 +158,6 @@ function Register() {
 
 
 	return (
-		// <LoadScript googleMapsApiKey={GOOGLE_API_KEY} libraries={libraries}
-		// 			onLoad={handleScriptLoad}  // Call this when the script is loaded
-		// 	>
 
 		<>
 			<div className='register-container'>
@@ -196,8 +177,6 @@ function Register() {
 						<Step1
 							formOneData={formOneData}
 							setFormOneData={setFormOneData}
-							handleChangeDataDefault={handleChangeDataDefault}
-							handleChangeDataReactSelect={handleChangeDataReactSelect}
 							stepFunctions={stepFunctions}
 							error={error} setError={setError}
 						/>
@@ -206,7 +185,7 @@ function Register() {
 						<Step2
 							formTwoData={formTwoData}
 							setFormTwoData={setFormTwoData}
-							handleChangeDataReactSelect={handleChangeDataReactSelect}
+							onSubmit={onSubmit}
 							stepFunctions={stepFunctions}
 							handleCloseMenu={handleCloseMenu}
 						/>
@@ -215,8 +194,7 @@ function Register() {
 						<Step3
 							formThreeData={formThreeData}
 							setFormThreeData={setFormThreeData}
-							handleChangeDataDefault={handleChangeDataDefault}
-							handleChangeDataReactSelect={handleChangeDataReactSelect}
+							onSubmit={onSubmit}
 							stepFunctions={stepFunctions}
 							error={error} setError={setError}
 						/>
@@ -224,8 +202,10 @@ function Register() {
 					{currentStep === 4 && (
 						<Step4
 							image={image}
+							imageUrl={imageUrl}
 							stepFunctions={stepFunctions}
 							onImageChange={onImageChange}
+							onSubmit={onSubmit}
 						/>
 					)}
 					{currentStep === 5 && (
@@ -238,8 +218,7 @@ function Register() {
 							formTwoData={formTwoData}
 							formThreeData={formThreeData}
 							handleCloseMenu={handleCloseMenu}
-							handleChangeDataDefault={handleChangeDataDefault}
-							handleChangeDataReactSelect={handleChangeDataReactSelect}
+							onSubmit={onSubmit}
 						/>
 					)}
 					{currentStep === 6 && (
