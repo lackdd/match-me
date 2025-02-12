@@ -49,20 +49,11 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 				</label>
 
 			</div>
-			<div className={'buttons-container'}>
-				<button
-					className='previous wide narrow'
-					type={'button'}
-					onClick={stepFunctions.DeductStep}>
-					Previous
-				</button>
-				<button
-					className='next wide narrow'
-					type='submit'
-				>
-					Next
-				</button>
-			</div>
+
+			<PreviousNextButtons
+				DeductStep={stepFunctions.DeductStep}
+				errors={{}}
+			/>
 		</form>
 	)
 }

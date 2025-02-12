@@ -1,47 +1,33 @@
 
-// step 2 of registration
+// step 3 of registration
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import {customStyles} from './customInputStyles.jsx';
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {stepThreeSchema} from './validationSchema.jsx';
+import {ErrorElement} from './error-element.jsx';
 
 
-// for testing
-const CustomNumberInput = ({ value, onChange, min = 0, max = 100 }) => {
-	const handleIncrement = () => {
-		if (value < max) onChange(value + 1);
-	};
-
-	const handleDecrement = () => {
-		if (value > min) onChange(value - 1);
-	};
-
-	return (
-		<div className="custom-number-input">
-			<button onClick={handleDecrement} className="decrement">
-				▼
-			</button>
-			<input
-				type="number"
-				value={value}
-				onChange={(e) => onChange(Number(e.target.value))}
-			/>
-			<button onClick={handleIncrement} className="increment">
-				▲
-			</button>
-		</div>
-	);
-};
-
-
-function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeDataReactSelect, handleChangeDataDefault, error, setError}) {
-	const [number, setNumber] = useState(10);
-
+function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
 	const [inputValue, setInputValue] = useState("");
 	const [options, setOptions] = useState([]);
 	const autocompleteServiceRef = useRef(null);
 
 	const isMounted = useRef(true);
+	// Initialize react-hook-form with Yup schema
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		watch,
+		trigger,
+		formState: { errors },
+	} = useForm({
+		defaultValues: formThreeData,
+		resolver: yupResolver(stepThreeSchema(formOneData)),
+		mode: "onChange",
+	});
 
 	useEffect(() => {
 		// Set isMounted to true when the component mounts
@@ -84,15 +70,12 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 
 	return (
 		<form className='step-three'
-			  onSubmit={(e) => {
-				  stepFunctions.AddStep(e);
-			  }}
-			  autoComplete={"on"}
-		>
+			  onSubmit={handleSubmit((data) => onSubmit(data, formThreeData, setFormThreeData))}
+			  autoComplete={'off'}
+			  noValidate>
 			<div className='form-title'>
 				<h1>A little bit more...</h1>
 			</div>
-
 
 			<div className={'line'}>
 				<label id='experience' className={'short'}>
@@ -102,15 +85,24 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 						type='number'
 						id='experience'
 						name={'experience'}
-						className={`not-react-select focus-highlight short ${error ? 'error-border' : ''}`}
+						className={`not-react-select focus-highlight short 
+						${errors.experience ? "error" : ""}
+						${!errors.experience && watch('experience') ? "valid" : ""}`}
 						placeholder='Enter number of years'
-						value={formThreeData.experience}
-						onChange={(e) => handleChangeDataDefault(e, setFormThreeData)}
-						min={0}
-						max={formThreeData.age}
 						autoFocus={true}
-						// required
+						{...register("experience")}
+						autoComplete={"off"}
+						min={0}
+						max={formOneData.age}
+						value={formThreeData.experience || ""}
+						onChange={(e) => {
+							const value = e.target.value ? parseInt(e.target.value, 10) : 0;
+							setValue('experience', value, { shouldValidate: true });
+							setFormThreeData((prev) => ({ ...prev, experience: value }));
+						}}
+						onBlur={() => trigger('experience')} // Trigger validation when user leaves the field
 					/>
+					<ErrorElement errors={errors}  id={'experience'}/>
 				</label>
 				<label id='music' className={'short'}>
 					Link to your music
@@ -119,11 +111,21 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 						type='url'
 						id='music'
 						name={'musicLink'}
-						className={`not-react-select focus-highlight short ${error ? 'error-border' : ''}`}
+						className={`not-react-select focus-highlight short
+						${errors.musicLink ? 'error' : ''}
+						${!errors.musicLink && watch('musicLink') ? 'valid' : ''}`}
 						placeholder='Link to your Spotify etc'
-						value={formThreeData.musicLink}
-						onChange={(e) => handleChangeDataDefault(e, setFormThreeData)}
+						value={watch('musicLink') || null}
+						{...register('musicLink')}
+						autoComplete={'off'}
+						onChange={(e) => {
+							const selectedValue = e.target.value;
+							setValue('musicLink', selectedValue, { shouldValidate: true });
+							setFormThreeData((prev) => ({ ...prev, musicLink: selectedValue }));
+						}}
+						onBlur={() => trigger('musicLink')} // Trigger validation when user leaves the field
 					/>
+					<ErrorElement errors={errors}  id={'musicLink'}/>
 				</label>
 
 			</div>
@@ -138,14 +140,27 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 							setInputValue(val);
 							fetchPlaces(val);
 						}}
-						onChange={(selectedOption) => handleChangeDataReactSelect('location', selectedOption, setFormThreeData)}
-						placeholder="Search for your city"
+						placeholder='Search for your city'
 						isClearable={true}
 						styles={customStyles}
 						wideMenu={true}
 						closeMenuOnSelect={true}
-						value={formThreeData.location}
+						value={watch('location') || null}
+						autoComplete={'off'}
+						isValid={
+							!errors.location &&
+							watch('location') &&
+							watch('location').label &&
+							watch('location').value
+						}
+						isError={!!errors.location} // Check if error exists
+						onChange={(selectedOption) => {
+							setValue('location', selectedOption, {shouldValidate: true});
+							setFormThreeData((prev) => ({...prev, location: selectedOption})); // Persist data correctly
+						}}
+						onBlur={() => trigger('location')} // Trigger validation when user leaves the field
 					/>
+					<ErrorElement errors={errors}  id={'location'}/>
 				</label>
 			</div>
 			<div className={'line large'}>
@@ -156,12 +171,20 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 						maxLength={300}
 						id='description'
 						name={'description'}
-						className={`description-container focus-highlight ${error ? 'error-border' : ''}`}
-						placeholder='Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut consequatur cupiditate error eveniet hic qui reiciendis rerum tenetur? Deserunt eos laboriosam minima nihil praesentium repellendus reprehenderit saepe tenetur vel, velit? Fugit, ratione, voluptas? Accusamus dolor incidunt ipsum iure nemo rem sed voluptatum. Accusantium doloribus ducimus esse harum natus nobis provident rem ut. Deleniti dolorum neque nulla quis rem? Ullam, unde?'
-						value={formThreeData.description}
-						onChange={(e) => handleChangeDataDefault(e, setFormThreeData)}
-						// required
+						className={`description-container focus-highlight
+						${errors.description ? 'error' : ''}
+						${!errors.description && watch('description') ? 'valid' : ''}`}
+						placeholder='Say a few words about yourself...'
+						{...register('description')}
+						autoComplete={'off'}
+						value={formThreeData.description || ""}
+						onChange={(e) => {
+							const value = e.target.value;
+							setValue('description', value, { shouldValidate: true });
+							setFormThreeData((prev) => ({ ...prev, description: value }));
+						}}
 					/>
+					<ErrorElement errors={errors}  id={'description'}/>
 				</label>
 			</div>
 			<div className={'buttons-container'}>
@@ -172,7 +195,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, handleChangeData
 					Previous
 				</button>
 				<button
-					className='next wide narrow'
+					className={`next wide narrow ${Object.keys(errors).length > 0 ? "disabled" : ""}`}
 					type={'submit'}
 				>
 					Next

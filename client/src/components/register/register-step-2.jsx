@@ -1,179 +1,178 @@
-import {genreOptions, methodsOptions, interestsOptions, personalityTraitsOptions, goalsOptions} from './inputOptions.jsx';
+import {
+	genreOptions,
+	methodsOptions,
+	interestsOptions,
+	personalityTraitsOptions,
+	goalsOptions,
+} from './inputOptions.jsx';
 import {customStyles} from './customInputStyles.jsx';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import {useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import {stepTwoSchema} from './validationSchema.jsx';
+import {handleCloseMenu} from './register.jsx';
+import {ErrorElement} from './error-element.jsx';
+import {PreviousNextButtons} from './previous-next-buttons.jsx';
 
 
-function Step2({formTwoData, setFormTwoData, stepFunctions, handleChangeDataReactSelect, handleCloseMenu, error, setError}) {
+const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData }) => {
+	return (
+		<div className={'line large'}>
+			<label id={id}>
+				{placeholder}*
+				<br/>
+				<Select
+					className='basic-multi-select long'
+					classNamePrefix='select'
+					components={makeAnimated()}
+					closeMenuOnSelect={false}
+					isClearable={true}
+					isSearchable={true}
+					isMulti={true}
+					containerExpand={true}
+					menuPlacement={'top'}
+					menuTop={true}
+					wideMenu={true}
+					name={id}
+					placeholder={`Choose 1-3 ${name}`}
+					options={options}
+					isOptionDisabled={() => (watch(id) || []).length >= 3}
+					styles={customStyles}
+					value={watch(id) || []}
+					isValid={!errors[id] && (watch(id) || []).length > 0}
+					isError={errors[id]} // Check if error exists
+					onChange={(selectedOption) => {
+						setValue(id, selectedOption, {shouldValidate: true});
+						setFormTwoData((prev) => ({...prev, [id]: selectedOption})); // Persist data correctly
+						handleCloseMenu(selectedOption);
+
+						if (!selectedOption || selectedOption.length === 0) {
+							setError(id, {message: 'Required'});
+						} else {
+							clearErrors(id);
+						}
+					}}
+					onBlur={() => trigger(id)} // Trigger validation when user leaves the field
+				/>
+				<ErrorElement errors={errors}  id={id}/>
+			</label>
+
+		</div>
+	)
+}
+
+function Step2({formTwoData, setFormTwoData, stepFunctions, onSubmit}) {
+
+	// Initialize react-hook-form with Yup schema
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		watch,
+		clearErrors,
+		setError,
+		trigger,
+		formState: { errors },
+	} = useForm({
+		defaultValues: formTwoData,
+		resolver: yupResolver(stepTwoSchema(formTwoData)),
+		mode: "onBlur",
+	});
 
 	return (
 
 		<form className='step-two'
-			  onSubmit={(e) => {
-				  stepFunctions.AddStep(e);
-			  }}
-			  autoComplete={"on"}>
+			  onSubmit={handleSubmit((data) => {
+				  onSubmit(data, formTwoData, setFormTwoData);
+			  })}
+			  autoComplete={'off'}
+			  noValidate>
 
 			<div className='form-title'>
 				<h1>Tell us about yourself</h1>
 			</div>
 
-			<div className={'line large'}>
-				<label id='genres'>
-					Preferred music genres*
-					<br/>
-					<Select
-						className='basic-multi-select long'
-						classNamePrefix='select'
-						components={makeAnimated()}
-						closeMenuOnSelect={false}
-						isClearable={true}
-						isSearchable={true}
-						isMulti={true}
-						containerExpand={true}
-						wideMenu={true}
-						name={'preferredGenres'}
-						required
-						placeholder='Choose 1-3 genres'
-						options={genreOptions}
-						isOptionDisabled={() => formTwoData.preferredGenres.length >= 3}
-						styles={customStyles}
-						value={formTwoData.preferredGenres}
-						autoFocus={true}
-						onChange={(selectedOption) => {
-							handleChangeDataReactSelect('preferredGenres', selectedOption, setFormTwoData);
-							handleCloseMenu(selectedOption);
-						}}
-					/>
-				</label>
+			<CustomSelect
+				placeholder={'Preferred music genres'}
+				options={genreOptions}
+				id={'preferredGenres'}
+				name={'genres'}
+				register={register}
+				// autoFocus={'on'}
+				watch={watch}
+				setValue={setValue}
+				trigger={trigger}
+				errors={errors}
+				setError={setError}
+				clearErrors={clearErrors}
+				setFormTwoData={setFormTwoData}
+			/>
 
-			</div>
+			<CustomSelect
+				placeholder={'Preferred methods'}
+				options={methodsOptions}
+				id={'preferredMethods'}
+				name={'methods'}
+				register={register}
+				watch={watch}
+				setValue={setValue}
+				trigger={trigger}
+				errors={errors}
+				setError={setError}
+				clearErrors={clearErrors}
+				setFormTwoData={setFormTwoData}
+			/>
 
-			<div className={'line large'}>
-				<label id='methods'>
-					Preferred methods*
-					<br/>
-					<Select
-						className='basic-multi-select long'
-						classNamePrefix='select'
-						components={makeAnimated()}
-						closeMenuOnSelect={false}
-						isClearable={true}
-						isSearchable={true}
-						isMulti={true}
-						containerExpand={true}
-						wideMenu={true}
-						name={'preferredMethods'}
-						placeholder='Choose 1-3 methods'
-						options={methodsOptions}
-						isOptionDisabled={() => formTwoData.preferredMethods.length >= 3}
-						styles={customStyles}
-						value={formTwoData.preferredMethods}
-						onChange={(selectedOption) => {
-							handleChangeDataReactSelect('preferredMethods', selectedOption, setFormTwoData);
-							handleCloseMenu(selectedOption);
-						}}
-					/>
-				</label>
-			</div>
+			<CustomSelect
+				placeholder={'Additional interests'}
+				options={interestsOptions}
+				id={'additionalInterests'}
+				name={'interests'}
+				register={register}
+				watch={watch}
+				setValue={setValue}
+				trigger={trigger}
+				errors={errors}
+				setError={setError}
+				clearErrors={clearErrors}
+				setFormTwoData={setFormTwoData}
+			/>
 
-			<div className={'line large'}>
-				<label id='interests'>
-					Additional interests*
-					<br/>
-					<Select
-						className='basic-multi-select long'
-						classNamePrefix='select'
-						components={makeAnimated()}
-						closeMenuOnSelect={false}
-						isClearable={true}
-						isSearchable={true}
-						isMulti={true}
-						containerExpand={true}
-						wideMenu={true}
-						name={'additionalInterests'}
-						placeholder='Choose 1-3 interests'
-						options={interestsOptions}
-						isOptionDisabled={() => formTwoData.additionalInterests.length >= 3}
-						styles={customStyles}
-						value={formTwoData.additionalInterests}
-						onChange={(selectedOption) => {
-							handleChangeDataReactSelect('additionalInterests', selectedOption, setFormTwoData);
-							handleCloseMenu(selectedOption);
-						}}
-					/>
-				</label>
-			</div>
+			<CustomSelect
+				placeholder={'Personality traits'}
+				options={personalityTraitsOptions}
+				id={'personalityTraits'}
+				name={'personality traits'}
+				register={register}
+				watch={watch}
+				setValue={setValue}
+				trigger={trigger}
+				errors={errors}
+				setError={setError}
+				clearErrors={clearErrors}
+				setFormTwoData={setFormTwoData}
+			/>
 
-			<div className={'line large'}>
-				<label id='personality'>
-					Personality traits*
-					<br/>
-					<Select
-						className='basic-multi-select long'
-						classNamePrefix='select'
-						components={makeAnimated()}
-						closeMenuOnSelect={false}
-						isClearable={true}
-						isSearchable={true}
-						isMulti={true}
-						containerExpand={true}
-						wideMenu={true}
-						name={'personalityTraits'}
-						placeholder='Choose 1-3 traits'
-						options={personalityTraitsOptions}
-						isOptionDisabled={() => formTwoData.personalityTraits.length >= 3}
-						styles={customStyles}
-						value={formTwoData.personalityTraits}
-						onChange={(selectedOption) => {
-							handleChangeDataReactSelect('personalityTraits', selectedOption, setFormTwoData);
-							handleCloseMenu(selectedOption);
-						}}
-					/>
-				</label>
-			</div>
-			<div className={'line large'}>
-				<label id='goal'>
-					What are your goals with music?*
-					<br/>
-					<Select
-						className='basic-multi-select long'
-						classNamePrefix='select'
-						components={makeAnimated()}
-						closeMenuOnSelect={false}
-						isClearable={true}
-						isSearchable={true}
-						isMulti={true}
-						containerExpand={true}
-						wideMenu={true}
-						name={'goals'}
-						placeholder='Choose 1-3 goals'
-						options={goalsOptions}
-						styles={customStyles}
-						value={formTwoData.goals}
-						isOptionDisabled={() => formTwoData.goals.length >= 3}
-						onChange={(selectedOption) => {
-							handleChangeDataReactSelect('goals', selectedOption, setFormTwoData);
-							handleCloseMenu(selectedOption);
-						}}
-					/>
-				</label>
-			</div>
+			<CustomSelect
+				placeholder={'Goals'}
+				options={goalsOptions}
+				id={'goals'}
+				name={'goals'}
+				register={register}
+				watch={watch}
+				setValue={setValue}
+				trigger={trigger}
+				errors={errors}
+				setError={setError}
+				clearErrors={clearErrors}
+				setFormTwoData={setFormTwoData}
+			/>
 
-			<div className={'buttons-container'}>
-				<button
-					className='previous wide narrow'
-					type={'button'}
-					onClick={stepFunctions.DeductStep}>
-					Previous
-				</button>
-				<button
-					className='next wide narrow'
-					type={'submit'}
-				>
-					Next
-				</button>
-			</div>
+			<PreviousNextButtons
+                DeductStep={stepFunctions.DeductStep}
+				errors={errors}
+            />
 		</form>
 	);
 }
