@@ -71,17 +71,17 @@ function Register() {
 
 	// step 2 data
 	const [formTwoData, setFormTwoData] = useState({
-		additionalInterests: "",
-		personalityTraits: "",
-        preferredMethods: "",
-        preferredGenres: "",
-		goals: "",
+		preferredGenres: [],
+		preferredMethods: [],
+		additionalInterests: [],
+		personalityTraits: [],
+		goals: [],
 	})
 
 	// step 3 data
 	const [formThreeData, setFormThreeData] = useState({
         experience: "",
-        location: "",
+        location: [],
         musicLink: "",
         description: "",
 	})
@@ -92,9 +92,9 @@ function Register() {
 
 	// step 5 data
 	const [formFiveData, setFormFiveData] = useState({
-		matchPreferredGenres: "",
-		matchPreferredMethods: "",
-        matchGoals: "",
+		matchPreferredGenres: [],
+		matchPreferredMethods: [],
+        matchGoals: [],
         matchGender: "",
         matchAge: "",
 		matchExperience: "",
