@@ -10,7 +10,14 @@ export const customStyles = {
 		padding: '0 0',
 		margin: '0 0',
 		boxSizing: 'border-box',
-		borderRadius: state.isFocused && state.selectProps.menuIsOpen ? '10px 10px 0 0' : '10px',
+		backgroundColor: state.selectProps.isValid
+			? '#d4f5d9' // light green if isValid is true
+			: state.selectProps.isError
+				? '#ffbebe' // light red if isError is true
+				: 'white', // default to white
+		borderRadius:
+			state.isFocused && state.selectProps.menuIsOpen
+				? (state.selectProps.menuTop ? '0 0 10px 10px' : '10px 10px 0 0'): '10px' ,
 		borderColor: state.isFocused ? 'rgb(254, 110, 121)' : 'rgb(97, 97, 97)',
 		boxShadow: state.isFocused ? '0 0 5px rgb(254, 110, 121)' : 'none',
 		'&:hover': { borderColor: '#rgb(254, 110, 121)' },
@@ -96,6 +103,40 @@ export const customStyles = {
 		textAlign: 'center',
 		paddingLeft: '8px',
 		// boxShadow: 'none !important',
+	}),
+
+	dropdownIndicator: (provided, state) => {
+		const isReversed = state.selectProps.menuTop; // Assuming menuTop is passed as a prop to the select
+
+		return {
+			...provided,
+			color: state.isFocused ? 'rgb(97, 97, 97)' : 'rgb(97, 97, 97)', // green when focused, grey otherwise
+			transform:
+				isReversed
+					? state.selectProps.menuIsOpen
+						? 'rotate(0deg)' // Arrow points down when menu is open
+						: 'rotate(180deg)' // Arrow points up when menu is closed
+					: state.selectProps.menuIsOpen
+						? 'rotate(180deg)' // Arrow points up when menu is open
+						: 'rotate(0deg)', // Arrow points down when menu is closed
+			transition: 'transform 0.2s ease-in-out', // Smooth animation
+			':hover': {
+				color: 'rgb(21,21,21)',
+			},
+		};
+	},
+
+	clearIndicator: (provided, state) => ({
+		...provided,
+		color: state.isFocused ? 'rgb(97, 97, 97)' : 'rgb(97, 97, 97)', // green when focused, grey otherwise
+		':hover': {
+			color: 'rgb(21,21,21)',
+		},
+	}),
+
+	indicatorSeparator: (provided) => ({
+		...provided,
+		backgroundColor: '#888', // grey separator
 	}),
 
 	placeholder: (provided) => ({
