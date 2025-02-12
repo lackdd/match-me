@@ -101,16 +101,11 @@ function Register() {
         matchLocation: "",
 	})
 
-	// const [isLoaded, setIsLoaded] = useState(false);
-	//
-	// const handleScriptLoad = () => {
-	// 	setIsLoaded(true);  // Set to true when the script is successfully loaded
-	// };
-
-	const handleCloseMenu = (selected) => {
-		if (selected.length >= 3) {
-			document.activeElement.blur()
-		}
+	// Handle form submission
+	const onSubmit = (data, form, setForm) => {
+		setForm(data);
+		console.log("Valid form data:", form);
+		stepFunctions.AddStep();
 	};
 
 
