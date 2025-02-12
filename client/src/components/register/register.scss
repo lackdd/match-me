@@ -7,7 +7,6 @@
   position: relative;
   height: 100vh;
 
-
   input[type="file"] {
     display: none;
   }
@@ -216,35 +215,37 @@
 
     }
   }
-}
 
-// for testing
-.custom-number-input {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+  .error-line {
+    width: 100%;
+    color: red;
+    height: 1rem;
+    font-size: 0.7rem;
 
-.custom-number-input input {
-  width: 60px;
-  text-align: center;
-  font-size: 1rem;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  outline: none;
-}
+    .error-text {
+      text-align: right;
+      padding-right: 5px;
+    }
+  }
 
-.custom-number-input button {
-  background-color: rgb(254, 110, 121);
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  font-size: 1rem;
-  border-radius: 5px;
-}
+  .error {
+    background-color: variables.$error-red;
+    //border-color: variables.$input-border-dark-grey;
+    //border-color: red;
+    //color: white;
 
-.custom-number-input button:hover {
-  background-color: rgb(200, 80, 90);
+    &:focus {
+      background-color: white !important;
+      //color: black;
+    }
+
+  }
+
+  .valid {
+    background-color: variables.$valid-green;
+
+    &:focus {
+      background-color: white;
+    }
+  }
 }
