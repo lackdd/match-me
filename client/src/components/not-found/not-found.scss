@@ -1,0 +1,10 @@
+@use '../../variables';
+
+.not-found-container {
+  @include variables.whole-page;
+  @include variables.centered-column;
+
+  .coming-soon {
+    justify-self: center;
+  }
+}
