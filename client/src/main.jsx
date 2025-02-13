@@ -13,6 +13,10 @@ import Login from './components/login/login.jsx';
 import ForgotPassword from './components/forgot-password/forgot-password.jsx';
 import Dashboard from './components/dashboard/dashboard.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
+import Connections from './components/connections/connections.jsx';
+import Chats from './components/chats/chats.jsx';
+import Recommendations from './components/recommendations/recommendations.jsx';
+import Settings from './components/settings/settings.jsx';
 
 
 
@@ -46,7 +50,27 @@ function Main() {
                 {
                     path: "/dashboard",
                     element: <ProtectedRoute />,
-                    children: [{ path: "/dashboard", element: <Dashboard /> }],
+                    children: [{ path: "/dashboard", element: <Dashboard /> },],
+                },
+                {
+                    path: "/connections",
+                    element: <ProtectedRoute />,
+                    children: [{ path: "/connections", element: <Connections /> },],
+                },
+                {
+                    path: "/chats",
+                    element: <ProtectedRoute />,
+                    children: [{ path: "/chats", element: <Chats /> },],
+                },
+                {
+                    path: "/recommendations",
+                    element: <ProtectedRoute />,
+                    children: [{ path: "/recommendations", element: <Recommendations /> },],
+                },
+                {
+                    path: "/settings",
+                    element: <ProtectedRoute />,
+                    children: [{ path: "/settings", element: <Settings /> },],
                 },
             ],
         },
