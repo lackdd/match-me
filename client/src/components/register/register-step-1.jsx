@@ -190,8 +190,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 								type='password'
 								placeholder='Enter a password'
 								className={`not-react-select focus-highlight
-							${errors.password ? 'error' : ''}
-							${!errors.password && watch('password') ? 'valid' : ''}`}
+									${errors.password ? 'error' : ''}
+									${!errors.password && watch('password') ? 'valid' : ''}`}
 								{...register('password')}
 								autoComplete={'off'}
 								onBlur={() => trigger('password')} // Trigger validation when user leaves the field
