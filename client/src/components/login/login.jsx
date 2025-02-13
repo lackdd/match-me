@@ -3,12 +3,15 @@ import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {AuthContext} from "../../main.jsx";
+import {ErrorElement} from '../register/errorElement.jsx';
+import {ShowPasswordButton} from '../register/showPasswordButton.jsx';
 
 function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const [error, setError] = useState('');
+	const [error, setError] = useState('placeholder-error');
 	const history = useNavigate();
+	const [showPassword, setShowPassword] = useState(true);
 
 	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
 
@@ -25,6 +28,7 @@ function Login() {
 			}
 			const response = await
 				axios.post('http://localhost:8080/login', {email, password});
+			setError("")
 			console.log('Login successful: ', response.data);
 			sessionStorage.setItem("token", response.data);
 			setIsUserLoggedIn(true);
@@ -61,24 +65,28 @@ function Login() {
 				<label id='password-label'>
 					Password
 					<br/>
-					<input
-						type='password'
-						id='password-input'
-						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
-						placeholder='Enter your password'
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						autoComplete={"on"}
-						required
-					/>
+					<div className={'with-button'}>
+						<input
+							type='password'
+							id='password-login'
+							className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
+							placeholder='Enter your password'
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							autoComplete={'on'}
+							required
+						/>
+						<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} login={true}/>
+					</div>
+
 					<Link to='/forgot-password' id='forgot-password' tabIndex={-1}>forgot password?</Link>
-					<p className={`error-message ${error ? 'visible' : 'hidden'}`}>
+					<p className={`error-message ${error && error !== "placeholder-error" ? 'visible' : 'hidden'}`}>
 						{error}
 					</p>
 				</label>
 				<label id='remember-me-label'>
 					<input
-						className={"focus-highlight"}
+						className={'focus-highlight'}
 						type='checkbox'
 						name='remember'
 						id='remember-me-input'/>
@@ -89,7 +97,9 @@ function Login() {
 					<button
 						className='login-button wide small'
 						onClick={handleLogin}
-						type={"submit"}>
+						type={"submit"}
+						// disabled={error}
+					>
 						Login
 					</button>
 				</label>
