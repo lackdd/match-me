@@ -1,1 +1,11 @@
 @use '../../variables';
+
+.recommendations-container {
+  @include variables.whole-page;
+  @include variables.centered-column;
+  @include variables.glass-container;
+
+  .coming-soon {
+    justify-self: center;
+  }
+}
