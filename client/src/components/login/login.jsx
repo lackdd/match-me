@@ -54,7 +54,7 @@ function Login() {
 						type='email'
 						id='email-input'
 						placeholder='Enter your email'
-						className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
+						className={`not-react-select focus-highlight ${error && error !== "placeholder-error" ? 'error' : ''}`}
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
 						autoComplete={"on"}
@@ -69,7 +69,7 @@ function Login() {
 						<input
 							type='password'
 							id='password-login'
-							className={`not-react-select focus-highlight ${error ? 'error-border' : ''}`}
+							className={`not-react-select focus-highlight ${error && error !== "placeholder-error" ? 'error' : ''}`}
 							placeholder='Enter your password'
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}

@@ -205,4 +205,15 @@
 
 
   }
+
+  .error {
+    background-color: variables.$error-red;
+    accent-color: variables.$error-red;
+
+    &:focus {
+      background-color: white !important;
+      //color: black;
+    }
+
+  }
 }
