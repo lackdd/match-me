@@ -1,5 +1,5 @@
 import './features.scss'
-import Navigator from '../nav-bar-guest/nav-bar-guest.jsx';
+
 
 function Features() {
 	return (
