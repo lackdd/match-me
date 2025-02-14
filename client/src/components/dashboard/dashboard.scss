@@ -1,0 +1,111 @@
+@use '../../variables';
+
+.dashboard-container {
+  @include variables.glass-container;
+  justify-self: center;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  width: 80%;
+  height: auto;
+  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns, each 50% */
+  grid-template-rows: auto auto; /* Two rows */
+  padding: 3rem;
+  row-gap: 2rem;
+
+  .coming-soon {
+    justify-self: center;
+  }
+
+  .grid-item {
+    border-bottom: 1px solid black;
+  }
+
+  .picture-container {
+    @include variables.centered-column;
+    align-items: flex-start;
+    position: relative;
+
+    //&::before, &::after {
+    //  content: "";
+    //  position: absolute;
+    //  top: 0;
+    //  left: 0;
+    //  background-color: rgba(0, 0, 0, 0.3);
+    //}
+
+    img {
+      width: 16rem; // todo make dynamic
+      height: auto;
+    }
+
+    .change-picture {
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16rem;
+      position: absolute;
+      bottom: 0;
+
+      input[type="file"] {
+        display: none;
+      }
+
+
+      & > label {
+        @include variables.centered-column;
+        background-color: variables.$main-pink;
+        width: 11rem;
+        height: 2rem;
+        border: 1px solid variables.$main-pink;
+        text-align: center;
+        border-radius: 100px;
+        cursor: pointer;
+        box-shadow: variables.$default-button-shadow;
+        transition: all 0.1s ease;
+        color: white;
+
+        &:hover {
+          background-color: variables.$main-pink-80;
+          box-shadow: variables.$upper-inset-shadow-hover;
+          border-color: variables.$main-pink-80;
+        }
+        &:active {
+          background-color: variables.$main-pink-20;
+          box-shadow: variables.$upper-inset-shadow-click;
+          border-color: variables.$main-pink-20;
+        }
+      }
+
+    }
+  }
+
+  .bio-container {
+    height: auto;
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+
+  .match-container {
+    //.large {
+    //  width: 100%
+    //}
+    //
+    //.short {
+    //  width: 40%;
+    //}
+
+    .line {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      //
+      //& > :nth-child(2) {
+      //  margin-left: auto;
+      //}
+    }
+  }
+}
