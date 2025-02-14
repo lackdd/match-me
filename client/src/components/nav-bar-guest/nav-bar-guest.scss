@@ -28,22 +28,31 @@
   .links-container {
     display: flex;
     flex-direction: row;
-    gap: 0.625rem;
+    //gap: 0.625rem;
     width: 25rem;
-    justify-content: space-between;
+    //justify-content: space-between;
+    justify-content: center;
+    gap: clamp(1rem, -2.393rem + 9.048vw, 5.75rem);
     padding-left: 1.25rem;
     padding-right: 1.25rem;
     font-weight: 600;
 
-    a:focus, a:active, a:visited, a:link {
+
+    a {
+      text-decoration: none;
       color: black;
-    }
 
-    a:hover,
-    {
-      color: variables.$main-pink;
-    }
+      &.current {
+        color: variables.$main-pink;
+      }
 
+      &:hover,
+      &:active,
+      &:focus {
+        color: variables.$main-pink;
+      }
+
+    }
   }
 
   .buttons-container {

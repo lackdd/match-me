@@ -1,5 +1,5 @@
 import './nav-bar-guest.scss'
-import {NavLink} from 'react-router-dom'
+import {NavLink} from 'react-router-dom';
 
 
 function NavigatorGuest() {
@@ -11,13 +11,19 @@ function NavigatorGuest() {
 				</NavLink>
 			</div>
 			<div className='links-container'>
-				<NavLink to='/features' className={'features'}>
+				<NavLink to='/features' className={({ isActive }) =>
+					`features ${isActive ? 'current' : ''}`
+				}>
 					FEATURES
 				</NavLink>
-				<NavLink to='/about' className={'about'}>
+				<NavLink to='/about' className={({ isActive }) =>
+					`about ${isActive ? 'current' : ''}`
+				}>
 					ABOUT
 				</NavLink>
-				<NavLink to='/support' className={'support'}>
+				<NavLink to='/support' className={({ isActive }) =>
+					`support ${isActive ? 'current' : ''}`
+				}>
 					SUPPORT
 				</NavLink>
 			</div>

@@ -18,19 +18,27 @@ function NavigatorUser() {
 	return (
 		<nav className='nav-container-user'>
 			<div className='profile-container'>
-				<NavLink to='/dashboard' className={"profile-link"}>
+				<NavLink to='/dashboard' className={({ isActive }) =>
+					`profile-link ${isActive ? 'current' : ''}`
+				}>
 					<img src='default_profile_picture.png' alt='Profile' className='profile-picture'/>
-					John Smith
+					John
 				</NavLink>
 			</div>
 			<div className='links-container'>
-				<NavLink to='/connections' className={'connections'}>
+				<NavLink to='/connections' className={({ isActive }) =>
+					`connections ${isActive ? 'current' : ''}`
+				}>
 					CONNECTIONS
 				</NavLink>
-				<NavLink to='/chats' className={'chats'}>
+				<NavLink to='/chats' className={({ isActive }) =>
+					`chats ${isActive ? 'current' : ''}`
+				}>
 					CHATS
 				</NavLink>
-				<NavLink to='/recommendations' className={'recommendations'}>
+				<NavLink to='/recommendations' className={({ isActive }) =>
+					`recommendations ${isActive ? 'current' : ''}`
+				}>
 					RECOMMENDATIONS
 				</NavLink>
 			</div>

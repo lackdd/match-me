@@ -4,7 +4,8 @@
   z-index: 5;
   height: 5rem;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  //background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(20, 20, 20, 0.9);
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   position: sticky;
   top: 0;
@@ -32,6 +33,16 @@
       color: white;
       text-decoration: none;
       height: 100%; /* Ensures it takes full height */
+
+      &:hover, &.current, &:hover.profile-picture {
+        color: variables.$main-pink;
+
+        .profile-picture {
+          border: 1px solid variables.$main-pink;
+        }
+
+      }
+
     }
 
     .profile-picture {
@@ -39,38 +50,42 @@
       border-radius: 100px;
       text-align: center;
     }
-
-    &:hover {
-
-      .profile-link {
-        color: variables.$main-pink-80;
-      }
-
-      .profile-picture {
-        border: 1px solid variables.$main-pink;
-      }
-
-    }
   }
 
   .links-container {
     display: flex;
     flex-direction: row;
     width: 37.85rem;
-    justify-content: space-between;
+    //justify-content: space-between;
+    gap: clamp(1rem, -2.393rem + 9.048vw, 5.75rem);
+    justify-content: center;
     padding-left: 1.25rem;
     padding-right: 1.25rem;
     font-weight: 600;
 
-    a:focus, a:active, a:visited, a:link {
-      color: white;
-      text-decoration: none;
-    }
+    //.chats {
+    //  align-self: center;
+    //}
+    //
+    //.recommendations {
+    //  align-self: flex-end;
+    //  text-align: right;
+    //}
 
-    a:hover,
-    {
-      color: variables.$main-pink;
-      cursor: pointer;
+    a {
+      text-decoration: none;
+      color: white;
+
+      &.current {
+        color: variables.$main-pink;
+      }
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: variables.$main-pink;
+      }
+
     }
 
   }
@@ -117,6 +132,7 @@
       height: 100%;
       width: 100%;
       z-index: 1;
+      overflow: clip;
       //top: 50%; // Align the top edge of the button to the middle
       //transform: translateY(-50%); // Move the button up by half its height
     }
