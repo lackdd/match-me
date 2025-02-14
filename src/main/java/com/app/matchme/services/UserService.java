@@ -1,7 +1,11 @@
 package com.app.matchme.services;
 
+import com.app.matchme.entities.UserProfileDTO;
+import com.app.matchme.entities.UsernamePictureDTO;
 import com.app.matchme.entities.Users;
+import com.app.matchme.mapper.UserMapper;
 import com.app.matchme.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -46,6 +52,16 @@ public class UserService {
         String email = jwtService.extractUserName(token);
         UserDetails userdetails = userDetailsService.loadUserByUsername(email);
         return jwtService.validateToken(token, userdetails);
+    }
+
+    public Optional<UserProfileDTO> getUserById(Long id) {
+        return repo.findById(id)
+                .map(UserMapper::toDTO);
+    }
+
+    public Optional<UsernamePictureDTO> getUserNameAndPictureById(Long id) {
+        return repo.findById(id)
+                .map(UserMapper::toUsernamePictureDTO);
     }
 
     public String verify(Users user) {

@@ -1,6 +1,9 @@
 package com.app.matchme.controllers;
 
+import com.app.matchme.entities.UserProfileDTO;
+import com.app.matchme.entities.UsernamePictureDTO;
 import com.app.matchme.entities.Users;
+import com.app.matchme.mapper.UserMapper;
 import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -65,8 +67,10 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<Users> getUser(@PathVariable Long id) {
-        return userRepository.findById(id)
+    public ResponseEntity<UsernamePictureDTO> getUserById(@PathVariable Long id) {
+        Optional <UsernamePictureDTO> userOptional = service.getUserNameAndPictureById(id);
+
+        return userOptional
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

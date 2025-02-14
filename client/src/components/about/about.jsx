@@ -8,9 +8,10 @@ function About() {
 
 	useEffect(() => {
 
-        fetch('http://localhost:8080/users/2')
+        fetch('http://localhost:8080/users/27')
             .then(response => response.json())
             .then(data => {
+				console.log(data);
                 setUser(data);
             })
     }, []);
@@ -19,9 +20,9 @@ function About() {
 		<>
 			{/*{Navigator()}*/}
 			<div className='about-container'>
-				{user.email}
+				{user.username}
 				<br/>
-				{user.gender}
+				<img src={user.profilePicture} alt="Profile" width="150" />
 				<h1 className={'coming-soon'}>About</h1>
 				<br/>
 				<h1 className={'coming-soon'}>Coming soon!</h1>
