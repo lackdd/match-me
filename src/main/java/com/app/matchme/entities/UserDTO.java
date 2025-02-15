@@ -2,7 +2,7 @@ package com.app.matchme.entities;
 
 import java.util.List;
 
-public class UserProfileDTO {
+public class UserDTO {
     private Long id;
     private String email;
     private String username;
@@ -26,10 +26,10 @@ public class UserProfileDTO {
     private String idealMatchYearsOfExperience;
     private String idealMatchLocation;
 
-    public UserProfileDTO() {
+    public UserDTO() {
     }
 
-    public UserProfileDTO(Long id, String username, String email, String gender, String profilePicture, Integer age, List<String> preferredMethod, List<String> preferredMusicGenres, List<String> personalityTraits, List<String> additionalInterests, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String location, String linkToMusic, String description, List<String> idealMatchGoals, List<String> idealMatchMethods, List<String> idealMatchGenres, String idealMatchGender, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchLocation) {
+    public UserDTO(Long id, String username, String email, String gender, String profilePicture, Integer age, List<String> preferredMethod, List<String> preferredMusicGenres, List<String> personalityTraits, List<String> additionalInterests, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String location, String linkToMusic, String description, List<String> idealMatchGoals, List<String> idealMatchMethods, List<String> idealMatchGenres, String idealMatchGender, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchLocation) {
         this.id = id;
         this.username = username;
         this.email = email;

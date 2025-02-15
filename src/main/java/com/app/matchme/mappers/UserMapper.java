@@ -1,16 +1,17 @@
-package com.app.matchme.mapper;
+package com.app.matchme.mappers;
 
-import com.app.matchme.entities.UserProfileDTO;
+import com.app.matchme.entities.ProfileDTO;
+import com.app.matchme.entities.UserDTO;
 import com.app.matchme.entities.UsernamePictureDTO;
-import com.app.matchme.entities.Users;
+import com.app.matchme.entities.User;
 
 
 public class UserMapper {
-    public static UserProfileDTO toDTO(Users user) {
+    public static UserDTO toDTO(User user) {
         if (user == null) {
             return null;
         }
-        return new UserProfileDTO(
+        return new UserDTO(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -36,7 +37,7 @@ public class UserMapper {
         );
     }
 
-    public static UsernamePictureDTO toUsernamePictureDTO(Users user) {
+    public static UsernamePictureDTO toUsernamePictureDTO(User user) {
         if (user == null) {
             return null;
         }
@@ -45,5 +46,13 @@ public class UserMapper {
         String profilePictureUrl = cloudinaryBaseUrl + user.getProfilePicture();
 
         return new UsernamePictureDTO(user.getUsername(), profilePictureUrl);
+    }
+
+    public static ProfileDTO toProfileDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return new ProfileDTO(user.getGender(), user.getAge(), user.getLocation(), user.getLinkToMusic(), user.getDescription(), user.getPreferredMusicGenres(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getAdditionalInterests(), user.getGoalsWithMusic(), user.getYearsOfMusicExperience());
     }
 }

@@ -1,17 +1,14 @@
 package com.app.matchme.controllers;
 
-import com.app.matchme.entities.UserProfileDTO;
+import com.app.matchme.entities.ProfileDTO;
 import com.app.matchme.entities.UsernamePictureDTO;
-import com.app.matchme.entities.Users;
-import com.app.matchme.mapper.UserMapper;
+import com.app.matchme.entities.User;
 import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -24,7 +21,7 @@ public class UserController {
     private UserService service;
 
     @PostMapping("/register")
-    public Users register(@RequestBody Users user) {
+    public User register(@RequestBody User user) {
         return service.register(user);
     }
 
@@ -36,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Users user) {
+    public String login(@RequestBody User user) {
         return service.verify(user);
     }
 
@@ -62,13 +59,22 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<Users> getUsers() {
+    public List<User> getUsers() {
         return userRepository.findAll();
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UsernamePictureDTO> getUserById(@PathVariable Long id) {
         Optional <UsernamePictureDTO> userOptional = service.getUserNameAndPictureById(id);
+
+        return userOptional
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/users/{id}/profile")
+    public ResponseEntity<ProfileDTO> getUserProfileById(@PathVariable Long id) {
+        Optional <ProfileDTO> userOptional = service.getUserProfileById(id);
 
         return userOptional
                 .map(ResponseEntity::ok)

@@ -1,11 +1,11 @@
 package com.app.matchme.services;
 
-import com.app.matchme.entities.UserProfileDTO;
+import com.app.matchme.entities.ProfileDTO;
+import com.app.matchme.entities.UserDTO;
 import com.app.matchme.entities.UsernamePictureDTO;
-import com.app.matchme.entities.Users;
-import com.app.matchme.mapper.UserMapper;
+import com.app.matchme.entities.User;
+import com.app.matchme.mappers.UserMapper;
 import com.app.matchme.repositories.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,7 +36,7 @@ public class UserService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public Users register(Users user) {
+    public User register(User user) {
         if (repo.existsByEmail(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
@@ -54,7 +54,7 @@ public class UserService {
         return jwtService.validateToken(token, userdetails);
     }
 
-    public Optional<UserProfileDTO> getUserById(Long id) {
+    public Optional<UserDTO> getUserById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toDTO);
     }
@@ -64,7 +64,12 @@ public class UserService {
                 .map(UserMapper::toUsernamePictureDTO);
     }
 
-    public String verify(Users user) {
+    public Optional<ProfileDTO> getUserProfileById(Long id) {
+        return repo.findById(id)
+                .map(UserMapper::toProfileDTO);
+    }
+
+    public String verify(User user) {
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 

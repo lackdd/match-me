@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/",
                                 "/register",
                                 "/users/*",
+                                "/users/*/profile",
                                 "/login",
                                 "/features",
                                 "/about",

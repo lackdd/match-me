@@ -1,6 +1,6 @@
 package com.app.matchme.services;
 
-import com.app.matchme.entities.Users;
+import com.app.matchme.entities.User;
 import com.app.matchme.entities.UserPrincipal;
 import com.app.matchme.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class UserDetailsService implements org.springframework.security.core.use
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Users user = repo.findByEmail(email);
+        User user = repo.findByEmail(email);
 
         if(user == null){
             System.out.println("User not found");

@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class Users {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,10 +61,10 @@ public class Users {
     private String idealMatchYearsOfExperience;
     private String idealMatchLocation;
 
-    public Users() {
+    public User() {
     }
 
-    public Users(Long id, String email, String username, String password, String gender, String profilePicture, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String linkToMusic, String location, List<String> idealMatchGenres, String description, List<String> idealMatchMethods, String idealMatchGender, List<String> idealMatchGoals, String idealMatchYearsOfExperience, String idealMatchAge, String idealMatchLocation) {
+    public User(Long id, String email, String username, String password, String gender, String profilePicture, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String linkToMusic, String location, List<String> idealMatchGenres, String description, List<String> idealMatchMethods, String idealMatchGender, List<String> idealMatchGoals, String idealMatchYearsOfExperience, String idealMatchAge, String idealMatchLocation) {
         this.id = id;
         this.email = email;
         this.username = username;
