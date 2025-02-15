@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 "/register",
                                 "/users/*",
                                 "/users/*/profile",
+                                "/users/*/bio",
                                 "/login",
                                 "/features",
                                 "/about",

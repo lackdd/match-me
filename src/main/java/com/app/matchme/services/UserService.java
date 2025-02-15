@@ -1,9 +1,6 @@
 package com.app.matchme.services;
 
-import com.app.matchme.entities.ProfileDTO;
-import com.app.matchme.entities.UserDTO;
-import com.app.matchme.entities.UsernamePictureDTO;
-import com.app.matchme.entities.User;
+import com.app.matchme.entities.*;
 import com.app.matchme.mappers.UserMapper;
 import com.app.matchme.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +64,11 @@ public class UserService {
     public Optional<ProfileDTO> getUserProfileById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toProfileDTO);
+    }
+
+    public Optional<BioDTO> getUserBioById(Long id) {
+        return repo.findById(id)
+                .map(UserMapper::toBioDTO);
     }
 
     public String verify(User user) {

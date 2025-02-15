@@ -1,9 +1,6 @@
 package com.app.matchme.mappers;
 
-import com.app.matchme.entities.ProfileDTO;
-import com.app.matchme.entities.UserDTO;
-import com.app.matchme.entities.UsernamePictureDTO;
-import com.app.matchme.entities.User;
+import com.app.matchme.entities.*;
 
 
 public class UserMapper {
@@ -54,5 +51,13 @@ public class UserMapper {
         }
 
         return new ProfileDTO(user.getGender(), user.getAge(), user.getLocation(), user.getLinkToMusic(), user.getDescription(), user.getPreferredMusicGenres(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getAdditionalInterests(), user.getGoalsWithMusic(), user.getYearsOfMusicExperience());
+    }
+
+    public static BioDTO toBioDTO(User user) {
+        if (user == null) {
+            return null;
+        }
+
+        return new BioDTO(user.getGender(), user.getAge(), user.getPreferredMusicGenres(), user.getAdditionalInterests(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getGoalsWithMusic(), user.getIdealMatchGenres(), user.getLocation(), user.getYearsOfMusicExperience(), user.getIdealMatchGoals(), user.getIdealMatchMethods(), user.getIdealMatchAge(), user.getIdealMatchGender(), user.getIdealMatchLocation(), user.getIdealMatchYearsOfExperience());
     }
 }

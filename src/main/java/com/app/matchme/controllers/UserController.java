@@ -1,5 +1,6 @@
 package com.app.matchme.controllers;
 
+import com.app.matchme.entities.BioDTO;
 import com.app.matchme.entities.ProfileDTO;
 import com.app.matchme.entities.UsernamePictureDTO;
 import com.app.matchme.entities.User;
@@ -75,6 +76,15 @@ public class UserController {
     @GetMapping("/users/{id}/profile")
     public ResponseEntity<ProfileDTO> getUserProfileById(@PathVariable Long id) {
         Optional <ProfileDTO> userOptional = service.getUserProfileById(id);
+
+        return userOptional
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/users/{id}/bio")
+    public ResponseEntity<BioDTO> getUserBioById(@PathVariable Long id) {
+        Optional <BioDTO> userOptional = service.getUserBioById(id);
 
         return userOptional
                 .map(ResponseEntity::ok)

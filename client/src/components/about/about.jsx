@@ -27,6 +27,15 @@ function About() {
 			})
 	}, []);
 
+	useEffect(() => {
+
+		fetch('http://localhost:8080/users/27/bio')
+			.then(response => response.json())
+			.then(data => {
+				console.log(data);
+			})
+	}, []);
+
 	return (
 		<>
 			{/*{Navigator()}*/}
