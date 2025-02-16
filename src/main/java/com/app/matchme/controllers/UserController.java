@@ -5,6 +5,7 @@ import com.app.matchme.entities.ProfileDTO;
 import com.app.matchme.entities.UsernamePictureDTO;
 import com.app.matchme.entities.User;
 import com.app.matchme.repositories.UserRepository;
+import com.app.matchme.services.JWTService;
 import com.app.matchme.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class UserController {
     }
 
     @PostMapping("/validateToken")
-    public ResponseEntity<?> validate(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+    public ResponseEntity<?> validateToken(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
         }
@@ -50,6 +51,27 @@ public class UserController {
             return ResponseEntity.ok(true);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> validateUser(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+        }
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, fetching /me data");
+            // extract user details from token and send them to frontend
+            String email = service.extractUserEmail(token);
+            Optional <UsernamePictureDTO> userOptional = service.getUserNameAndPictureByEmail(email);
+
+            return userOptional
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 

@@ -51,6 +51,11 @@ public class UserService {
         return jwtService.validateToken(token, userdetails);
     }
 
+    public String extractUserEmail(String token) {
+        String email = jwtService.extractUserName(token);
+        return email;
+    }
+
     public Optional<UserDTO> getUserById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toDTO);
@@ -58,6 +63,11 @@ public class UserService {
 
     public Optional<UsernamePictureDTO> getUserNameAndPictureById(Long id) {
         return repo.findById(id)
+                .map(UserMapper::toUsernamePictureDTO);
+    }
+
+    public Optional<UsernamePictureDTO> getUserNameAndPictureByEmail(String email) {
+        return repo.findByEmail(email)
                 .map(UserMapper::toUsernamePictureDTO);
     }
 

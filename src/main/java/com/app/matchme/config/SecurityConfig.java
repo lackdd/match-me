@@ -53,6 +53,7 @@ public class SecurityConfig {
                                 "/users/*/bio",
                                 "/login",
                                 "/features",
+                                "/me",
                                 "/about",
                                 "/support",
                                 "/check-email",

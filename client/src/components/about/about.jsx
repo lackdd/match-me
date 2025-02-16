@@ -7,7 +7,7 @@ function About() {
 	const [user, setUser] = useState({});
 	const [profile, setProfile] = useState({});
 
-	useEffect(() => {
+	/*useEffect(() => {
 
         fetch('http://localhost:8080/users/27')
             .then(response => response.json())
@@ -34,6 +34,29 @@ function About() {
 			.then(data => {
 				console.log(data);
 			})
+	}, []);*/
+
+	// fetching /me data if user is logged in
+	useEffect(() => {
+		const token = sessionStorage.getItem("token");
+
+		fetch('http://localhost:8080/me', {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json"
+			}
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Unauthorized access");
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log("/me data: ", data);
+			})
+			.catch(error => console.error("Error fetching /me:", error));
 	}, []);
 
 	return (

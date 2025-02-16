@@ -57,7 +57,16 @@ public class JWTService {
 
     public String extractUserName(String token) {
         // extract the username from jwt token
-        return extractClaim(token, Claims::getSubject);
+        if (token == null || token.trim().isEmpty()) {
+            System.out.println("Token is missing or empty!");
+            return null;
+        }
+        try {
+            return extractClaim(token, Claims::getSubject);
+        } catch (Exception e) {
+            System.out.println("Invalid token: " + e.getMessage());
+            return null;
+        }
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver){
