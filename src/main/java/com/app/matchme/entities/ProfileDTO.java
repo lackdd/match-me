@@ -3,6 +3,7 @@ package com.app.matchme.entities;
 import java.util.List;
 
 public class ProfileDTO {
+    private Long id;
     private String gender;
     private Integer age;
     private String linkToMusic;
@@ -18,7 +19,8 @@ public class ProfileDTO {
     public ProfileDTO() {
     }
 
-    public ProfileDTO(String gender, Integer age, String location, String linkToMusic, String description, List<String> preferredMusicGenres, List<String> preferredMethod, List<String> personalityTraits, List<String> additionalInterests, List<String> goalsWithMusic, Integer yearsOfMusicExperience) {
+    public ProfileDTO(Long id, String gender, Integer age, String location, String linkToMusic, String description, List<String> preferredMusicGenres, List<String> preferredMethod, List<String> personalityTraits, List<String> additionalInterests, List<String> goalsWithMusic, Integer yearsOfMusicExperience) {
+        this.id = id;
         this.gender = gender;
         this.age = age;
         this.location = location;
@@ -30,6 +32,14 @@ public class ProfileDTO {
         this.additionalInterests = additionalInterests;
         this.goalsWithMusic = goalsWithMusic;
         this.yearsOfMusicExperience = yearsOfMusicExperience;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getGender() {

@@ -4,7 +4,6 @@ import java.util.List;
 
 public class UserDTO {
     private Long id;
-    private String email;
     private String username;
     private String gender;
     private Integer age;
@@ -29,10 +28,9 @@ public class UserDTO {
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String username, String email, String gender, String profilePicture, Integer age, List<String> preferredMethod, List<String> preferredMusicGenres, List<String> personalityTraits, List<String> additionalInterests, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String location, String linkToMusic, String description, List<String> idealMatchGoals, List<String> idealMatchMethods, List<String> idealMatchGenres, String idealMatchGender, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchLocation) {
+    public UserDTO(Long id, String username, String gender, String profilePicture, Integer age, List<String> preferredMethod, List<String> preferredMusicGenres, List<String> personalityTraits, List<String> additionalInterests, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String location, String linkToMusic, String description, List<String> idealMatchGoals, List<String> idealMatchMethods, List<String> idealMatchGenres, String idealMatchGender, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchLocation) {
         this.id = id;
         this.username = username;
-        this.email = email;
         this.gender = gender;
         this.profilePicture = profilePicture;
         this.age = age;
@@ -60,14 +58,6 @@ public class UserDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUsername() {

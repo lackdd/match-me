@@ -56,6 +56,11 @@ public class UserService {
         return email;
     }
 
+    public Long extractUserId(String token) {
+        Long id = jwtService.extractUserId(token);
+        return id;
+    }
+
     public Optional<UserDTO> getUserById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toDTO);
@@ -66,37 +71,40 @@ public class UserService {
                 .map(UserMapper::toUsernamePictureDTO);
     }
 
-    public Optional<UsernamePictureDTO> getUserNameAndPictureByEmail(String email) {
+    /*public Optional<UsernamePictureDTO> getUserNameAndPictureByEmail(String email) {
         return repo.findByEmail(email)
                 .map(UserMapper::toUsernamePictureDTO);
-    }
+    }*/
 
     public Optional<ProfileDTO> getUserProfileById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toProfileDTO);
     }
 
-    public Optional<ProfileDTO> getUserProfileByEmail(String email) {
+    /*public Optional<ProfileDTO> getUserProfileByEmail(String email) {
         return repo.findByEmail(email)
                 .map(UserMapper::toProfileDTO);
-    }
+    }*/
 
     public Optional<BioDTO> getUserBioById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toBioDTO);
     }
 
-    public Optional<BioDTO> getUserBioByEmail(String email) {
+    /*public Optional<BioDTO> getUserBioByEmail(String email) {
         return repo.findByEmail(email)
                 .map(UserMapper::toBioDTO);
-    }
+    }*/
 
     public String verify(User user) {
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
-        if (authentication.isAuthenticated())
-            return jwtService.generateToken(user.getEmail());
+        if (authentication.isAuthenticated()) {
+            User authenticatedUser = repo.findByEmail(user.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            return jwtService.generateToken(authenticatedUser);
+        }
 
         return "fail";
     }

@@ -35,10 +35,11 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // Skip JWT validation for registration and public routes
-        if (requestURI.equals("/register") || requestURI.equals("/login")) {
+        if (requestURI.equals("/register") || requestURI.equals("/login") ) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         String authHeader = request.getHeader("Authorization");
         String token = null;

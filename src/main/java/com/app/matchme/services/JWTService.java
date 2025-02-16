@@ -1,5 +1,6 @@
 package com.app.matchme.services;
 
+import com.app.matchme.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -33,14 +34,15 @@ public class JWTService {
         }
     }
 
-    public String generateToken(String email) {
+    public String generateToken(User user) {
 
         Map<String, Object> claims = new HashMap<>();
+        claims.put("id", user.getId());
 
         return Jwts.builder()
                 .claims()
                 .add(claims)
-                .subject(email)
+                .subject(user.getEmail())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() * 60 * 60 * 30))
                 .and()
@@ -68,6 +70,11 @@ public class JWTService {
             return null;
         }
     }
+
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("id", Long.class));
+    }
+
 
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver){
         final Claims claims = extractAllClaims(token);

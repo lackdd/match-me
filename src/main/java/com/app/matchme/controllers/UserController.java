@@ -57,21 +57,21 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> validateUser(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid token: Missing or incorrect format");
         }
         String token = authHeader.substring(7);
         boolean isValid = service.validate(token);
         if (isValid) {
             System.out.println("Token is valid, fetching /me data");
             // extract user details from token and send them to frontend
-            String email = service.extractUserEmail(token);
-            Optional <UsernamePictureDTO> userOptional = service.getUserNameAndPictureByEmail(email);
+            Long id = service.extractUserId(token);
+            Optional <UsernamePictureDTO> userOptional = service.getUserNameAndPictureById(id);
 
             return userOptional
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -85,8 +85,8 @@ public class UserController {
         if (isValid) {
             System.out.println("Token is valid, fetching /me/profile data");
             // extract user details from token and send them to frontend
-            String email = service.extractUserEmail(token);
-            Optional <ProfileDTO> userOptional = service.getUserProfileByEmail(email);
+            Long id = service.extractUserId(token);
+            Optional <ProfileDTO> userOptional = service.getUserProfileById(id);
 
             return userOptional
                     .map(ResponseEntity::ok)
@@ -106,8 +106,8 @@ public class UserController {
         if (isValid) {
             System.out.println("Token is valid, fetching /me(bio data");
             // extract user details from token and send them to frontend
-            String email = service.extractUserEmail(token);
-            Optional <BioDTO> userOptional = service.getUserBioByEmail(email);
+            Long id = service.extractUserId(token);
+            Optional <BioDTO> userOptional = service.getUserBioById(id);
 
             return userOptional
                     .map(ResponseEntity::ok)

@@ -60,7 +60,7 @@ function About() {
 	}, []);
 
 	// fetching /me/profile data if user is logged in
-	useEffect(() => {
+	/*useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
 		fetch('http://localhost:8080/me/profile', {
@@ -103,7 +103,7 @@ function About() {
 				console.log("/me/bio data: ", data);
 			})
 			.catch(error => console.error("Error fetching /me/bio:", error));
-	}, []);
+	}, []);*/
 
 	return (
 		<>

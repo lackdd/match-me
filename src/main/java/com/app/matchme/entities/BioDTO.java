@@ -3,6 +3,7 @@ package com.app.matchme.entities;
 import java.util.List;
 
 public class BioDTO {
+    private Long id;
     private String gender;
     private Integer age;
     private List<String> preferredMusicGenres;
@@ -23,7 +24,8 @@ public class BioDTO {
     public BioDTO() {
     }
 
-    public BioDTO(String gender, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethod, List<String> personalityTraits, List<String> goalsWithMusic, List<String> idealMatchGenres, String location, Integer yearsOfMusicExperience, List<String> idealMatchGoals, List<String> idealMatchMethods, String idealMatchAge, String idealMatchGender, String idealMatchLocation, String idealMatchYearsOfExperience) {
+    public BioDTO(Long id, String gender, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethod, List<String> personalityTraits, List<String> goalsWithMusic, List<String> idealMatchGenres, String location, Integer yearsOfMusicExperience, List<String> idealMatchGoals, List<String> idealMatchMethods, String idealMatchAge, String idealMatchGender, String idealMatchLocation, String idealMatchYearsOfExperience) {
+        this.id = id;
         this.gender = gender;
         this.age = age;
         this.preferredMusicGenres = preferredMusicGenres;
@@ -40,6 +42,14 @@ public class BioDTO {
         this.idealMatchGender = idealMatchGender;
         this.idealMatchLocation = idealMatchLocation;
         this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getGender() {

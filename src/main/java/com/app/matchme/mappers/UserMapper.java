@@ -11,7 +11,6 @@ public class UserMapper {
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),
-                user.getEmail(),
                 user.getGender(),
                 user.getProfilePicture(),
                 user.getAge(),
@@ -42,7 +41,7 @@ public class UserMapper {
         String cloudinaryBaseUrl = "https://res.cloudinary.com/djfqpfthj/image/upload/";
         String profilePictureUrl = cloudinaryBaseUrl + user.getProfilePicture();
 
-        return new UsernamePictureDTO(user.getUsername(), profilePictureUrl);
+        return new UsernamePictureDTO(user.getId(), user.getUsername(), profilePictureUrl);
     }
 
     public static ProfileDTO toProfileDTO(User user) {
@@ -50,7 +49,7 @@ public class UserMapper {
             return null;
         }
 
-        return new ProfileDTO(user.getGender(), user.getAge(), user.getLocation(), user.getLinkToMusic(), user.getDescription(), user.getPreferredMusicGenres(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getAdditionalInterests(), user.getGoalsWithMusic(), user.getYearsOfMusicExperience());
+        return new ProfileDTO(user.getId(), user.getGender(), user.getAge(), user.getLocation(), user.getLinkToMusic(), user.getDescription(), user.getPreferredMusicGenres(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getAdditionalInterests(), user.getGoalsWithMusic(), user.getYearsOfMusicExperience());
     }
 
     public static BioDTO toBioDTO(User user) {
@@ -58,6 +57,6 @@ public class UserMapper {
             return null;
         }
 
-        return new BioDTO(user.getGender(), user.getAge(), user.getPreferredMusicGenres(), user.getAdditionalInterests(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getGoalsWithMusic(), user.getIdealMatchGenres(), user.getLocation(), user.getYearsOfMusicExperience(), user.getIdealMatchGoals(), user.getIdealMatchMethods(), user.getIdealMatchAge(), user.getIdealMatchGender(), user.getIdealMatchLocation(), user.getIdealMatchYearsOfExperience());
+        return new BioDTO(user.getId(), user.getGender(), user.getAge(), user.getPreferredMusicGenres(), user.getAdditionalInterests(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getGoalsWithMusic(), user.getIdealMatchGenres(), user.getLocation(), user.getYearsOfMusicExperience(), user.getIdealMatchGoals(), user.getIdealMatchMethods(), user.getIdealMatchAge(), user.getIdealMatchGender(), user.getIdealMatchLocation(), user.getIdealMatchYearsOfExperience());
     }
 }
