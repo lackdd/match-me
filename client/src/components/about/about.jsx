@@ -37,7 +37,7 @@ function About() {
 	}, []);*/
 
 	// fetching /me data if user is logged in
-	useEffect(() => {
+	/*useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
 		fetch('http://localhost:8080/me', {
@@ -57,7 +57,7 @@ function About() {
 				console.log("/me data: ", data);
 			})
 			.catch(error => console.error("Error fetching /me:", error));
-	}, []);
+	}, []);*/
 
 	// fetching /me/profile data if user is logged in
 	/*useEffect(() => {
@@ -104,6 +104,28 @@ function About() {
 			})
 			.catch(error => console.error("Error fetching /me/bio:", error));
 	}, []);*/
+
+	useEffect(() => {
+		const token = sessionStorage.getItem("token");
+
+		fetch('http://localhost:8080/recommendations', {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json"
+			}
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Unauthorized access");
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log("/recommendations data: ", data);
+			})
+			.catch(error => console.error("Error fetching /recommendations:", error));
+	}, []);
 
 	return (
 		<>
