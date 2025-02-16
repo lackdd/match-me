@@ -54,6 +54,24 @@ public class UserController {
         }
     }
 
+    @GetMapping("/recommendations")
+    public ResponseEntity<?> getRecommendations(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, fetching /recommendations data");
+            Long id = service.extractUserId(token);
+            List<Long> recommendedUserIds = service.findMatches(id);
+
+            if (recommendedUserIds.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(recommendedUserIds);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     @GetMapping("/me")
     public ResponseEntity<?> validateUser(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {

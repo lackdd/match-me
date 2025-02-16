@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 "/features",
                                 "/me",
                                 "/me/profile",
+                                "/recommendations",
                                 "/me/bio",
                                 "/about",
                                 "/support",
