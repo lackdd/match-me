@@ -76,8 +76,18 @@ public class UserService {
                 .map(UserMapper::toProfileDTO);
     }
 
+    public Optional<ProfileDTO> getUserProfileByEmail(String email) {
+        return repo.findByEmail(email)
+                .map(UserMapper::toProfileDTO);
+    }
+
     public Optional<BioDTO> getUserBioById(Long id) {
         return repo.findById(id)
+                .map(UserMapper::toBioDTO);
+    }
+
+    public Optional<BioDTO> getUserBioByEmail(String email) {
+        return repo.findByEmail(email)
                 .map(UserMapper::toBioDTO);
     }
 

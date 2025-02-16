@@ -59,6 +59,52 @@ function About() {
 			.catch(error => console.error("Error fetching /me:", error));
 	}, []);
 
+	// fetching /me/profile data if user is logged in
+	useEffect(() => {
+		const token = sessionStorage.getItem("token");
+
+		fetch('http://localhost:8080/me/profile', {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json"
+			}
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Unauthorized access");
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log("/me/profile data: ", data);
+			})
+			.catch(error => console.error("Error fetching /me/profile:", error));
+	}, []);
+
+	// fetching /me/bio data if user is logged in
+	useEffect(() => {
+		const token = sessionStorage.getItem("token");
+
+		fetch('http://localhost:8080/me/bio', {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json"
+			}
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Unauthorized access");
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log("/me/bio data: ", data);
+			})
+			.catch(error => console.error("Error fetching /me/bio:", error));
+	}, []);
+
 	return (
 		<>
 			{/*{Navigator()}*/}

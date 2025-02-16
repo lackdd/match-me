@@ -75,6 +75,48 @@ public class UserController {
         }
     }
 
+    @GetMapping("/me/profile")
+    public ResponseEntity<?> validateUserProfile(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+        }
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, fetching /me/profile data");
+            // extract user details from token and send them to frontend
+            String email = service.extractUserEmail(token);
+            Optional <ProfileDTO> userOptional = service.getUserProfileByEmail(email);
+
+            return userOptional
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+
+    @GetMapping("/me/bio")
+    public ResponseEntity<?> validateUserBio(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+        }
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, fetching /me(bio data");
+            // extract user details from token and send them to frontend
+            String email = service.extractUserEmail(token);
+            Optional <BioDTO> userOptional = service.getUserBioByEmail(email);
+
+            return userOptional
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+
     private final UserRepository userRepository;
 
     public UserController(UserRepository userRepository) {
