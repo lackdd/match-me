@@ -169,7 +169,7 @@ function Register() {
             linkToMusic: formThreeData.musicLink,
             yearsOfMusicExperience: formThreeData.experience,
             description: formThreeData.description,
-            location: formThreeData.location.value,
+            location: formThreeData.location.label,
             idealMatchMethods: idealMatchMethodsValues,
             idealMatchGender: formFiveData.matchGender.value,
             idealMatchGenres: idealMatchGenresValues,

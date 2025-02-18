@@ -100,7 +100,7 @@ public class UserService {
 
         Map<User, Integer> userPointsMap = users.stream()
                 .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
-                .filter(user -> ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation) )
+                .filter(user -> ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation) || "anywhere".equals(idealMatchLocation))
                 .filter(user -> user.getAge() >= minAge && user.getAge() <= maxAge)
                 .filter(user -> Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));

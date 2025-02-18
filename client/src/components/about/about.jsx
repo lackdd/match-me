@@ -7,7 +7,7 @@ function About() {
 	const [user, setUser] = useState({});
 	const [profile, setProfile] = useState({});
 
-	/*useEffect(() => {
+	useEffect(() => {
 
         fetch('http://localhost:8080/users/27')
             .then(response => response.json())
@@ -34,10 +34,10 @@ function About() {
 			.then(data => {
 				console.log(data);
 			})
-	}, []);*/
+	}, []);
 
 	// fetching /me data if user is logged in
-	/*useEffect(() => {
+	useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
 		fetch('http://localhost:8080/me', {
@@ -57,10 +57,10 @@ function About() {
 				console.log("/me data: ", data);
 			})
 			.catch(error => console.error("Error fetching /me:", error));
-	}, []);*/
+	}, []);
 
 	// fetching /me/profile data if user is logged in
-	/*useEffect(() => {
+	useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
 		fetch('http://localhost:8080/me/profile', {
@@ -103,7 +103,7 @@ function About() {
 				console.log("/me/bio data: ", data);
 			})
 			.catch(error => console.error("Error fetching /me/bio:", error));
-	}, []);*/
+	}, []);
 
 	useEffect(() => {
 		const token = sessionStorage.getItem("token");
