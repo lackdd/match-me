@@ -22,7 +22,7 @@ public class UserSeeder implements CommandLineRunner {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     private final Faker faker = new Faker();
-    private final Random random = new Random();
+    private static final Random random = new Random();
 
     private final List<String> estonianCityLocations = Arrays.asList(
             "Harju County, Estonia", "Tartu County, Estonia", "Ida-Viru County, Estonia", "Pärnu County, Estonia",
@@ -36,6 +36,17 @@ public class UserSeeder implements CommandLineRunner {
 
 
     private final List<String> genderOptions = Arrays.asList("male", "female", "other");
+
+    public static String getWeightedRandomGender() {
+        double rand = random.nextDouble();
+
+        if (rand < 0.45) return "any";
+        else if (rand < 0.7) return "male";
+        else if (rand < 0.95) return "female";
+        else return "other";
+    }
+
+
     private final List<String> musicGenres = Arrays.asList(
             "rock", "pop", "jazz", "hip-hop", "classical", "blues", "reggae", "metal",
             "country", "electronic", "folk", "funk", "soul", "punk", "rnb", "house",
@@ -112,7 +123,7 @@ public class UserSeeder implements CommandLineRunner {
             user.setPassword(encoder.encode("111"));
             user.setUsername(faker.name().firstName() + " " + faker.name().lastName());
             user.setGender(randomChoice(genderOptions));
-            user.setAge(faker.number().numberBetween(18, 50));
+            user.setAge(faker.number().numberBetween(12, 120));
             user.setProfilePicture(faker.internet().avatar());
             user.setLocation(randomCityCountryFromEstonia());
             user.setDescription(faker.lorem().sentence());
@@ -132,8 +143,9 @@ public class UserSeeder implements CommandLineRunner {
 
 
 
-            user.setIdealMatchGender(randomChoice(genderOptions));
-            user.setIdealMatchAge(randomAgeRange());
+            //user.setIdealMatchGender(randomChoice(genderOptions));
+            user.setIdealMatchGender(getWeightedRandomGender());
+            user.setIdealMatchAge(getWeightedRandomAgeRange());
             user.setIdealMatchLocation(randomChoice(matchLocationOptions));
             user.setIdealMatchYearsOfExperience(randomExperienceRange());
 
@@ -164,6 +176,23 @@ public class UserSeeder implements CommandLineRunner {
     private String randomAgeRange() {
         List<String> ageRanges = Arrays.asList("12-21", "22-31", "32-41", "42-51", "52-61");
         return randomChoice(ageRanges);
+    }
+
+    public static String getWeightedRandomAgeRange() {
+        double rand = random.nextDouble();
+
+        if (rand < 0.5) return "any";
+        else if (rand < 0.58) return "12-21";
+        else if (rand < 0.66) return "22-31";
+        else if (rand < 0.74) return "32-41";
+        else if (rand < 0.82) return "42-51";
+        else if (rand < 0.9) return "52-61";
+        else if (rand < 0.92) return "62-71";
+        else if (rand < 0.94) return "72-81";
+        else if (rand < 0.96) return "82-91";
+        else if (rand < 0.98) return "92-101";
+        else if (rand < 0.99) return "102-111";
+        else return "112-120";
     }
 
     private String randomExperienceRange() {
