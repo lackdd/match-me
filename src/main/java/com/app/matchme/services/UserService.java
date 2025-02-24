@@ -94,8 +94,6 @@ public class UserService {
         List<User> users = repo.findAll();
         Optional<User> optionalUser = repo.findById(id);
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
-        Integer minAge = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2));
-        Integer maxAge = Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 5));
         String idealMatchLocation = currentUser.getIdealMatchLocation();
 
         Map<User, Integer> userPointsMap = users.stream()
