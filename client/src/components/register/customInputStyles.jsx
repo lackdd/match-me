@@ -4,9 +4,11 @@ export const customStyles = {
 		fontSize: '0.875rem',
 		minHeight: '2rem',  // Ensure it starts with a height of 2rem
 		height: 'auto',  // Set to 'auto' so it adjusts based on content
+		// height: '2.5rem',  // Set to 'auto' so it adjusts based on content
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
+		position: 'relative',
 		padding: '0 0',
 		margin: '0 0',
 		boxSizing: 'border-box',
@@ -21,6 +23,8 @@ export const customStyles = {
 		borderColor: state.isFocused ? 'rgb(254, 110, 121)' : 'rgb(97, 97, 97)',
 		boxShadow: state.isFocused ? '0 0 5px rgb(254, 110, 121)' : 'none',
 		'&:hover': { borderColor: '#rgb(254, 110, 121)' },
+		overflow: 'hidden',
+		transition: 'all 0.3s ease-in-out', // Smooth transition for height changes
 
 	}),
 	menu: (provided, state) => ({
