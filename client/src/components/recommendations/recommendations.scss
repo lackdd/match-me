@@ -58,11 +58,12 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 0;
-    transition: border-color 0.1s ease-in-out,
-      box-shadow 0.3s ease-in-out,
-      transform 0.75s 0.1s ease-in,
-      filter 0.1s linear,
-    background-color 0.1s linear;
+    transition:
+      //      border-color 0.1s ease-in-out,
+      //box-shadow 0.3s ease-in-out,
+      transform 0.75s 0.1s ease-in;
+    //  filter 0.1s linear,
+    //background-color 0.1s linear;
 
     &:has(+ .buttons-container .like:hover) {
       border-color: variables.$button-green;
@@ -73,16 +74,29 @@
     }
 
     &:has(+ .buttons-container .like:active) {
-      box-shadow: 0 0 20px 5px variables.$button-green;
-      filter: blur(2px);
-      transform: translateX(2000px);
-      background-color: variables.$valid-green;
+      //box-shadow: 0 0 20px 5px variables.$button-green;
+      //filter: blur(2px);
+      //transform: translateX(2000px);
+      //background-color: variables.$valid-green;
     }
 
     &:has(+ .buttons-container .dislike:active) {
-      box-shadow: 0 0 20px 5px variables.$button-red;
+      //box-shadow: 0 0 20px 5px variables.$button-red;
+      //filter: blur(2px);
+      //transform: translateX(-2000px);
+      //background-color: variables.$error-red;
+    }
+
+    &.like-animation {
       filter: blur(2px);
-      transform: translateX(-2000px);
+      transform: translateX(200%);
+      background-color: variables.$valid-green;
+
+    }
+
+    &.dislike-animation {
+      filter: blur(2px);
+      transform: translateX(-200%);
       background-color: variables.$error-red;
     }
 
