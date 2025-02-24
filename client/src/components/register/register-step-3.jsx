@@ -8,13 +8,35 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {stepThreeSchema} from './validationSchema.jsx';
 import {ErrorElement} from './errorElement.jsx';
 import {PreviousNextButtons} from './previousNextButtons.jsx';
-import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx';
+import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx'
+
+
+function loadGoogleMapsScript(callback) {
+	if (window.google && window.google.maps) {
+		callback();
+		return;
+	}
+
+	const existingScript = document.getElementById("google-maps-script");
+	if (!existingScript) {
+		const script = document.createElement("script");
+		script.id = "google-maps-script";
+		script.src = `***REMOVED***api/js?key=***REMOVED***&loading=async&libraries=places&language=en`;
+		script.async = true;
+		script.onload = callback;
+		document.body.appendChild(script);
+	} else {
+		existingScript.onload = callback;
+	}
+}
+
 
 
 function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
 	const [inputValue, setInputValue] = useState("");
 	const [options, setOptions] = useState([]);
 	const autocompleteServiceRef = useRef(null);
+	const [apiLoaded, setApiLoaded] = useState(false);
 
 	const isMounted = useRef(true);
 	// Initialize react-hook-form with Yup schema
@@ -43,23 +65,36 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 
 
 // Initialize the autocomplete service only when the API is loaded
+// 	useEffect(() => {
+// 		if (window.google && window.google.maps && window.google.maps.places) {
+// 			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+// 		}
+// 	}, []);
+
 	useEffect(() => {
-		if (window.google && window.google.maps && window.google.maps.places) {
-			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-		}
+		loadGoogleMapsScript(() => {
+			if (window.google && window.google.maps && window.google.maps.places) {
+				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+				setApiLoaded(true);
+			}
+		});
 	}, []);
 
 	const fetchPlaces = useCallback((input) => {
 		if (!input || !autocompleteServiceRef.current) return;
 
 		autocompleteServiceRef.current.getPlacePredictions(
-			{ input, types: ["(cities)"] },
+			{ input,
+				types: ['administrative_area_level_1'],
+				componentRestrictions: {country: "est"},
+				language: 'en'},
 			// { input },
 			(predictions, status) => {
 				if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
 					setOptions(
 						predictions.map((place) => ({
 							value: place.place_id,
+							// label: place.structured_formatting.main_text,
 							label: place.description,
 						}))
 					);
@@ -161,9 +196,43 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							watch('location').value
 						}
 						isError={!!errors.location} // Check if error exists
+						// onChange={(selectedOption) => {
+						// 	setValue('location', selectedOption, {shouldValidate: true});
+						// 	setFormThreeData((prev) => ({...prev, location: selectedOption})); // Persist data correctly
+						// }}
 						onChange={(selectedOption) => {
-							setValue('location', selectedOption, {shouldValidate: true});
-							setFormThreeData((prev) => ({...prev, location: selectedOption})); // Persist data correctly
+							if (!selectedOption) {
+								setValue('location', null, { shouldValidate: true });
+								setFormThreeData((prev) => ({ ...prev, location: null }));
+								return;
+							}
+
+							fetch(`***REMOVED***api/geocode/json?place_id=${selectedOption.value}&key=***REMOVED***&language=en`)
+								.then(response => response.json())
+								.then(data => {
+									if (data.status === "OK" && data.results.length > 0) {
+										const addressComponents = data.results[0].address_components;
+
+										let region = "";
+										let country = "";
+
+										// Extract administrative area and country explicitly
+										addressComponents.forEach(component => {
+											if (component.types.includes("administrative_area_level_1")) {
+												region = component.long_name;
+											}
+											if (component.types.includes("country")) {
+												country = component.long_name;
+											}
+										});
+
+										const properName = `${region}${country ? `, ${country}` : ""}`; // Ensure "Tartu County, Estonia"
+
+										setValue('location', { value: selectedOption.value, label: properName }, { shouldValidate: true });
+										setFormThreeData((prev) => ({ ...prev, location: { value: selectedOption.value, label: properName } }));
+									}
+								})
+								.catch(error => console.error("Geocoding error:", error));
 						}}
 						onBlur={() => trigger('location')} // Trigger validation when user leaves the field
 					/>
