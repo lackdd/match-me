@@ -25,11 +25,14 @@ public class UserSeeder implements CommandLineRunner {
     private final Random random = new Random();
 
     private final List<String> estonianCityLocations = Arrays.asList(
-            "Tallinn, Estonia", "Tartu, Estonia", "Narva, Estonia", "Pärnu, Estonia",
-            "Viljandi, Estonia", "Rakvere, Estonia", "Kohtla-Järve, Estonia", "Maardu, Estonia",
-            "Haapsalu, Estonia", "Paide, Estonia", "Jõhvi, Estonia", "Valga, Estonia",
-            "Rapla, Estonia", "Kuressaare, Estonia", "Võru, Estonia", "Põlva, Estonia", "Sillamäe, Estonia"
+            "Harju County, Estonia", "Tartu County, Estonia", "Ida-Viru County, Estonia", "Pärnu County, Estonia",
+            "Viljandi County, Estonia", "Lääne-Viru County, Estonia", "Ida-Viru County, Estonia", "Harju County, Estonia",
+            "Lääne County, Estonia", "Järva County, Estonia", "Ida-Viru County, Estonia", "Valga County, Estonia",
+            "Rapla County, Estonia", "Saare County, Estonia", "Võru County, Estonia", "Põlva County, Estonia", "Ida-Viru County, Estonia"
     );
+
+
+
 
 
     private final List<String> genderOptions = Arrays.asList("male", "female", "other");
