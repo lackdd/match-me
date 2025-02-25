@@ -61,6 +61,8 @@ public class User {
     private String idealMatchYearsOfExperience;
     private String idealMatchLocation;
 
+    
+
     public User() {
     }
 
