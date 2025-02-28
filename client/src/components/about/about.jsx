@@ -1,11 +1,15 @@
 import './about.scss'
 import Navigator from '../nav-bar-guest/nav-bar-guest.jsx';
 import {useEffect, useRef, useState} from "react";
+import Chat from "../chats/Chat";
 
 function About() {
 
 	const [user, setUser] = useState({});
 	const [profile, setProfile] = useState({});
+	const [matchId, setMatchId] = useState("");
+
+
 
 	/*useEffect(() => {
 
@@ -81,7 +85,7 @@ function About() {
 			})
 			.catch(error => console.error("Error fetching /me/profile:", error));
 	}, []);
- // test
+
 	// fetching /me/bio data if user is logged in
 	useEffect(() => {
 		const token = sessionStorage.getItem("token");
@@ -105,7 +109,7 @@ function About() {
 			.catch(error => console.error("Error fetching /me/bio:", error));
 	}, []);*/
 
-	useEffect(() => {
+	/*useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
 		fetch('http://localhost:8080/recommendations', {
@@ -126,6 +130,51 @@ function About() {
 			})
 			.catch(error => console.error("Error fetching /recommendations:", error));
 	}, []);
+
+	useEffect(() => {
+		const token = sessionStorage.getItem("token");
+
+		fetch('http://localhost:8080/connections', {
+			method: "GET",
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json"
+			}
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Unauthorized access");
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log("/connections data: ", data);
+			})
+			.catch(error => console.error("Error fetching /connections:", error));
+	}, []);*/
+
+	const addConnection = () => {
+		const token = sessionStorage.getItem("token");
+		const matchIdNumber = Number(matchId);
+
+		fetch(`http://localhost:8080/addConnection?matchId=${matchIdNumber}`, {
+			method: "POST",
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Content-Type": "application/json"
+			}
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Unauthorized access");
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log("/addConnection data: ", data);
+			})
+			.catch(error => console.error("Error fetching /addConnection:", error));
+	};
 
 	return (
 		<>
@@ -153,6 +202,15 @@ function About() {
 				<h1 className={'coming-soon'}>About</h1>
 				<br/>
 				<h1 className={'coming-soon'}>Coming soon!</h1>
+				<input
+					type="number"
+					value={matchId}
+					onChange={(e) => setMatchId(e.target.value)}
+					placeholder="Enter Match ID"
+				/>
+				<button onClick={addConnection}>Add match</button>
+				{/* Chat Component */}
+				<Chat />
 			</div>
 		</>
 

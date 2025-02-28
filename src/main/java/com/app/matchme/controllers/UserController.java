@@ -27,6 +27,23 @@ public class UserController {
         return service.register(user);
     }
 
+    @PostMapping("/addConnection")
+    public ResponseEntity<?> addConnection (@RequestHeader (value = "Authorization", required = false) String authHeader, @RequestParam("matchId") Long matchId) {
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, adding connection to user");
+            Long id = service.extractUserId(token);
+            User currentUser = service.getUserById(id);
+            service.addConnectionById(matchId, currentUser);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Connection added");
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     @PostMapping("/check-email")
     public Map<String, Boolean> checkEmail(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -42,7 +59,7 @@ public class UserController {
     @PostMapping("/validateToken")
     public ResponseEntity<?> validateToken(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid token: Missing or incorrect format");
         }
         String token = authHeader.substring(7);
         boolean isValid = service.validate(token);
@@ -50,7 +67,25 @@ public class UserController {
             System.out.println("Token is valid");
             return ResponseEntity.ok(true);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+        }
+    }
+
+    @GetMapping("/connections")
+    public ResponseEntity<?> getConnections(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, fetching /connections data");
+            Long id = service.extractUserId(token);
+            List<Long> connections = service.getUserConnectionsById(id);
+
+            if (connections.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(connections);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -172,31 +207,4 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-    /*@GetMapping("/csrf-token")
-    public CsrfToken getCsrfToken(HttpServletRequest request){
-        return (CsrfToken) request.getAttribute("_csrf");
-    }*/
-
-    /*@PostMapping
-    public ResponseEntity createUser(@RequestBody User user) throws URISyntaxException {
-        User savedUser = user.save(user);
-        return ResponseEntity.created(new URI("/users/" + savedUser.getId())).body(savedUser);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity updateUser(@PathVariable Long id, @RequestBody User user) {
-        User currentUser = user.findById(id).orElseThrow(RuntimeException::new);
-        currentUser.setEmail(user.getEmail());
-        currentUser.setPassword(user.getPassword());
-        currentUser = user.save(user);
-
-        return ResponseEntity.ok(currentUser);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteUser(@PathVariable Long id) {
-        user.deleteById(id);
-        return ResponseEntity.ok().build();
-    }*/
 }
