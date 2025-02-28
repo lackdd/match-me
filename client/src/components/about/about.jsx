@@ -152,6 +152,7 @@ function About() {
 			})
 			.catch(error => console.error("Error fetching /connections:", error));
 	}, []);*/
+	// test
 
 	const addConnection = () => {
 		const token = sessionStorage.getItem("token");
