@@ -81,7 +81,7 @@ function About() {
 			})
 			.catch(error => console.error("Error fetching /me/profile:", error));
 	}, []);
-
+ // test
 	// fetching /me/bio data if user is logged in
 	useEffect(() => {
 		const token = sessionStorage.getItem("token");
