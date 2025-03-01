@@ -1,0 +1,40 @@
+services:
+  # Backend service (Spring Boot)
+  match-me-backend:
+    build:
+      context: .  # Path to the backend folder containing Dockerfile
+      dockerfile: Dockerfile  # Specify the Dockerfile name (optional if it's just "Dockerfile")
+    image: "match-me-backend:latest"  # This just tags the built image
+    container_name: match-me-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+#    volumes:
+#      - .:/app
+#    environment:
+#      - REACT_APP_BACKEND_URL=http://match-me-backend:8080
+#      - SPRING_DATASOURCE_URL=${POSTGRES_URL}
+#      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
+#      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+#      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+
+  # Frontend service (React)
+  match-me-frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: "match-me-frontend:latest"  # This just tags the built image
+    container_name: match-me-frontend
+    ports:
+      - "5173:5173"
+#    volumes:
+#      - ./client:/app
+    depends_on:
+      - match-me-backend # make sure back-end service is running before starting front-end
+    environment:
+      - REACT_APP_BACKEND_URL=http://match-me-backend:8080
+    links:
+      - match-me-backend
+
