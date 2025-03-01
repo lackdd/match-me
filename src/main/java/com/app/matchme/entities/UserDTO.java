@@ -1,5 +1,6 @@
 package com.app.matchme.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDTO {
@@ -24,11 +25,12 @@ public class UserDTO {
     private String idealMatchAge;
     private String idealMatchYearsOfExperience;
     private String idealMatchLocation;
+    private List<Long> connections;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String username, String gender, String profilePicture, Integer age, List<String> preferredMethod, List<String> preferredMusicGenres, List<String> personalityTraits, List<String> additionalInterests, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String location, String linkToMusic, String description, List<String> idealMatchGoals, List<String> idealMatchMethods, List<String> idealMatchGenres, String idealMatchGender, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchLocation) {
+    public UserDTO(Long id, String username, String gender, String profilePicture, Integer age, List<String> preferredMethod, List<String> preferredMusicGenres, List<String> personalityTraits, List<String> additionalInterests, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String location, String linkToMusic, String description, List<String> idealMatchGoals, List<String> idealMatchMethods, List<String> idealMatchGenres, String idealMatchGender, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchLocation, List<Long> connections) {
         this.id = id;
         this.username = username;
         this.gender = gender;
@@ -50,6 +52,7 @@ public class UserDTO {
         this.idealMatchAge = idealMatchAge;
         this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
         this.idealMatchLocation = idealMatchLocation;
+        this.connections = connections;
     }
 
     public Long getId() {
@@ -218,5 +221,13 @@ public class UserDTO {
 
     public void setIdealMatchYearsOfExperience(String idealMatchYearsOfExperience) {
         this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
+    }
+
+    public List<Long> getConnections() {
+        return connections;
+    }
+
+    public void setConnections(List<Long> connections) {
+        this.connections = connections;
     }
 }

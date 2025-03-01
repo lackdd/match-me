@@ -29,7 +29,8 @@ public class UserMapper {
                 user.getIdealMatchGender(),
                 user.getIdealMatchAge(),
                 user.getIdealMatchYearsOfExperience(),
-                user.getIdealMatchLocation()
+                user.getIdealMatchLocation(),
+                user.getConnections()
         );
     }
 

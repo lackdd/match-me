@@ -35,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // Skip JWT validation for registration and public routes
-        if (requestURI.equals("/register") || requestURI.equals("/login") ) {
+        if (requestURI.equals("/register") || requestURI.equals("/login") || requestURI.startsWith("/ws") ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -50,15 +50,25 @@ public class JwtFilter extends OncePerRequestFilter {
             email = jwtService.extractUserName(token);
         }
 
-        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
+        if (token == null || email == null) {
+            System.out.println("Invalid or missing token");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+            response.getWriter().write("Token not found or invalid");
+            return;
+        }
 
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = context.getBean(UserDetailsService.class).loadUserByUsername(email);
-
-            if(jwtService.validateToken(token, userDetails)){
+            if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                System.out.println("Token validation failed");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+                response.getWriter().write("Token is invalid or expired");
+                return;
             }
         }
         filterChain.doFilter(request, response);

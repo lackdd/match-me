@@ -45,6 +45,7 @@ public class SecurityConfig {
                 //.csrf(customizer -> customizer.disable())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(
                                 "/",
                                 "/register",
@@ -56,6 +57,8 @@ public class SecurityConfig {
                                 "/me",
                                 "/me/profile",
                                 "/recommendations",
+                                "/connections",
+                                "/addConnection",
                                 "/me/bio",
                                 "/about",
                                 "/support",

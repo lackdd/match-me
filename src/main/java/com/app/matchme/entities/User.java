@@ -53,6 +53,10 @@ public class User {
     @Column(name = "method")
     private List<String> idealMatchMethods = new ArrayList<>();
     @ElementCollection
+    @CollectionTable(name = "connections", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "connection_id")
+    private List<Long> connections = new ArrayList<>();
+    @ElementCollection
     @CollectionTable(name = "user_ideal_match_goals", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "goal")
     private List<String> idealMatchGoals = new ArrayList<>();
@@ -61,12 +65,12 @@ public class User {
     private String idealMatchYearsOfExperience;
     private String idealMatchLocation;
 
-    
+
 
     public User() {
     }
 
-    public User(Long id, String email, String username, String password, String gender, String profilePicture, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String linkToMusic, String location, List<String> idealMatchGenres, String description, List<String> idealMatchMethods, String idealMatchGender, List<String> idealMatchGoals, String idealMatchYearsOfExperience, String idealMatchAge, String idealMatchLocation) {
+    public User(Long id, String email, String username, String password, String gender, String profilePicture, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String linkToMusic, String location, List<String> idealMatchGenres, String description, List<String> idealMatchMethods, String idealMatchGender, List<Long> connections, List<String> idealMatchGoals, String idealMatchYearsOfExperience, String idealMatchAge, String idealMatchLocation) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -86,6 +90,7 @@ public class User {
         this.description = description;
         this.idealMatchMethods = idealMatchMethods;
         this.idealMatchGender = idealMatchGender;
+        this.connections = connections;
         this.idealMatchGoals = idealMatchGoals;
         this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
         this.idealMatchAge = idealMatchAge;
@@ -274,5 +279,13 @@ public class User {
 
     public void setIdealMatchLocation(String idealMatchLocation) {
         this.idealMatchLocation = idealMatchLocation;
+    }
+
+    public List<Long> getConnections() {
+        return connections;
+    }
+
+    public void setConnections(List<Long> connections) {
+        this.connections = connections;
     }
 }
