@@ -10,7 +10,6 @@ import {ErrorElement} from './errorElement.jsx';
 import {PreviousNextButtons} from './previousNextButtons.jsx';
 import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx'
 
-
 function loadGoogleMapsScript(callback) {
 	if (window.google && window.google.maps) {
 		callback();
@@ -21,7 +20,7 @@ function loadGoogleMapsScript(callback) {
 	if (!existingScript) {
 		const script = document.createElement("script");
 		script.id = "google-maps-script";
-		script.src = `***REMOVED***api/js?key=***REMOVED***&loading=async&libraries=places&language=en`;
+		script.src = process.env.REACT_APP_GOOGLE_API;
 		script.async = true;
 		script.onload = callback;
 		document.body.appendChild(script);

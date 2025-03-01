@@ -23,8 +23,8 @@ export const customStyles = {
 		borderColor: state.isFocused ? 'rgb(254, 110, 121)' : 'rgb(97, 97, 97)',
 		boxShadow: state.isFocused ? '0 0 5px rgb(254, 110, 121)' : 'none',
 		'&:hover': { borderColor: '#rgb(254, 110, 121)' },
-		overflow: 'hidden',
-		transition: 'all 0.3s ease-in-out', // Smooth transition for height changes
+		// overflow: 'hidden',
+		transition: 'height 0.2s ease-in-out', // Smooth transition for height change
 
 	}),
 	menu: (provided, state) => ({
@@ -70,13 +70,14 @@ export const customStyles = {
 
 	valueContainer: (provided, state) => ({
 		...provided,
-		minHeight: '2rem',  // Ensure it starts with a height of 2rem
+		// minHeight: '2rem',  // Ensure it starts with a height of 2rem
+		// height: 'auto', // Allow it to adjust based on content
 		height: state.selectProps.containerExpand === true ? 'auto' : '2rem',  // Ensures alignment inside the control
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
 		padding: '0 5px',
-		margin: '0',
+		margin: '0 0',
 		boxSizing: 'border-box',
 		flexWrap: 'wrap', // Prevent the container from wrapping the items
 		overflow: 'hidden',  // Ensure it doesn't overflow
@@ -89,7 +90,7 @@ export const customStyles = {
 
 	input: (provided) => ({
 		...provided,
-		minHeight: '2rem',
+		// minHeight: '2rem',
 		height: 'auto',
 		margin: '0',
 		padding: '0',
@@ -156,9 +157,12 @@ export const customStyles = {
 	multiValue: (provided) => ({
 		...provided,
 		borderRadius: '8px',
+		margin: '2px 0',
 		backgroundColor: 'rgb(254, 110, 121)',
 		flexWrap: 'nowrap', // Wrap multi-selected items to new rows
-		display: 'inline-flex', // Allows values to shrink and grow
+		display: 'flex', // Allows values to shrink and grow
+		alignItems: 'center',
+		justifyContent: 'flex-start',
 		lineHeight: '100%',
 	}),
 
