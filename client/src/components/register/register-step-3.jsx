@@ -10,6 +10,11 @@ import {ErrorElement} from './errorElement.jsx';
 import {PreviousNextButtons} from './previousNextButtons.jsx';
 import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx'
 
+const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+const googleApi = import.meta.env.VITE_GOOGLE_API;
+
+
+
 function loadGoogleMapsScript(callback) {
 	if (window.google && window.google.maps) {
 		callback();
@@ -20,7 +25,7 @@ function loadGoogleMapsScript(callback) {
 	if (!existingScript) {
 		const script = document.createElement("script");
 		script.id = "google-maps-script";
-		script.src = process.env.VITE_GOOGLE_API;
+		script.src = googleApi;
 		script.async = true;
 		script.onload = callback;
 		document.body.appendChild(script);
@@ -156,7 +161,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 						${errors.musicLink ? 'error' : ''}
 						${!errors.musicLink && watch('musicLink') ? 'valid' : ''}`}
 						placeholder='Link to your Spotify etc'
-						value={watch('musicLink') || null}
+						value={watch('musicLink') || ""}
 						{...register('musicLink')}
 						autoComplete={'off'}
 						onChange={(e) => {
@@ -186,7 +191,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 						styles={customStyles}
 						wideMenu={true}
 						closeMenuOnSelect={true}
-						value={watch('location') || null}
+						value={watch('location') || ""}
 						autoComplete={'off'}
 						isValid={
 							!errors.location &&
@@ -205,8 +210,6 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 								setFormThreeData((prev) => ({ ...prev, location: null }));
 								return;
 							}
-
-							const googleApiKey = import.meta.env.VITE_GOOGLE_API;
 
 							fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
 								.then(response => response.json())

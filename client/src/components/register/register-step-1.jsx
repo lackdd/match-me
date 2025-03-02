@@ -18,7 +18,6 @@ import {ShowPasswordButton} from './showPasswordButton.jsx';
 
 function Step1({ formOneData, setFormOneData, onSubmit}) {
 	const [showPassword, setShowPassword] = useState(true);
-	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	// Initialize react-hook-form with Yup schema
 	const {

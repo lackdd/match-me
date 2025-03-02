@@ -15,7 +15,7 @@ function About() {
 
 	/*useEffect(() => {
 
-        fetch('/api/users/27')
+        fetch('/users/27')
             .then(response => response.json())
             .then(data => {
 				console.log(data);
@@ -25,7 +25,7 @@ function About() {
 
 	useEffect(() => {
 
-		fetch('/api/users/27/profile')
+		fetch('/users/27/profile')
 			.then(response => response.json())
 			.then(data => {
 				console.log(data);
