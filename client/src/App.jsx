@@ -14,6 +14,7 @@ import {AuthContext} from './main.jsx';
 function App() {
     const location = useLocation();
     const { isUserLoggedIn, setIsUserLoggedIn } = useContext(AuthContext);
+    const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
     useEffect(() => {
@@ -22,7 +23,7 @@ function App() {
             if (token){
                 try {
                     const response = await
-                        axios.post('http://localhost:8080/validateToken', {},
+                        axios.post(`/api/validateToken`, {},
                             {
                                 headers: { Authorization: `Bearer ${token}` },
                             }

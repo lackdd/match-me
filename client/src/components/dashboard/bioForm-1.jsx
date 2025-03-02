@@ -154,7 +154,7 @@ export function BioForm1() {
 			{/*				if (watch('email')) {*/}
 			{/*					try {*/}
 			{/*						const response = await*/}
-			{/*							axios.post("http://localhost:8080/check-email", {email: watch('email')});*/}
+			{/*							axios.post("${BACKEND_URL}/check-email", {email: watch('email')});*/}
 			{/*						if (response.data.exists) {*/}
 			{/*							// console.log("Email already exists");*/}
 			{/*							setError("email", { type: "manual", message: "Email is already in use" });*/}

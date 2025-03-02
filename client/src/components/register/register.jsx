@@ -183,7 +183,7 @@ function Register() {
         console.log("Sending:", JSON.stringify(userDetails, null, 2));
         try {
             const response = await
-                axios.post("http://localhost:8080/register", userDetails);
+                axios.post(`/api/register`, userDetails);
             console.log("User created successfully");
         } catch (error) {
             if (error.response.status === 400) {

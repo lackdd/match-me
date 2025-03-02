@@ -13,6 +13,8 @@ function Login() {
 	const history = useNavigate();
 	const [showPassword, setShowPassword] = useState(true);
 
+	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
 
 	if (isUserLoggedIn === true) {
@@ -27,7 +29,7 @@ function Login() {
 				setError('Please enter a username and a password')
 			}
 			const response = await
-				axios.post('http://localhost:8080/login', {email, password});
+				axios.post(`/api/login`, {email, password});
 			setError("")
 			console.log('Login successful: ', response.data);
 			sessionStorage.setItem("token", response.data);

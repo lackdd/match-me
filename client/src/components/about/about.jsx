@@ -9,11 +9,13 @@ function About() {
 	const [profile, setProfile] = useState({});
 	const [matchId, setMatchId] = useState("");
 
+	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 
 
 	/*useEffect(() => {
 
-        fetch('http://localhost:8080/users/27')
+        fetch('/api/users/27')
             .then(response => response.json())
             .then(data => {
 				console.log(data);
@@ -23,7 +25,7 @@ function About() {
 
 	useEffect(() => {
 
-		fetch('http://localhost:8080/users/27/profile')
+		fetch('/api/users/27/profile')
 			.then(response => response.json())
 			.then(data => {
 				console.log(data);
@@ -33,7 +35,7 @@ function About() {
 
 	useEffect(() => {
 
-		fetch('http://localhost:8080/users/27/bio')
+		fetch('/users/27/bio')
 			.then(response => response.json())
 			.then(data => {
 				console.log(data);
@@ -44,7 +46,7 @@ function About() {
 	useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
-		fetch('http://localhost:8080/me', {
+		fetch('/api/me', {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${token}`,
@@ -67,7 +69,7 @@ function About() {
 	useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
-		fetch('http://localhost:8080/me/profile', {
+		fetch('/api/me/profile', {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${token}`,
@@ -90,7 +92,7 @@ function About() {
 	useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
-		fetch('http://localhost:8080/me/bio', {
+		fetch('/api/me/bio', {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${token}`,
@@ -112,7 +114,7 @@ function About() {
 	/*useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
-		fetch('http://localhost:8080/recommendations', {
+		fetch('/api/recommendations', {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${token}`,
@@ -134,7 +136,7 @@ function About() {
 	useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
-		fetch('http://localhost:8080/connections', {
+		fetch('/api/connections', {
 			method: "GET",
 			headers: {
 				"Authorization": `Bearer ${token}`,
@@ -158,7 +160,7 @@ function About() {
 		const token = sessionStorage.getItem("token");
 		const matchIdNumber = Number(matchId);
 
-		fetch(`http://localhost:8080/addConnection?matchId=${matchIdNumber}`, {
+		fetch(`/api/addConnection?matchId=${matchIdNumber}`, {
 			method: "POST",
 			headers: {
 				"Authorization": `Bearer ${token}`,

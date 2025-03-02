@@ -206,7 +206,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 								return;
 							}
 
-							fetch(`***REMOVED***api/geocode/json?place_id=${selectedOption.value}&key=***REMOVED***&language=en`)
+							fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=***REMOVED***&language=en`)
 								.then(response => response.json())
 								.then(data => {
 									if (data.status === "OK" && data.results.length > 0) {
