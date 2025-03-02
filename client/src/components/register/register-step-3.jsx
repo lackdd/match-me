@@ -20,7 +20,7 @@ function loadGoogleMapsScript(callback) {
 	if (!existingScript) {
 		const script = document.createElement("script");
 		script.id = "google-maps-script";
-		script.src = process.env.REACT_APP_GOOGLE_API;
+		script.src = process.env.VITE_GOOGLE_API;
 		script.async = true;
 		script.onload = callback;
 		document.body.appendChild(script);
@@ -206,7 +206,9 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 								return;
 							}
 
-							fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=***REMOVED***&language=en`)
+							const googleApiKey = import.meta.env.VITE_GOOGLE_API;
+
+							fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
 								.then(response => response.json())
 								.then(data => {
 									if (data.status === "OK" && data.results.length > 0) {
