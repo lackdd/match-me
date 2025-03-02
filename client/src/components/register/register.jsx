@@ -27,6 +27,8 @@ function Register() {
     const cloudName = 'hzxyensd5';
     const uploadPreset = 'aoh4fpwm';
 
+    const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
     // State
     const [publicId, setPublicId] = useState('');
 
