@@ -2,6 +2,8 @@
 
 Full-stack recommendation application, to connect users based on their mutual musical interests.
 
+This project is being actively developed by me and my group mate Andre Berezin. We decided to leave the backend of the project to me and the frontend to Andre.
+
 NB! Pls uncomment the script and edit src="https://maps.googleapis.com/maps/api/js?key={insertYourGoogleAPIkeyHere}&loading=async&libraries=places&language=en"> to include your own Google API key in client/index.html please.
 
 Quick set-up for testing:
