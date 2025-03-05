@@ -1,0 +1,26 @@
+services:
+  - type: web
+    region: frankfurt
+    name: match-me-backend
+    runtime: docker
+    dockerfilePath: Dockerfile
+    buildCommand: docker build -t match-me-backend .
+    startCommand: docker run -p 8080:8080 match-me-backend
+    plan: free
+    envVars:
+      - key: SPRING_FRONTEND_URL
+        value: https://match-me-frontend.onrender.com
+      # Add other environment variables here
+
+  - type: web
+    region: frankfurt
+    name: match-me-frontend
+    runtime: docker
+    dockerfilePath: client/Dockerfile
+    buildCommand: cd client && docker build -t match-me-frontend .
+    startCommand: docker run -p 5173:5173 match-me-frontend
+    plan: free
+    envVars:
+      - key: VITE_BACKEND_URL
+        value: https://match-me-backend-latest.onrender.com
+      # Add other environment variables for frontend here
