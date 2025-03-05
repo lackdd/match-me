@@ -3,6 +3,10 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+#ARG VITE_BACKEND_URL
+#ARG VITE_GOOGLE_API_KEY
+#ARG VITE_GOOGLE_API
+
 # Copy package.json and package-lock.json first (this allows caching)
 COPY package.json ./
 COPY package-lock.json ./
@@ -16,6 +20,10 @@ RUN npm ci  # `ci` is faster and ensures consistency
 
 # Copy the rest of the application files
 COPY . .
+
+#RUN echo "VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY" >> .env && \
+#    echo "VITE_GOOGLE_API=$VITE_GOOGLE_API" >> .env  && \
+#    echo "VITE_BACKEND_URL=$VITE_BACKEND_URL" >> .env
 
 # Build the React app
 RUN npm run build

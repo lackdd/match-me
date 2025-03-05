@@ -16,6 +16,8 @@ FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
+#ENV SPRING_FRONTEND_URL=https://match-me-frontend.onrender.com
+
 ARG JAR_FILE=target/match-me-0.0.1-SNAPSHOT.jar
 
 COPY ${JAR_FILE} matchme.jar
