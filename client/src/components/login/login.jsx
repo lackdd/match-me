@@ -31,29 +31,19 @@ function Login() {
 
 		try {
 			if (!email || !password) {
-				setError('Please enter a username and a password')
+				setError('Please enter a username and a password');
+				return;
 			}
+
 			const response = await
 				axios.post(`${VITE_BACKEND_URL}/api/login`, {email, password});
 			setError("")
 			console.log('Login successful: ', response.data);
-			// console.log('VITE_BACKEND_URL: ', VITE_BACKEND_URL);
-			// console.log('SPRING_FRONTEND_URL: ', SPRING_FRONTEND_URL);
-			// console.log('POSTGRES_URL: ', POSTGRES_URL);
-			// console.log('POSTGRES_PASSWORD: ', POSTGRES_PASSWORD);
-			// console.log('VITE_GOOGLE_API: ', VITE_GOOGLE_API);
-			// console.log('VITE_GOOGLE_API_KEY: ', VITE_GOOGLE_API_KEY);
 			sessionStorage.setItem("token", response.data);
 			setIsUserLoggedIn(true);
 			history('/dashboard')
 		} catch (error) {
 			console.error('Login failed: ', error.response ? error.response.data : error.message);
-			// console.log('VITE_BACKEND_URL: ', VITE_BACKEND_URL);
-			// console.log('SPRING_FRONTEND_URL: ', SPRING_FRONTEND_URL);
-			// console.log('POSTGRES_URL: ', POSTGRES_URL);
-			// console.log('POSTGRES_PASSWORD: ', POSTGRES_PASSWORD);
-			// console.log('VITE_GOOGLE_API: ', VITE_GOOGLE_API);
-			// console.log('VITE_GOOGLE_API_KEY: ', VITE_GOOGLE_API_KEY);
 			setError('Invalid username or password.')
 		}
 	}
