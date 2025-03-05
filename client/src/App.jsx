@@ -23,7 +23,7 @@ function App() {
             if (token){
                 try {
                     const response = await
-                        axios.post(`/api/validateToken`, {},
+                        axios.post(`${VITE_BACKEND_URL}/api/validateToken`, {},
                             {
                                 headers: { Authorization: `Bearer ${token}` },
                             }

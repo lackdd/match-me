@@ -183,7 +183,7 @@ function Register() {
         console.log("Sending:", JSON.stringify(userDetails, null, 2));
         try {
             const response = await
-                axios.post(`/api/register`, userDetails);
+                axios.post(`${VITE_BACKEND_URL}/api/register`, userDetails);
             console.log("User created successfully");
         } catch (error) {
             if (error.response.status === 400) {

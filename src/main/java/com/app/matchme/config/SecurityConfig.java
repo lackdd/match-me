@@ -55,25 +55,25 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(
-                                "/",
-                                "/register",
-                                "/users/*",
-                                "/users/*/profile",
-                                "/users/*/bio",
-                                "/login",
-                                "/features",
-                                "/me",
-                                "/me/profile",
-                                "/recommendations",
-                                "/connections",
-                                "/addConnection",
-                                "/me/bio",
-                                "/about",
-                                "/support",
-                                "/check-email",
-                                "/error",
-                                "/forgot-password",
-                                "/validateToken")
+                                "/api/",
+                                "/api/register",
+                                "/api/users/*",
+                                "/api/users/*/profile",
+                                "/api/users/*/bio",
+                                "/api/login",
+                                "/api/features",
+                                "/api/me",
+                                "/api/me/profile",
+                                "/api/recommendations",
+                                "/api/connections",
+                                "/api/addConnection",
+                                "/api/me/bio",
+                                "/api/about",
+                                "/api/support",
+                                "/api/check-email",
+                                "/api/error",
+                                "/api/forgot-password",
+                                "/api/validateToken")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->

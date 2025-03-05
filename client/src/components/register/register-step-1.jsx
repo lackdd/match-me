@@ -19,6 +19,9 @@ import {ShowPasswordButton} from './showPasswordButton.jsx';
 function Step1({ formOneData, setFormOneData, onSubmit}) {
 	const [showPassword, setShowPassword] = useState(true);
 
+	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+
 	// Initialize react-hook-form with Yup schema
 	const {
 		register,
@@ -157,7 +160,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 								if (watch('email')) {
 									try {
 										const response = await
-											axios.post(`/api/check-email`, {email: watch('email')});
+											axios.post(`${VITE_BACKEND_URL}/api/check-email`, {email: watch('email')});
 										if (response.data.exists) {
 											// console.log("Email already exists");
 											setError("email", { type: "manual", message: "Email is already in use" });

@@ -16,7 +16,8 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_BACKEND_URL || (env.DOCKER_ENV ? 'http://match-me-backend:8080' : 'http://localhost:8080'),
           changeOrigin: true,            // Ensures the Host header matches the target
-          rewrite: (path) => path.replace(/^\/api/, ''), // Optionally rewrite paths
+          // rewrite: (path) => path.replace(/^\/api/, ''), // Optionally rewrite paths
+          // rewrite: (path) => path.replace(/\/api/g, ''), // Remove all occurrences of "/api"
         },
         // Proxy for WebSocket connections
         '/ws': {

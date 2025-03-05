@@ -23,13 +23,15 @@ function Login() {
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
+		console.log(`${VITE_BACKEND_URL}/api/login`);
+		console.log('http://localhost:8080/api/login');
 
 		try {
 			if (!email || !password) {
 				setError('Please enter a username and a password')
 			}
 			const response = await
-				axios.post(`/api/login`, {email, password});
+				axios.post(`${VITE_BACKEND_URL}/api/login`, {email, password});
 			setError("")
 			console.log('Login successful: ', response.data);
 			sessionStorage.setItem("token", response.data);
