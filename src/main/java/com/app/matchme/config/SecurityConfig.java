@@ -32,6 +32,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // todo not getting spring.frontend.url
     @Value("${spring.frontend.url}")
     private String frontendUrl;
 
@@ -88,8 +89,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        System.out.println("Frontend URL: " + getFrontendUrl());
-        config.setAllowedOrigins(List.of(getFrontendUrl(), "https://match-me-20pb.onrender.com/")); // Adjust as needed
+        config.setAllowedOrigins(List.of("localhost:5173", "https://match-me-20pb.onrender.com/")); // Adjust as needed
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);
