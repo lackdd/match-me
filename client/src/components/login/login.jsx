@@ -29,6 +29,8 @@ function Login() {
 	const handleLogin = async (event) => {
 		event.preventDefault();
 
+		console.log(import.meta.env); // Log all environment variables here
+
 		try {
 			if (!email || !password) {
 				setError('Please enter a username and a password')
