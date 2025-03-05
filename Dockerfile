@@ -48,7 +48,11 @@ ENV POSTGRES_USERNAME=$POSTGRES_USERNAME
 ENV VITE_GOOGLE_API=$VITE_GOOGLE_API
 ENV VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY
 
-
+# Build the frontend with environment variables
+RUN VITE_BACKEND_URL=$VITE_BACKEND_URL \
+    VITE_GOOGLE_API=$VITE_GOOGLE_API \
+    VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY \
+    npm run build
 
 # Copy the backend JAR file from the build stage
 COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar /app/matchme.jar
