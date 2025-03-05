@@ -23,7 +23,9 @@ COPY client/package-lock.json .
 RUN npm install
 
 # Copy the frontend source code
+COPY client/public ./public
 COPY client/src ./src
+COPY client ./
 
 # Build the frontend
 RUN npm run build
