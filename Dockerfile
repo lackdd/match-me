@@ -39,6 +39,17 @@ RUN apk add --no-cache nodejs npm
 # Set working directory inside the final container
 WORKDIR /app
 
+# Set the environment variable inside the container
+ENV SPRING_FRONTEND_URL=$SPRING_FRONTEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ENV POSTGRES_URL=$POSTGRES_URL
+ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+ENV POSTGRES_USERNAME=$POSTGRES_USERNAME
+ENV VITE_GOOGLE_API=$VITE_GOOGLE_API
+ENV VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY
+
+
+
 # Copy the backend JAR file from the build stage
 COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar /app/matchme.jar
 
