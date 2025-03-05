@@ -32,10 +32,10 @@ WORKDIR /app
 RUN npm install -g serve
 
 # Copy the package.json and package-lock.json from the build stage
-COPY --from=build /app/package.json /app/package-lock.json /app/
+COPY --from=frontend-build /app/package.json /app/package-lock.json /app/
 
 # Copy only the built application from the previous stage
-COPY --from=build /app/dist /app/dist
+COPY --from=frontend-build /app/dist /app/dist
 
 # Expose the port for serving the frontend
 EXPOSE 5173
