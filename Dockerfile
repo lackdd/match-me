@@ -12,16 +12,48 @@
 #EXPOSE 8080
 #ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 
-FROM eclipse-temurin:21-jdk-alpine
+#FROM eclipse-temurin:21-jdk-alpine
+#
+#WORKDIR /app
+#
+##ENV SPRING_FRONTEND_URL=https://match-me-frontend.onrender.com
+#
+#ARG JAR_FILE=target/match-me-0.0.1-SNAPSHOT.jar
+#
+#COPY ${JAR_FILE} matchme.jar
+#
+#ENTRYPOINT ["java","-jar","/app/matchme.jar"]
+#
+#EXPOSE 8080
 
+# Use Maven to build the app
+FROM maven:3.8.4-openjdk-11 AS build
+
+# Set the working directory inside the container
 WORKDIR /app
 
-#ENV SPRING_FRONTEND_URL=https://match-me-frontend.onrender.com
+# Copy the pom.xml and other necessary files for Maven to download dependencies
+COPY pom.xml .
 
-ARG JAR_FILE=target/match-me-0.0.1-SNAPSHOT.jar
+# Download the dependencies
+RUN mvn dependency:go-offline
 
-COPY ${JAR_FILE} matchme.jar
+# Copy the source code into the container
+COPY src ./src
 
-ENTRYPOINT ["java","-jar","/app/matchme.jar"]
+# Build the JAR file
+RUN mvn clean install
+
+# Create the final image with the JAR file
+FROM openjdk:11-jre-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the JAR file from the build stage
+COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar matchme.jar
+
+# Define the entrypoint for the application
+ENTRYPOINT ["java", "-jar", "/app/matchme.jar"]
 
 EXPOSE 8080
