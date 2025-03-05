@@ -33,6 +33,9 @@ RUN npm run build
 # Create the final image with both the backend JAR and frontend build
 FROM eclipse-temurin:17-jre-alpine
 
+# Install Node.js to run the frontend
+RUN apk add --no-cache nodejs npm
+
 # Set working directory inside the final container
 WORKDIR /app
 
