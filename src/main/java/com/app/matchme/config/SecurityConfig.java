@@ -88,7 +88,8 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(getFrontendUrl())); // Adjust as needed
+        System.out.println("Frontend URL: " + getFrontendUrl());
+        config.setAllowedOrigins(List.of(getFrontendUrl(), "https://match-me-frontend.onrender.com")); // Adjust as needed
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);
