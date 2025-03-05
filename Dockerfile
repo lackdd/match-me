@@ -27,7 +27,7 @@
 #EXPOSE 8080
 
 # Use Maven to build the app
-FROM maven:3.8.4-openjdk-11 AS build
+FROM eclipse-temurin:17-jdk-alpine AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -45,7 +45,7 @@ COPY src ./src
 RUN mvn clean install
 
 # Create the final image with the JAR file
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:17-jre-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
