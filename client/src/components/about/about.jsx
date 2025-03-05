@@ -183,37 +183,37 @@ function About() {
 		<>
 			{/*{Navigator()}*/}
 			<div className='about-container'>
-				{user.username}
-				<br/>
-				<img src={user.profilePicture} alt="Profile" width="150"/>
-				<br/>
-				{profile.gender} {profile.age}
-				<br/>
-				{profile.linkToMusic}
-				<br/>
-				{profile.location}
-				<br/>
-				{profile.description}
-				<br/>
-				{profile.additionalInterests}
-				<br/>
-				{profile.personalityTraits}
-				<br/>
-				{profile.preferredMethods}
-				{/*preferredMusicGenres and goalsWithMusic are also in use in register.jsx*/}
-				{profile.preferredMusicGenres} {profile.goalsWithMusic} {profile.yearsOfMusicExperience}
+				{/*{user.username}*/}
+				{/*<br/>*/}
+				{/*<img src={user.profilePicture} alt="Profile" width="150"/>*/}
+				{/*<br/>*/}
+				{/*{profile.gender} {profile.age}*/}
+				{/*<br/>*/}
+				{/*{profile.linkToMusic}*/}
+				{/*<br/>*/}
+				{/*{profile.location}*/}
+				{/*<br/>*/}
+				{/*{profile.description}*/}
+				{/*<br/>*/}
+				{/*{profile.additionalInterests}*/}
+				{/*<br/>*/}
+				{/*{profile.personalityTraits}*/}
+				{/*<br/>*/}
+				{/*{profile.preferredMethods}*/}
+				{/*/!*preferredMusicGenres and goalsWithMusic are also in use in register.jsx*!/*/}
+				{/*{profile.preferredMusicGenres} {profile.goalsWithMusic} {profile.yearsOfMusicExperience}*/}
 				<h1 className={'coming-soon'}>About</h1>
 				<br/>
 				<h1 className={'coming-soon'}>Coming soon!</h1>
-				<input
-					type="number"
-					value={matchId}
-					onChange={(e) => setMatchId(e.target.value)}
-					placeholder="Enter Match ID"
-				/>
-				<button onClick={addConnection}>Add match</button>
-				{/* Chat Component */}
-				<Chat />
+				{/*<input*/}
+				{/*	type="number"*/}
+				{/*	value={matchId}*/}
+				{/*	onChange={(e) => setMatchId(e.target.value)}*/}
+				{/*	placeholder="Enter Match ID"*/}
+				{/*/>*/}
+				{/*<button onClick={addConnection}>Add match</button>*/}
+				{/*/!* Chat Component *!/*/}
+				{/*<Chat />*/}
 			</div>
 		</>
 
