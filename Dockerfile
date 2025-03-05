@@ -1,59 +1,54 @@
-## First stage: Build the JAR file
-#FROM maven:3.9.6-eclipse-temurin-21 AS build
-#WORKDIR /app
-#COPY pom.xml .
-#COPY src ./src
-#RUN mvn clean package -DskipTests
-#
-## Second stage: Run the JAR file with a smaller image
-#FROM eclipse-temurin:21-jdk-alpine
-#WORKDIR /app
-#COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar app.jar
-#EXPOSE 8080
-#ENTRYPOINT ["java", "-jar", "/app/app.jar"]
-
-#FROM eclipse-temurin:21-jdk-alpine
-#
-#WORKDIR /app
-#
-##ENV SPRING_FRONTEND_URL=https://match-me-frontend.onrender.com
-#
-#ARG JAR_FILE=target/match-me-0.0.1-SNAPSHOT.jar
-#
-#COPY ${JAR_FILE} matchme.jar
-#
-#ENTRYPOINT ["java","-jar","/app/matchme.jar"]
-#
-#EXPOSE 8080
-
-# Use Maven to build the app
+# Use Maven to build the backend
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set the working directory inside the container
+# Set the working directory inside the container for backend
 WORKDIR /app
 
-# Copy the pom.xml and other necessary files for Maven to download dependencies
+# Copy pom.xml and backend source code
 COPY pom.xml .
-
-# Download the dependencies
-RUN mvn dependency:go-offline
-
-# Copy the source code into the container
 COPY src ./src
 
-# Build the JAR file
+# Build the backend JAR file
 RUN mvn clean install -DskipTests
 
-# Create the final image with the JAR file
+# Use Node.js to build the frontend
+FROM node:18 AS frontend-build
+
+# Set the working directory for frontend
+WORKDIR /frontend
+
+# Copy frontend files and install dependencies
+COPY client/package.json .
+COPY client/package-lock.json .
+RUN npm install
+
+# Copy the frontend source code
+COPY client/src ./src
+
+# Build the frontend
+RUN npm run build
+
+# Create the final image with both the backend JAR and frontend build
 FROM eclipse-temurin:17-jre-alpine
 
-# Set the working directory inside the container
+# Set working directory inside the final container
 WORKDIR /app
 
-# Copy the JAR file from the build stage
-COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar matchme.jar
+# Copy the backend JAR file from the build stage
+COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar /app/matchme.jar
 
-# Define the entrypoint for the application
-ENTRYPOINT ["java", "-jar", "/app/matchme.jar"]
+# Copy the frontend build output (static files)
+COPY --from=frontend-build /frontend/dist /app/frontend
 
-EXPOSE 8080
+# Install bash (optional, if needed)
+RUN apk add --no-cache bash
+
+# Copy the start.sh script
+COPY ./start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Expose the necessary ports for frontend and backend
+EXPOSE 8080 5173
+
+# Run both backend and frontend services
+CMD ["/start.sh"]

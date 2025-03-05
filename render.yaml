@@ -5,7 +5,7 @@ services:
     runtime: docker
     dockerfilePath: Dockerfile
     buildCommand: docker build -t match-me-backend .
-    startCommand: docker run -p 8080:8080 match-me-backend
+    startCommand: docker run -p $PORT:8080 match-me-backend
     plan: free
     envVars:
       - key: SPRING_FRONTEND_URL
@@ -18,7 +18,7 @@ services:
     runtime: docker
     dockerfilePath: client/Dockerfile
     buildCommand: cd client && docker build -t match-me-frontend .
-    startCommand: docker run -p 5173:5173 match-me-frontend
+    startCommand: docker run -p $PORT:5173 match-me-frontend
     plan: free
     envVars:
       - key: VITE_BACKEND_URL
