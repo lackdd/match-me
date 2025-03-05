@@ -4,7 +4,7 @@ services:
     name: match-me-backend
     runtime: docker
     dockerfilePath: Dockerfile
-    buildCommand: docker build -t match-me-backend .
+    buildCommand: mvn clean install && docker build -t match-me-backend .
     startCommand: docker run -p 8080:8080 match-me-backend
     plan: free
     envVars:
