@@ -15,24 +15,24 @@ const googleApi = import.meta.env.VITE_GOOGLE_API;
 
 
 
-function loadGoogleMapsScript(callback) {
-	if (window.google && window.google.maps) {
-		callback();
-		return;
-	}
-
-	const existingScript = document.getElementById("google-maps-script");
-	if (!existingScript) {
-		const script = document.createElement("script");
-		script.id = "google-maps-script";
-		script.src = googleApi;
-		script.async = true;
-		script.onload = callback;
-		document.body.appendChild(script);
-	} else {
-		existingScript.onload = callback;
-	}
-}
+// function loadGoogleMapsScript(callback) {
+// 	if (window.google && window.google.maps) {
+// 		callback();
+// 		return;
+// 	}
+//
+// 	const existingScript = document.getElementById("google-maps-script");
+// 	if (!existingScript) {
+// 		const script = document.createElement("script");
+// 		script.id = "google-maps-script";
+// 		script.src = googleApi;
+// 		script.async = true;
+// 		script.onload = callback;
+// 		document.body.appendChild(script);
+// 	} else {
+// 		existingScript.onload = callback;
+// 	}
+// }
 
 
 
