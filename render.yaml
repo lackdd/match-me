@@ -9,7 +9,7 @@ services:
     plan: free
     envVars:
       - key: SPRING_FRONTEND_URL
-        value: https://match-me-frontend.onrender.com
+        value: https://match-me-se2e.onrender.com
       # Add other environment variables here
 
   - type: web
@@ -22,5 +22,5 @@ services:
     plan: free
     envVars:
       - key: VITE_BACKEND_URL
-        value: https://match-me-backend-latest.onrender.com
+        value: https://match-me-se2e.onrender.com
       # Add other environment variables for frontend here
