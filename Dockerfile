@@ -1,5 +1,5 @@
 # Use Maven to build the backend
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+FROM maven:3.9.6-eclipse-temurin-17 AS backend-build
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 ENV POSTGRES_USERNAME=${POSTGRES_USERNAME}
 
 # Copy the backend JAR file from the build stage
-COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar /app/matchme.jar
+COPY --from=backend-build /app/target/match-me-0.0.1-SNAPSHOT.jar /app/matchme.jar
 
 # Expose the necessary port for backend
 EXPOSE 8080

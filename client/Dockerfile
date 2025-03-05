@@ -4,9 +4,9 @@ FROM node:18 AS frontend-build
 WORKDIR /frontend
 
 # Copy frontend source code and install dependencies
-COPY client/package.json client/package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm install
-COPY client ./
+COPY ./
 
 # Build the frontend (with environment variables)
 ARG VITE_BACKEND_URL
