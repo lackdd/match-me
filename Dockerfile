@@ -7,7 +7,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Build the backend JAR file
+# Build the backend JAR file and skip maven tests
 RUN mvn clean install -DskipTests
 
 # Final image (alpine with Java runtime)

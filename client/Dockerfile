@@ -21,8 +21,6 @@ ENV VITE_GOOGLE_API_KEY=${VITE_GOOGLE_API_KEY}
 
 RUN npm run build
 
-RUN ls /app/dist
-
 # Final image with Node.js and serve to serve the frontend
 FROM node:18-slim
 

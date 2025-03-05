@@ -75,14 +75,14 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 // 		}
 // 	}, []);
 
-	useEffect(() => {
-		loadGoogleMapsScript(() => {
-			if (window.google && window.google.maps && window.google.maps.places) {
-				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-				setApiLoaded(true);
-			}
-		});
-	}, []);
+	// useEffect(() => {
+	// 	loadGoogleMapsScript(() => {
+	// 		if (window.google && window.google.maps && window.google.maps.places) {
+	// 			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+	// 			setApiLoaded(true);
+	// 		}
+	// 	});
+	// }, []);
 
 	const fetchPlaces = useCallback((input) => {
 		if (!input || !autocompleteServiceRef.current) return;
