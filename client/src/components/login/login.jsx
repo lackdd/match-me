@@ -14,6 +14,11 @@ function Login() {
 	const [showPassword, setShowPassword] = useState(true);
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+	const SPRING_FRONTEND_URL = import.meta.env.SPRING_FRONTEND_URL;
+	const POSTGRES_URL = import.meta.env.POSTGRES_URL;
+	const POSTGRES_PASSWORD = import.meta.env.POSTGRESS_PASSWORD;
+	const VITE_GOOGLE_API = import.meta.env.VITE_GOOGLE_API;
+	const VITE_GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
 	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
 
@@ -23,8 +28,6 @@ function Login() {
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
-		console.log(`${VITE_BACKEND_URL}/api/login`);
-		console.log('http://localhost:8080/api/login');
 
 		try {
 			if (!email || !password) {
@@ -34,11 +37,23 @@ function Login() {
 				axios.post(`${VITE_BACKEND_URL}/api/login`, {email, password});
 			setError("")
 			console.log('Login successful: ', response.data);
+			console.log('VITE_BACKEND_URL: ', VITE_BACKEND_URL);
+			console.log('SPRING_FRONTEND_URL: ', SPRING_FRONTEND_URL);
+			console.log('POSTGRES_URL: ', POSTGRES_URL);
+			console.log('POSTGRES_PASSWORD: ', POSTGRES_PASSWORD);
+			console.log('VITE_GOOGLE_API: ', VITE_GOOGLE_API);
+			console.log('VITE_GOOGLE_API_KEY: ', VITE_GOOGLE_API_KEY);
 			sessionStorage.setItem("token", response.data);
 			setIsUserLoggedIn(true);
 			history('/dashboard')
 		} catch (error) {
 			console.error('Login failed: ', error.response ? error.response.data : error.message);
+			console.log('VITE_BACKEND_URL: ', VITE_BACKEND_URL);
+			console.log('SPRING_FRONTEND_URL: ', SPRING_FRONTEND_URL);
+			console.log('POSTGRES_URL: ', POSTGRES_URL);
+			console.log('POSTGRES_PASSWORD: ', POSTGRES_PASSWORD);
+			console.log('VITE_GOOGLE_API: ', VITE_GOOGLE_API);
+			console.log('VITE_GOOGLE_API_KEY: ', VITE_GOOGLE_API_KEY);
 			setError('Invalid username or password.')
 		}
 	}
