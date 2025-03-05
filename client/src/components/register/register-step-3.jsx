@@ -208,6 +208,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							if (!selectedOption) {
 								setValue('location', null, { shouldValidate: true });
 								setFormThreeData((prev) => ({ ...prev, location: null }));
+								console.log("GOOGLE_API_KEY: " + googleApiKey);
 								return;
 							}
 
