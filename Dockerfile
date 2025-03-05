@@ -17,15 +17,46 @@ FROM node:18 AS frontend-build
 # Set the working directory for frontend
 WORKDIR /frontend
 
-# Copy frontend files and install dependencies
-COPY client/package.json .
-COPY client/package-lock.json .
+COPY client/package.json client/package-lock.json ./
+
 RUN npm install
 
 # Copy the frontend source code
-COPY client/public ./public
-COPY client/src ./src
-COPY client ./
+COPY client/ ./
+
+ARG VITE_BACKEND_URL
+ARG VITE_GOOGLE_API
+ARG VITE_GOOGLE_API_KEY
+
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+ENV VITE_GOOGLE_API=${VITE_GOOGLE_API}
+ENV VITE_GOOGLE_API_KEY=${VITE_GOOGLE_API_KEY}
+
+
+## Set the environment variable inside the container
+#ENV SPRING_FRONTEND_URL=$SPRING_FRONTEND_URL
+#ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+#ENV POSTGRES_URL=$POSTGRES_URL
+#ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+#ENV POSTGRES_USERNAME=$POSTGRES_USERNAME
+#ENV VITE_GOOGLE_API=$VITE_GOOGLE_API
+#ENV VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY
+#
+## Build the frontend with environment variables
+#RUN VITE_BACKEND_URL=$VITE_BACKEND_URL \
+#    VITE_GOOGLE_API=$VITE_GOOGLE_API \
+#    VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY \
+#    npm run build
+
+# Copy frontend files and install dependencies
+#COPY client/package.json .
+#COPY client/package-lock.json .
+#RUN npm install
+#
+## Copy the frontend source code
+#COPY client/public ./public
+#COPY client/src ./src
+#COPY client ./
 
 # Build the frontend
 RUN npm run build
@@ -39,20 +70,13 @@ RUN apk add --no-cache nodejs npm
 # Set working directory inside the final container
 WORKDIR /app
 
-# Set the environment variable inside the container
-ENV SPRING_FRONTEND_URL=$SPRING_FRONTEND_URL
-ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
-ENV POSTGRES_URL=$POSTGRES_URL
-ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-ENV POSTGRES_USERNAME=$POSTGRES_USERNAME
-ENV VITE_GOOGLE_API=$VITE_GOOGLE_API
-ENV VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY
-
-# Build the frontend with environment variables
-RUN VITE_BACKEND_URL=$VITE_BACKEND_URL \
-    VITE_GOOGLE_API=$VITE_GOOGLE_API \
-    VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY \
-    npm run build
+ENV SPRING_FRONTEND_URL=${SPRING_FRONTEND_URL}
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+ENV POSTGRES_URL=${POSTGRES_URL}
+ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+ENV POSTGRES_USERNAME=${POSTGRES_USERNAME}
+ENV VITE_GOOGLE_API=${VITE_GOOGLE_API}
+ENV VITE_GOOGLE_API_KEY=${VITE_GOOGLE_API_KEY}
 
 # Copy the backend JAR file from the build stage
 COPY --from=build /app/target/match-me-0.0.1-SNAPSHOT.jar /app/matchme.jar
