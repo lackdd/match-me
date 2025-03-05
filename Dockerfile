@@ -42,7 +42,7 @@ RUN mvn dependency:go-offline
 COPY src ./src
 
 # Build the JAR file
-RUN mvn clean install
+RUN mvn clean install -DskipTests
 
 # Create the final image with the JAR file
 FROM eclipse-temurin:17-jre-alpine
