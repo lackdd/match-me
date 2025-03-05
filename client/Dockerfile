@@ -1,12 +1,14 @@
 # Use Node.js to build the frontend
-FROM node:18 AS frontend-build
+FROM node:20-alpine AS frontend-build
 
-WORKDIR /frontend
+WORKDIR /app
 
 # Copy frontend source code and install dependencies
 COPY package.json package-lock.json ./
-RUN npm install
-COPY ./ ./
+
+RUN npm ci
+
+COPY . .
 
 # Build the frontend (with environment variables)
 ARG VITE_BACKEND_URL
@@ -22,15 +24,18 @@ RUN npm run build
 RUN ls /frontend/dist
 
 # Final image with Node.js and serve to serve the frontend
-FROM node:18-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
 # Install 'serve' globally to serve static files
 RUN npm install -g serve
 
-# Copy the frontend build output to the container
-COPY --from=frontend-build /frontend/dist /app
+# Copy the package.json and package-lock.json from the build stage
+COPY --from=build /app/package.json /app/package-lock.json /app/
+
+# Copy only the built application from the previous stage
+COPY --from=build /app/dist /app/dist
 
 # Expose the port for serving the frontend
 EXPOSE 5173
