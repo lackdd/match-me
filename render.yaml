@@ -3,6 +3,7 @@ services:
     region: frankfurt
     name: match-me-backend
     runtime: docker
+    rootDir: /
     dockerfilePath: Dockerfile
     buildCommand: docker build match-me-backend .
     startCommand: docker run -p $PORT:8080 -e SPRING_FRONTEND_URL=$SPRING_FRONTEND_URL -e POSTGRES_URL=$POSTGRES_URL -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD match-me-backend
@@ -17,8 +18,8 @@ services:
     name: match-me-frontend
     runtime: docker
     rootDir: client
-    dockerfilePath: client/Dockerfile
-    buildCommand: cd client && docker build --build-arg VITE_BACKEND_URL=$VITE_BACKEND_URL --build-arg VITE_GOOGLE_API=$VITE_GOOGLE_API --build-arg VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY -t match-me-frontend .
+    dockerfilePath: Dockerfile
+    buildCommand: docker build --build-arg VITE_BACKEND_URL=$VITE_BACKEND_URL --build-arg VITE_GOOGLE_API=$VITE_GOOGLE_API --build-arg VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY -t match-me-frontend .
     startCommand: docker run -p $PORT:5173 -e VITE_BACKEND_URL=$VITE_BACKEND_URL -e VITE_GOOGLE_API=$VITE_GOOGLE_API -e VITE_GOOGLE_API_KEY=$VITE_GOOGLE_API_KEY match-me-frontend
     plan: free
     envVars:
