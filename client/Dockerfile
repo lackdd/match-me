@@ -1,5 +1,5 @@
 # Use Node.js to build the frontend
-FROM node:18-alpine AS frontend-build
+FROM node:18 AS frontend-build
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN npm run build
 RUN ls /frontend/dist
 
 # Final image with Node.js and serve to serve the frontend
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
