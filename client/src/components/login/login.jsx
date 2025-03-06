@@ -14,11 +14,6 @@ function Login() {
 	const [showPassword, setShowPassword] = useState(true);
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-	const SPRING_FRONTEND_URL = import.meta.env.SPRING_FRONTEND_URL;
-	const POSTGRES_URL = import.meta.env.POSTGRES_URL;
-	const POSTGRES_PASSWORD = import.meta.env.POSTGRESS_PASSWORD;
-	const VITE_GOOGLE_API = import.meta.env.VITE_GOOGLE_API;
-	const VITE_GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 
 	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
 
@@ -100,6 +95,7 @@ function Login() {
 						name='remember'
 						id='remember-me-input'/>
 					&nbsp;
+					{/* todo add functionality to keep token in storagr for 30 days */}
 					Remember for 30 days
 				</label>
 				<label>
