@@ -95,7 +95,7 @@ export function BioForm1() {
 						isClearable
 						isSearchable
 						styles={customStyles}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						options={genderOptions}
 						placeholder="Select gender"
 						value={watch('gender')}

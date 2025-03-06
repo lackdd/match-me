@@ -73,14 +73,14 @@ export const customStyles = {
 		// minHeight: '2rem',  // Ensure it starts with a height of 2rem
 		// height: 'auto', // Allow it to adjust based on content
 		height: state.selectProps.containerExpand === true ? 'auto' : '2rem',  // Ensures alignment inside the control
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'flex-start',
-		padding: '0 5px',
+		// display: 'flex',
+		// alignItems: 'center',
+		// justifyContent: 'flex-start',
+		padding: '0 5px 0 5px',
 		margin: '0 0',
 		boxSizing: 'border-box',
 		flexWrap: 'wrap', // Prevent the container from wrapping the items
-		overflow: 'hidden',  // Ensure it doesn't overflow
+		// overflow: 'hidden',  // Ensure it doesn't overflow
 		lineHeight: '2rem',
 	}),
 
@@ -146,7 +146,7 @@ export const customStyles = {
 
 	placeholder: (provided) => ({
 		...provided,
-		height: '100%',
+		height: '2rem',
 		width: '100%',
 		display: 'flex',
 		alignItems: 'center',
@@ -157,7 +157,7 @@ export const customStyles = {
 	multiValue: (provided) => ({
 		...provided,
 		borderRadius: '8px',
-		margin: '2px 0',
+		margin: '5px 2px 5px 0px',
 		backgroundColor: 'rgb(254, 110, 121)',
 		flexWrap: 'nowrap', // Wrap multi-selected items to new rows
 		display: 'flex', // Allows values to shrink and grow
@@ -182,6 +182,7 @@ export const customStyles = {
 		color: 'black',
 		cursor: 'pointer',
 		borderRadius: '8px',
+		height: '19px'
 	}),
 
 };

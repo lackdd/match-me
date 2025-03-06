@@ -112,7 +112,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						components={makeAnimated()}
+						// // components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -152,7 +152,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -190,7 +190,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -231,7 +231,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchGender'}
 						placeholder='Select gender'
 						options={matchGenderOptions}
@@ -262,7 +262,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchAge'}
 						placeholder='Select age gap'
 						options={matchAgeOptions}
@@ -296,7 +296,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchExperience'}
 						placeholder='Select experience'
 						options={matchExperienceOptions}
@@ -327,7 +327,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchLocation'}
 						placeholder='Select proximity'
 						options={matchLocationsOptions}

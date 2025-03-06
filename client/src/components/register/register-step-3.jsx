@@ -13,26 +13,24 @@ import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx'
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 const googleApi = import.meta.env.VITE_GOOGLE_API;
 
+function loadGoogleMapsScript(callback) {
+	if (window.google && window.google.maps) {
+		callback();
+		return;
+	}
 
-
-// function loadGoogleMapsScript(callback) {
-// 	if (window.google && window.google.maps) {
-// 		callback();
-// 		return;
-// 	}
-//
-// 	const existingScript = document.getElementById("google-maps-script");
-// 	if (!existingScript) {
-// 		const script = document.createElement("script");
-// 		script.id = "google-maps-script";
-// 		script.src = googleApi;
-// 		script.async = true;
-// 		script.onload = callback;
-// 		document.body.appendChild(script);
-// 	} else {
-// 		existingScript.onload = callback;
-// 	}
-// }
+	const existingScript = document.getElementById("google-maps-script");
+	if (!existingScript) {
+		const script = document.createElement("script");
+		script.id = "google-maps-script";
+		script.src = googleApi;
+		script.async = true;
+		script.onload = callback;
+		document.body.appendChild(script);
+	} else {
+		existingScript.onload = callback;
+	}
+}
 
 
 
@@ -68,21 +66,16 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 	}, []);
 
 
-// Initialize the autocomplete service only when the API is loaded
-// 	useEffect(() => {
-// 		if (window.google && window.google.maps && window.google.maps.places) {
-// 			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-// 		}
-// 	}, []);
-
-	// useEffect(() => {
-	// 	loadGoogleMapsScript(() => {
-	// 		if (window.google && window.google.maps && window.google.maps.places) {
-	// 			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-	// 			setApiLoaded(true);
-	// 		}
-	// 	});
-	// }, []);
+	// todo fix: I think the google API is not available on the first render of this component
+	useEffect(() => {
+		loadGoogleMapsScript(() => {
+			if (window.google && window.google.maps && window.google.maps.places) {
+				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+				setApiLoaded(true);
+			}
+			console.log("Google API loaded")
+		});
+	}, []);
 
 	const fetchPlaces = useCallback((input) => {
 		if (!input || !autocompleteServiceRef.current) return;

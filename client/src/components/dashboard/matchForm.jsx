@@ -58,7 +58,7 @@ export function MatchForm() {
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -98,7 +98,7 @@ export function MatchForm() {
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -136,7 +136,7 @@ export function MatchForm() {
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -177,7 +177,7 @@ export function MatchForm() {
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchGender'}
 						placeholder='Select gender'
 						options={matchGenderOptions}
@@ -207,7 +207,7 @@ export function MatchForm() {
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchAge'}
 						placeholder='Select age gap'
 						options={matchAgeOptions}
@@ -241,7 +241,7 @@ export function MatchForm() {
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchExperience'}
 						placeholder='Select experience'
 						options={matchExperienceOptions}
@@ -272,7 +272,7 @@ export function MatchForm() {
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						components={makeAnimated()}
+						// components={makeAnimated()}
 						name={'matchLocation'}
 						placeholder='Select proximity'
 						options={matchLocationsOptions}

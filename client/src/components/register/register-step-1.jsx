@@ -101,7 +101,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							isClearable
 							isSearchable
 							styles={customStyles}
-							components={makeAnimated()}
+							// components={makeAnimated()}
 							options={genderOptions}
 							placeholder="Select gender"
 							value={watch('gender')}

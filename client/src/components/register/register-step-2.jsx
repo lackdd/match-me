@@ -15,7 +15,6 @@ import {handleCloseMenu} from './register.jsx';
 import {ErrorElement} from './errorElement.jsx';
 import {PreviousNextButtons} from './previousNextButtons.jsx';
 
-// todo fix styling to when first item is selected into an input field the input field's height doesn't bug out for a split second (I think because of height: auto it gets bigger than the inital height for a split second so all the fields move and then the field goes back to it's inital height).
 const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData }) => {
 	return (
 		<div className={'line large'}>
@@ -25,7 +24,7 @@ const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger
 				<Select
 					className='basic-multi-select long'
 					classNamePrefix='select'
-					components={makeAnimated()}
+					// components={makeAnimated()}
 					closeMenuOnSelect={false}
 					isClearable={true}
 					isSearchable={true}
