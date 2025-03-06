@@ -52,6 +52,7 @@ public class UserController {
         return Collections.singletonMap("exists", exists);
     }
 
+
     @PostMapping("/login")
     public String login(@RequestBody User user) {
         return service.verify(user);
@@ -175,6 +176,15 @@ public class UserController {
 
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @PostMapping("/hello-backend")
+    public ResponseEntity<String> helloFrontend(@RequestBody Map<String, String> payload) {
+        String message = payload.get("message");
+        if (message != null && !message.isEmpty()) {
+            return ResponseEntity.ok(message);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message cannot be empty");
     }
 
     @GetMapping("/users")

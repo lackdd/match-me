@@ -20,7 +20,6 @@ import Settings from './components/settings/settings.jsx';
 
 
 
-// ✅ Move AuthContext creation to main.jsx
 export const AuthContext = createContext();
 
 function Main() {
@@ -30,13 +29,11 @@ function Main() {
     const router = createBrowserRouter([
         {
             path: "/",
-            element: <App />,  // Still wrapped in AuthContext
-            // problems rendering nav bar if errorElement is used
-            // errorElement: (
-            //     <AuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn }}>
-            //         <NotFound />
-            //     </AuthContext.Provider>
-            // ), // Now NotFound also has access to AuthContext
+            element: (
+                <AuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn }}>
+                    <App />
+                </AuthContext.Provider>
+            ),
             children: [
                 { path: "/", element: <HomePage /> },
                 { path: "/features", element: <Features /> },
@@ -78,14 +75,15 @@ function Main() {
 
 
     return (
-        <AuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn }}>
+        // <AuthContext.Provider value={{ isUserLoggedIn, setIsUserLoggedIn }}>
+        //     <RouterProvider router={router} />
+        // </AuthContext.Provider>
             <RouterProvider router={router} />
-        </AuthContext.Provider>
     );
 }
 
 
-
+// todo disable strict mode in production
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         <Main />

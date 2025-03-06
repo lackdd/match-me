@@ -74,6 +74,7 @@ public class SecurityConfig {
                                 "/api/check-email",
                                 "/api/error",
                                 "/api/forgot-password",
+                                "/api/hello-backend",
                                 "/api/validateToken")
                         .permitAll()
                         .anyRequest().authenticated())

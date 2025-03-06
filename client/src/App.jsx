@@ -13,8 +13,25 @@ import {AuthContext} from './main.jsx';
 
 function App() {
     const location = useLocation();
+    // todo React Router caught the following error during render TypeError: Cannot destructure property 'isUserLoggedIn' of 'useContext(...)' as it is undefined.
+    //     at App (App.jsx:16:13)
     const { isUserLoggedIn, setIsUserLoggedIn } = useContext(AuthContext);
     const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+    // wake up backend when frontend is rendered
+    useEffect(() => {
+        const wakeUpBackend = async () => {
+            try {
+                const response = await axios.post(`${VITE_BACKEND_URL}/api/hello-backend`, {
+                    message: "Hello from backend"
+                });
+                console.log(response.data);
+            } catch (error) {
+                console.error("Failed to wake up backend: " + error.message);
+            }
+        }
+        wakeUpBackend();
+    });
 
 
     useEffect(() => {

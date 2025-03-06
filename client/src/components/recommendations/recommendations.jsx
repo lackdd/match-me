@@ -1,11 +1,52 @@
 import './recommendations.scss'
 import {FaPlay, FaSpotify} from 'react-icons/fa';
 import {IoPlaySkipForward} from 'react-icons/io5';
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import axios from 'axios';
 
 function Recommendations() {
 	const matchContainerRef = useRef(null);
 	const [resetKey, setResetKey] = useState(0); // Forces re-render when match changes
+	const [matchIDs, setMatchIDs] = useState(['']);
+	const [matches, setMatches] = useState({});
+
+	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+
+	useEffect(() => {
+		const token = sessionStorage.getItem("token");
+		console.log("Token: ", token)
+
+		if (matchIDs.length <= 1) { // no need to fetch matches if already available
+			const getAllMatches = async() => {
+				try {
+					// const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`)
+					const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`, {
+							headers: { Authorization: `Bearer ${token}` },
+						}
+					);
+					setMatchIDs(response.data);
+				} catch (error) {
+					console.error("Failed to get matches:", error);
+				}
+			}
+			getAllMatches();
+		} else {
+			console.log("Matches already fetched:", matchIDs);
+		}
+	}, [])
+
+	useEffect(() => {
+		console.log(matchIDs);
+
+
+
+	}, [matchIDs])
+
+	// todo check if useCallback should be used
+	const getMatchData = useCallback((matchIDs) => {
+
+	})
 
 	function Like() {
 		const matchContainer = matchContainerRef.current;
