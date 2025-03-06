@@ -89,7 +89,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("localhost:5173", "https://match-me-20pb.onrender.com/")); // Adjust as needed
+        config.setAllowedOrigins(List.of("http://localhost:5173", "https://match-me-20pb.onrender.com/")); // Adjust as needed
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);
