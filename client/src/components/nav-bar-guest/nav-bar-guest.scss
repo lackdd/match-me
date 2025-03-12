@@ -7,8 +7,6 @@
   background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   position: sticky;
-  top: 0;
-  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -17,11 +15,41 @@
   padding-left: clamp(0.2rem, 6vw, 8rem);
   padding-right: clamp(0.2rem, 6vw, 8rem);
 
+  &.default {
+    display: flex;
+    position: sticky;
+    top: 0;
+  }
+
+  &.mobile {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    &.default {
+      display: none; // Hide on small screens
+    }
+    &.mobile {
+      display: flex; // Show mobile nav
+      position: fixed;  // Make it stick to the bottom
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      //height: 4rem;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
 
   .logo-container {
 
     .nav-bar-logo {
       width: 11.75rem;
+
+      @media (max-width: 768px) {
+        width: 2.5rem;
+      }
     }
   }
 
@@ -36,6 +64,64 @@
     padding-left: 1.25rem;
     padding-right: 1.25rem;
     font-weight: 600;
+
+    .hamburger {
+      all: unset;
+      color: black;
+      background-color: transparent;
+      border: none;
+      //transition: background 0.3s ease, color 0.3s ease;
+      //transition: all 0.3s ease-in-out;
+    }
+
+    @supports (backdrop-filter: blur(5px))
+    { .hamburger-links {
+      z-index: -1;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5vh;
+      left: 0;
+      top: 0;
+      /*top: 80px;*/
+      /*right: -1em;*/
+      width: 100vw;
+      height: 100vh;
+      padding-top: 35vh;
+      /*padding-bottom: 15vh;*/
+      backdrop-filter: blur(5px);
+      /*background: rgba(0, 0, 0, 0.5);*/
+      text-align: center;
+      font-size: 1.5rem;
+
+      // Initially hidden
+      transform: translateY(100%);
+      opacity: 0;
+
+      // Keyframe animation for sliding in/out
+      animation: slideOut 0.2s ease-out forwards; // Default to slide out
+
+      &.open {
+        animation: slideIn 0.2s ease-out forwards; // When open, slide in
+      }
+
+      a {
+        color: white;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+      }
+    }
+    }
+
+
+    @media (max-width: 768px) {
+      justify-content: space-around;
+
+      svg {
+        width: 2.25rem;
+        height: 2.25rem;
+      }
+    }
 
 
     a {
@@ -70,6 +156,21 @@
       box-shadow: none; // Remove shadow when either button is hovered
     }
 
+    @media (max-width: 768px) {
+      all: unset;
+      width: 2.5rem;
+      border: none;
+      box-shadow: none;
+      background-color: transparent;
+
+      svg {
+        width: 2.5rem;
+        height: 2.5rem;
+        color: black;
+      }
+
+    }
+
 
     button {
       border: none;
@@ -80,6 +181,10 @@
       overflow: hidden;
       white-space: nowrap;
       position: absolute;
+
+      @media (max-width: 768px) {
+        all: unset;
+      }
     }
 
     .signup {
@@ -148,6 +253,28 @@
       box-shadow: variables.$upper-inset-shadow-click;
     }
 
+  }
+
+  @keyframes slideIn {
+    0% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100%);
+      opacity: 0;
+    }
   }
 
 }

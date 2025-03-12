@@ -15,6 +15,10 @@
   flex-direction: column;
   justify-content: space-between;
 
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+
   .hero-container {
     // todo dynamic positioning is fucked
     //padding-top: 5.625rem;
@@ -36,6 +40,15 @@
     //padding-right: 2.5rem;
     //width: clamp(30rem, 160vw, 80rem); // Container width scales with viewport
 
+    @media (max-width: 768px) {
+      padding: 0;
+      position: static;
+      width: 90%;
+      height: 90%;
+      align-self: center;
+      justify-content: space-evenly;
+    }
+
     .hero-text {
       width: 100%;
       text-align: center;
@@ -45,6 +58,10 @@
       line-height: 2.5rem;
       text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 
+      @media (max-width: 768px) {
+        font-size: 1.375rem;
+      }
+
     }
 
     .cta-button-container {
@@ -53,6 +70,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
+
+      @media (max-width: 768px) {
+
+      }
 
 
       .cta-button {

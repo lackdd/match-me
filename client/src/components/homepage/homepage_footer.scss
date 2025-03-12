@@ -4,13 +4,27 @@
   background-color: variables.$main-blue-80;
   position: fixed;
   width: 100%;
-  bottom: 0;
+  //bottom: 0;
   height: 3.375rem;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
   //gap: 8rem;
+
+  @media (min-width: 769px) {
+    bottom: 0;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    right: 0;
+    background-color: transparent;
+    justify-content: space-between;
+    width: 2rem;
+    height: 60%;
+    padding-right: 1rem;
+  }
 
   .icon {
 
