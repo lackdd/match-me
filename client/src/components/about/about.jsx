@@ -202,9 +202,22 @@ function About() {
 				{/*{profile.preferredMethods}*/}
 				{/*/!*preferredMusicGenres and goalsWithMusic are also in use in register.jsx*!/*/}
 				{/*{profile.preferredMusicGenres} {profile.goalsWithMusic} {profile.yearsOfMusicExperience}*/}
-				<h1 className={'coming-soon'}>About</h1>
-				<br/>
-				<h1 className={'coming-soon'}>Coming soon!</h1>
+				{/*<h1 className={'coming-soon'}>About</h1>*/}
+				{/*<br/>*/}
+				{/*<h1 className={'coming-soon'}>Coming soon!</h1>*/}
+				<div className='about-text'>
+					<p className={'left'}>
+						At Jammer, we believe that music is a universal language that connects people from all corners of the world. Whether you’re a seasoned musician or just starting your musical journey, Jammer is here to help you find like-minded individuals to collaborate with, create, and jam together.
+					</p>
+					<p className={'right'}>
+						Our platform brings musicians from diverse backgrounds and genres together in one space, making it
+						easier than ever to connect with potential bandmates, find jam sessions, and share your passion for
+						music. No matter where you are, Jammer is your global stage for musical discovery.
+					</p>
+					<p className={'mid'}>
+						Join the Jammer community today, and let the music play!
+					</p>
+				</div>
 				{/*<input*/}
 				{/*	type="number"*/}
 				{/*	value={matchId}*/}

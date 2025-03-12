@@ -4,12 +4,32 @@
   @include variables.whole-page;
   @include variables.centered-column;
 
-  .coming-soon {
-    justify-self: center;
+  .about-text {
+    @include variables.centered-column;
+    width: 70%;
+
+    p {
+      line-height: 2rem;
+      margin-bottom: 1rem;
+      width: 70%;
+    }
+
+    .left {
+      text-align: left;
+      align-self: flex-start;
+    }
+
+    .right {
+      text-align: right;
+      align-self: flex-end;
+    }
+
+    .mid {
+      margin-top: 1rem;
+      text-align: center;
+    }
   }
+
 }
 
-.about {
-  color: variables.$main-pink;
-}
 
