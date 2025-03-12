@@ -52,17 +52,27 @@ function Recommendations() {
 		if (matchIDs.length > 1) {
 			const getMatchData = async() => {
 				try {
-					const matchPromises = matchIDs.map(id =>
-						axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
-							headers: { Authorization: `Bearer ${token.current}`}
-						})
-					);
+					// Create an array of promises that fetch both profile and user data for each match
+					const matchPromises = matchIDs.map(id => {
+						const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
+							headers: { Authorization: `Bearer ${token.current}` }
+						});
+						const userPromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
+							headers: { Authorization: `Bearer ${token.current}` }
+						});
 
+						// Return both promises for the same id
+						return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({
+							...profile.data,   // Merge profile data
+							...user.data       // Merge user data
+						}));
+					});
+
+					// Wait for all promises to resolve
 					const matchResults = await Promise.all(matchPromises);
 
-					const matchData = matchResults.map(result => result.data)
-
-					setMatches(matchData);
+					// Update the matches state with the merged data
+					setMatches(matchResults);
 
 				} catch (error) {
 					console.error("Failed to get match data: ", error)

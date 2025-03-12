@@ -177,8 +177,8 @@
            text-align: center;
            border-radius: 50%;
            //border: 1px solid black;
-           transition: all 0.5s ease-in-out;
-           transform-origin: 50% 50%; /* Ensures the element remains anchored at its center */
+           transition: all 0.3s ease-in-out;
+           transform-origin: center center; /* Ensures the element remains anchored at its center */
 
            & > * {
              width: 100%;
@@ -189,6 +189,7 @@
            &:hover {
              cursor: pointer;
              //box-shadow: 10px 10px 5px white;
+             scale: 1.1;
            }
          }
 
