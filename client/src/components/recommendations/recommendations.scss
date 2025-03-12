@@ -4,54 +4,14 @@
   position: relative;
   min-height: 70vh;
   @include variables.centered-column;
-  //@include variables.glass-container;
-  //width: 90%;
-  ////height: fit-content;
-  ////min-height: 80vh;
-  //height: 80vh;
-  //margin-top: 3rem;
-  //align-self: center;
-  //justify-self: center;
-  //display: flex;
-  //justify-content: center;
-  //
-  //@media (max-width: 575px) {
-  //  width: 100%;
-  //  border-radius: 0;
-  //  height: calc(100vh - 80px);
-  //  padding: 0;
-  //  margin: 0;
-  //}
-  //
-  ////@media (max-width: 575px) {
-  ////  min-height: 80vh;
-  ////}
-  //
-  //@media (min-width: 768px) {
-  //  min-height: 80vh;
-  //}
-  //
-  //@media (min-width: 1200px) {
-  //  min-height: 80vh;
-  //}
-
+  // @include variables.glass-container; // Uncomment if needed
 
   .match-profile-container {
-    //@include variables.centered-column;
-    //justify-content: space-around;
-    //width: 100%;
-    //height: 100%;
-    //padding: 1rem 1.5rem 1rem 1.5rem;
-    //
-    //.flex-item {
-    //  //margin-bottom: 1rem;
-    //}
     @include variables.whole-page;
     @include variables.centered-column;
     @include variables.glass-container;
+
     width: 90%;
-    //height: fit-content;
-    //min-height: 80vh;
     height: 75vh;
     margin-top: 3rem;
     align-self: center;
@@ -59,17 +19,9 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 0;
-    transition:
-      //      border-color 0.1s ease-in-out,
-      //box-shadow 0.3s ease-in-out,
-      transform 0.75s 0.1s ease-in;
-    //  filter 0.1s linear,
-    //background-color 0.1s linear;
+    transition: transform 0.75s 0.1s ease-in;
 
-    @media (max-width: 575px) {
-      height: 80vh;
-    }
-
+    // Hover and active states for like/dislike buttons
     &:has(+ .buttons-container .like:hover) {
       border-color: variables.$button-green;
     }
@@ -79,198 +31,143 @@
     }
 
     &:has(+ .buttons-container .like:active) {
-      //box-shadow: 0 0 20px 5px variables.$button-green;
-      //filter: blur(2px);
-      //transform: translateX(2000px);
-      //background-color: variables.$valid-green;
+      // Add effects for like active state
     }
 
     &:has(+ .buttons-container .dislike:active) {
-      //box-shadow: 0 0 20px 5px variables.$button-red;
-      //filter: blur(2px);
-      //transform: translateX(-2000px);
-      //background-color: variables.$error-red;
+      // Add effects for dislike active state
     }
 
+    // Like/Dislike animation classes
     &.like-animation {
       filter: blur(2px);
       transform: translateX(200%);
       background-color: variables.$valid-green;
-      //transition: transform 1s ease-out;
-
     }
 
     &.dislike-animation {
       filter: blur(2px);
       transform: translateX(-200%);
       background-color: variables.$error-red;
-      //transition: transform 1s ease-out;
     }
 
+    .picture-bio-container {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
 
-   .picture-bio-container {
-     width: 100%;
-     display: flex;
-     flex-direction: row;
-     align-items: center;
+      .picture-container {
+        justify-self: center;
+        align-items: center;
+        display: flex;
+        width: 50%;
 
-     .picture-container {
-       justify-self: center;
-       justify-content: center;
-       //padding-left: 2rem;
-       align-items: center;
-       display: flex;
-       width: 50%;
-       //padding-right: 1rem;
-       //border-radius: 50px;
+        .extra-picture-container {
+          width: fit-content;
+          height: fit-content;
+          display: flex;
+          justify-content: flex-end;
+          position: relative;
+          margin-right: 4rem;
 
-       .extra-picture-container {
-         width: fit-content;
-         height: fit-content;
-         display: flex;
-         justify-content: flex-end;
-         position: relative;
-         margin-right: 4rem;
+          @media (max-width: 575px) {
+            justify-content: center;
+            margin-right: 2rem;
+          }
 
-         @media (max-width: 575px) {
-           justify-content: center;
-           margin-right: 2rem;
-         }
+          img.match-profile-picture {
+            height: auto;
+            max-width: 80%;
 
-         img.match-profile-picture {
-           height: auto;
-           max-width: 80%;
-           //border-radius: 50px;
+            @media (max-width: 575px) {
+              max-width: 120%;
+            }
+          }
 
-           @media (max-width: 575px) {
-             max-width: 120%;
-           }
+          .music-link {
+            position: absolute;
+            bottom: 5%;
+            right: 0;
+            width: clamp(3rem, 5vw, 6rem);
+            height: clamp(3rem, 5vw, 6rem);
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            border-radius: 50%;
+            transition: all 0.1s ease-in-out;
+            transform-origin: center center;
 
-         }
+            & > * {
+              width: 100%;
+              height: 100%;
+            }
 
-         .music-link {
-           position: absolute;  /* Position in relation to the image */
-           //bottom: 8%; /* Adjust the position of the link from the bottom of the image */
-           //right: 8%; /* Center the link horizontally */
-           bottom: 18%; /* Adjust the position of the link from the bottom of the image */
-           right: 10%; /* Center the link horizontally */
-           //transform: translateX(-50%); /* Correct centering */
-           transform: translate(50%, 50%);
-           //width: 4rem;
-           //height: 4rem;
-           width: clamp(3rem, 5vw, 6rem);
-           height: clamp(3rem, 5vw, 6rem);
-           color: white;
-           font-size: 1rem;
-           text-align: center;
-           border-radius: 50%;
-           //border: 1px solid black;
-           transition: all 0.3s ease-in-out;
-           transform-origin: center center; /* Ensures the element remains anchored at its center */
+            &:hover {
+              cursor: pointer;
+              scale: 1.1;
+            }
+          }
+        }
+      }
 
-           & > * {
-             width: 100%;
-             height: 100%;
-             //filter: invert(100%);
-           }
+      .bio-container {
+        width: 100%;
+        flex: 1;
+        justify-self: flex-end;
+        white-space: nowrap;
+        height: fit-content;
 
-           &:hover {
-             cursor: pointer;
-             //box-shadow: 10px 10px 5px white;
-             scale: 1.1;
-           }
-         }
+        table {
+          width: 100%;
+          height: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+          border-spacing: 0;
+          overflow: clip;
 
-       }
+          tbody {
+            tr {
+              display: flex;
+              flex-wrap: wrap;
 
-     }
+              th {
+                border-bottom: 1px solid variables.$main-pink;
+                width: 100%;
+                text-align: left;
+                padding-left: 1rem;
 
-     .bio-container {
-       width: 100%;
-       flex: 1;
-       justify-self: flex-end;
-       white-space: nowrap;
-       height: fit-content;
+                @media (max-width: 575px) {
+                  font-size: 0.7rem;
+                }
 
-       table {
-         width: 100%;
-         height: 100%;
-         border-collapse: collapse;
-         table-layout: fixed;
-         border-spacing: 0;
-         overflow: clip;
-         white-space: wrap;
+                .two-column {
+                  width: 50%;
+                }
 
-         tbody {
+                .one-column {
+                  column-span: 2;
+                }
+              }
 
-           //tr:first-child {
-           //  display: flex;
-           //  flex-direction: row; // Default: side-by-side columns
-           //  width: 100%;
-           //
-           //  th,
-           //  td {
-           //    width: 50%; // Two columns side by side for smaller screens
-           //    padding: 0.75rem;
-           //    text-align: left;
-           //    font-size: 1rem;
-           //  }
-           //
-           //  // Apply this for larger screens to stack them
-           //  @media (min-width: 768px) {
-           //    flex-direction: column; // Stack columns vertically on larger screens
-           //
-           //    th,
-           //    td {
-           //      width: 100%; // Each item in the first row takes full width
-           //    }
-           //  }
-           //}
+              td {
+                padding-bottom: 0.5rem;
+                width: 100%;
+                font-size: 0.9rem;
 
-           tr {
-             display: flex;
-             flex-wrap: wrap; // Allow wrapping columns to new rows
-
-
-             th {
-               border-bottom: 1px solid variables.$main-pink;
-               width: 100%;
-               text-align: left;
-               padding-left: 1rem;
-
-               @media (max-width: 575px) {
-                 font-size: 0.7rem;
-               }
-
-               .two-column {
-                 width: 50%;
-               }
-
-               .one-column {
-                 column-span: 2;
-               }
-             }
-
-             td {
-               //padding-top: 0.5rem;
-               padding-bottom: 0.5rem;
-               width: 100%;
-               font-size: 0.9rem;
-
-               @media (max-width: 575px) {
-                 font-size: 0.6rem;
-               }
-             }
-           }
-         }
-
-       }
-     }
-   }
+                @media (max-width: 575px) {
+                  font-size: 0.6rem;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
 
     .description-container {
       text-align: center;
-      padding: 1rem 0 1rem 0;
+      padding: 1rem 0;
 
       @media (max-width: 575px) {
         font-size: 0.8rem;
@@ -281,14 +178,11 @@
     .name-container {
       text-align: center;
       color: variables.$main-blue;
-      //font-size: 1.5rem;
 
       .name {
         font-size: 1.5rem;
       }
-
     }
-
   }
 
   .buttons-container {
@@ -298,11 +192,11 @@
     border-radius: 50px;
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: variables.$default-button-shadow;
-    padding: 0 0.75rem 0 0.75rem;
+    padding: 0 0.75rem;
     position: absolute;
     bottom: -2.5rem;
     left: 50%;
-    transform: translateX(-50%); /* Correct centering */
+    transform: translateX(-50%);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -313,20 +207,22 @@
       bottom: -1.5rem;
     }
 
-    .buttons-container:hover .dislike {
-      ~ .match-profile-container {
-        border-color: variables.$button-red;
-      }
+    .like, .dislike {
+      height: 3rem;
+      width: 3rem;
+      border: 1px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .buttons-container:hover .like {
-      ~ .match-profile-container {
-        border-color: variables.$button-green;
-      }
+    .like {
+      background-color: variables.$button-green;
+      padding-left: 5px;
     }
 
-    &:has(.like:active), &:has(.dislike:active) {
-      box-shadow: variables.$upper-inset-shadow-click
+    .dislike {
+      background-color: variables.$button-red;
     }
 
     &:has(.like:hover) {
@@ -351,7 +247,6 @@
           scale: 1.3;
         }
       }
-
     }
 
     &:has(.dislike:hover) {
@@ -377,28 +272,6 @@
         }
       }
     }
-
-
-    .like, .dislike {
-      height: 3rem;
-      width: 3rem;
-      border: 1px solid black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-    }
-
-    .like {
-      background-color: variables.$button-green;
-      padding-left: 5px;
-
-    }
-
-    .dislike {
-      background-color: variables.$button-red;
-    }
-
   }
 
   .no-matches {
@@ -408,7 +281,7 @@
     text-align: center;
   }
 
-  // endless spinner animation
+  // Endless spinner animation
   .endless {
     &::before, &::after {
       animation: rotate 6s var(--timing) infinite, transformEffect 2s 6s forwards !important;
@@ -416,29 +289,45 @@
   }
 }
 
-//@media (max-width: 575px) {
-//  .match-profile-container {
-//    width: 100%;
-//    border-radius: 0;
-//    height: calc(100vh - 80px);
-//    padding: 0;
-//    margin: 0;
-//  }
-//}
-//
-////@media (max-width: 575px) {
-////  min-height: 80vh;
-////}
-//
-//@media (min-width: 768px) {
-//  .match-profile-container {
-//    min-height: 75vh;
-//  }
-//
-//}
-//
-//@media (min-width: 1200px) {
-//  .match-profile-container {
-//    min-height: 75vh;
-//  }
-//}
+// Media Queries
+
+@media (max-width: 575px) {
+  .recommendations-container {
+    .match-profile-container {
+      height: 80vh;
+    }
+
+    .buttons-container {
+      bottom: -1.5rem;
+    }
+
+    .picture-bio-container .extra-picture-container {
+      margin-right: 2rem;
+    }
+
+    .picture-bio-container .match-profile-picture {
+      max-width: 120%;
+    }
+
+    .description-container {
+      font-size: 0.8rem;
+      padding: 0;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .recommendations-container {
+    .match-profile-container {
+      min-height: 75vh;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .recommendations-container {
+    .match-profile-container {
+      min-height: 75vh;
+    }
+  }
+}
