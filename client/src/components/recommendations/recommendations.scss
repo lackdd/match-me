@@ -66,6 +66,10 @@
     //  filter 0.1s linear,
     //background-color 0.1s linear;
 
+    @media (max-width: 575px) {
+      height: 80vh;
+    }
+
     &:has(+ .buttons-container .like:hover) {
       border-color: variables.$button-green;
     }
@@ -104,27 +108,6 @@
     }
 
 
-    @media (max-width: 575px) {
-      width: 100%;
-      border-radius: 0;
-      height: calc(100vh - 80px);
-      padding: 0;
-      margin: 0;
-    }
-
-    //@media (max-width: 575px) {
-    //  min-height: 80vh;
-    //}
-
-    @media (min-width: 768px) {
-      min-height: 75vh;
-    }
-
-    @media (min-width: 1200px) {
-      min-height: 75vh;
-    }
-
-
    .picture-bio-container {
      width: 100%;
      display: flex;
@@ -149,13 +132,18 @@
          position: relative;
          margin-right: 4rem;
 
+         @media (max-width: 575px) {
+           justify-content: center;
+           margin-right: 2rem;
+         }
+
          img.match-profile-picture {
            height: auto;
            max-width: 80%;
            //border-radius: 50px;
 
-           @media (max-width: 768px) {
-             max-width: 100%;
+           @media (max-width: 575px) {
+             max-width: 120%;
            }
 
          }
@@ -251,7 +239,7 @@
                padding-left: 1rem;
 
                @media (max-width: 575px) {
-                 font-size: 0.9rem;
+                 font-size: 0.7rem;
                }
 
                .two-column {
@@ -270,7 +258,7 @@
                font-size: 0.9rem;
 
                @media (max-width: 575px) {
-                 font-size: 0.8rem;
+                 font-size: 0.6rem;
                }
              }
            }
@@ -320,6 +308,10 @@
     justify-content: space-between;
     align-items: center;
     transition: all 0.1s ease-in-out;
+
+    @media (max-width: 575px) {
+      bottom: -1.5rem;
+    }
 
     .buttons-container:hover .dislike {
       ~ .match-profile-container {
@@ -423,3 +415,30 @@
     }
   }
 }
+
+//@media (max-width: 575px) {
+//  .match-profile-container {
+//    width: 100%;
+//    border-radius: 0;
+//    height: calc(100vh - 80px);
+//    padding: 0;
+//    margin: 0;
+//  }
+//}
+//
+////@media (max-width: 575px) {
+////  min-height: 80vh;
+////}
+//
+//@media (min-width: 768px) {
+//  .match-profile-container {
+//    min-height: 75vh;
+//  }
+//
+//}
+//
+//@media (min-width: 1200px) {
+//  .match-profile-container {
+//    min-height: 75vh;
+//  }
+//}
