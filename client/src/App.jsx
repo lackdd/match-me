@@ -7,7 +7,9 @@ import "@fontsource/poppins/400.css"; // Specify weight
 import "@fontsource/poppins/400-italic.css"; // Specify weight and style
 import {Outlet, useLocation} from 'react-router-dom';
 import axios from "axios";
-import {AuthContext} from './main.jsx';
+// import {AuthContext} from './main.jsx';
+import { useAuth } from './AuthContext.jsx'
+
 
 // export const AuthContext = createContext();
 
@@ -15,8 +17,9 @@ function App() {
     const location = useLocation();
     // todo React Router caught the following error during render TypeError: Cannot destructure property 'isUserLoggedIn' of 'useContext(...)' as it is undefined.
     //     at App (App.jsx:16:13)
-    const { isUserLoggedIn, setIsUserLoggedIn } = useContext(AuthContext);
+    // const { isUserLoggedIn, setIsUserLoggedIn } = useContext(AuthContext);
     const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+    const { isUserLoggedIn, isLoading } = useAuth();
 
     // wake up backend when frontend is rendered
     useEffect(() => {
@@ -31,31 +34,31 @@ function App() {
             }
         }
         wakeUpBackend();
-    });
-
-
-    useEffect(() => {
-        const validateToken = async () => {
-            const token = sessionStorage.getItem("token");
-            if (token){
-                try {
-                    const response = await
-                        axios.post(`${VITE_BACKEND_URL}/api/validateToken`, {},
-                            {
-                                headers: { Authorization: `Bearer ${token}` },
-                            }
-                        );
-                    console.log("Token is valid. Logging in")
-                    setIsUserLoggedIn(true);
-                } catch (error) {
-                    "Failed to validate token. Token either missing or not correct."
-                    setIsUserLoggedIn(false);
-                }
-            }
-        };
-
-        validateToken();
     }, []);
+
+
+    // useEffect(() => {
+    //     const validateToken = async () => {
+    //         const token = sessionStorage.getItem("token");
+    //         if (token){
+    //             try {
+    //                 const response = await
+    //                     axios.post(`${VITE_BACKEND_URL}/api/validateToken`, {},
+    //                         {
+    //                             headers: { Authorization: `Bearer ${token}` },
+    //                         }
+    //                     );
+    //                 console.log("Token is valid. Logging in")
+    //                 setIsUserLoggedIn(true);
+    //             } catch (error) {
+    //                 "Failed to validate token. Token either missing or not correct."
+    //                 setIsUserLoggedIn(false);
+    //             }
+    //         }
+    //     };
+    //
+    //     validateToken();
+    // }, []);
     // useEffect(() => {
     //     const token = sessionStorage.getItem("token");
     //
@@ -77,6 +80,10 @@ function App() {
     const isGuestRoute = guestRoutes.includes(location.pathname);
     const isUserRoute = userRoutes.includes(location.pathname);
     const isRegister = location.pathname === "/register";
+
+    if (isLoading) {
+        return <div></div>; // Or a nicer loading spinner
+    }
 
     return (
         // <AuthContext.Provider value={{isUserLoggedIn, setIsUserLoggedIn}}>

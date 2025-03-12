@@ -1,17 +1,20 @@
 import './nav-bar-user.scss'
 import {NavLink, useNavigate} from 'react-router-dom'
-import {AuthContext} from "../../main.jsx";
+// import {AuthContext} from "../../main.jsx";
 import {useContext} from "react";
+import {useAuth} from '../../AuthContext.jsx';
 
 
 function NavigatorUser() {
-	const { setIsUserLoggedIn } = useContext(AuthContext);
+	// const { setIsUserLoggedIn } = useContext(AuthContext);
 	const navigate = useNavigate();
+	const { isUserLoggedIn, logout } = useAuth();
 
 	const handleLogout = async () => {
 		console.log('Logout successful');
-		sessionStorage.removeItem("token");
-		setIsUserLoggedIn(false);
+		// sessionStorage.removeItem("token");
+		// setIsUserLoggedIn(false);
+		logout();
 		navigate("/");
 	};
 

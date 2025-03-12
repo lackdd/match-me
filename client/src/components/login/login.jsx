@@ -2,9 +2,10 @@ import './login.scss'
 import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import {AuthContext} from "../../main.jsx";
+// import {AuthContext} from "../../main.jsx";
 import {ErrorElement} from '../register/errorElement.jsx';
 import {ShowPasswordButton} from '../register/showPasswordButton.jsx';
+import { useAuth } from '../../AuthContext.jsx';
 
 function Login() {
 	const [email, setEmail] = useState('');
@@ -13,13 +14,41 @@ function Login() {
 	const history = useNavigate();
 	const [showPassword, setShowPassword] = useState(true);
 
+
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
+	// const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
 
-	if (isUserLoggedIn === true) {
-		return <Navigate to="/dashboard" replace />;
-	}
+
+	//
+	//
+	// if (isUserLoggedIn === true) {
+	// 	return <Navigate to="/dashboard" replace />;
+	// }
+	//
+	// const handleLogin = async (event) => {
+	// 	event.preventDefault();
+	//
+	// 	try {
+	// 		if (!email || !password) {
+	// 			setError('Please enter a username and a password');
+	// 			return;
+	// 		}
+	//
+	// 		const response = await
+	// 			axios.post(`${VITE_BACKEND_URL}/api/login`, {email, password});
+	// 		setError("")
+	// 		console.log('Login successful: ', response.data);
+	// 		sessionStorage.setItem("token", response.data);
+	// 		setIsUserLoggedIn(true);
+	// 		history('/dashboard')
+	// 	} catch (error) {
+	// 		console.error('Login failed: ', error.response ? error.response.data : error.message);
+	// 		setError('Invalid username or password.')
+	// 	}
+	// }
+
+	const { login } = useAuth();
 
 	const handleLogin = async (event) => {
 		event.preventDefault();
@@ -30,18 +59,29 @@ function Login() {
 				return;
 			}
 
-			const response = await
-				axios.post(`${VITE_BACKEND_URL}/api/login`, {email, password});
-			setError("")
-			console.log('Login successful: ', response.data);
-			sessionStorage.setItem("token", response.data);
-			setIsUserLoggedIn(true);
+			const response = await axios.post(`${VITE_BACKEND_URL}/api/login`, {email, password});
+			setError("");
+			const token = response.data;
+			await login(token);
+			console.log("Login successful: ", response.data);
+			// Navigate to dashboard or other protected route
 			history('/dashboard')
 		} catch (error) {
-			console.error('Login failed: ', error.response ? error.response.data : error.message);
-			setError('Invalid username or password.')
+			console.error("Login failed:", error);
 		}
-	}
+	};
+
+	// const handleLogin = async (credentials) => {
+	// 	try {
+	// 		const response = await axios.post(`${VITE_BACKEND_URL}/api/login`, credentials);
+	// 		const token = response.data.token;
+	// 		await login(token);
+	// 		console.log("Login successful");
+	// 		// Navigate to dashboard or other protected route
+	// 	} catch (error) {
+	// 		console.error("Login failed:", error);
+	// 	}
+	// };
 
 
 	return (

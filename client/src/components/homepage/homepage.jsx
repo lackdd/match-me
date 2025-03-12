@@ -2,11 +2,13 @@ import './homepage.scss'
 import HomePageFooter from './homepage_footer.jsx'
 import {Link, Navigate, useOutletContext} from 'react-router-dom';
 import {useContext} from "react";
-import {AuthContext} from "../../main.jsx";
+import {useAuth} from '../../AuthContext.jsx';
+// import {AuthContext} from "../../main.jsx";
 
 function HomePage() {
 
-	const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
+	// const {isUserLoggedIn, setIsUserLoggedIn} = useContext(AuthContext);
+	const { isUserLoggedIn } = useAuth();
 
 	if (isUserLoggedIn === true) {
 		return <Navigate to="/dashboard" replace />;
