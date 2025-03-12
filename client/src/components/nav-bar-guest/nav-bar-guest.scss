@@ -46,9 +46,11 @@
 
     .nav-bar-logo {
       width: 11.75rem;
+      fill: none;
 
       @media (max-width: 768px) {
         width: 2.5rem;
+
       }
     }
   }
@@ -70,6 +72,9 @@
       color: black;
       background-color: transparent;
       border: none;
+      //text-align: center;
+      display: flex;
+      //align-items: center;
       //transition: background 0.3s ease, color 0.3s ease;
       //transition: all 0.3s ease-in-out;
     }
