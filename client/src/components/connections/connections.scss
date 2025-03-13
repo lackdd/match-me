@@ -4,6 +4,103 @@
   @include variables.whole-page;
   @include variables.centered-column;
 
+  .extra-connections-container {
+    @include variables.centered-column;
+    width: 60%;
+
+    @media (max-width: 768px) {
+      width: 80%;
+      flex-direction: column-reverse;
+    }
+
+    @media (max-width: 440px) {
+      width: 90%;
+    }
+
+
+    .buttons-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      width: 100%;
+
+      button {
+        padding: 1.25rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border: 1px solid black;
+        color: black;
+      }
+
+
+      .pending {
+
+      }
+
+      .current {
+
+      }
+
+    }
+
+    .connections-list {
+      @include variables.centered-column;
+      @include variables.glass-container;
+      justify-content: flex-start;
+      margin-top: 3rem;
+      min-height: 60vh;
+      width: 100%;
+
+      @media (max-width: 768px) {
+        max-height: 70vh;
+        overflow-y: scroll;
+      }
+
+      .connection {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        padding: 1rem 0.75rem 1rem 0.75rem;
+
+        .picture-container {
+
+          img {
+
+          }
+        }
+
+        .name {
+
+        }
+
+        .connection-buttons-container {
+
+        }
+
+
+        .icon {
+
+
+          &.yes {
+
+          }
+
+          &.no {
+
+          }
+        }
+
+      }
+
+    }
+  }
+
+
+
+
   .coming-soon {
     justify-self: center;
   }
