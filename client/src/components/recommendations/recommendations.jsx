@@ -24,6 +24,8 @@ function Recommendations() {
 
 	// fetch IDs of matched users
 	useEffect(() => {
+		const controller = new AbortController(); // Create an abort controller
+		const signal = controller.signal;
 
 		if (matchIDs.length <= 1) { // no need to fetch matches if already available
 			const getAllMatches = async() => {
@@ -31,19 +33,25 @@ function Recommendations() {
 					// const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`)
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`, {
 							headers: { Authorization: `Bearer ${token.current}` },
-						}
-					);
+						signal,
+						});
 					// todo fetch matchIDs when creating an account (and additionally in the background when logging in) so fetching here can be skipped if matches are already available
 					// todo add matchIDs to database and check if available before fetching
 					setMatchIDs(response.data);
 				} catch (error) {
-					console.error("Failed to get matches:", error);
+					if (axios.isCancel(error)) {
+						console.log("Fetch aborted");
+					} else {
+						console.error("Failed to get matches:", error);
+					}
 				}
 			}
 			getAllMatches();
 		} else {
 			console.log("Matches already fetched:", matchIDs);
 		}
+
+		return () => controller.abort(); // Cleanup function to abort request
 	}, [])
 
 	// if match ids are fetched from server then fetch the data for all the ids
@@ -113,7 +121,7 @@ function Recommendations() {
 			console.log("not undefined");
 			for (let key in matches[currentMatchNum]) {
 				if (matches[currentMatchNum].hasOwnProperty(key)) {
-					console.log(key + " => " + matches[currentMatchNum][key]);
+					// console.log(key + " => " + matches[currentMatchNum][key]);
 				}
 
 				if (key === 'location') {
@@ -146,22 +154,43 @@ function Recommendations() {
 		const matchContainer = matchContainerRef.current;
 		if (!matchContainer) return;
 
-		// setCurrentMatchNum(prevState => prevState + 1)
-
 		console.log("Like!");
 		matchContainer.classList.add("like-animation");
+
+		console.log("current match id: " + currentMatch.id);
+
+		// send data to backend
+		const likeUser = async () => {
+			try {
+				const response = await axios.post(
+					`${VITE_BACKEND_URL}/api/addLikedUser?matchId=${Number(currentMatch.id)}`,
+					null,
+					// {matchId: currentMatch.id},
+					{
+						headers: { "Authorization": `Bearer ${token.current}`,
+									"Content-Type": "application/json"
+						},
+					}
+				);
+				console.log("Like successful: " + response.data)
+			} catch (error) {
+				console.error("Failed to like match: ", error.response.data);
+			}
+		};
+
+		likeUser();
 
 		setTimeout(() => {
 			resetPosition({ target: matchContainer });
 		}, 600); // Match the CSS transition duration
-	}, []);
+	}, [currentMatch]);
 
 	// logic when user presses "Dislike"
 	const Dislike = useCallback(() => {
 		const matchContainer = matchContainerRef.current;
 		if (!matchContainer) return;
 
-		// setCurrentMatchNum(prevState => prevState + 1)
+
 
 		console.log("Dislike!");
 		matchContainer.classList.add("dislike-animation");
@@ -205,6 +234,27 @@ function Recommendations() {
 		// setResetKey(prevKey => prevKey + 1); // Force component to update
 		// Logic to update match profile with new data
 		setCurrentMatchNum(prevState => prevState + 1)
+
+
+		const likedUsers = async () => {
+			try {
+				const response = await axios.get(
+					`${VITE_BACKEND_URL}/api/likedUsers`,
+					// {matchId: currentMatch.id},
+					{
+						headers: { "Authorization": `Bearer ${token.current}`,
+							"Content-Type": "application/json"
+						},
+					}
+				);
+				console.log("Liked users: " + response.data)
+			} catch (error) {
+				console.error("Failed to fetch liked users: ", error);
+			}
+		};
+
+		likedUsers();
+
 	}, []);
 
 	// todo doesnt work
