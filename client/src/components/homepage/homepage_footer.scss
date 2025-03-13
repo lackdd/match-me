@@ -28,6 +28,10 @@
 
   .icon {
 
+    @media (max-width: 440px) {
+      //filter: brightness(0) saturate(100%) invert(53%) sepia(26%) saturate(1191%) hue-rotate(307deg) brightness(102%) contrast(99%)
+      //filter: brightness(0) saturate(100%) invert(33%) sepia(76%) saturate(7455%) hue-rotate(230deg) brightness(97%) contrast(97%)
+    }
   }
 
   .icon:hover {

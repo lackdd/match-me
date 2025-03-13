@@ -32,6 +32,7 @@
     }
 
     &.mobile {
+      height: 4rem;
       display: flex; // Show mobile nav
       position: fixed;  // Make it stick to the bottom
       bottom: 0;

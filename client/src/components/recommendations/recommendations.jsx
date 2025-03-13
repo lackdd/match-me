@@ -4,8 +4,7 @@ import {IoPlaySkipForward} from 'react-icons/io5';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import '../register/loadingAnimation.scss'
-import {getOptimizedImage} from '../utils/cloudinary.jsx';
-import {AdvancedImage} from '@cloudinary/react';
+import {useSwipe} from './useSwipe.jsx';
 
 function Recommendations() {
 	const matchContainerRef = useRef(null);
@@ -21,6 +20,7 @@ function Recommendations() {
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
+	const { handleTouchStart, handleTouchEnd, handleTouchMove } = useSwipe();
 
 	// fetch IDs of matched users
 	useEffect(() => {
@@ -33,7 +33,8 @@ function Recommendations() {
 							headers: { Authorization: `Bearer ${token.current}` },
 						}
 					);
-					// todo add matchIDS to database and check if available before fetching
+					// todo fetch matchIDs when creating an account (and additionally in the background when logging in) so fetching here can be skipped if matches are already available
+					// todo add matchIDs to database and check if available before fetching
 					setMatchIDs(response.data);
 				} catch (error) {
 					console.error("Failed to get matches:", error);
@@ -45,7 +46,7 @@ function Recommendations() {
 		}
 	}, [])
 
-	// if match ids are fetched from server the fetch the data for al the ids
+	// if match ids are fetched from server then fetch the data for all the ids
 	useEffect(() => {
 		console.log(matchIDs);
 
@@ -54,9 +55,13 @@ function Recommendations() {
 				try {
 					// Create an array of promises that fetch both profile and user data for each match
 					const matchPromises = matchIDs.map(id => {
+
+						// fetch profile pic and name
 						const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
 							headers: { Authorization: `Bearer ${token.current}` }
 						});
+
+						// fetch other bio data
 						const userPromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
 							headers: { Authorization: `Bearer ${token.current}` }
 						});
@@ -77,7 +82,7 @@ function Recommendations() {
 				} catch (error) {
 					console.error("Failed to get match data: ", error)
 				} finally {
-					setLoading(false);
+					setLoading(false); // disable loading state
 				}
 			}
 			getMatchData()
@@ -89,18 +94,43 @@ function Recommendations() {
 
 	}, [matchIDs])
 
-	useEffect(() => {
-		setCurrentMatch(matches[currentMatchNum])
-	}, [matches])
+	// // set current match data and format it initally when matches are fet
+	// useEffect(() => {
+	// 	setCurrentMatch(matches[currentMatchNum])
+	// }, [matches])
 
+	// just to log data
 	useEffect(() => {
 		console.log("Matches: ",  matches);
 	}, [matches]);
 
+	// set current match data and format it
 	useEffect(() => {
-		setCurrentMatch(matches[currentMatchNum])
-	}, [currentMatchNum]);
 
+		console.log(matches[currentMatchNum]);
+
+		if (matches[currentMatchNum] !== undefined) {
+			console.log("not undefined");
+			for (let key in matches[currentMatchNum]) {
+				if (matches[currentMatchNum].hasOwnProperty(key)) {
+					console.log(key + " => " + matches[currentMatchNum][key]);
+				}
+
+				if (key === 'location') {
+					matches[currentMatchNum][key] = formatLocation(matches[currentMatchNum][key])
+				} else if (Array.isArray(matches[currentMatchNum][key])) {
+					// matches[currentMatchNum][key] = matches[currentMatchNum][key].map(formatData)
+					matches[currentMatchNum][key] = formatData(matches[currentMatchNum][key])
+					// matches[currentMatchNum][key] = formatData(matches[currentMatchNum][key])
+				}
+			}
+		}
+
+		setCurrentMatch(matches[currentMatchNum])
+
+	}, [currentMatchNum, matches]);
+
+	// just to log data
 	useEffect(() => {
 		console.log("Current match data: ", currentMatch);
 	}, [currentMatch]);
@@ -111,7 +141,8 @@ function Recommendations() {
 	//
 	// })
 
-	function Like() {
+	// logic when user presses "Like"
+	const Like = useCallback(() => {
 		const matchContainer = matchContainerRef.current;
 		if (!matchContainer) return;
 
@@ -123,9 +154,10 @@ function Recommendations() {
 		setTimeout(() => {
 			resetPosition({ target: matchContainer });
 		}, 600); // Match the CSS transition duration
-	}
+	}, []);
 
-	function Dislike() {
+	// logic when user presses "Dislike"
+	const Dislike = useCallback(() => {
 		const matchContainer = matchContainerRef.current;
 		if (!matchContainer) return;
 
@@ -137,9 +169,10 @@ function Recommendations() {
 		setTimeout(() => {
 			resetPosition({ target: matchContainer });
 		}, 600); // Match the CSS transition duration
-	}
+	}, []);
 
-	function resetPosition(event) {
+	// logic to reset the position of matchContainer after like and dislike animation
+	const resetPosition = useCallback((event) => {
 		console.log("Resetting position...");
 		const matchContainer = matchContainerRef.current;
 
@@ -161,34 +194,35 @@ function Recommendations() {
 
 		// Load next match
 		loadNextMatch();
-	}
+	}, []);
 
-	function loadNextMatch() {
+	// load next match data
+	const loadNextMatch = useCallback(() => {
 		console.log("Loading next match...");
 
 		// todo get the next match data from the database
 
-		setResetKey(prevKey => prevKey + 1); // Force component to update
+		// setResetKey(prevKey => prevKey + 1); // Force component to update
 		// Logic to update match profile with new data
 		setCurrentMatchNum(prevState => prevState + 1)
-	}
+	}, []);
 
 	// todo doesnt work
 	// handle event listener every time user clicks on like or dislike
-	useEffect(() => {
-		const matchContainer = matchContainerRef.current;
-		if (!matchContainer) return;
-
-		console.log("Adding event listener on transitionend");
-		// Add event listener once
-		matchContainer.addEventListener("transitionend", resetPosition);
-
-		// Cleanup function to remove listener when component unmounts
-		return () => {
-			console.log("Removing event listener on transitionend");
-			matchContainer.removeEventListener("transitionend", resetPosition);
-		};
-	}, []);
+	// useEffect(() => {
+	// 	const matchContainer = matchContainerRef.current;
+	// 	if (!matchContainer) return;
+	//
+	// 	console.log("Adding event listener on transitionend");
+	// 	// Add event listener once
+	// 	matchContainer.addEventListener("transitionend", resetPosition);
+	//
+	// 	// Cleanup function to remove listener when component unmounts
+	// 	return () => {
+	// 		console.log("Removing event listener on transitionend");
+	// 		matchContainer.removeEventListener("transitionend", resetPosition);
+	// 	};
+	// }, []);
 
 	// // handle getting next match data from the database and then handle the event listener so the component is updated
 	// useEffect(() => {
@@ -197,7 +231,7 @@ function Recommendations() {
 	// 	}
 	// }, [resetKey])
 
-
+	// helped function to format match data
 	const formatData = (data) => {
 		for (let i = 0; i < data.length; i++) {
 			data[i] = data[i].replaceAll("_", " ")
@@ -211,6 +245,11 @@ function Recommendations() {
 		return data;
 	}
 
+	// helped function to format location data (remove "County")
+	const formatLocation = (data) => {
+		return data.replaceAll(" County", "")
+	}
+
 	return (
 		<>
 		<div className='recommendations-container'>
@@ -221,7 +260,7 @@ function Recommendations() {
 		) : currentMatch ? (
 			<>
 			<div
-				key={resetKey}
+				key={currentMatchNum}
 				ref={matchContainerRef}
 				id={'match-container'}
 				className='match-profile-container'>
@@ -237,17 +276,40 @@ function Recommendations() {
 							{/*		className='match-profile-picture'*/}
 							{/*	/>*/}
 							{/*)}*/}
-							<img
-								src='default_profile_picture.png'
-								alt='profile picture'
-								className='match-profile-picture'
-							/>
-							<div className='music-link'>
-								<FaSpotify style={{ color: '#31D165' }} />
-							</div>
+							{currentMatch.gender === 'male' && (
+								<img
+									src='profile_pic_male.jpg'
+									alt='profile picture'
+									className='match-profile-picture'
+								/>
+							)}
+							{currentMatch.gender === 'female' && (
+								<img
+									src='profile_pic_female.jpg'
+									alt='profile picture'
+									className='match-profile-picture'
+								/>
+							)}
+							{currentMatch.gender === 'other' && (
+								<img
+									src='default_profile_picture.png'
+									alt='profile picture'
+									className='match-profile-picture'
+								/>
+							)}
+							{currentMatch.linkToMusic ? (
+								<div className='music-link'>
+									<FaSpotify style={{ color: '#31D165' }} />
+								</div>
+							) : ("")
+							}
+
 						</div>
 					</div>
-					<div className='bio-container'>
+
+					{/* bigger screen design*/}
+					<div className='bio-container default'>
+
 						<table className='bio-table'>
 							<tbody>
 							<tr>
@@ -274,7 +336,7 @@ function Recommendations() {
 								</th>
 							</tr>
 							<tr>
-								<td colSpan={3}>{formatData(currentMatch.preferredMusicGenres)}</td>
+								<td colSpan={3}>{currentMatch.preferredMusicGenres}</td>
 							</tr>
 							<tr>
 								<th className='one-column' colSpan={3}>
@@ -282,7 +344,7 @@ function Recommendations() {
 								</th>
 							</tr>
 							<tr>
-								<td colSpan={3}>{formatData(currentMatch.preferredMethod)}</td>
+								<td colSpan={3}>{currentMatch.preferredMethod}</td>
 							</tr>
 							<tr>
 								<th className='one-column' colSpan={3}>
@@ -290,7 +352,7 @@ function Recommendations() {
 								</th>
 							</tr>
 							<tr>
-								<td colSpan={3}>{formatData(currentMatch.additionalInterests)}</td>
+								<td colSpan={3}>{currentMatch.additionalInterests}</td>
 							</tr>
 							<tr>
 								<th className='one-column' colSpan={3}>
@@ -298,7 +360,7 @@ function Recommendations() {
 								</th>
 							</tr>
 							<tr>
-								<td colSpan={3}>{formatData(currentMatch.personalityTraits)}</td>
+								<td colSpan={3}>{currentMatch.personalityTraits}</td>
 							</tr>
 							<tr>
 								<th className='one-column' colSpan={3}>
@@ -306,10 +368,62 @@ function Recommendations() {
 								</th>
 							</tr>
 							<tr>
-								<td colSpan={3}>{formatData(currentMatch.goalsWithMusic)}</td>
+								<td colSpan={3}>{currentMatch.goalsWithMusic}</td>
 							</tr>
 							</tbody>
 						</table>
+					</div>
+
+				{/*	 mobile design */}
+
+					<div className='bio-container mobile'>
+
+						<table className='bio-table'>
+							<tbody>
+							<tr>
+								<th style={{ width: '48%' }} className='two-column'>Location</th>
+								<td style={{ width: '4%' }}></td>
+								<th style={{ width: '48%' }} className='two-column'>Experience</th>
+							</tr>
+							<tr>
+								<td style={{ width: '48%' }}>{currentMatch.location}</td>
+								<td style={{ width: '4%' }}></td>
+								<td style={{ width: '48%' }}>
+									{currentMatch.yearsOfMusicExperience === 1
+										? `${currentMatch.yearsOfMusicExperience} year`
+										: `${currentMatch.yearsOfMusicExperience} years`}
+								</td>
+							</tr>
+							<tr>
+								<th style={{ width: '48%' }} className='two-column'>Genres</th>
+								<td style={{ width: '4%' }}></td>
+								<th style={{ width: '48%' }} className='two-column'>Methods</th>
+							</tr>
+							<tr>
+								<td style={{ width: '48%' }}>{currentMatch.preferredMusicGenres}</td>
+								<td style={{ width: '4%' }}></td>
+								<td style={{ width: '48%' }}>{currentMatch.preferredMethod}</td>
+							</tr>
+							<tr>
+								<th style={{ width: '48%' }} className='two-column'>Interests</th>
+								<td style={{ width: '4%' }}></td>
+								<th style={{ width: '48%' }} className='two-column'>Personality</th>
+							</tr>
+							<tr>
+								<td style={{ width: '48%' }}>{currentMatch.additionalInterests}</td>
+								<td style={{ width: '4%' }}></td>
+								<td style={{ width: '48%' }}>{currentMatch.personalityTraits}</td>
+							</tr>
+							<tr>
+								<th className='' colSpan={3}>Goals</th>
+							</tr>
+							<tr>
+								<td colSpan={3} className={''}>{currentMatch.goalsWithMusic}</td>
+							</tr>
+
+							</tbody>
+						</table>
+
 					</div>
 				</div>
 				<div className='description-container flex-item'>
@@ -325,7 +439,12 @@ function Recommendations() {
 					<span>{currentMatch.age}, {currentMatch.gender}</span>
 				</div>
 			</div>
-			<div className='buttons-container'>
+			<div
+				className='buttons-container'
+				onTouchStart={handleTouchStart}
+				onTouchMove={handleTouchMove}
+				onTouchEnd={handleTouchEnd}
+			>
 				<button className='dislike' onClick={Dislike}>
 					<IoPlaySkipForward style={{ color: 'white', width: '70%', height: '70%' }} />
 				</button>

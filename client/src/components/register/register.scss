@@ -184,6 +184,10 @@
       //bottom: 0;
       margin-top: 2rem;
 
+      @media (max-width: 440px) {
+        margin-top: 0.5rem;
+      }
+
       .next {
         background-color: variables.$button-green;
         border: 1px solid variables.$button-green;
@@ -262,6 +266,13 @@
     margin-top: 1.5rem;
 
 
+    @media (max-width: 440px) {
+      margin-top: 0.5rem;
+      align-self: center;
+      margin-left: 0;
+    }
+
+
 
     .exit {
       width: 8.75rem;
@@ -290,12 +301,21 @@
   .account-creation {
     margin-top: 2rem;
     text-align: center;
+
+    @media (max-width: 440px) {
+      margin-top: 0.5rem;
+    }
+
   }
 
   #have-account {
     display: block;
     position: absolute;
     bottom: 2rem;
+
+    @media (max-width: 440px) {
+      display: none;
+    }
 
     a {
       color: variables.$main-pink;
