@@ -144,6 +144,26 @@ public class UserService {
         return repo.findUserConnectionsById(id);
     }
 
+    public void addLikedUserById(Long id, User currentUser) {
+        if (!currentUser.getLikedUsers().contains(id)) {
+            currentUser.getLikedUsers().add(id);
+            repo.save(currentUser);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User already in list");
+        }
+    }
+
+    public void addPendingRequestById(Long id, User likedUser) {
+        if (!likedUser.getPendingRequests().contains(id)) {
+            likedUser.getPendingRequests().add(id);
+            repo.save(likedUser);
+        }
+    }
+
+    public List<Long> getLikedUsersById(Long id) { return repo.findUserLikedUsersById(id); }
+
+    public List<Long> getPendingRequestsById(Long id) {return repo.findUserPendingRequestsById(id);}
+
     public void addConnectionById(Long id, User currentUser) {
         currentUser.getConnections().add(id);
         repo.save(currentUser);

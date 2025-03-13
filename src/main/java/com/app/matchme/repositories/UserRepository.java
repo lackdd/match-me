@@ -19,4 +19,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.connections FROM User u WHERE u.id = :userId")
     List<Long> findUserConnectionsById(@Param("userId") Long userId);
 
+    @Query("SELECT u.likedUsers FROM User u WHERE u.id = :userId")
+    List<Long> findUserLikedUsersById(@Param("userId") Long userId);
+
+    @Query("SELECT u.pendingRequests FROM User u WHERE u.id = :userId")
+    List<Long> findUserPendingRequestsById(@Param("userId") Long userId);
+
 }

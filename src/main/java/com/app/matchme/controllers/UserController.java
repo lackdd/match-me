@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.*;
 
@@ -26,6 +28,57 @@ public class UserController {
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         return service.register(user);
+    }
+
+    @GetMapping("/likedUsers")
+    public ResponseEntity<?> getLikedUsersById(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, fetching liked user id's");
+            Long id = service.extractUserId(token);
+            List<Long> likedUsers = service.getLikedUsersById(id);
+            return ResponseEntity.ok(likedUsers);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/pendingRequests")
+    public ResponseEntity<?> getPendingRequests(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, fetching pending requests");
+            Long id = service.extractUserId(token);
+            List<Long> pendingRequests = service.getPendingRequestsById(id);
+            return ResponseEntity.ok(pendingRequests);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @PostMapping("/addLikedUser")
+    public ResponseEntity<?> addLikedUser(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam("matchId") Long matchId) {
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            System.out.println("Token is valid, adding user id to liked users list");
+            Long id = service.extractUserId(token);
+            User currentUser = service.getUserById(id);
+            User likedUser = service.getUserById(matchId);
+            try {
+                service.addLikedUserById(matchId, currentUser);
+                service.addPendingRequestById(id, likedUser);
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "User id added to liked user list");
+                return ResponseEntity.ok(response);
+            } catch (ResponseStatusException e){
+                return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PostMapping("/addConnection")

@@ -35,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // Skip JWT validation for registration and public routes
-        if (requestURI.equals("/api/register") || requestURI.equals("/api/login") || requestURI.startsWith("/ws") || requestURI.startsWith("/api/check-email") || requestURI.startsWith("/api/hello-backend") ) {
+        if (requestURI.equals("/api/register") || requestURI.equals("/api/login") || requestURI.startsWith("/ws") || requestURI.startsWith("/api/check-email") || requestURI.startsWith("/api/hello-backend") || requestURI.startsWith("/api/addLikedUser") ) {
             filterChain.doFilter(request, response);
             return;
         }

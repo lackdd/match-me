@@ -75,6 +75,8 @@ public class SecurityConfig {
                                 "/api/error",
                                 "/api/forgot-password",
                                 "/api/hello-backend",
+                                "/api/addLikedUser",
+                                "/api/likedUsers",
                                 "/api/validateToken")
                         .permitAll()
                         .anyRequest().authenticated())

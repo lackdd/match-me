@@ -65,12 +65,21 @@ public class User {
     private String idealMatchYearsOfExperience;
     private String idealMatchLocation;
 
+    @ElementCollection
+    @CollectionTable(name = "liked_user_ids", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "liked_user_id")
+    private List<Long> likedUsers = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "pending_requests", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "pending_request")
+    private List<Long> pendingRequests = new ArrayList<>();
 
 
     public User() {
     }
 
-    public User(Long id, String email, String username, String password, String gender, String profilePicture, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String linkToMusic, String location, List<String> idealMatchGenres, String description, List<String> idealMatchMethods, String idealMatchGender, List<Long> connections, List<String> idealMatchGoals, String idealMatchYearsOfExperience, String idealMatchAge, String idealMatchLocation) {
+    public User(Long id, String email, String username, String password, String gender, String profilePicture, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String linkToMusic, String location, List<String> idealMatchGenres, String description, List<String> idealMatchMethods, String idealMatchGender, List<Long> connections, List<String> idealMatchGoals, String idealMatchYearsOfExperience, String idealMatchAge, String idealMatchLocation, List<Long> likedUsers, List<Long> pendingRequests) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -95,6 +104,8 @@ public class User {
         this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
         this.idealMatchAge = idealMatchAge;
         this.idealMatchLocation = idealMatchLocation;
+        this.likedUsers = likedUsers;
+        this.pendingRequests = pendingRequests;
     }
 
     public Long getId() {
@@ -287,5 +298,21 @@ public class User {
 
     public void setConnections(List<Long> connections) {
         this.connections = connections;
+    }
+
+    public List<Long> getLikedUsers() {
+        return likedUsers;
+    }
+
+    public void setLikedUsers(List<Long> likedUsers) {
+        this.likedUsers = likedUsers;
+    }
+
+    public List<Long> getPendingRequests() {
+        return pendingRequests;
+    }
+
+    public void setPendingRequests(List<Long> pendingRequests) {
+        this.pendingRequests = pendingRequests;
     }
 }
