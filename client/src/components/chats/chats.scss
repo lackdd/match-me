@@ -4,7 +4,22 @@
   @include variables.whole-page;
   @include variables.centered-column;
 
-  .coming-soon {
-    justify-self: center;
+  .extra-chats-container {
+    @include variables.glass-container;
+    display: flex;
+    flex-direction: row;
+    width: 90vh;
+    height: 80vh;
+
+
+    .connections {
+
+    }
+
+    .chat {
+      background: white;
+      border-radius: 20px;
+    }
   }
+
 }
