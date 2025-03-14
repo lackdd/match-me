@@ -48,7 +48,12 @@ function Recommendations() {
 					if (axios.isCancel(error)) {
 						console.log("Fetch aborted");
 					} else {
-						console.error("Failed to get matches:", error);
+						if (error.response) {
+							console.error("Backend error:", error.response.data); // Server responded with an error
+						} else {
+							console.error("Request failed:", error.message); // Network error or request issue
+						}
+						// todo display error to user
 					}
 				}
 			}
@@ -92,16 +97,19 @@ function Recommendations() {
 
 					// Update the matches state with the merged data
 					setMatches(matchResults);
-
-				} catch (error) {
-					console.error("Failed to get match data: ", error)
-				} finally {
 					setLoading(false); // disable loading state
+				} catch (error) {
+					if (error.response) {
+						console.error("Backend error:", error.response.data); // Server responded with an error
+					} else {
+						console.error("Request failed:", error.message); // Network error or request issue
+					}
 				}
 			}
 			getMatchData()
 		} else {
 			console.log("No match IDs to fetch data for");
+			// todo display error to user
 			// setLoading(false);
 		}
 
@@ -180,7 +188,11 @@ function Recommendations() {
 				);
 				console.log("Like successful: " + response.data)
 			} catch (error) {
-				console.error("Failed to like match: ", error.response.data);
+				if (error.response) {
+					console.error("Backend error:", error.response.data); // Server responded with an error
+				} else {
+					console.error("Request failed:", error.message); // Network error or request issue
+				}
 			}
 		};
 
@@ -255,7 +267,12 @@ function Recommendations() {
 				);
 				console.log("Liked users: " + response.data)
 			} catch (error) {
-				console.error("Failed to fetch liked users: ", error);
+				if (error.response) {
+					console.error("Backend error:", error.response.data); // Server responded with an error
+				} else {
+					console.error("Request failed:", error.message); // Network error or request issue
+				}
+				// todo display error to user
 			}
 		};
 
@@ -292,13 +309,11 @@ function Recommendations() {
 	return (
 		<>
 		<div className='recommendations-container'>
-
 			<div className='settings-popup' id={'settings-popup'}>
-
 				<div className='settings-content'>
 
 					<form action=''>
-						{/* todo add register step 5 form here auto filled with current data and add ability to change data*/}
+						{/* todo add register step 5 form here auto filled with current user preferences data and add ability to change data*/}
 					</form>
 
 					<div className='settings-buttons-container'>
@@ -312,12 +327,7 @@ function Recommendations() {
 						</button>
 
 					</div>
-
 				</div>
-
-
-
-
 			</div>
 
 		{loading ? (
