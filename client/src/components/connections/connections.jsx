@@ -259,15 +259,17 @@ function Connections() {
 
 					</div>
 
-					{(pendingOrCurrent === "current" && currentConnections.length > 0) ||
-					(pendingOrCurrent !== "current" && pendingConnections.length > 0) ? (
-						<div className='user-stats-container'>
-							You have {pendingOrCurrent === "current"
-							? `${currentConnections.length} ${currentConnections.length === 1 ? "connection" : "connections"}`
-							: `${pendingConnections.length} ${pendingConnections.length === 1 ? "request" : "requests"}`
-						}
-						</div>
-					) : null}
+					<div className='user-stats-container'>
+						{(pendingOrCurrent === "current" && currentConnections.length > 0) ||
+						(pendingOrCurrent !== "current" && pendingConnections.length > 0) ? (
+							<div className='user-stats'>
+								You have {pendingOrCurrent === "current"
+								? `${currentConnections.length} ${currentConnections.length === 1 ? "connection" : "connections"}`
+								: `${pendingConnections.length} ${pendingConnections.length === 1 ? "request" : "requests"}`
+							}
+							</div>
+						) : null}
+					</div>
 				</div>
 			)}
 		</div>
