@@ -51,6 +51,7 @@
     align-items: center;
 
     @media (max-width: 768px) {
+      width: fit-content;
     }
 
     .profile-link {
@@ -102,9 +103,17 @@
     padding-right: 1.25rem;
     font-weight: 600;
 
+    button.logout {
+      all: unset;
+      color: white;
+    }
+
 
     @media (max-width: 768px) {
       justify-content: space-around;
+      align-items: center;
+      padding-left: 0;
+      padding-right: 0;
 
       svg {
         width: 2.25rem;

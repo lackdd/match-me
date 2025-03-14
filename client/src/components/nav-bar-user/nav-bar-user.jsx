@@ -122,15 +122,6 @@ function NavigatorUser() {
 			{/* todo*/}
 			<nav className='nav-container-user mobile'>
 
-				<div className='profile-container'>
-					<NavLink to='/dashboard' className={({ isActive }) =>
-						`profile-link ${isActive ? 'current' : ''}`
-					}>
-						{(gender === 'male') && <img src='profile_pic_male.jpg' alt={username} className='profile-picture'/>}
-						{(gender === 'female') && <img src='profile_pic_female.jpg' alt={username} className='profile-picture'/>}
-						{(gender !== 'female' && gender !== 'male') && <img src='default_profile_picture.png' alt={username} className='profile-picture'/>}
-					</NavLink>
-				</div>
 				<div className='links-container'>
 					<NavLink to='/connections' className={({ isActive }) =>
 						`icon connections ${isActive ? 'current' : ''}`
@@ -142,13 +133,20 @@ function NavigatorUser() {
 					}>
 						<BsChat />
 					</NavLink>
+					<div className='profile-container'>
+						<NavLink to='/dashboard' className={({ isActive }) =>
+							`profile-link ${isActive ? 'current' : ''}`
+						}>
+							{(gender === 'male') && <img src='profile_pic_male.jpg' alt={username} className='profile-picture'/>}
+							{(gender === 'female') && <img src='profile_pic_female.jpg' alt={username} className='profile-picture'/>}
+							{(gender !== 'female' && gender !== 'male') && <img src='default_profile_picture.png' alt={username} className='profile-picture'/>}
+						</NavLink>
+					</div>
 					<NavLink to='/recommendations' className={({ isActive }) =>
 						`icon recommendations ${isActive ? 'current' : ''}`
 					}>
 						<PiMusicNotesPlus />
 					</NavLink>
-				</div>
-				<div className='nav-buttons-container'>
 					<button className='logout' title='Log out' onClick={handleLogout}>
 						<FiLogOut />
 					</button>
