@@ -6,6 +6,9 @@ import axios from 'axios';
 import '../register/loadingAnimation.scss'
 import {useSwipe} from './useSwipe.jsx';
 
+// react icons
+import { GiSettingsKnobs } from "react-icons/gi";
+
 function Recommendations() {
 	const matchContainerRef = useRef(null);
 	const [loading, setLoading] = useState(true)
@@ -300,9 +303,47 @@ function Recommendations() {
 		return data.replaceAll(" County", "")
 	}
 
+	const openSettings = (event) => {
+		const settingsPopup = document.getElementById('settings-popup')
+		settingsPopup.style.display = 'flex';
+	}
+
+	const closeSettings = (event) => {
+		const settingsPopup = document.getElementById('settings-popup')
+		settingsPopup.style.display = 'none';
+	}
+
 	return (
 		<>
 		<div className='recommendations-container'>
+
+			<div className='settings-popup' id={'settings-popup'}>
+
+				<div className='settings-content'>
+
+					<form action=''>
+						{/* todo add register step 5 form here auto filled with current data and add ability to change data*/}
+					</form>
+
+					<div className='settings-buttons-container'>
+
+						<button className='save' onClick={closeSettings}>
+							save
+						</button>
+
+						<button className='cancel' onClick={closeSettings}>
+							cancel
+						</button>
+
+					</div>
+
+				</div>
+
+
+
+
+			</div>
+
 		{loading ? (
 			<div className={'spinner-container'}>
 				<div className='spinner endless'>Finding matches...</div>
@@ -314,6 +355,13 @@ function Recommendations() {
 				ref={matchContainerRef}
 				id={'match-container'}
 				className='match-profile-container'>
+
+				<div className='settings-container'>
+					<button className='settings-button' onClick={openSettings}>
+						<GiSettingsKnobs />
+					</button>
+				</div>
+
 				<div className='picture-bio-container flex-item'>
 					<div className='picture-container'>
 						<div className='extra-picture-container'>
