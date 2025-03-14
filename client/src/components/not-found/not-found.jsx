@@ -4,7 +4,7 @@ import Navigator from '../nav-bar-guest/nav-bar-guest.jsx';
 import {useContext} from 'react';
 import NavigatorUser from '../nav-bar-user/nav-bar-user.jsx';
 import NavigatorGuest from '../nav-bar-guest/nav-bar-guest.jsx';
-import { useAuth } from '../../AuthContext.jsx';
+import { useAuth } from '../utils/AuthContext.jsx';
 
 function NotFound() {
 	// const {isUserLoggedIn} = useContext(AuthContext);
