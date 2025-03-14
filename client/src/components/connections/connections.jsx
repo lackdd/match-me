@@ -51,9 +51,13 @@ function Connections() {
 
 	}
 	// delete connection
-	const deleteConnection = async(setState, connectionId) => { // connectionId, setConnections, setConnectionsIds
+	const deleteConnection = async(event, setState, connectionId) => { // connectionId, setConnections, setConnectionsIds
 		// setIsDeleting(true);
 
+		// todo add confirmation pop-up in case of misclick
+		event.preventDefault();
+
+		// todo request api to delete form db as well
 		try {
 			// Remove the connection from the state
 			setState((prevConnections) =>
@@ -185,14 +189,14 @@ function Connections() {
 
 				{connections === currentConnections && (
 					<div className='connections-buttons-container'>
-						<button className='no' onClick={(event) => deleteConnection(setCurrentConnections, connection.id)}><FaRegCircleStop /></button>
+						<button className='no' onClick={(eventevent) => deleteConnection(event, setCurrentConnections, connection.id)}><FaRegCircleStop /></button>
 						<button className='chat'><BsChat /></button>
 					</div>
 				)}
 
 				{connections === pendingConnections && (
 					<div className='connections-buttons-container'>
-						<button className='no' onClick={(event) => deleteConnection(setPendingConnections, connection.id)}><FaRegCircleStop /></button>
+						<button className='no' onClick={(eventevent) => deleteConnection(event, setPendingConnections, connection.id)}><FaRegCircleStop /></button>
 						<button className='yes'><FaRegCirclePlay /></button>
 					</div>
 				)}
