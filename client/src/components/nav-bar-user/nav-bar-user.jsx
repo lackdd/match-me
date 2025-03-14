@@ -2,7 +2,7 @@ import './nav-bar-user.scss'
 import {NavLink, useNavigate} from 'react-router-dom'
 // import {AuthContext} from "../../main.jsx";
 import {useContext} from "react";
-import {useAuth} from '../../AuthContext.jsx';
+import {useAuth} from '../utils/AuthContext.jsx';
 
 // mobile icons
 import { FiLogOut } from "react-icons/fi";
@@ -52,7 +52,7 @@ function NavigatorUser() {
 						RECOMMENDATIONS
 					</NavLink>
 				</div>
-				<div className='buttons-container'>
+				<div className='nav-buttons-container'>
 					<button className='button logout' title='Log out' onClick={handleLogout}>
 						Log out
 					</button>
@@ -86,7 +86,7 @@ function NavigatorUser() {
 						<PiMusicNotesPlus />
 					</NavLink>
 				</div>
-				<div className='buttons-container'>
+				<div className='nav-buttons-container'>
 					<button className='logout' title='Log out' onClick={handleLogout}>
 						<FiLogOut />
 					</button>
