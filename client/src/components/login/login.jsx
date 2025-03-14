@@ -67,7 +67,11 @@ function Login() {
 			// Navigate to dashboard or other protected route
 			history('/dashboard')
 		} catch (error) {
-			console.error("Login failed:", error);
+			if (error.response) {
+				console.error("Backend error:", error.response.data); // Server responded with an error
+			} else {
+				console.error("Request failed:", error.message); // Network error or request issue
+			}
 		}
 	};
 
