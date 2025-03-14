@@ -19,7 +19,7 @@ function Connections() {
 	const [pendingDataFetched, setPendingDataFetched] = useState(false);
 
 	const token = useRef(sessionStorage.getItem("token"));
-	console.log("Token: ", token.current)
+	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -144,9 +144,6 @@ function Connections() {
 
 	// display current connections
 	const displayConnections = (connections) => {
-
-		console.log("length: ", connections.length);
-
 		if (connections.length === 0) {
 
 			if (connections === currentConnections && pendingOrCurrent === "current") {

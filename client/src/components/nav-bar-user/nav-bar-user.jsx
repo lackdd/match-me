@@ -21,7 +21,7 @@ function NavigatorUser() {
 	const [gender, setGender] = useState("");
 
 	const token = useRef(sessionStorage.getItem("token"));
-	console.log("Token: ", token.current)
+	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 

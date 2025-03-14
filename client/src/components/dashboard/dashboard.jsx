@@ -18,7 +18,7 @@ function Dashboard() {
 	const [liked, setLiked] = useState(0);
 
 	const token = useRef(sessionStorage.getItem("token"));
-	console.log("Token: ", token.current)
+	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
