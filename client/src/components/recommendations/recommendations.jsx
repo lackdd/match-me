@@ -1,10 +1,13 @@
 import './recommendations.scss'
+import '../reusables/profile-card.scss'
+import '../reusables/settings-popup.scss'
+import '../register/loadingAnimation.scss'
 import {FaPlay, FaSpotify} from 'react-icons/fa';
 import {IoPlaySkipForward} from 'react-icons/io5';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
-import '../register/loadingAnimation.scss'
 import {useSwipe} from './useSwipe.jsx';
+import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
 
 // react icons
 import { GiSettingsKnobs } from "react-icons/gi";
@@ -284,34 +287,7 @@ function Recommendations() {
 	// 	}
 	// }, [resetKey])
 
-	// helped function to format match data
-	const formatData = (data) => {
-		for (let i = 0; i < data.length; i++) {
-			data[i] = data[i].replaceAll("_", " ")
 
-			if (i < data.length - 1) {
-				data[i] = data[i] + ", "
-			}
-
-			// console.log(data[i]);
-		}
-		return data;
-	}
-
-	// helped function to format location data (remove "County")
-	const formatLocation = (data) => {
-		return data.replaceAll(" County", "")
-	}
-
-	const openSettings = (event) => {
-		const settingsPopup = document.getElementById('settings-popup')
-		settingsPopup.style.display = 'flex';
-	}
-
-	const closeSettings = (event) => {
-		const settingsPopup = document.getElementById('settings-popup')
-		settingsPopup.style.display = 'none';
-	}
 
 	return (
 		<>
@@ -354,7 +330,7 @@ function Recommendations() {
 				key={currentMatchNum}
 				ref={matchContainerRef}
 				id={'match-container'}
-				className='match-profile-container'>
+				className='profile-card-container'>
 
 				<div className='settings-container'>
 					<button className='settings-button' onClick={openSettings}>
@@ -362,7 +338,7 @@ function Recommendations() {
 					</button>
 				</div>
 
-				<div className='picture-bio-container flex-item'>
+				<div className='picture-bio-container'>
 					<div className='picture-container'>
 						<div className='extra-picture-container'>
 							{/*{currentMatch.profilePicture ? (*/}
@@ -371,28 +347,28 @@ function Recommendations() {
 							{/*	<img*/}
 							{/*		src='default_profile_picture.png'*/}
 							{/*		alt='profile picture'*/}
-							{/*		className='match-profile-picture'*/}
+							{/*		className='profile-picture'*/}
 							{/*	/>*/}
 							{/*)}*/}
 							{currentMatch.gender === 'male' && (
 								<img
 									src='profile_pic_male.jpg'
 									alt='profile picture'
-									className='match-profile-picture'
+									className='profile-picture'
 								/>
 							)}
 							{currentMatch.gender === 'female' && (
 								<img
 									src='profile_pic_female.jpg'
 									alt='profile picture'
-									className='match-profile-picture'
+									className='profile-picture'
 								/>
 							)}
 							{currentMatch.gender === 'other' && (
 								<img
 									src='default_profile_picture.png'
 									alt='profile picture'
-									className='match-profile-picture'
+									className='profile-picture'
 								/>
 							)}
 							{currentMatch.linkToMusic ? (
@@ -475,7 +451,6 @@ function Recommendations() {
 				{/*	 mobile design */}
 
 					<div className='bio-container mobile'>
-
 						<table className='bio-table'>
 							<tbody>
 							<tr>
@@ -524,14 +499,14 @@ function Recommendations() {
 
 					</div>
 				</div>
-				<div className='description-container flex-item'>
+				<div className='description-container'>
 					{currentMatch.description}
 					{/*Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, alias, aliquam animi aperiam aspernatur*/}
 					{/*assumenda consequatur, cupiditate deleniti dolorem doloribus ducimus eligendi et excepturi expedita*/}
 					{/*inventore labore laborum modi mollitia nihil odio porro qui quibusdam repellendus tempora tenetur*/}
 					{/*ullam unde voluptas. Amet, fuga velit? Dolor impedit natus nostrum repudiandae suscipit.*/}
 				</div>
-				<div className='name-container flex-item'>
+				<div className='name-container'>
 					<span className='name'>{currentMatch.username}</span>
 					<br />
 					<span>{currentMatch.age}, {currentMatch.gender}</span>
