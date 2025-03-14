@@ -1,188 +1,20 @@
 @use '../../variables';
 
 .dashboard-container {
-  @include variables.glass-container;
+  position: relative;
+  min-height: 70vh;
   @include variables.centered-column;
-  justify-self: center;
-  margin-top: 3rem;
-  margin-bottom: 3rem;
-  width: 80%;
-  height: auto;
-  justify-content: flex-start;
-  //display: grid;
-  //grid-template-columns: 1fr 1fr; /* Two columns, each 50% */
-  //grid-template-rows: auto auto; /* Two rows */
-  padding: 3rem;
-  //row-gap: 2rem;
-  //border-bottom: 1px solid black;
-  flex-wrap: wrap;
-  overflow: hidden;
 
-  .coming-soon {
-    justify-self: center;
-  }
-
-  .flex-border {
-    margin: 4rem 0 4rem 0;
-    background-color: variables.$input-border-grey;
-    height: 1px;
-    width: 90%;
-    align-items: stretch;
-  }
-
-  //.grid-item {
-  //  border-bottom: 1px solid black;
+  //@media (max-width: 768px) {
+  //  .picture-bio-container {
+  //    flex-direction: column;
+  //  }
   //}
 
-  .picture-container {
-    @include variables.centered-column;
-    align-items: flex-start;
-    position: relative;
 
-    img {
-      width: 16rem; // todo make dynamic
-      height: auto;
-    }
-
-    .change-picture {
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 16rem;
-      position: absolute;
-      bottom: 0;
-
-      input[type="file"] {
-        display: none;
-      }
-
-
-      & > label {
-        @include variables.centered-column;
-        background-color: variables.$main-pink;
-        width: 11rem;
-        height: 2rem;
-        border: 1px solid variables.$main-pink;
-        text-align: center;
-        border-radius: 100px;
-        cursor: pointer;
-        box-shadow: variables.$default-button-shadow;
-        transition: all 0.1s ease;
-        color: white;
-
-        &:hover {
-          background-color: variables.$main-pink-80;
-          box-shadow: variables.$upper-inset-shadow-hover;
-          border-color: variables.$main-pink-80;
-        }
-        &:active {
-          background-color: variables.$main-pink-20;
-          box-shadow: variables.$upper-inset-shadow-click;
-          border-color: variables.$main-pink-20;
-        }
-      }
-
-    }
-  }
-
-  .bio-container {
-    height: auto;
-  }
-
-  .form-container {
-    height: fit-content;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    //.large {
-    //  width: 100%
-    //}
-    //
-    //.short {
-    //  width: 40%;
-    //}
-
-    .dashboard-matches, .dashboard-bio-1 {
-      padding: 0;
-      margin: 0;
-      //min-height: 0;
-      height: auto;
-      //flex-grow: 0;
-      //flex-shrink: 1;
-      //flex-basis: auto;
-    }
-
-    .line {
-      margin: 0;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      width: 100%;
-      //
-      //& > :nth-child(2) {
-      //  margin-left: auto;
-      //}
-    }
-  }
-
-  .with-button {
-    position: relative;
-
-    .number-buttons {
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      right: 0;
-      top: 1.5px;
-      justify-content: flex-start;
-      align-items: flex-start;
-      margin-right: 0.15rem;
-      height: 1.375rem;
-
-      button.number-field {
-        @include variables.centered-column;
-        height: 1.0875rem;
-        width: 2.375rem;
-        border: none;
-        background: transparent;
-        color: variables.$input-border-grey;
-        box-shadow: none;
-        display: flex;
-
-        &:hover, &:focus, &:active {
-          color: rgb(21, 21, 21);
-        }
-
-        &:focus-visible {
-          outline: 1px solid black;
-        }
-
-        svg {
-          height: 1.25rem;
-          width: 1.25rem;
-        }
-      }
-    }
-  }
-
-  .error {
-    background-color: variables.$error-red;
-    accent-color: variables.$error-red;
-
-    &:focus {
-      background-color: white !important;
-      //color: black;
-    }
-
-  }
-
-  .valid {
-    background-color: variables.$valid-green;
-
-    &:focus {
-      background-color: white;
-    }
+  .profile-card-container {
+    padding-bottom: 1rem !important;
+    margin-top: 2rem !important;
   }
 }
 
