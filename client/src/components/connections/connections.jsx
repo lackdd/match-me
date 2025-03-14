@@ -2,6 +2,7 @@ import './connections.scss'
 
 // react icons
 import { FaRegCircleStop } from "react-icons/fa6";
+import { FaRegCirclePlay } from "react-icons/fa6";
 import { BsChat } from "react-icons/bs";
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
@@ -50,27 +51,40 @@ function Connections() {
 
 	}
 	// delete connection
-	const deleteConnection = async(connectionId, setConnections, setConnectionsIds) => {
+	const deleteConnection = async(setState, connectionId) => { // connectionId, setConnections, setConnectionsIds
+		// setIsDeleting(true);
 
 		try {
-			setIsDeleting(true);
-
-			// todo need api for this
-			await axios.delete(`${VITE_BACKEND_URL}/api/connection/delete/${connectionId}`), {
-				headers: { "Authorization": `Bearer ${token.current}`,
-					"Content-Type": "application/json"},
-			}
-			setConnections(prev => prev.filter(conn => conn._id !== connectionId));
-			setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
+			// Remove the connection from the state
+			setState((prevConnections) =>
+				prevConnections.filter((connection) => connection.id !== connectionId)
+			);
 		} catch (error) {
-			if (error.response) {
-				console.error("Backend error:", error.response.data); // Server responded with an error
-			} else {
-				console.error("Request failed:", error.message); // Network error or request issue
-			}
-		} finally {
-			setIsDeleting(false);
+			console.error("Error deleting connection:", error);
 		}
+
+		// setCurrentConnections(prev => prev.filter(conn => conn.id !== connectionId));
+		// setCurrentConnectionIds(prevIds => prevIds.filter(id => id !== connectionId));
+
+		// try {
+		// 	// todo need api for this
+		// 	await axios.delete(`${VITE_BACKEND_URL}/api/connection/delete/${connectionId}`), {
+		// 		headers: { "Authorization": `Bearer ${token.current}`,
+		// 			"Content-Type": "application/json"},
+		// 	}
+		// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
+		// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
+		// } catch (error) {
+		// 	if (error.response) {
+		// 		console.error("Backend error:", error.response.data); // Server responded with an error
+		// 	} else {
+		// 		console.error("Request failed:", error.message); // Network error or request issue
+		// 	}
+		// } finally {
+		// 	setIsDeleting(false);
+		// }
+
+
 	}
 
 
@@ -161,7 +175,7 @@ function Connections() {
 		}
 
 		return connections.map((connection, index) => (
-			<div key={index} className='connection'>
+			<div key={index} id={connection.id} className='connection'>
 
 				<div className='picture-name-container'>
 					<img src='profile_pic_female.jpg' alt=''/>
@@ -169,10 +183,20 @@ function Connections() {
 					<div className='name'>{connection.username}</div>
 				</div>
 
-				<div className='connections-buttons-container'>
-					<button className='no'><FaRegCircleStop /></button>
-					<button className='chat'><BsChat /></button>
-				</div>
+				{connections === currentConnections && (
+					<div className='connections-buttons-container'>
+						<button className='no' onClick={(event) => deleteConnection(setCurrentConnections, connection.id)}><FaRegCircleStop /></button>
+						<button className='chat'><BsChat /></button>
+					</div>
+				)}
+
+				{connections === pendingConnections && (
+					<div className='connections-buttons-container'>
+						<button className='no' onClick={(event) => deleteConnection(setPendingConnections, connection.id)}><FaRegCircleStop /></button>
+						<button className='yes'><FaRegCirclePlay /></button>
+					</div>
+				)}
+
 			</div>
 		))
 	}
