@@ -5,7 +5,7 @@ import axios from 'axios';
 // import {AuthContext} from "../../main.jsx";
 import {ErrorElement} from '../register/errorElement.jsx';
 import {ShowPasswordButton} from '../register/showPasswordButton.jsx';
-import { useAuth } from '../../AuthContext.jsx';
+import { useAuth } from '../utils/AuthContext.jsx';
 
 function Login() {
 	const [email, setEmail] = useState('');

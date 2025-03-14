@@ -12,14 +12,14 @@ import Register from './components/register/register.jsx';
 import Login from './components/login/login.jsx';
 import ForgotPassword from './components/forgot-password/forgot-password.jsx';
 import Dashboard from './components/dashboard/dashboard.jsx';
-import ProtectedRoute from './ProtectedRoute.jsx';
+import ProtectedRoute from './components/utils/ProtectedRoute.jsx';
 import Connections from './components/connections/connections.jsx';
 import Chats from './components/chats/chats.jsx';
 import Recommendations from './components/recommendations/recommendations.jsx';
 import Settings from './components/settings/settings.jsx';
 import axios from 'axios';
 
-import { AuthProvider } from './AuthContext.jsx';
+import { AuthProvider } from './components/utils/AuthContext.jsx';
 
 
 // export const AuthContext = createContext(null);

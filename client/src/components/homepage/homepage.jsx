@@ -2,7 +2,7 @@ import './homepage.scss'
 import HomePageFooter from './homepage_footer.jsx'
 import {Link, Navigate, useOutletContext} from 'react-router-dom';
 import {useContext} from "react";
-import {useAuth} from '../../AuthContext.jsx';
+import {useAuth} from '../utils/AuthContext.jsx';
 // import {AuthContext} from "../../main.jsx";
 
 function HomePage() {
