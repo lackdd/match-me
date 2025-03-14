@@ -8,7 +8,7 @@ import "@fontsource/poppins/400-italic.css"; // Specify weight and style
 import {Outlet, useLocation} from 'react-router-dom';
 import axios from "axios";
 // import {AuthContext} from './main.jsx';
-import { useAuth } from './AuthContext.jsx'
+import { useAuth } from './components/utils/AuthContext.jsx'
 
 
 // export const AuthContext = createContext();
