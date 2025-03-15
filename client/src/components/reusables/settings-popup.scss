@@ -33,15 +33,25 @@
 
 
     .settings-buttons-container {
-      width: 50%;
+      width: 60%;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      margin-top: 10px;
+      padding-left: 20px;
+      padding-right: 20px;
 
       button {
         width: 5rem;
+        display: flex;
+        place-items: center;
+        align-items: center;
+        justify-content: center;
         border: none;
+        border-radius: 50px;
+        color: white;
+        padding: 10px 20px;
       }
 
       .save {
