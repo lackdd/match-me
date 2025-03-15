@@ -1,11 +1,13 @@
 import './connections.scss'
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import axios from 'axios';
 
 // react icons
 import { FaRegCircleStop } from "react-icons/fa6";
 import { FaRegCirclePlay } from "react-icons/fa6";
 import { BsChat } from "react-icons/bs";
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import axios from 'axios';
+import { FaRegCircleXmark } from "react-icons/fa6"
+
 
 
 function Connections() {
@@ -18,7 +20,11 @@ function Connections() {
 	const [pendingOrCurrent, setPendingOrCurrent] = useState("current");
 	const [currentDataFetched, setCurrentDataFetched] = useState(false);
 	const [pendingDataFetched, setPendingDataFetched] = useState(false);
+	const toDeleteId = useRef(0);
+	// const toDeleteName = useRef("");
+	const [toDeleteName, setToDeleteName] = useState("");
 
+	const modal = document.getElementById('loadingModal');
 	const token = useRef(sessionStorage.getItem("token"));
 	// console.log("Token: ", token.current)
 
@@ -50,47 +56,6 @@ function Connections() {
 		// }
 
 	}
-	// delete connection
-	const deleteConnection = async(event, setState, connectionId) => { // connectionId, setConnections, setConnectionsIds
-		// setIsDeleting(true);
-
-		// todo add confirmation pop-up in case of misclick
-		event.preventDefault();
-
-		// todo request api to delete form db as well
-		try {
-			// Remove the connection from the state
-			setState((prevConnections) =>
-				prevConnections.filter((connection) => connection.id !== connectionId)
-			);
-		} catch (error) {
-			console.error("Error deleting connection:", error);
-		}
-
-		// setCurrentConnections(prev => prev.filter(conn => conn.id !== connectionId));
-		// setCurrentConnectionIds(prevIds => prevIds.filter(id => id !== connectionId));
-
-		// try {
-		// 	// todo need api for this
-		// 	await axios.delete(`${VITE_BACKEND_URL}/api/connection/delete/${connectionId}`), {
-		// 		headers: { "Authorization": `Bearer ${token.current}`,
-		// 			"Content-Type": "application/json"},
-		// 	}
-		// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
-		// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
-		// } catch (error) {
-		// 	if (error.response) {
-		// 		console.error("Backend error:", error.response.data); // Server responded with an error
-		// 	} else {
-		// 		console.error("Request failed:", error.message); // Network error or request issue
-		// 	}
-		// } finally {
-		// 	setIsDeleting(false);
-		// }
-
-
-	}
-
 
 	// fetch connection ids
 	const getConnectionIds = async() => {
@@ -132,30 +97,32 @@ function Connections() {
 		const controller = new AbortController(); // Create an abort controller
 		const signal = controller.signal;
 
-		try {
-			const requests = ids.map(id =>
-				axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
-					headers: { "Authorization": `Bearer ${token.current}`,
-						"Content-Type": "application/json"},
-					signal,
-				})
-			);
-			const responses = await Promise.all(requests);
-			const users = responses.map(response => response.data); // Extract user data
+		if (isDeleting === false) {
+			try {
+				const requests = ids.map(id =>
+					axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
+						headers: { "Authorization": `Bearer ${token.current}`,
+							"Content-Type": "application/json"},
+						signal,
+					})
+				);
+				const responses = await Promise.all(requests);
+				const users = responses.map(response => response.data); // Extract user data
 
-			setState(users);
-			setFetchedState(true); // Indicate that data has been fetched
+				setState(users);
+				setFetchedState(true); // Indicate that data has been fetched
 
-		} catch (error) {
-			if (axios.isCancel(error)) {
-				console.log("Fetch aborted");
-			} else {
-				if (error.response) {
-					console.error("Backend error:", error.response.data); // Server responded with an error
+			} catch (error) {
+				if (axios.isCancel(error)) {
+					console.log("Fetch aborted");
 				} else {
-					console.error("Request failed:", error.message); // Network error or request issue
+					if (error.response) {
+						console.error("Backend error:", error.response.data); // Server responded with an error
+					} else {
+						console.error("Request failed:", error.message); // Network error or request issue
+					}
+					// todo display error to user
 				}
-				// todo display error to user
 			}
 		}
 	}
@@ -189,15 +156,15 @@ function Connections() {
 
 				{connections === currentConnections && (
 					<div className='connections-buttons-container'>
-						<button className='no' onClick={(eventevent) => deleteConnection(event, setCurrentConnections, connection.id)}><FaRegCircleStop /></button>
 						<button className='chat'><BsChat /></button>
+						<button className='delete' onClick={() => deleteConnection(connection.id, connection.username)}><FaRegCircleXmark /></button>
 					</div>
 				)}
 
 				{connections === pendingConnections && (
 					<div className='connections-buttons-container'>
-						<button className='no' onClick={(eventevent) => deleteConnection(event, setPendingConnections, connection.id)}><FaRegCircleStop /></button>
-						<button className='yes'><FaRegCirclePlay /></button>
+						<button className='accept'><FaRegCirclePlay /></button>
+						<button className='delete' onClick={() => deleteConnection(connection.id, connection.username)}><FaRegCircleXmark /></button>
 					</div>
 				)}
 
@@ -224,9 +191,110 @@ function Connections() {
 		console.log("Pending connections: ", pendingConnections);
 	}, [currentConnections]);
 
+	// delete connection
+	const deleteConnection = async(connectionId, connectionName) => { // connectionId, setConnections, setConnectionsIds
+		// setIsDeleting(true);
+		//
+		// const acceptButton = document.getElementById('accept');
+		// const deleteButton = document.getElementById('delete');
+		//
+		// const modal = document.getElementById('loadingModal');
+		toDeleteId.current = connectionId;
+		// toDeleteName.current = connectionName;
+		setToDeleteName(connectionName); // Use useState to trigger a re-render
+		modal.style.display = 'flex'; // Show modal
+
+		// try {
+		// 	const response = await axios.get(`${VITE_BACKEND_URL}/api/users/${connectionId}`, {
+		// 		headers: {
+		// 			"Authorization": `Bearer ${token.current}`,
+		// 			"Content-Type": "application/json"
+		// 		}
+		// 	});
+		//
+		// 	toDeleteName.current = response.data.username;
+		// } catch (error) {
+		// 	if (error.response) {
+		// 		console.error("Backend error:", error.response.data); // Server responded with an error
+		// 	} else {
+		// 		console.error("Request failed:", error.message); // Network error or request issue
+		// 	}
+		// }
+
+
+
+		// setCurrentConnections(prev => prev.filter(conn => conn.id !== connectionId));
+		// setCurrentConnectionIds(prevIds => prevIds.filter(id => id !== connectionId));
+
+		// try {
+		// 	// todo need api for this
+		// 	await axios.delete(`${VITE_BACKEND_URL}/api/connection/delete/${connectionId}`), {
+		// 		headers: { "Authorization": `Bearer ${token.current}`,
+		// 			"Content-Type": "application/json"},
+		// 	}
+		// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
+		// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
+		// } catch (error) {
+		// 	if (error.response) {
+		// 		console.error("Backend error:", error.response.data); // Server responded with an error
+		// 	} else {
+		// 		console.error("Request failed:", error.message); // Network error or request issue
+		// 	}
+		// } finally {
+		// 	setIsDeleting(false);
+		// }
+
+
+	}
+
+	const acceptDelete = async(setState, toDeleteId) => {
+		// Handle the accept button click
+		// todo request api to delete form db as well
+		setIsDeleting(true);
+		try {
+			// Remove the connection from the state
+			setState((prevConnections) =>
+				prevConnections.filter((connection) => connection.id !== toDeleteId.current)
+			);
+			console.log("Connection deleted!");
+		} catch (error) {
+			console.error("Error deleting connection:", error);
+		} finally {
+			setIsDeleting(false);
+			modal.style.display = 'none'; // Close the modal
+		}
+	}
+
+	const cancelDelete = () => {
+		modal.style.display = 'none'; // Close the modal without navigating
+	}
+
 
 	return (
 		<div className='connections-container'>
+
+			<div id="loadingModal" className="modal">
+				<div className="modal-content">
+					<p className='modal-text'>You are about to remove <br/> {toDeleteName}</p>
+						<p style={{marginTop: '0.5rem'}}>Are you sure?</p>
+					<div className='modal-buttons'>
+						{pendingOrCurrent === "current" ? (
+							<button id="acceptButton" onClick={() => {acceptDelete(setCurrentConnections, toDeleteId)}}>
+								<span>Yes</span>
+							</button>
+						) : (
+							<button id="acceptButton" onClick={() => {acceptDelete(setPendingConnections, toDeleteId)}}>
+								<span>Yes</span>
+							</button>
+						)
+						}
+
+						<button id="cancelButton" onClick={() => {cancelDelete()}}>
+							<span>No</span>
+						</button>
+					</div>
+				</div>
+			</div>
 
 			{loading && (
 				<div className={'spinner-container'}>
@@ -242,12 +310,14 @@ function Connections() {
 						<button className='current active' onClick={() => {
 							toggleButton(event);
 							setPendingOrCurrent('current');
-						}}>Current connections</button>
+						}}>Current connections
+						</button>
 
 						<button className='pending' onClick={() => {
 							toggleButton(event);
 							setPendingOrCurrent('pending');
-						}}>Pending connections</button>
+						}}>Pending connections
+						</button>
 					</div>
 
 
