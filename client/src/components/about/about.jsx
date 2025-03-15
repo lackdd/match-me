@@ -111,7 +111,7 @@ function About() {
 			.catch(error => console.error("Error fetching /me/bio:", error));
 	}, []);*/
 
-	/*useEffect(() => {
+	useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
 		fetch('/api/recommendations', {
@@ -133,7 +133,7 @@ function About() {
 			.catch(error => console.error("Error fetching /recommendations:", error));
 	}, []);
 
-	useEffect(() => {
+	/*useEffect(() => {
 		const token = sessionStorage.getItem("token");
 
 		fetch('/api/connections', {

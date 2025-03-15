@@ -75,37 +75,45 @@ public class User {
     @Column(name = "pending_request")
     private List<Long> pendingRequests = new ArrayList<>();
 
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> sentMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> receivedMessages = new ArrayList<>();
+
 
     public User() {
     }
 
-    public User(Long id, String email, String username, String password, String gender, String profilePicture, Integer age, List<String> preferredMusicGenres, List<String> additionalInterests, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String linkToMusic, String location, List<String> idealMatchGenres, String description, List<String> idealMatchMethods, String idealMatchGender, List<Long> connections, List<String> idealMatchGoals, String idealMatchYearsOfExperience, String idealMatchAge, String idealMatchLocation, List<Long> likedUsers, List<Long> pendingRequests) {
+    public User(Long id, String email, String password, String gender, String username, Integer age, String profilePicture, List<String> preferredMusicGenres, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> additionalInterests, List<String> goalsWithMusic, String location, List<String> idealMatchGenres, List<String> idealMatchMethods, String description, String linkToMusic, List<Long> connections, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchGender, List<String> idealMatchGoals, List<Long> pendingRequests, List<ChatMessage> sentMessages, List<ChatMessage> receivedMessages, List<Long> likedUsers, String idealMatchLocation) {
         this.id = id;
         this.email = email;
-        this.username = username;
         this.password = password;
         this.gender = gender;
-        this.profilePicture = profilePicture;
+        this.username = username;
         this.age = age;
+        this.profilePicture = profilePicture;
         this.preferredMusicGenres = preferredMusicGenres;
-        this.additionalInterests = additionalInterests;
         this.preferredMethods = preferredMethods;
         this.personalityTraits = personalityTraits;
         this.yearsOfMusicExperience = yearsOfMusicExperience;
+        this.additionalInterests = additionalInterests;
         this.goalsWithMusic = goalsWithMusic;
-        this.linkToMusic = linkToMusic;
         this.location = location;
         this.idealMatchGenres = idealMatchGenres;
-        this.description = description;
         this.idealMatchMethods = idealMatchMethods;
-        this.idealMatchGender = idealMatchGender;
+        this.description = description;
+        this.linkToMusic = linkToMusic;
         this.connections = connections;
-        this.idealMatchGoals = idealMatchGoals;
-        this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
         this.idealMatchAge = idealMatchAge;
-        this.idealMatchLocation = idealMatchLocation;
-        this.likedUsers = likedUsers;
+        this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
+        this.idealMatchGender = idealMatchGender;
+        this.idealMatchGoals = idealMatchGoals;
         this.pendingRequests = pendingRequests;
+        this.sentMessages = sentMessages;
+        this.receivedMessages = receivedMessages;
+        this.likedUsers = likedUsers;
+        this.idealMatchLocation = idealMatchLocation;
     }
 
     public Long getId() {
@@ -314,5 +322,21 @@ public class User {
 
     public void setPendingRequests(List<Long> pendingRequests) {
         this.pendingRequests = pendingRequests;
+    }
+
+    public List<ChatMessage> getSentMessages() {
+        return sentMessages;
+    }
+
+    public void setSentMessages(List<ChatMessage> sentMessages) {
+        this.sentMessages = sentMessages;
+    }
+
+    public List<ChatMessage> getReceivedMessages() {
+        return receivedMessages;
+    }
+
+    public void setReceivedMessages(List<ChatMessage> receivedMessages) {
+        this.receivedMessages = receivedMessages;
     }
 }

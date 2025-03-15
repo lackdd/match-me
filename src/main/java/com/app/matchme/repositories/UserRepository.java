@@ -14,10 +14,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByUsername(String username);
+
     boolean existsByEmail(String email);
 
     @Query("SELECT u.connections FROM User u WHERE u.id = :userId")
     List<Long> findUserConnectionsById(@Param("userId") Long userId);
+
+    @Query(value = "SELECT connection_id FROM connections WHERE user_id = (SELECT id FROM users WHERE username = :userUsername)", nativeQuery = true)
+    List<Long> findUserConnectionsByUsername(@Param("userUsername") String userUsername);
 
     @Query("SELECT u.likedUsers FROM User u WHERE u.id = :userId")
     List<Long> findUserLikedUsersById(@Param("userId") Long userId);

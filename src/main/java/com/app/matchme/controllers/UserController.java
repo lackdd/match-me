@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -252,6 +253,22 @@ public class UserController {
         return userOptional
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/getUsersByIds")
+    public ResponseEntity<List<UsernamePictureDTO>> getUsersByIds(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody List<Long> ids) {
+        String token = authHeader.substring(7);
+        boolean isValid = service.validate(token);
+        if (isValid) {
+            List<UsernamePictureDTO> users = ids.stream()
+                    .map(id -> service.getUserNameAndPictureById(id))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(users);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @GetMapping("/users/{id}/profile")

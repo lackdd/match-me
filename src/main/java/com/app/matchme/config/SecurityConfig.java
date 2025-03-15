@@ -74,8 +74,10 @@ public class SecurityConfig {
                                 "/api/check-email",
                                 "/api/error",
                                 "/api/forgot-password",
+                                "/api/getUsersByIds",
                                 "/api/hello-backend",
                                 "/api/addLikedUser",
+                                "/api/chat//history/**",
                                 "/api/likedUsers",
                                 "/api/validateToken")
                         .permitAll()

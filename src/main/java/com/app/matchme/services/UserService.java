@@ -3,6 +3,7 @@ package com.app.matchme.services;
 import com.app.matchme.entities.*;
 import com.app.matchme.mappers.UserMapper;
 import com.app.matchme.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -65,6 +66,21 @@ public class UserService {
     public Optional<UserDTO> getUserDTOById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toDTO);
+    }
+
+    @Transactional
+    public boolean areUsersConnected(String sender, String receiver) {
+        User senderUser = repo.findByUsername(sender).orElseThrow(() -> new RuntimeException("User not found"));
+        Long senderId = senderUser.getId();
+        User receiverUser = repo.findByUsername(receiver).orElseThrow(() -> new RuntimeException("User not found"));
+        Long receiverId = receiverUser.getId();
+
+        if(senderUser.getConnections().contains(receiverId) && receiverUser.getConnections().contains(senderId)) {
+            System.out.println("Users are confirmed to be connected");
+            return true;
+        }
+        System.out.println("Failed to confirm that users are connected");
+        return false;
     }
 
     public User getUserById(Long id) {
@@ -161,6 +177,10 @@ public class UserService {
     }
 
     public List<Long> getLikedUsersById(Long id) { return repo.findUserLikedUsersById(id); }
+
+    public User findByUsername(String username) {
+        return repo.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
     public List<Long> getPendingRequestsById(Long id) {return repo.findUserPendingRequestsById(id);}
 

@@ -7,6 +7,7 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+	const [tokenValue, setTokenValue] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 	// const history = useNavigate();
@@ -19,6 +20,7 @@ export function AuthProvider({ children }) {
 			if (!token) {
 				setIsUserLoggedIn(false);
 				setIsLoading(false);
+				setTokenValue("");
 				return;
 			}
 
@@ -30,10 +32,12 @@ export function AuthProvider({ children }) {
 				);
 				console.log("Token is valid. Logging in");
 				setIsUserLoggedIn(true);
+				setTokenValue(token);
 			} catch (error) {
 				console.error("Failed to validate token:", error);
 				setIsUserLoggedIn(false);
 				sessionStorage.removeItem("token"); // Clear invalid token
+				setTokenValue("");
 			} finally {
 				setIsLoading(false);
 			}
@@ -45,12 +49,14 @@ export function AuthProvider({ children }) {
 	const login = async (token) => {
 		sessionStorage.setItem("token", token);
 		setIsUserLoggedIn(true);
+		setTokenValue(token);
 		// history('/dashboard')
 	};
 
 	const logout = () => {
 		sessionStorage.removeItem("token");
 		setIsUserLoggedIn(false);
+		setTokenValue("");
 	};
 
 	return (
@@ -59,7 +65,8 @@ export function AuthProvider({ children }) {
 			setIsUserLoggedIn,
 			login,
 			logout,
-			isLoading
+			isLoading,
+			tokenValue
 		}}>
 			{children}
 		</AuthContext.Provider>
