@@ -1,7 +1,8 @@
 import './chats.scss'
 import {Link} from 'react-router-dom';
 import Chat from "../chats/Chat";
-import {useAuth} from '../../AuthContext.jsx';
+/*import {useAuth} from '../../AuthContext.jsx';*/
+import { useAuth } from '../utils/AuthContext.jsx';
 import {useEffect, useState} from "react";
 import axios from "axios";
 
@@ -63,7 +64,6 @@ function Chats() {
 				</div>
 
 				<div className='chat'>
-					<h3>Chat</h3>
 					{selectedUser ? (
 						<Chat receiverUsername={selectedUser} receiverUserId={selectedUserId} />
 					) : (

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import './chat.css'
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import {useAuth} from "../../AuthContext.jsx";
+/*import {useAuth} from "../../AuthContext.jsx";*/
+import { useAuth } from '../utils/AuthContext.jsx';
 import axios from "axios";
 
 /*var stompClient = null;*/
@@ -117,17 +119,21 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     };
 
+    /*style={{ border: "1px solid black", padding: "10px", height: "200px", overflowY: "auto" }}*/
+   /* <strong>{msg.senderUsername}: </strong>*/
+
     return (
-        <div>
-            <h2>Chat with {receiverUsername}</h2>
-            <div style={{ border: "1px solid black", padding: "10px", height: "200px", overflowY: "auto" }}>
+        <div className="chat-box">
+            <h2>{receiverUsername}</h2>
+            <div className="chat">
                 {messages.map((msg, index) => (
-                    <div key={index}>
-                        <strong>{msg.senderUsername}: </strong> {msg.content}
+                    <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>
+                        {msg.content}
                     </div>
                 ))}
             </div>
             <input
+                className="input"
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
