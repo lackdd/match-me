@@ -243,7 +243,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 				</div>
 
 				{/* Submit Button */}
-				<div className='buttons-container'>
+				<div className='register-buttons-container'>
 					<button className={`next wide small ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
 							type='submit'
 							disabled={Object.keys(errors).length > 0}

@@ -1,10 +1,16 @@
 import './recommendations.scss'
+import '../reusables/profile-card.scss'
+import '../reusables/settings-popup.scss'
+import '../register/loadingAnimation.scss'
 import {FaPlay, FaSpotify} from 'react-icons/fa';
 import {IoPlaySkipForward} from 'react-icons/io5';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
-import '../register/loadingAnimation.scss'
 import {useSwipe} from './useSwipe.jsx';
+import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
+
+// react icons
+import { GiSettingsKnobs } from "react-icons/gi";
 
 function Recommendations() {
 	const matchContainerRef = useRef(null);
@@ -16,7 +22,7 @@ function Recommendations() {
 	const [currentMatch, setCurrentMatch] = useState({})
 
 	const token = useRef(sessionStorage.getItem("token"));
-	console.log("Token: ", token.current)
+	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -42,7 +48,12 @@ function Recommendations() {
 					if (axios.isCancel(error)) {
 						console.log("Fetch aborted");
 					} else {
-						console.error("Failed to get matches:", error);
+						if (error.response) {
+							console.error("Backend error:", error.response.data); // Server responded with an error
+						} else {
+							console.error("Request failed:", error.message); // Network error or request issue
+						}
+						// todo display error to user
 					}
 				}
 			}
@@ -86,16 +97,19 @@ function Recommendations() {
 
 					// Update the matches state with the merged data
 					setMatches(matchResults);
-
-				} catch (error) {
-					console.error("Failed to get match data: ", error)
-				} finally {
 					setLoading(false); // disable loading state
+				} catch (error) {
+					if (error.response) {
+						console.error("Backend error:", error.response.data); // Server responded with an error
+					} else {
+						console.error("Request failed:", error.message); // Network error or request issue
+					}
 				}
 			}
 			getMatchData()
 		} else {
 			console.log("No match IDs to fetch data for");
+			// todo display error to user
 			// setLoading(false);
 		}
 
@@ -174,7 +188,11 @@ function Recommendations() {
 				);
 				console.log("Like successful: " + response.data)
 			} catch (error) {
-				console.error("Failed to like match: ", error.response.data);
+				if (error.response) {
+					console.error("Backend error:", error.response.data); // Server responded with an error
+				} else {
+					console.error("Request failed:", error.message); // Network error or request issue
+				}
 			}
 		};
 
@@ -249,7 +267,12 @@ function Recommendations() {
 				);
 				console.log("Liked users: " + response.data)
 			} catch (error) {
-				console.error("Failed to fetch liked users: ", error);
+				if (error.response) {
+					console.error("Backend error:", error.response.data); // Server responded with an error
+				} else {
+					console.error("Request failed:", error.message); // Network error or request issue
+				}
+				// todo display error to user
 			}
 		};
 
@@ -281,28 +304,32 @@ function Recommendations() {
 	// 	}
 	// }, [resetKey])
 
-	// helped function to format match data
-	const formatData = (data) => {
-		for (let i = 0; i < data.length; i++) {
-			data[i] = data[i].replaceAll("_", " ")
 
-			if (i < data.length - 1) {
-				data[i] = data[i] + ", "
-			}
-
-			// console.log(data[i]);
-		}
-		return data;
-	}
-
-	// helped function to format location data (remove "County")
-	const formatLocation = (data) => {
-		return data.replaceAll(" County", "")
-	}
 
 	return (
 		<>
 		<div className='recommendations-container'>
+			<div className='settings-popup' id={'settings-popup'}>
+				<div className='settings-content'>
+
+					<form action=''>
+						{/* todo add register step 5 form here auto filled with current user preferences data and add ability to change data*/}
+					</form>
+
+					<div className='settings-buttons-container'>
+
+						<button className='save' onClick={closeSettings}>
+							save
+						</button>
+
+						<button className='cancel' onClick={closeSettings}>
+							cancel
+						</button>
+
+					</div>
+				</div>
+			</div>
+
 		{loading ? (
 			<div className={'spinner-container'}>
 				<div className='spinner endless'>Finding matches...</div>
@@ -313,8 +340,15 @@ function Recommendations() {
 				key={currentMatchNum}
 				ref={matchContainerRef}
 				id={'match-container'}
-				className='match-profile-container'>
-				<div className='picture-bio-container flex-item'>
+				className='profile-card-container'>
+
+				<div className='settings-container'>
+					<button className='settings-button' onClick={openSettings}>
+						<GiSettingsKnobs />
+					</button>
+				</div>
+
+				<div className='picture-bio-container'>
 					<div className='picture-container'>
 						<div className='extra-picture-container'>
 							{/*{currentMatch.profilePicture ? (*/}
@@ -323,28 +357,28 @@ function Recommendations() {
 							{/*	<img*/}
 							{/*		src='default_profile_picture.png'*/}
 							{/*		alt='profile picture'*/}
-							{/*		className='match-profile-picture'*/}
+							{/*		className='profile-picture'*/}
 							{/*	/>*/}
 							{/*)}*/}
 							{currentMatch.gender === 'male' && (
 								<img
 									src='profile_pic_male.jpg'
 									alt='profile picture'
-									className='match-profile-picture'
+									className='profile-picture'
 								/>
 							)}
 							{currentMatch.gender === 'female' && (
 								<img
 									src='profile_pic_female.jpg'
 									alt='profile picture'
-									className='match-profile-picture'
+									className='profile-picture'
 								/>
 							)}
 							{currentMatch.gender === 'other' && (
 								<img
 									src='default_profile_picture.png'
 									alt='profile picture'
-									className='match-profile-picture'
+									className='profile-picture'
 								/>
 							)}
 							{currentMatch.linkToMusic ? (
@@ -427,7 +461,6 @@ function Recommendations() {
 				{/*	 mobile design */}
 
 					<div className='bio-container mobile'>
-
 						<table className='bio-table'>
 							<tbody>
 							<tr>
@@ -476,14 +509,14 @@ function Recommendations() {
 
 					</div>
 				</div>
-				<div className='description-container flex-item'>
+				<div className='description-container'>
 					{currentMatch.description}
 					{/*Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, alias, aliquam animi aperiam aspernatur*/}
 					{/*assumenda consequatur, cupiditate deleniti dolorem doloribus ducimus eligendi et excepturi expedita*/}
 					{/*inventore labore laborum modi mollitia nihil odio porro qui quibusdam repellendus tempora tenetur*/}
 					{/*ullam unde voluptas. Amet, fuga velit? Dolor impedit natus nostrum repudiandae suscipit.*/}
 				</div>
-				<div className='name-container flex-item'>
+				<div className='name-container'>
 					<span className='name'>{currentMatch.username}</span>
 					<br />
 					<span>{currentMatch.age}, {currentMatch.gender}</span>

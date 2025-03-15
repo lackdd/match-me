@@ -51,6 +51,7 @@
     align-items: center;
 
     @media (max-width: 768px) {
+      width: fit-content;
     }
 
     .profile-link {
@@ -76,12 +77,18 @@
 
     .profile-picture {
       width: 3.75rem;
-      border-radius: 100px;
+      height: 3.75rem;;
       text-align: center;
+      border-radius: 50%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      object-position: top;
 
       @media (max-width: 768px) {
         width: 3rem;
+        height: 3rem;
       }
+
     }
   }
 
@@ -96,9 +103,17 @@
     padding-right: 1.25rem;
     font-weight: 600;
 
+    button.logout {
+      all: unset;
+      color: white;
+    }
+
 
     @media (max-width: 768px) {
       justify-content: space-around;
+      align-items: center;
+      padding-left: 0;
+      padding-right: 0;
 
       svg {
         width: 2.25rem;
@@ -134,7 +149,7 @@
 
   }
 
-  .buttons-container {
+  .nav-buttons-container {
     border: 1px solid black;
     border-radius: 100px;
     display: flex;

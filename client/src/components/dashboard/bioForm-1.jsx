@@ -4,12 +4,10 @@ import {stepOneSchema} from '../register/validationSchema.jsx';
 {/*import {ErrorElement} from '../register/errorElement.jsx';*/}
 import Select from 'react-select';
 import {customStyles} from '../register/customInputStyles.jsx';
-import makeAnimated from 'react-select/animated';
 import {genderOptions} from '../register/inputOptions.jsx';
 import {IncrementDecrementButtons} from '../register/incrementDecrementButtons.jsx';
-import axios from 'axios';
-import {ShowPasswordButton} from '../register/showPasswordButton.jsx';
 import './dashboard.scss'
+import '../register/register.scss'
 
 export function BioForm1() {
 	// Initialize react-hook-form with Yup schema
@@ -34,7 +32,7 @@ export function BioForm1() {
 	});
 
 	return (
-		<form className="dashboard-bio-1"
+		<form className="step-one"
 			  onSubmit={handleSubmit((data) => {
 				  // onSubmit(data, formOneData, setFormOneData);
 				  console.log("Errors on submit: ", errors);
@@ -136,105 +134,6 @@ export function BioForm1() {
 					{/*<ErrorElement errors={errors} id={'age'}/>*/}
 				</label>
 			</div>
-
-			{/* Email */}
-			{/*<div className='line large'>*/}
-			{/*	<label>*/}
-			{/*		Email address**/}
-			{/*		<input*/}
-			{/*			type='email'*/}
-			{/*			placeholder='Enter your email address'*/}
-			{/*			className={`not-react-select focus-highlight */}
-			{/*				${errors.email ? 'error' : ''}*/}
-			{/*				${!errors.email && watch('email') ? 'valid' : ''}`}*/}
-			{/*			{...register('email')}*/}
-			{/*			autoComplete={'off'}*/}
-			{/*			onBlur={async() => {*/}
-			{/*				// check if email is already in use*/}
-			{/*				if (watch('email')) {*/}
-			{/*					try {*/}
-			{/*						const response = await*/}
-			{/*							axios.post("${BACKEND_URL}/check-email", {email: watch('email')});*/}
-			{/*						if (response.data.exists) {*/}
-			{/*							// console.log("Email already exists");*/}
-			{/*							setError("email", { type: "manual", message: "Email is already in use" });*/}
-			{/*							return;*/}
-			{/*						}*/}
-			{/*						//  else {*/}
-			{/*						// 	console.log("Email is not in use");*/}
-			{/*						// 	 //clearErrors("email")*/}
-			{/*						// }*/}
-			{/*					} catch (error) {*/}
-			{/*						console.log("Failed to request data from backend: ", error.response?.data || error.message);*/}
-			{/*						setError("email", { type: "manual", message: "Oops! Failed to check email availability" });*/}
-			{/*					}*/}
-			{/*					await trigger('email');*/}
-			{/*				}*/}
-			{/*				trigger('email');*/}
-			{/*			}}// Trigger validation when user leaves the field*/}
-			{/*		/>*/}
-			{/*		/!*<ErrorElement errors={errors} id={'email'}/>*!/*/}
-			{/*	</label>*/}
-			{/*</div>*/}
-
-			{/*/!* Password *!/*/}
-			{/*<div className='line large'>*/}
-			{/*	<label>*/}
-			{/*		Password**/}
-			{/*		<div className={'with-button'}>*/}
-			{/*			<input*/}
-			{/*				id={'password'}*/}
-			{/*				type='password'*/}
-			{/*				placeholder='Enter a password'*/}
-			{/*				className={`not-react-select focus-highlight*/}
-			{/*						${errors.password ? 'error' : ''}*/}
-			{/*						${!errors.password && watch('password') ? 'valid' : ''}`}*/}
-			{/*				{...register('password')}*/}
-			{/*				autoComplete={'off'}*/}
-			{/*				onBlur={() => trigger('password')} // Trigger validation when user leaves the field*/}
-			{/*			/>*/}
-			{/*			<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}/>*/}
-			{/*		</div>*/}
-			{/*		/!*<ErrorElement errors={errors} id={'password'}/>*!/*/}
-			{/*	</label>*/}
-
-			{/*</div>*/}
-
-			{/* Confirm Password */}
-			{/*<div className='line large'>*/}
-			{/*	<label>*/}
-			{/*		Re-enter password**/}
-			{/*		<input*/}
-			{/*			id={'rePassword'}*/}
-			{/*			type='password'*/}
-			{/*			placeholder='Re-enter password'*/}
-			{/*			className={`not-react-select focus-highlight */}
-			{/*				${errors.rePassword ? 'error' : ''}*/}
-			{/*				${!errors.rePassword && watch('rePassword') ? 'valid' : ''}`}*/}
-			{/*			{...register('rePassword')}*/}
-			{/*			autoComplete={'off'}*/}
-			{/*			onBlur={() => trigger('rePassword')} // Trigger validation when user leaves the field*/}
-			{/*		/>*/}
-			{/*		/!*<ErrorElement errors={errors} id={'rePassword'}/>*!/*/}
-			{/*	</label>*/}
-
-			{/*</div>*/}
-
-			{/* Terms and Conditions */}
-			{/*<label id='tc-label'>*/}
-			{/*	<input*/}
-			{/*		className={`focus-highlight */}
-			{/*				${errors.terms ? 'error-checkbox' : ''}`}*/}
-			{/*		type='checkbox'*/}
-			{/*		id='tc-input'*/}
-			{/*		{...register('terms')}*/}
-			{/*		onBlur={() => trigger('terms')} // Trigger validation when user leaves the field*/}
-			{/*	/>*/}
-			{/*	&nbsp; I agree to the terms and conditions**/}
-			{/*</label>*/}
-			{/*<div className={'terms-error'}>*/}
-			{/*	/!*<ErrorElement errors={errors} id={'terms'}/>*!/*/}
-			{/*</div>*/}
 
 			{/*/!* Submit Button *!/*/}
 			{/*<div className='buttons-container'>*/}

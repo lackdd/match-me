@@ -1,0 +1,487 @@
+@use '../../variables';
+
+//.recommendations-container {
+//  position: relative;
+//  min-height: 70vh;
+//  @include variables.centered-column;
+
+  .profile-card-container {
+    @include variables.whole-page;
+    @include variables.centered-column;
+    @include variables.glass-container;
+
+    width: 90%;
+    height: 75vh;
+    margin-top: 3rem;
+    align-self: center;
+    justify-self: center;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 0;
+    transition: transform 0.75s 0.1s ease-in;
+    padding-bottom: 2rem;
+    position: relative;
+
+    // Hover and active states for like/dislike buttons
+    &:has(+ .buttons-container .like:hover) {
+      border-color: variables.$button-green;
+    }
+
+    &:has(+ .buttons-container .dislike:hover) {
+      border-color: variables.$button-red;
+    }
+
+    &:has(+ .buttons-container .like:active) {
+      // Add effects for like active state
+    }
+
+    &:has(+ .buttons-container .dislike:active) {
+      // Add effects for dislike active state
+    }
+
+    // Like/Dislike animation classes
+    &.like-animation {
+      filter: blur(2px);
+      transform: translateX(200%);
+      background-color: variables.$valid-green;
+    }
+
+    &.dislike-animation {
+      filter: blur(2px);
+      transform: translateX(-200%);
+      background-color: variables.$error-red;
+    }
+
+    .picture-bio-container {
+      width: 100%;
+      height: 60%;
+      //max-height: 60%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      .picture-container {
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        width: 100%;
+        height: auto;
+        max-width: 60%;
+        max-height: 100%;
+        aspect-ratio: 1/1;
+        box-sizing: border-box;  // Ensure box-sizing is consistent
+
+        @media (max-width: 768px) {
+          max-width: 60%;
+        }
+
+        @media (min-width: 769px) {
+          min-width: 55%;
+        }
+
+        //@media (min-width: 1401px) {
+        //  max-width: 40%;
+        //}
+
+        .extra-picture-container {
+          //width: 100%;  // Allow the image to take up full available width
+          //height: 100%;  // Set the height to 100% of the parent container
+          max-height: 100%; // Make sure the image does not exceed the height of its parent
+          width: auto;
+          //max-width: 100%;  // Ensure it doesn't exceed the width of the container
+          aspect-ratio: 1/1;
+          display: flex;
+          justify-content: center;
+          align-items: center;  // Align content centrally if necessary
+          position: relative;
+          //margin-right: 4rem; // You can adjust as needed
+          box-sizing: border-box;  // Ensure box-sizing is consistent
+
+
+          @media (max-width: 768px) {
+            justify-content: center;
+            margin-right: 2rem;
+          }
+
+          //@media (min-width: 768px) {
+          //  max-height: 100%;
+          //  width: auto;
+          //}
+
+          img.profile-picture {
+            width: 90%;  // Allow the image to take up full available width
+            height: 90%;  // Set the height to 100% of the parent container
+            max-height: 100%; // Make sure the image does not exceed the height of its parent
+            max-width: 100%;  // Ensure it doesn't exceed the width of the container
+            //max-width: 40rem;
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            object-position: top;
+            box-sizing: border-box;  // Ensure box-sizing is consistent
+
+            @media (max-width: 768px) {
+              max-width: 20rem;
+            }
+          }
+
+          .music-link {
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            //width: clamp(3rem, 5vw, 6rem);
+            //height: clamp(3rem, 5vw, 6rem);
+            width: 5rem;
+            height: 5rem;
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            border-radius: 50%;
+            transition: all 0.1s ease-in-out;
+            transform-origin: center center;
+
+            @media (max-width: 768px) {
+              width: 4rem;
+              height: 4rem;
+            }
+
+
+            & > * {
+              width: 100%;
+              height: 100%;
+            }
+
+            &:hover {
+              cursor: pointer;
+              scale: 1.1;
+            }
+          }
+        }
+      }
+
+      .bio-container {
+        width: 100%;
+        flex: 1;
+        justify-self: flex-end;
+        white-space: nowrap;
+        height: fit-content;
+
+        @media (min-width: 1700px) {
+          margin-right: 5rem;
+        }
+
+        &.default {
+          display: flex;
+          //position: sticky;
+          //top: 0;
+        }
+
+        &.mobile {
+          display: none;
+        }
+
+        @media (max-width: 440px) {
+          &.default {
+            display: none; // Hide on small screens
+          }
+
+          &.mobile {
+            display: flex; // Show mobile nav
+            height: fit-content;
+            //position: fixed;  // Make it stick to the bottom
+            //bottom: 0;
+            //left: 0;
+            //width: 100%;
+            ////height: 4rem;
+            //justify-content: center;
+            //align-items: center;
+          }
+        }
+
+        table {
+          width: 100%;
+          height: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+          border-spacing: 0;
+          overflow: clip;
+
+          tbody {
+            tr {
+              display: flex;
+              flex-wrap: wrap;
+
+              th {
+                border-bottom: 1px solid variables.$main-pink;
+                width: 100%;
+                text-align: left;
+                padding-left: 1rem;
+
+                @media (max-width: 768px) {
+                  font-size: 0.8rem;
+                }
+
+                //.two-column {
+                //  width: 50%;
+                //}
+                //
+                //.one-column {
+                //  column-span: 2;
+                //}
+              }
+
+              td {
+                padding-bottom: 0.5rem;
+                width: 100%;
+                font-size: 0.9rem;
+                white-space: wrap;
+
+                @media (max-width: 768px) {
+                  font-size: 0.75rem;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .description-container {
+      text-align: center;
+      //align-self: center;
+      //padding: 3rem 0;
+      //height: 30%;
+      margin-top: 1.5rem;
+
+      @media (max-width: 440px) {
+        font-size: 0.8rem;
+        padding: 0;
+      }
+
+      @media (min-width: 1200px) {
+        margin-top: 3rem;
+      }
+    }
+
+    .name-container {
+      text-align: center;
+      color: variables.$main-blue;
+      margin-top: auto;
+      margin-bottom: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 0.9rem;
+      }
+
+      .name {
+        font-size: 1.5rem;
+
+        @media (max-width: 768px) {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+
+  .buttons-container {
+    width: 18rem;
+    height: 4rem;
+    border: 1px solid black;
+    border-radius: 50px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: variables.$default-button-shadow;
+    padding: 0 0.75rem;
+    position: absolute;
+    bottom: -2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.1s ease-in-out;
+
+    @media (max-width: 768px) {
+      bottom: -1.5rem;
+    }
+
+    .like, .dislike {
+      height: 3rem;
+      width: 3rem;
+      border: 1px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .like {
+      background-color: variables.$button-green;
+      padding-left: 5px;
+    }
+
+    .dislike {
+      background-color: variables.$button-red;
+    }
+
+    &:has(.like:hover) {
+      background-color: variables.$button-green;
+      box-shadow: variables.$upper-inset-shadow-hover;
+
+      .dislike {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .like {
+        border: none;
+        box-shadow: none;
+        width: 100%;
+        position: relative;
+
+        svg {
+          position: absolute;
+          right: 30%;
+          top: 20%;
+          scale: 1.3;
+        }
+      }
+    }
+
+    &:has(.dislike:hover) {
+      background-color: variables.$button-red;
+      box-shadow: variables.$upper-inset-shadow-hover;
+
+      .like {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .dislike {
+        border: none;
+        box-shadow: none;
+        width: 100%;
+        position: relative;
+
+        svg {
+          position: absolute;
+          left: 25%;
+          top: 15%;
+          scale: 1.3;
+        }
+      }
+    }
+  }
+
+  .no-matches {
+    justify-self: center;
+    width: fit-content;
+    height: 100%;
+    text-align: center;
+  }
+
+  // Endless spinner animation
+  .endless {
+    &::before, &::after {
+      animation: rotate 6s var(--timing) infinite, transformEffect 2s 6s forwards !important;
+    }
+  }
+//}
+
+//@media (max-width: 600px) {
+//  .recommendations-container {
+//
+//    .profile-card-container {
+//
+//      .picture-bio-container {
+//        flex-direction: column;
+//      }
+//    }
+//  }
+//}
+
+// smalls screen Media Queries
+@media (max-width: 600px) {
+  .recommendations-container, .dashboard-container {
+
+
+    .profile-card-container {
+      height: 80vh;
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      padding-bottom: 2.25rem;
+      justify-content: flex-start;
+
+      .picture-bio-container {
+        flex-direction: column;
+        height: 65%;
+        //overflow: hidden;
+
+        .picture-container {
+          min-height: 45%;
+          width: auto;
+
+          .extra-picture-container {
+            margin: 0 0 0.5rem;
+
+            img {
+              max-height: 80%;
+              min-height: 10rem;
+            }
+
+
+            .music-link {
+              bottom: 10%;
+              right: -25%;
+              width: 3rem;
+              height: 3rem;
+            }
+
+          }
+        }
+
+        .bio-container {
+          table {
+            tbody {
+              tr {
+                th {
+                  //font-size: 0.9rem;
+                }
+                td {
+                  padding-bottom: 0.5rem;
+                  //font-size: 0.8rem;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    }
+
+    .buttons-container {
+      bottom: -2rem;
+    }
+
+    //.picture-container .extra-picture-container {
+    //  margin: 0;
+    //}
+
+    .picture-bio-container .profile-picture {
+      //max-width: 120%;
+    }
+
+    .description-container {
+      font-size: 0.8rem;
+      padding: 2rem 0 0 0 ;
+      //height: 25%;
+    }
+
+    .name-container {
+      //height: fit-content;
+      //display: flex;
+      //flex-direction: column;
+      //margin-top: 15px;
+      //margin-top: auto;
+    }
+  }

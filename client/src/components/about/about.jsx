@@ -183,6 +183,12 @@ function About() {
 		<>
 			{/*{Navigator()}*/}
 			<div className='about-container'>
+
+				<h1 className={'blinking-text'}>Jammer</h1>
+
+				<img className={'background-image one'} src={'icon_black.png'} alt={''}/>
+				<img className={'background-image two'} src={'icon_black.png'} alt={''}/>
+
 				{/*{user.username}*/}
 				{/*<br/>*/}
 				{/*<img src={user.profilePicture} alt="Profile" width="150"/>*/}

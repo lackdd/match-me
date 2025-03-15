@@ -5,7 +5,7 @@ import axios from 'axios';
 // import {AuthContext} from "../../main.jsx";
 import {ErrorElement} from '../register/errorElement.jsx';
 import {ShowPasswordButton} from '../register/showPasswordButton.jsx';
-import { useAuth } from '../../AuthContext.jsx';
+import { useAuth } from '../utils/AuthContext.jsx';
 
 function Login() {
 	const [email, setEmail] = useState('');
@@ -67,7 +67,11 @@ function Login() {
 			// Navigate to dashboard or other protected route
 			history('/dashboard')
 		} catch (error) {
-			console.error("Login failed:", error);
+			if (error.response) {
+				console.error("Backend error:", error.response.data); // Server responded with an error
+			} else {
+				console.error("Request failed:", error.message); // Network error or request issue
+			}
 		}
 	};
 

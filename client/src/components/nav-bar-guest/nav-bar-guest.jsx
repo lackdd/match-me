@@ -36,7 +36,7 @@ function NavigatorGuest() {
 						SUPPORT
 					</NavLink>
 				</div>
-				<div className='buttons-container'>
+				<div className='nav-buttons-container'>
 					{/* again a tag to force rerender of nav bar*/}
 					<NavLink to='/register'>
 						<button className='button signup' title='Get started'>
@@ -103,7 +103,7 @@ function NavigatorGuest() {
 						{/*{hamburger && <IoClose/>}*/}
 					</button>
 				</div>
-					<div className='buttons-container'>
+					<div className='nav-buttons-container'>
 						<NavLink to='/login'>
 							<button className='mobile-login' title='Log in'>
 								<FiLogIn />
