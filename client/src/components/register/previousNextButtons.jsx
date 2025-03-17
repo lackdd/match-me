@@ -1,6 +1,6 @@
 export const PreviousNextButtons = ({DeductStep, text = "Next", errors = {} }) => {
 	return (
-		<div className={'buttons-container'}>
+		<div className={'register-buttons-container'}>
 			<button
 				className='previous wide narrow'
 				type={'button'}
