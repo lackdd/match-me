@@ -26,6 +26,9 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Autowired
+    private JWTService jwtService;
+
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         return service.register(user);
@@ -96,6 +99,19 @@ public class UserController {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @DeleteMapping("/deleteConnection")
+    public ResponseEntity<?> deleteConnection (@RequestHeader (value = "Authorization", required = false) String authHeader, @RequestParam("connectionId") Long connectionId) {
+        String token = authHeader.substring(7);
+        Long currentUserId = jwtService.extractUserId(token);
+        User currentUser = service.getUserById(currentUserId);
+        try {
+            service.deleteConnectionById(connectionId, currentUser);
+            return ResponseEntity.ok("Connection " + connectionId + " deleted.");
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
         }
     }
 

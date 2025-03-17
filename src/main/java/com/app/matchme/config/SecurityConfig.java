@@ -76,6 +76,7 @@ public class SecurityConfig {
                                 "/api/forgot-password",
                                 "/api/getUsersByIds",
                                 "/api/hello-backend",
+                                "/api/deleteConnection",
                                 "/api/addLikedUser",
                                 "/api/chat//history/**",
                                 "/api/likedUsers",

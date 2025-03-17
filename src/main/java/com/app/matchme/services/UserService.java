@@ -189,6 +189,18 @@ public class UserService {
         repo.save(currentUser);
     }
 
+    @Transactional
+    public void deleteConnectionById(Long connectionId, User currentUser) {
+        User connectedUser = repo.findById(connectionId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if(currentUser.getConnections().contains(connectionId) && connectedUser.getConnections().contains(currentUser.getId())) {
+            currentUser.getConnections().remove(connectionId);
+            connectedUser.getConnections().remove(currentUser.getId());
+            repo.save(currentUser);
+            repo.save(connectedUser);
+        }
+    }
+
     public String verify(User user) {
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
