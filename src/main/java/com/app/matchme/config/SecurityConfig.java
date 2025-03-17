@@ -77,6 +77,7 @@ public class SecurityConfig {
                                 "/api/getUsersByIds",
                                 "/api/hello-backend",
                                 "/api/deleteConnection",
+                                "/api/deletePendingRequest",
                                 "/api/addLikedUser",
                                 "/api/chat//history/**",
                                 "/api/likedUsers",

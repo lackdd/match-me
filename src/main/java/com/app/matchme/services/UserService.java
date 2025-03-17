@@ -83,6 +83,18 @@ public class UserService {
         return false;
     }
 
+    @Transactional
+    public void deletePendingRequestById(Long pendingRequestId, User currentUser) {
+        User otherUser = repo.findById(pendingRequestId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if (currentUser.getPendingRequests().contains(pendingRequestId)) {
+            currentUser.getPendingRequests().remove(pendingRequestId);
+            if(otherUser != null && otherUser.getLikedUsers().contains(currentUser.getId())) {
+                otherUser.getLikedUsers().remove(currentUser.getId());
+            }
+        }
+    }
+
     public User getUserById(Long id) {
         return repo.findById(id).orElse(null);
     }

@@ -115,6 +115,19 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/deletePendingRequest")
+    public ResponseEntity<?> deletePendingRequest(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam("pendingRequestId") Long pendingRequestId) {
+        String token = authHeader.substring(7);
+        Long currentUserId = jwtService.extractUserId(token);
+        User currentUser = service.getUserById(currentUserId);
+        try {
+            service.deletePendingRequestById(pendingRequestId, currentUser);
+            return ResponseEntity.ok("Pending Request " + pendingRequestId + " deleted.");
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
+        }
+    }
+
     @PostMapping("/check-email")
     public Map<String, Boolean> checkEmail(@RequestBody Map<String, String> request) {
         String email = request.get("email");
