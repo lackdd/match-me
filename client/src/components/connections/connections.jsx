@@ -76,8 +76,8 @@ function Connections() {
 				}),
 			])
 
-			const currentIds = currentConnectionsResponse.data;
-			const pendingIds = pendingConnectionsResponse.data;
+			const currentIds = currentConnectionsResponse.data || [];
+			const pendingIds = pendingConnectionsResponse.data || [];
 
 			await getConnectionsData(currentIds, setCurrentConnections, setCurrentDataFetched);
 			await getConnectionsData(pendingIds, setPendingConnections, setPendingDataFetched);
