@@ -62,8 +62,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/addLikedUser")
-    public ResponseEntity<?> addLikedUser(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam("matchId") Long matchId) {
+    @PostMapping("/swiped")
+    public ResponseEntity<?> swiped(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam("matchId") Long matchId, @RequestParam("swipedRight") boolean swipedRight) {
         String token = authHeader.substring(7);
         boolean isValid = service.validate(token);
         if (isValid) {
@@ -71,14 +71,24 @@ public class UserController {
             Long id = service.extractUserId(token);
             User currentUser = service.getUserById(id);
             User likedUser = service.getUserById(matchId);
-            try {
-                service.addLikedUserById(matchId, currentUser);
-                service.addPendingRequestById(id, likedUser);
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "User id added to liked user list");
-                return ResponseEntity.ok(response);
-            } catch (ResponseStatusException e){
-                return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
+            if(swipedRight) {
+                try {
+                    service.addLikedUserById(matchId, currentUser);
+                    service.addPendingRequestById(id, likedUser);
+                    service.addToSwipedUsers(matchId, currentUser);
+                    Map<String, String> response = new HashMap<>();
+                    response.put("message", "User id added to liked user list");
+                    return ResponseEntity.ok(response);
+                } catch (ResponseStatusException e){
+                    return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
+                }
+            } else {
+                try {
+                    service.addToSwipedUsers(matchId, currentUser);
+                    return ResponseEntity.ok(Map.of("message", "User swiped to left"));
+                } catch (ResponseStatusException e) {
+                    return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
+                }
             }
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

@@ -75,6 +75,11 @@ public class User {
     @Column(name = "pending_request")
     private List<Long> pendingRequests = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "already_swiped_users", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "swiped_user")
+    private List<Long> swipedUsers = new ArrayList<>();
+
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> sentMessages = new ArrayList<>();
 
@@ -85,35 +90,36 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String email, String password, String gender, String username, Integer age, String profilePicture, List<String> preferredMusicGenres, List<String> preferredMethods, List<String> personalityTraits, Integer yearsOfMusicExperience, List<String> additionalInterests, List<String> goalsWithMusic, String location, List<String> idealMatchGenres, List<String> idealMatchMethods, String description, String linkToMusic, List<Long> connections, String idealMatchAge, String idealMatchYearsOfExperience, String idealMatchGender, List<String> idealMatchGoals, List<Long> pendingRequests, List<ChatMessage> sentMessages, List<ChatMessage> receivedMessages, List<Long> likedUsers, String idealMatchLocation) {
+    public User(Long id, String email, String password, String username, String gender, Integer age, String profilePicture, List<String> preferredMethods, List<String> additionalInterests, List<String> preferredMusicGenres, List<String> personalityTraits, String linkToMusic, String description, Integer yearsOfMusicExperience, List<String> goalsWithMusic, String location, List<String> idealMatchGenres, List<String> idealMatchMethods, List<Long> connections, String idealMatchGender, List<Long> pendingRequests, String idealMatchYearsOfExperience, String idealMatchAge, List<String> idealMatchGoals, List<Long> likedUsers, String idealMatchLocation, List<ChatMessage> sentMessages, List<Long> swipedUsers, List<ChatMessage> receivedMessages) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.gender = gender;
         this.username = username;
+        this.gender = gender;
         this.age = age;
         this.profilePicture = profilePicture;
-        this.preferredMusicGenres = preferredMusicGenres;
         this.preferredMethods = preferredMethods;
-        this.personalityTraits = personalityTraits;
-        this.yearsOfMusicExperience = yearsOfMusicExperience;
         this.additionalInterests = additionalInterests;
+        this.preferredMusicGenres = preferredMusicGenres;
+        this.personalityTraits = personalityTraits;
+        this.linkToMusic = linkToMusic;
+        this.description = description;
+        this.yearsOfMusicExperience = yearsOfMusicExperience;
         this.goalsWithMusic = goalsWithMusic;
         this.location = location;
         this.idealMatchGenres = idealMatchGenres;
         this.idealMatchMethods = idealMatchMethods;
-        this.description = description;
-        this.linkToMusic = linkToMusic;
         this.connections = connections;
-        this.idealMatchAge = idealMatchAge;
-        this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
         this.idealMatchGender = idealMatchGender;
-        this.idealMatchGoals = idealMatchGoals;
         this.pendingRequests = pendingRequests;
-        this.sentMessages = sentMessages;
-        this.receivedMessages = receivedMessages;
+        this.idealMatchYearsOfExperience = idealMatchYearsOfExperience;
+        this.idealMatchAge = idealMatchAge;
+        this.idealMatchGoals = idealMatchGoals;
         this.likedUsers = likedUsers;
         this.idealMatchLocation = idealMatchLocation;
+        this.sentMessages = sentMessages;
+        this.swipedUsers = swipedUsers;
+        this.receivedMessages = receivedMessages;
     }
 
     public Long getId() {
@@ -338,5 +344,13 @@ public class User {
 
     public void setReceivedMessages(List<ChatMessage> receivedMessages) {
         this.receivedMessages = receivedMessages;
+    }
+
+    public List<Long> getSwipedUsers() {
+        return swipedUsers;
+    }
+
+    public void setSwipedUsers(List<Long> swipedUsers) {
+        this.swipedUsers = swipedUsers;
     }
 }

@@ -99,6 +99,11 @@ public class UserService {
         return repo.findById(id).orElse(null);
     }
 
+    public void addToSwipedUsers(Long matchId, User currentUser) {
+        currentUser.getSwipedUsers().add(matchId);
+        repo.save(currentUser);
+    }
+
     public List<Long> findMatches(Long id) {
         List<User> users = repo.findAll();
         Optional<User> optionalUser = repo.findById(id);
@@ -112,8 +117,11 @@ public class UserService {
                 .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
 
-        return userPointsMap.entrySet().stream()
+        Set<Map.Entry<User, Integer>> allRecommendations = userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return allRecommendations.stream()
                 .limit(10)
                 .peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))
                 .map(entry -> entry.getKey().getId())
