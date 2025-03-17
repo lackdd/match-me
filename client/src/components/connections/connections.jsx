@@ -65,12 +65,14 @@ function Connections() {
 		try {
 			const [currentConnectionsResponse, pendingConnectionsResponse] = await Promise.all([
 				axios.get(`${VITE_BACKEND_URL}/api/connections`, {
-					headers: { "Authorization": `Bearer ${token.current}`,
+					headers: {
+						"Authorization": `Bearer ${token.current}`,
 						"Content-Type": "application/json"},
 					signal,
 				}),
 				axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {
-					headers: { "Authorization": `Bearer ${token.current}`,
+					headers: {
+						"Authorization": `Bearer ${token.current}`,
 						"Content-Type": "application/json"},
 					signal,
 				}),
@@ -101,7 +103,8 @@ function Connections() {
 			try {
 				const requests = ids.map(id =>
 					axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
-						headers: { "Authorization": `Bearer ${token.current}`,
+						headers: {
+							"Authorization": `Bearer ${token.current}`,
 							"Content-Type": "application/json"},
 						signal,
 					})
@@ -117,7 +120,7 @@ function Connections() {
 					console.log("Fetch aborted");
 				} else {
 					if (error.response) {
-						console.error("Backend error:", error.response.data); // Server responded with an error
+						console.error("Backend error:", error.response); // Server responded with an error
 					} else {
 						console.error("Request failed:", error.message); // Network error or request issue
 					}
@@ -127,7 +130,7 @@ function Connections() {
 		}
 	}
 
-	// display current connections
+	// display connections
 	const displayConnections = (connections) => {
 		if (connections.length === 0) {
 
@@ -189,39 +192,15 @@ function Connections() {
 	useEffect(() => {
 		console.log("Current connections: ", currentConnections);
 		console.log("Pending connections: ", pendingConnections);
-	}, [currentConnections]);
+	}, [pendingConnections, currentConnections]);
 
 	// delete connection
 	const deleteConnection = async(connectionId, connectionName) => { // connectionId, setConnections, setConnectionsIds
 		// setIsDeleting(true);
-		//
-		// const acceptButton = document.getElementById('accept');
-		// const deleteButton = document.getElementById('delete');
-		//
-		// const modal = document.getElementById('loadingModal');
+
 		toDeleteId.current = connectionId;
-		// toDeleteName.current = connectionName;
 		setToDeleteName(connectionName); // Use useState to trigger a re-render
 		modal.style.display = 'flex'; // Show modal
-
-		// try {
-		// 	const response = await axios.get(`${VITE_BACKEND_URL}/api/users/${connectionId}`, {
-		// 		headers: {
-		// 			"Authorization": `Bearer ${token.current}`,
-		// 			"Content-Type": "application/json"
-		// 		}
-		// 	});
-		//
-		// 	toDeleteName.current = response.data.username;
-		// } catch (error) {
-		// 	if (error.response) {
-		// 		console.error("Backend error:", error.response.data); // Server responded with an error
-		// 	} else {
-		// 		console.error("Request failed:", error.message); // Network error or request issue
-		// 	}
-		// }
-
-
 
 		// setCurrentConnections(prev => prev.filter(conn => conn.id !== connectionId));
 		// setCurrentConnectionIds(prevIds => prevIds.filter(id => id !== connectionId));
@@ -247,18 +226,51 @@ function Connections() {
 
 	}
 
-	const acceptDelete = async(setState, toDeleteId) => {
-		// Handle the accept button click
-		// todo request api to delete form db as well
+	// Handle the accept button click
+	const acceptDelete = async(setState, setIdState) => {
 		setIsDeleting(true);
+
+		let endpoint = "";
+		let paramKey = "";
+
+		if (setState === setPendingConnections) {
+			endpoint = "deletePendingRequest";
+			paramKey =  "pendingRequestId";
+		}
+
+		if (setState === setCurrentConnections) {
+			endpoint = "deleteConnection";
+			paramKey =  "connectionId";
+		}
+
+		if (!endpoint || !paramKey) {
+			console.error("Invalid state setter function provided.");
+			setIsDeleting(false);
+			return;
+		}
+
 		try {
-			// Remove the connection from the state
-			setState((prevConnections) =>
-				prevConnections.filter((connection) => connection.id !== toDeleteId.current)
-			);
+			//Remove the connection from the state
+			setState((prevConnections) => prevConnections.filter((connection) => connection.id !== toDeleteId.current));
+			setIdState((prevIds) => prevIds.filter((id) => id !== toDeleteId.current));
+
+			// todo throws 403
+			await axios.delete(`${VITE_BACKEND_URL}/api/${endpoint}`, {
+				headers: {
+					"Authorization": `Bearer ${token.current}`,
+					"Content-Type": "application/json"},
+				params: { [paramKey] : toDeleteId.current } // Include request parameters here
+			});
+
+			// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
+			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
 			console.log("Connection deleted!");
 		} catch (error) {
-			console.error("Error deleting connection:", error);
+				if (error.response) {
+					console.error("Backend error:", error.response); // Server responded with an error
+				} else {
+					console.error("Request failed:", error.message); // Network error or request issue
+				}
 		} finally {
 			setIsDeleting(false);
 			modal.style.display = 'none'; // Close the modal
@@ -279,11 +291,11 @@ function Connections() {
 						<p style={{marginTop: '0.5rem'}}>Are you sure?</p>
 					<div className='modal-buttons'>
 						{pendingOrCurrent === "current" ? (
-							<button id="acceptButton" onClick={() => {acceptDelete(setCurrentConnections, toDeleteId)}}>
+							<button id="acceptButton" onClick={() => {acceptDelete(setCurrentConnections, setCurrentConnectionIds)}}>
 								<span>Yes</span>
 							</button>
 						) : (
-							<button id="acceptButton" onClick={() => {acceptDelete(setPendingConnections, toDeleteId)}}>
+							<button id="acceptButton" onClick={() => {acceptDelete(setPendingConnections, setPendingConnectionIds)}}>
 								<span>Yes</span>
 							</button>
 						)
