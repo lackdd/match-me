@@ -160,13 +160,18 @@ function Connections() {
 				{connections === currentConnections && (
 					<div className='connections-buttons-container'>
 						<button className='chat'><BsChat /></button>
-						<button className='delete' onClick={() => deleteConnection(connection.id, connection.username)}><FaRegCircleXmark /></button>
+						<button className='delete' onClick={() => {
+							deleteConnection(connection.id, connection.username);
+							// await getConnectionIds();
+						}}
+						>
+							<FaRegCircleXmark /></button>
 					</div>
 				)}
 
 				{connections === pendingConnections && (
 					<div className='connections-buttons-container'>
-						<button className='accept'><FaRegCirclePlay /></button>
+						<button className='accept' onClick={() => acceptRequest(connection.id)}><FaRegCirclePlay /></button>
 						<button className='delete' onClick={() => deleteConnection(connection.id, connection.username)}><FaRegCircleXmark /></button>
 					</div>
 				)}
@@ -195,39 +200,16 @@ function Connections() {
 	}, [pendingConnections, currentConnections]);
 
 	// delete connection
-	const deleteConnection = async(connectionId, connectionName) => { // connectionId, setConnections, setConnectionsIds
+	const deleteConnection = (connectionId, connectionName) => { // connectionId, setConnections, setConnectionsIds
 		// setIsDeleting(true);
 
 		toDeleteId.current = connectionId;
 		setToDeleteName(connectionName); // Use useState to trigger a re-render
 		modal.style.display = 'flex'; // Show modal
-
-		// setCurrentConnections(prev => prev.filter(conn => conn.id !== connectionId));
-		// setCurrentConnectionIds(prevIds => prevIds.filter(id => id !== connectionId));
-
-		// try {
-		// 	// todo need api for this
-		// 	await axios.delete(`${VITE_BACKEND_URL}/api/connection/delete/${connectionId}`), {
-		// 		headers: { "Authorization": `Bearer ${token.current}`,
-		// 			"Content-Type": "application/json"},
-		// 	}
-		// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
-		// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
-		// } catch (error) {
-		// 	if (error.response) {
-		// 		console.error("Backend error:", error.response.data); // Server responded with an error
-		// 	} else {
-		// 		console.error("Request failed:", error.message); // Network error or request issue
-		// 	}
-		// } finally {
-		// 	setIsDeleting(false);
-		// }
-
-
 	}
 
 	// Handle the accept button click
-	const acceptDelete = async(setState, setIdState) => {
+	const acceptDelete = (setState, setIdState) => {
 		setIsDeleting(true);
 
 		let endpoint = "";
@@ -250,18 +232,15 @@ function Connections() {
 		}
 
 		try {
-			//Remove the connection from the state
 			setState((prevConnections) => prevConnections.filter((connection) => connection.id !== toDeleteId.current));
 			setIdState((prevIds) => prevIds.filter((id) => id !== toDeleteId.current));
-
-			// todo throws 403
-			await axios.delete(`${VITE_BACKEND_URL}/api/${endpoint}`, {
+			//Remove the connection from the state
+			axios.delete(`${VITE_BACKEND_URL}/api/${endpoint}`, {
 				headers: {
 					"Authorization": `Bearer ${token.current}`,
 					"Content-Type": "application/json"},
 				params: { [paramKey] : toDeleteId.current } // Include request parameters here
 			});
-
 			// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
 			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
 			console.log("Connection deleted!");
@@ -279,6 +258,54 @@ function Connections() {
 
 	const cancelDelete = () => {
 		modal.style.display = 'none'; // Close the modal without navigating
+	}
+
+	const acceptRequest = (requestId) => {
+
+		// add to connections
+		try {
+			axios.post(`${VITE_BACKEND_URL}/api/addConnection`, null, {
+				headers: {
+					"Authorization": `Bearer ${token.current}`,
+					"Content-Type": "application/json"
+				},
+				params: {matchId: requestId} // Correct parameter name
+			})
+
+		} catch (error) {
+			if (error.response) {
+				console.error("Backend error:", error.response); // Server responded with an error
+			} else {
+				console.error("Request failed:", error.message); // Network error or request issue
+			}
+		}
+
+		// delete the pending request
+		setIsDeleting(true);
+
+		try {
+			axios.delete(`${VITE_BACKEND_URL}/api/deletePendingRequest`, {
+				headers: {
+					"Authorization": `Bearer ${token.current}`,
+					"Content-Type": "application/json"
+				},
+				params: {pendingRequestId: requestId} // Include request parameters here
+			});
+			setPendingConnections((prevConnections) => prevConnections.filter((connection) => connection.id !== requestId));
+			setPendingConnectionIds((prevIds) => prevIds.filter((id) => id !== requestId));
+
+			// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
+			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
+			console.log("Pending request deleted!");
+		} catch (error) {
+			if (error.response) {
+				console.error("Backend error:", error.response); // Server responded with an error
+			} else {
+				console.error("Request failed:", error.message); // Network error or request issue
+			}
+		} finally {
+			setIsDeleting(false);
+		}
 	}
 
 
