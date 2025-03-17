@@ -1,9 +1,15 @@
 @use '../../variables';
 
 .dashboard-container {
-  position: relative;
-  min-height: 70vh;
+  @include variables.whole-page;
   @include variables.centered-column;
+  position: relative;
+
+
+  .extra-dashboard-container {
+    @include variables.centered-column;
+    margin-bottom: 1.5rem;
+  }
 
   //@media (max-width: 768px) {
   //  .picture-bio-container {

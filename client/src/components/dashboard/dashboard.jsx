@@ -118,7 +118,7 @@ function Dashboard() {
 
 	return (
 
-		<div className='connections-container'>
+		<div className='dashboard-container'>
 
 			{loading && (
 				<div className={'spinner-container'}>
@@ -128,7 +128,7 @@ function Dashboard() {
 
 			{!loading && (
 				<>
-				<div className="dashboard-container">
+				<div className="extra-dashboard-container">
 					<div className="settings-popup" id="settings-popup">
 						<div className="settings-content">
 							<div className='forms-container'>
