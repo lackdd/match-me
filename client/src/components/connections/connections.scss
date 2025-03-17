@@ -156,7 +156,13 @@
             align-items: center;
             font-size: 1.1rem;
             text-overflow: fade;
+
+            @media (max-width: 440px) {
+              font-size: 1rem;
+            }
+
           }
+
 
         }
 
@@ -182,7 +188,8 @@
             box-shadow: none;
 
             @media (max-width: 440px) {
-
+              width: 3.5rem;
+              height: 3.5rem;
             }
 
             &.accept {
@@ -205,6 +212,11 @@
             svg {
               width: 4rem;
               height: 4rem;
+
+              //@media (max-width: 440px) {
+              //  width: 3.5rem;
+              //  height: 3.5rem;
+              //}
 
             }
           }
