@@ -13,34 +13,12 @@ import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx'
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 const googleApi = import.meta.env.VITE_GOOGLE_API;
 
-function loadGoogleMapsScript(callback) {
-	if (window.google && window.google.maps) {
-		callback();
-		return;
-	}
-
-	const existingScript = document.getElementById("google-maps-script");
-	if (!existingScript) {
-		const script = document.createElement("script");
-		script.id = "google-maps-script";
-		script.src = googleApi;
-		script.async = true;
-		script.onload = callback;
-		document.body.appendChild(script);
-	} else {
-		existingScript.onload = callback;
-	}
-}
-
-
-
 function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
 	const [inputValue, setInputValue] = useState("");
 	const [options, setOptions] = useState([]);
 	const autocompleteServiceRef = useRef(null);
 	const [apiLoaded, setApiLoaded] = useState(false);
 
-	const isMounted = useRef(true);
 	// Initialize react-hook-form with Yup schema
 	const {
 		register,
@@ -56,42 +34,39 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 	});
 
 	useEffect(() => {
-		// Set isMounted to true when the component mounts
-		isMounted.current = true;
-
-		return () => {
-			// Set isMounted to false when the component unmounts
-			isMounted.current = false;
-		};
-	}, []);
-
-
-	// todo fix: I think the google API is not available on the first render of this component
-	useEffect(() => {
-		loadGoogleMapsScript(() => {
-			if (window.google && window.google.maps && window.google.maps.places) {
+		const checkGoogleApi = setInterval(() => {
+			if (window.google?.maps?.places) {
 				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
 				setApiLoaded(true);
+				console.log("Google API is loaded");
+				clearInterval(checkGoogleApi);
 			}
-			console.log("Google API loaded")
-		});
+		}, 100);
+
+		return () => clearInterval(checkGoogleApi); // Cleanup interval when unmounting
 	}, []);
 
+	// useEffect(() => {
+	// 	if (window.google && window.google.maps && window.google.maps.places) {
+	// 		autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+	// 	}
+	// }, []);
+
 	const fetchPlaces = useCallback((input) => {
-		if (!input || !autocompleteServiceRef.current) return;
+		if (!input || !apiLoaded || !autocompleteServiceRef.current) return;
 
 		autocompleteServiceRef.current.getPlacePredictions(
-			{ input,
+			{
+				input,
 				types: ['administrative_area_level_1'],
-				componentRestrictions: {country: "est"},
-				language: 'en'},
-			// { input },
+				componentRestrictions: { country: "est" },
+				language: 'en'
+			},
 			(predictions, status) => {
 				if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
 					setOptions(
 						predictions.map((place) => ({
 							value: place.place_id,
-							// label: place.structured_formatting.main_text,
 							label: place.description,
 						}))
 					);
@@ -100,7 +75,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 				}
 			}
 		);
-	}, []);
+	}, [apiLoaded]);
 
 	return (
 		<form className='step-three'

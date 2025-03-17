@@ -27,6 +27,17 @@ function Step6() {
 	}, [navigate])
 
 
+	// remove google api script
+	// useEffect(() => {
+	// 	const googleApiScript = document.getElementById('google-maps-script');
+	//
+	// 	if (googleApiScript) {
+	// 		googleApiScript.remove();
+	// 		console.log("Google API removed");
+	// 	}
+	// }, []);
+
+
 
 		return (
 			<div className={'spinner-container'}>

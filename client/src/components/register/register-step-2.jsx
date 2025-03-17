@@ -14,6 +14,7 @@ import {stepTwoSchema} from './validationSchema.jsx';
 import {handleCloseMenu} from './register.jsx';
 import {ErrorElement} from './errorElement.jsx';
 import {PreviousNextButtons} from './previousNextButtons.jsx';
+import {useEffect} from 'react';
 
 const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData }) => {
 	return (

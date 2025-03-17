@@ -7,17 +7,11 @@ import "@fontsource/poppins/400.css"; // Specify weight
 import "@fontsource/poppins/400-italic.css"; // Specify weight and style
 import {Outlet, useLocation} from 'react-router-dom';
 import axios from "axios";
-// import {AuthContext} from './main.jsx';
 import { useAuth } from './components/utils/AuthContext.jsx'
-
-
-// export const AuthContext = createContext();
+import { loadGoogleMapsScript } from './components/utils/loadGoogleMapsApi.js';
 
 function App() {
     const location = useLocation();
-    // todo React Router caught the following error during render TypeError: Cannot destructure property 'isUserLoggedIn' of 'useContext(...)' as it is undefined.
-    //     at App (App.jsx:16:13)
-    // const { isUserLoggedIn, setIsUserLoggedIn } = useContext(AuthContext);
     const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const { isUserLoggedIn, isLoading } = useAuth();
 
@@ -34,6 +28,11 @@ function App() {
             }
         }
         wakeUpBackend();
+    }, []);
+
+    // load google API script
+    useEffect(() => {
+        loadGoogleMapsScript();
     }, []);
 
 
