@@ -19,6 +19,7 @@ function NavigatorUser() {
 	const [username, setUsername] = useState("");
 	const [profilePicture, setProfilePicture] = useState("");
 	const [gender, setGender] = useState("");
+	const [pendingReqNum, setPendingReqNum] = useState("");
 
 	const token = useRef(sessionStorage.getItem("token"));
 	// console.log("Token: ", token.current)
@@ -74,9 +75,32 @@ function NavigatorUser() {
 		}
 	}
 
+	const getPendingRequests = async() => {
+
+		console.log("Getting pending requests length");
+
+		try {
+			const response = await axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {
+					headers: {
+						"Authorization": `Bearer ${token.current}`,
+						"Content-Type": "application/json"},
+				});
+
+			setPendingReqNum(response.data.length)
+		} catch (error) {
+			if (axios.isCancel(error)) {
+				console.log("Fetch aborted");
+			} else {
+				console.error("Error getting connections: ", (error.message))
+				// todo display error to user
+			}
+		}
+	}
+
 	useEffect(() => {
 		getProfileInfo();
 		getGender();
+		getPendingRequests();
 	}, []);
 
 	return (
@@ -96,7 +120,7 @@ function NavigatorUser() {
 					</NavLink>
 				</div>
 				<div className='links-container'>
-					<NavLink to='/connections' className={({ isActive }) =>
+					<NavLink to='/connections' data-type-reqnum={pendingReqNum} className={({ isActive }) =>
 						`connections ${isActive ? 'current' : ''}`
 					}>
 						CONNECTIONS
@@ -123,7 +147,7 @@ function NavigatorUser() {
 			<nav className='nav-container-user mobile'>
 
 				<div className='links-container'>
-					<NavLink to='/connections' className={({ isActive }) =>
+					<NavLink to='/connections' data-type-reqnum={pendingReqNum} className={({ isActive }) =>
 						`icon connections ${isActive ? 'current' : ''}`
 					}>
 						<FaUserFriends />

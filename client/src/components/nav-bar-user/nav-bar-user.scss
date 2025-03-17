@@ -108,6 +108,21 @@
       color: white;
     }
 
+    .connections {
+      position: relative;
+    }
+
+    .connections::after {
+      content: attr(data-type-reqnum);
+      position: absolute;
+      display: block;
+      top: -10px;
+      right: -20px;
+      width: 1rem;
+      background-color: transparent;
+      color: variables.$main-pink-80;
+    }
+
 
     @media (max-width: 768px) {
       justify-content: space-around;
