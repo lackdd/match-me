@@ -99,7 +99,6 @@ export const interestsOptions = [
 	{ value: 'dancing', label: 'Dancing' },
 	{ value: 'gardening', label: 'Gardening' },
 	{ value: 'crafting', label: 'Crafting' },
-	{ value: 'photography', label: 'Photography' },
 	{ value: 'health', label: 'Health' },
 	{ value: 'mental_health', label: 'Mental Health' },
 	{ value: 'self_improvement', label: 'Self Improvement' },
