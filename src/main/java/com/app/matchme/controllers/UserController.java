@@ -194,6 +194,7 @@ public class UserController {
             List<Long> recommendedUserIds = service.findMatches(id);
 
             if (recommendedUserIds.isEmpty()) {
+                System.out.println("Recommendations empty");
                 return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok(recommendedUserIds);
