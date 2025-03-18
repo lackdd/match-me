@@ -161,31 +161,124 @@ function Recommendations() {
 	//
 	// })
 
-	// logic when user presses "Like"
-	const Like = useCallback(() => {
+	// // logic when user presses "Like"
+	// const Like = useCallback(() => {
+	// 	const matchContainer = matchContainerRef.current;
+	// 	if (!matchContainer) return;
+	//
+	// 	console.log("Like!");
+	// 	matchContainer.classList.add("like-animation");
+	//
+	// 	console.log("current match id: " + currentMatch.id);
+	//
+	// 	// send data to backend
+	// 	const likeUser = async () => {
+	// 		try {
+	// 			const response = await axios.post(
+	// 				// todo use new /swiped API
+	// 				`${VITE_BACKEND_URL}/api/swiped`,
+	// 				null,
+	// 				{
+	// 					params: {
+	// 						matchId : currentMatch.id,
+	// 						swipedRight: true},
+	// 					headers: {
+	// 						"Authorization": `Bearer ${token.current}`,
+	// 						"Content-Type": "application/json"
+	// 					},
+	// 				}
+	// 			);
+	// 			console.log("Like successful: " + response.data)
+	// 		} catch (error) {
+	// 			if (error.response) {
+	// 				console.error("Backend error:", error.response.data); // Server responded with an error
+	// 			} else {
+	// 				console.error("Request failed:", error.message); // Network error or request issue
+	// 			}
+	// 		}
+	// 	};
+	//
+	// 	likeUser();
+	//
+	// 	setTimeout(() => {
+	// 		resetPosition({ target: matchContainer });
+	// 	}, 600); // Match the CSS transition duration
+	// }, [currentMatch]);
+
+	// logic when user presses "Dislike"
+	// const Dislike = useCallback(() => {
+	// 	const matchContainer = matchContainerRef.current;
+	// 	if (!matchContainer) return;
+	//
+	// 	console.log("Dislike!");
+	// 	matchContainer.classList.add("dislike-animation");
+	//
+	// 	// send data to backend
+	// 	const disLikedUser = async () => {
+	// 		try {
+	// 			const response = await axios.post(
+	// 				// todo use new /swiped API
+	// 				`${VITE_BACKEND_URL}/api/swiped`,
+	// 				null,
+	// 				{
+	// 					params: {
+	// 						matchId : currentMatch.id,
+	// 						swipedRight: false},
+	// 					headers: {
+	// 						"Authorization": `Bearer ${token.current}`,
+	// 						"Content-Type": "application/json"
+	// 					},
+	// 				}
+	// 			);
+	// 			console.log("Dislike successful: " + response.data)
+	// 		} catch (error) {
+	// 			if (error.response) {
+	// 				console.error("Backend error:", error.response.data); // Server responded with an error
+	// 			} else {
+	// 				console.error("Request failed:", error.message); // Network error or request issue
+	// 			}
+	// 		}
+	// 	};
+	//
+	// 	setTimeout(() => {
+	// 		resetPosition({ target: matchContainer });
+	// 	}, 600); // Match the CSS transition duration
+	// }, []);
+
+	// logic when user swipes left or right (likes or dislikes)
+	const swipe = useCallback((likeOrDislike) => {
 		const matchContainer = matchContainerRef.current;
+		let swipedRight = true;
 		if (!matchContainer) return;
 
-		console.log("Like!");
-		matchContainer.classList.add("like-animation");
+		if (likeOrDislike === "like") {
+			console.log("Like!");
+			matchContainer.classList.add("like-animation");
+		}
 
-		console.log("current match id: " + currentMatch.id);
+		if (likeOrDislike === "dislike") {
+			console.log("Dislike!");
+			swipedRight = false;
+			matchContainer.classList.add("dislike-animation");
+		}
 
 		// send data to backend
-		const likeUser = async () => {
+		const swipedUser = () => {
 			try {
-				const response = await axios.post(
+				const response = axios.post(
 					// todo use new /swiped API
-					`${VITE_BACKEND_URL}/api/addLikedUser?matchId=${Number(currentMatch.id)}`,
+					`${VITE_BACKEND_URL}/api/swiped`,
 					null,
-					// {matchId: currentMatch.id},
 					{
-						headers: { "Authorization": `Bearer ${token.current}`,
-									"Content-Type": "application/json"
+						params: {
+							matchId : currentMatch.id,
+							swipedRight: swipedRight},
+						headers: {
+							"Authorization": `Bearer ${token.current}`,
+							"Content-Type": "application/json"
 						},
 					}
 				);
-				console.log("Like successful: " + response.data)
 			} catch (error) {
 				if (error.response) {
 					console.error("Backend error:", error.response.data); // Server responded with an error
@@ -195,22 +288,7 @@ function Recommendations() {
 			}
 		};
 
-		likeUser();
-
-		setTimeout(() => {
-			resetPosition({ target: matchContainer });
-		}, 600); // Match the CSS transition duration
-	}, [currentMatch]);
-
-	// logic when user presses "Dislike"
-	const Dislike = useCallback(() => {
-		const matchContainer = matchContainerRef.current;
-		if (!matchContainer) return;
-
-
-
-		console.log("Dislike!");
-		matchContainer.classList.add("dislike-animation");
+		swipedUser();
 
 		setTimeout(() => {
 			resetPosition({ target: matchContainer });
@@ -253,29 +331,29 @@ function Recommendations() {
 		setCurrentMatchNum(prevState => prevState + 1)
 
 
-		const likedUsers = async () => {
-			try {
-				const response = await axios.get(
-					`${VITE_BACKEND_URL}/api/likedUsers`,
-					// {matchId: currentMatch.id},
-					{
-						headers: { "Authorization": `Bearer ${token.current}`,
-							"Content-Type": "application/json"
-						},
-					}
-				);
-				console.log("Liked users: " + response.data)
-			} catch (error) {
-				if (error.response) {
-					console.error("Backend error:", error.response.data); // Server responded with an error
-				} else {
-					console.error("Request failed:", error.message); // Network error or request issue
-				}
-				// todo display error to user
-			}
-		};
-
-		likedUsers();
+		// const likedUsers = async () => {
+		// 	try {
+		// 		const response = await axios.get(
+		// 			`${VITE_BACKEND_URL}/api/likedUsers`,
+		// 			// {matchId: currentMatch.id},
+		// 			{
+		// 				headers: { "Authorization": `Bearer ${token.current}`,
+		// 					"Content-Type": "application/json"
+		// 				},
+		// 			}
+		// 		);
+		// 		console.log("Liked users: " + response.data.length)
+		// 	} catch (error) {
+		// 		if (error.response) {
+		// 			console.error("Backend error:", error.response.data); // Server responded with an error
+		// 		} else {
+		// 			console.error("Request failed:", error.message); // Network error or request issue
+		// 		}
+		// 		// todo display error to user
+		// 	}
+		// };
+		//
+		// likedUsers();
 
 	}, []);
 
@@ -527,10 +605,10 @@ function Recommendations() {
 				onTouchMove={handleTouchMove}
 				onTouchEnd={handleTouchEnd}
 			>
-				<button className='dislike' onClick={Dislike}>
+				<button className='dislike' onClick={() => swipe("dislike")}>
 					<IoPlaySkipForward style={{ color: 'white', width: '70%', height: '70%' }} />
 				</button>
-				<button className='like' onClick={Like}>
+				<button className='like' onClick={() => swipe("like")}>
 					<FaPlay style={{ color: 'white', width: '55%', height: '55%' }} />
 				</button>
 			</div>
