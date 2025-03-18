@@ -4,7 +4,7 @@ import '../reusables/settings-popup.scss'
 import '../register/loadingAnimation.scss'
 import {FaPlay, FaSpotify} from 'react-icons/fa';
 import {IoPlaySkipForward} from 'react-icons/io5';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useSwipe} from './useSwipe.jsx';
 import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
@@ -14,17 +14,28 @@ import { GiSettingsKnobs } from "react-icons/gi";
 
 function Recommendations() {
 	const matchContainerRef = useRef(null);
-	const [loading, setLoading] = useState(true)
+	const [swipedCount, setSwipedCount] = useState(0);
+	const [loading, setLoading] = useState(true);
 	const [matchIDs, setMatchIDs] = useState(['']);
 	const [matches, setMatches] = useState({});
-	const [currentMatchNum, setCurrentMatchNum] = useState(0)
-	const [currentMatch, setCurrentMatch] = useState({})
+	const [currentMatchNum, setCurrentMatchNum] = useState(0);
+	const [currentMatch, setCurrentMatch] = useState({});
+	const [fetchMoreMatches, setFetchMoreMatches] = useState(false);
 
 	const token = useRef(sessionStorage.getItem("token"));
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	const { handleTouchStart, handleTouchEnd, handleTouchMove } = useSwipe();
+
+	useEffect(() => {
+
+		if (currentMatchNum === 9) {
+			setCurrentMatchNum(0);
+			setFetchMoreMatches(prev => !prev);
+		}
+
+	}, [currentMatch])
 
 	// fetch IDs of matched users
 	useEffect(() => {
@@ -64,7 +75,7 @@ function Recommendations() {
 		}
 
 		return () => controller.abort(); // Cleanup function to abort request
-	}, [])
+	}, [fetchMoreMatches])
 
 	// if match ids are fetched from server then fetch the data for all the ids
 	useEffect(() => {
@@ -121,28 +132,51 @@ function Recommendations() {
 		console.log("Matches: ",  matches);
 	}, [matches]);
 
-	// set current match data and format it
-	useEffect(() => {
+	// //set format data
+	// useEffect(() => {
+	//
+	// 	setCurrentMatch(prevMatch => {
+	// 		if (!prevMatch) return prevMatch; // Ensure state is not undefined
+	//
+	// 		const newMatch = { ...prevMatch }; // Clone the object
+	//
+	// 		for (let key in newMatch) {
+	// 			if (newMatch.hasOwnProperty(key)) {
+	// 				// console.log(key + " => " + newMatch[key]);
+	// 			}
+	//
+	// 			if (key === 'location') {
+	// 				newMatch[key] = formatLocation(newMatch[key]); // Update location
+	// 			} else if (Array.isArray(newMatch[key])) {
+	// 				console.log("formatting data");
+	// 				newMatch[key] = formatData([...newMatch[key]]); // Clone array before modifying
+	// 			}
+	// 		}
+	//
+	// 		return newMatch;
+	// 	});
+	//
+	// }, [currentMatchNum, matches]);
 
-		if (matches[currentMatchNum] !== undefined) {
-			for (let key in matches[currentMatchNum]) {
-				if (matches[currentMatchNum].hasOwnProperty(key)) {
-					// console.log(key + " => " + matches[currentMatchNum][key]);
-				}
-
-				if (key === 'location') {
-					matches[currentMatchNum][key] = formatLocation(matches[currentMatchNum][key])
-				} else if (Array.isArray(matches[currentMatchNum][key])) {
-					// matches[currentMatchNum][key] = matches[currentMatchNum][key].map(formatData)
-					matches[currentMatchNum][key] = formatData(matches[currentMatchNum][key])
-					// matches[currentMatchNum][key] = formatData(matches[currentMatchNum][key])
-				}
-			}
-		}
-
-		setCurrentMatch(matches[currentMatchNum])
-
-	}, [currentMatchNum, matches]);
+	// useEffect(() => {
+	// 	if (matches[currentMatchNum]) {
+	// 		const formattedMatch = { ...matches[currentMatchNum] }; // Clone to avoid mutations
+	//
+	// 		for (let key in formattedMatch) {
+	// 			if (key === 'location') {
+	// 				formattedMatch[key] = formatLocation(formattedMatch[key]);
+	// 			} else if (Array.isArray(formattedMatch[key])) {
+	// 				console.log("formatting data");
+	// 				formattedMatch[key] = formatData([...formattedMatch[key]]);
+	// 			}
+	// 		}
+	//
+	// 		// ✅ Only update if the match has actually changed
+	// 		setCurrentMatch(prevMatch => {
+	// 			return JSON.stringify(prevMatch) === JSON.stringify(formattedMatch) ? prevMatch : formattedMatch;
+	// 		});
+	// 	}
+	// }, [currentMatchNum, matches]); // Ensure the effect runs when matches change
 
 	// just to log data
 	useEffect(() => {
@@ -155,6 +189,8 @@ function Recommendations() {
 		const matchContainer = matchContainerRef.current;
 		if (!matchContainer) return;
 		let swipedRight = true;
+
+		setSwipedCount(prev => prev + 1 )
 
 		if (likeOrDislike === "like") {
 			console.log("Like!");
@@ -220,6 +256,20 @@ function Recommendations() {
 		loadNextMatch();
 	}, []);
 
+	const formatMatchData = (matchData) => {
+		const newMatch = { ...matchData };  // Clone to avoid mutations
+
+		for (let key in newMatch) {
+			if (key === 'location') {
+				newMatch[key] = formatLocation(newMatch[key]);
+			} else if (Array.isArray(newMatch[key])) {
+				newMatch[key] = formatData([...newMatch[key]]);
+			}
+		}
+
+		return newMatch;
+	};
+
 	// load next match data
 	const loadNextMatch = useCallback(() => {
 		console.log("Loading next match...");
@@ -228,6 +278,13 @@ function Recommendations() {
 		setCurrentMatchNum(prevState => prevState + 1)
 
 	}, []);
+
+	// set current match data
+	useEffect(() => {
+		const formattedMatch = formatMatchData(matches[currentMatchNum]);
+
+		setCurrentMatch(formattedMatch);
+	}, [currentMatchNum, matches]);
 
 	// // todo doesnt work because it needs matchContainer to be available but it's available only when currentMatch is available but using currentMatch as dependency causes the evenlistener to be added and removed on every like/dislike click
 	// //handle event listener every time user clicks on like or dislike
@@ -475,12 +532,17 @@ function Recommendations() {
 					<FaPlay style={{ color: 'white', width: '55%', height: '55%' }} />
 				</button>
 			</div>
+
+				<div className='user-stats-container'>
+					<div className='user-stats'>{swipedCount} {swipedCount === 1 ? "swipe" : "swipes"}</div>
+				</div>
 			</>
 		) : (
 			<div className='no-matches'>
 				<p>No more matches available.</p>
 			</div>
 		)}
+
 		</div>
 		</>
 	);

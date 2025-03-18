@@ -7,6 +7,13 @@
   @include variables.centered-column;
   justify-content: flex-start;
 
+  .user-stats-container {
+    text-align: center;
+    color: black;
+    margin-top: auto;
+    height: 1.75rem;
+  }
+
 //  .match-profile-container {
 //    @include variables.whole-page;
 //    @include variables.centered-column;
