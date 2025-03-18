@@ -116,11 +116,6 @@ function Recommendations() {
 
 	}, [matchIDs])
 
-	// // set current match data and format it initally when matches are fet
-	// useEffect(() => {
-	// 	setCurrentMatch(matches[currentMatchNum])
-	// }, [matches])
-
 	// just to log data
 	useEffect(() => {
 		console.log("Matches: ",  matches);
@@ -130,7 +125,6 @@ function Recommendations() {
 	useEffect(() => {
 
 		if (matches[currentMatchNum] !== undefined) {
-			console.log("not undefined");
 			for (let key in matches[currentMatchNum]) {
 				if (matches[currentMatchNum].hasOwnProperty(key)) {
 					// console.log(key + " => " + matches[currentMatchNum][key]);
@@ -156,100 +150,11 @@ function Recommendations() {
 	}, [currentMatch]);
 
 
-	// // todo check if useCallback should be used
-	// const getMatchData = useCallback((matchIDs) => {
-	//
-	// })
-
-	// // logic when user presses "Like"
-	// const Like = useCallback(() => {
-	// 	const matchContainer = matchContainerRef.current;
-	// 	if (!matchContainer) return;
-	//
-	// 	console.log("Like!");
-	// 	matchContainer.classList.add("like-animation");
-	//
-	// 	console.log("current match id: " + currentMatch.id);
-	//
-	// 	// send data to backend
-	// 	const likeUser = async () => {
-	// 		try {
-	// 			const response = await axios.post(
-	// 				// todo use new /swiped API
-	// 				`${VITE_BACKEND_URL}/api/swiped`,
-	// 				null,
-	// 				{
-	// 					params: {
-	// 						matchId : currentMatch.id,
-	// 						swipedRight: true},
-	// 					headers: {
-	// 						"Authorization": `Bearer ${token.current}`,
-	// 						"Content-Type": "application/json"
-	// 					},
-	// 				}
-	// 			);
-	// 			console.log("Like successful: " + response.data)
-	// 		} catch (error) {
-	// 			if (error.response) {
-	// 				console.error("Backend error:", error.response.data); // Server responded with an error
-	// 			} else {
-	// 				console.error("Request failed:", error.message); // Network error or request issue
-	// 			}
-	// 		}
-	// 	};
-	//
-	// 	likeUser();
-	//
-	// 	setTimeout(() => {
-	// 		resetPosition({ target: matchContainer });
-	// 	}, 600); // Match the CSS transition duration
-	// }, [currentMatch]);
-
-	// logic when user presses "Dislike"
-	// const Dislike = useCallback(() => {
-	// 	const matchContainer = matchContainerRef.current;
-	// 	if (!matchContainer) return;
-	//
-	// 	console.log("Dislike!");
-	// 	matchContainer.classList.add("dislike-animation");
-	//
-	// 	// send data to backend
-	// 	const disLikedUser = async () => {
-	// 		try {
-	// 			const response = await axios.post(
-	// 				// todo use new /swiped API
-	// 				`${VITE_BACKEND_URL}/api/swiped`,
-	// 				null,
-	// 				{
-	// 					params: {
-	// 						matchId : currentMatch.id,
-	// 						swipedRight: false},
-	// 					headers: {
-	// 						"Authorization": `Bearer ${token.current}`,
-	// 						"Content-Type": "application/json"
-	// 					},
-	// 				}
-	// 			);
-	// 			console.log("Dislike successful: " + response.data)
-	// 		} catch (error) {
-	// 			if (error.response) {
-	// 				console.error("Backend error:", error.response.data); // Server responded with an error
-	// 			} else {
-	// 				console.error("Request failed:", error.message); // Network error or request issue
-	// 			}
-	// 		}
-	// 	};
-	//
-	// 	setTimeout(() => {
-	// 		resetPosition({ target: matchContainer });
-	// 	}, 600); // Match the CSS transition duration
-	// }, []);
-
 	// logic when user swipes left or right (likes or dislikes)
-	const swipe = useCallback((likeOrDislike) => {
+	const swipe = (likeOrDislike) => {
 		const matchContainer = matchContainerRef.current;
-		let swipedRight = true;
 		if (!matchContainer) return;
+		let swipedRight = true;
 
 		if (likeOrDislike === "like") {
 			console.log("Like!");
@@ -262,11 +167,12 @@ function Recommendations() {
 			matchContainer.classList.add("dislike-animation");
 		}
 
+		console.log("current match id: ", currentMatch.id);
+
 		// send data to backend
 		const swipedUser = () => {
 			try {
-				const response = axios.post(
-					// todo use new /swiped API
+				axios.post(
 					`${VITE_BACKEND_URL}/api/swiped`,
 					null,
 					{
@@ -293,7 +199,7 @@ function Recommendations() {
 		setTimeout(() => {
 			resetPosition({ target: matchContainer });
 		}, 600); // Match the CSS transition duration
-	}, []);
+	};
 
 	// logic to reset the position of matchContainer after like and dislike animation
 	const resetPosition = useCallback((event) => {
@@ -304,12 +210,6 @@ function Recommendations() {
 
 		matchContainer.classList.remove("like-animation");
 		matchContainer.classList.remove("dislike-animation");
-		// setTimeout(() => {
-		// 	matchContainer.classList.remove("like-animation");
-		// 	matchContainer.classList.remove("dislike-animation");
-		// }, 110); // Short delay ensures transition completes
-		// matchContainer.style.transition = "none"; // Disable transition temporarily
-		// matchContainer.style.transform = "translateX(0)"; // Reset position
 
 		// Force reflow to apply the changes instantly
 		void matchContainer.offsetWidth;
@@ -324,44 +224,19 @@ function Recommendations() {
 	const loadNextMatch = useCallback(() => {
 		console.log("Loading next match...");
 
-		// todo get the next match data from the database
-
-		// setResetKey(prevKey => prevKey + 1); // Force component to update
 		// Logic to update match profile with new data
 		setCurrentMatchNum(prevState => prevState + 1)
 
-
-		// const likedUsers = async () => {
-		// 	try {
-		// 		const response = await axios.get(
-		// 			`${VITE_BACKEND_URL}/api/likedUsers`,
-		// 			// {matchId: currentMatch.id},
-		// 			{
-		// 				headers: { "Authorization": `Bearer ${token.current}`,
-		// 					"Content-Type": "application/json"
-		// 				},
-		// 			}
-		// 		);
-		// 		console.log("Liked users: " + response.data.length)
-		// 	} catch (error) {
-		// 		if (error.response) {
-		// 			console.error("Backend error:", error.response.data); // Server responded with an error
-		// 		} else {
-		// 			console.error("Request failed:", error.message); // Network error or request issue
-		// 		}
-		// 		// todo display error to user
-		// 	}
-		// };
-		//
-		// likedUsers();
-
 	}, []);
 
-	// todo doesnt work
-	// handle event listener every time user clicks on like or dislike
+	// // todo doesnt work because it needs matchContainer to be available but it's available only when currentMatch is available but using currentMatch as dependency causes the evenlistener to be added and removed on every like/dislike click
+	// //handle event listener every time user clicks on like or dislike
 	// useEffect(() => {
 	// 	const matchContainer = matchContainerRef.current;
-	// 	if (!matchContainer) return;
+	// 	if (!matchContainer) {
+	// 		console.log("match container not found");
+	// 		return;
+	// 	}
 	//
 	// 	console.log("Adding event listener on transitionend");
 	// 	// Add event listener once
@@ -372,15 +247,7 @@ function Recommendations() {
 	// 		console.log("Removing event listener on transitionend");
 	// 		matchContainer.removeEventListener("transitionend", resetPosition);
 	// 	};
-	// }, []);
-
-	// // handle getting next match data from the database and then handle the event listener so the component is updated
-	// useEffect(() => {
-	// 	async function updateMatch() {
-	//
-	// 	}
-	// }, [resetKey])
-
+	// }, [matches]);
 
 
 	return (
@@ -588,10 +455,6 @@ function Recommendations() {
 				</div>
 				<div className='description-container'>
 					{currentMatch.description}
-					{/*Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, alias, aliquam animi aperiam aspernatur*/}
-					{/*assumenda consequatur, cupiditate deleniti dolorem doloribus ducimus eligendi et excepturi expedita*/}
-					{/*inventore labore laborum modi mollitia nihil odio porro qui quibusdam repellendus tempora tenetur*/}
-					{/*ullam unde voluptas. Amet, fuga velit? Dolor impedit natus nostrum repudiandae suscipit.*/}
 				</div>
 				<div className='name-container'>
 					<span className='name'>{currentMatch.username}</span>
