@@ -86,7 +86,13 @@ function NavigatorUser() {
 						"Content-Type": "application/json"},
 				});
 
-			setPendingReqNum(response.data.length)
+			// don't display 0
+			if (response.data.length > 0) {
+				setPendingReqNum(response.data.length)
+			} else {
+				setPendingReqNum("")
+			}
+
 		} catch (error) {
 			if (axios.isCancel(error)) {
 				console.log("Fetch aborted");
