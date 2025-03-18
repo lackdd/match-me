@@ -2,8 +2,10 @@
 
 .recommendations-container {
   position: relative;
-  min-height: 70vh;
+  //min-height: 70vh;
+  height: calc(100vh - 64px);
   @include variables.centered-column;
+  justify-content: flex-start;
 
 //  .match-profile-container {
 //    @include variables.whole-page;

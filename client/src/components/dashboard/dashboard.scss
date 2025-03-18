@@ -4,7 +4,7 @@
   @include variables.whole-page;
   @include variables.centered-column;
   position: relative;
-
+  height: calc(100vh - 64px);
 
   .extra-dashboard-container {
     @include variables.centered-column;
@@ -20,7 +20,7 @@
 
   .profile-card-container {
     padding-bottom: 1rem !important;
-    margin-top: 2rem !important;
+    margin-top: 1rem !important;
   }
 }
 
