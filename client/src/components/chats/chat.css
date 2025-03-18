@@ -33,12 +33,12 @@
     transition: background 0.3s ease-in-out;
 }
 
-.chat {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-y: auto;
-}
+/*.chat {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    flex-grow: 1;*/
+/*    overflow-y: auto;*/
+/*}*/
 
 .message-box {
     background: pink;
