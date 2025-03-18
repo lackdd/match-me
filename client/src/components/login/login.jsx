@@ -59,11 +59,11 @@ function Login() {
 				return;
 			}
 
-			const response = await axios.post(`${VITE_BACKEND_URL}/api/login`, {email, password});
+			const response = await axios.post(`${VITE_BACKEND_URL}/api/auth/login`, {email, password});
 			setError("");
-			const token = response.data;
+			const token = response.data.token;
 			await login(token);
-			console.log("Login successful: ", response.data);
+			console.log("Login successful: ", token);
 			// Navigate to dashboard or other protected route
 			history('/dashboard')
 		} catch (error) {

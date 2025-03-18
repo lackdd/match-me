@@ -26,6 +26,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     ApplicationContext context;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -35,10 +38,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // Skip JWT validation for registration and public routes
-        if (requestURI.equals("/api/register") || requestURI.equals("/api/login") || requestURI.startsWith("/ws") || requestURI.startsWith("/api/check-email") || requestURI.startsWith("/api/hello-backend") || requestURI.startsWith("/api/addLikedUser") ) {
+        /*if (requestURI.equals("/api/register") || requestURI.equals("/api/auth/login") || requestURI.startsWith("/ws") || requestURI.startsWith("/api/check-email") || requestURI.startsWith("/api/hello-backend") || requestURI.startsWith("/api/addLikedUser") ) {
             filterChain.doFilter(request, response);
             return;
-        }
+        }*/
 
 
         String authHeader = request.getHeader("Authorization");
@@ -51,14 +54,14 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if (token == null || email == null) {
-            System.out.println("Invalid or missing token");
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
-            response.getWriter().write("Token not found or invalid");
+            /*System.out.println("Invalid or missing token");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not found or invalid");*/
+            filterChain.doFilter(request, response);
             return;
         }
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = context.getBean(UserDetailsService.class).loadUserByUsername(email);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
             if (jwtService.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

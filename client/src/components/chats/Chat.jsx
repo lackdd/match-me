@@ -32,7 +32,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
 
         const fetchChatHistory = async () => {
             try {
-                const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/history/${userId}/${receiverUserId}`, {
+                const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}`, {
                     headers: {Authorization: `Bearer ${tokenValue}`},
                 });
                 console.log("Fetched chat history:", response.data);

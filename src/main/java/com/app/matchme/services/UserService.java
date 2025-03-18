@@ -100,8 +100,10 @@ public class UserService {
     }
 
     public void addToSwipedUsers(Long matchId, User currentUser) {
-        currentUser.getSwipedUsers().add(matchId);
-        repo.save(currentUser);
+        if (!currentUser.getPendingRequests().contains(matchId)) {
+            currentUser.getPendingRequests().add(matchId);
+            repo.save(currentUser);
+        }
     }
 
     public List<Long> findMatches(Long id) {
@@ -118,11 +120,8 @@ public class UserService {
                 .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
 
-        Set<Map.Entry<User, Integer>> allRecommendations = userPointsMap.entrySet().stream()
+        return userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        return allRecommendations.stream()
                 .limit(10)
                 .peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))
                 .map(entry -> entry.getKey().getId())
@@ -222,7 +221,7 @@ public class UserService {
         }
     }
 
-    public String verify(User user) {
+    /*public String verify(User user) {
         Authentication authentication =
                 authManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
@@ -233,5 +232,5 @@ public class UserService {
         }
 
         return "fail";
-    }
+    }*/
 }

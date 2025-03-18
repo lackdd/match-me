@@ -56,36 +56,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(
-                                "/api/",
+                                "/api/auth/login",
                                 "/api/register",
-                                "/api/users/*",
-                                "/api/users/*/profile",
-                                "/api/users/*/bio",
-                                "/api/login",
-                                "/api/features",
-                                "/api/me",
-                                "/api/me/profile",
-                                "/api/recommendations",
-                                "/api/connections",
-                                "/api/addConnection",
-                                "/api/me/bio",
-                                "/api/about",
-                                "/api/support",
                                 "/api/check-email",
-                                "/api/error",
-                                "/api/forgot-password",
-                                "/api/getUsersByIds",
-                                "/api/hello-backend",
-                                "/api/deleteConnection",
-                                "/api/deletePendingRequest",
-                                "/api/swiped",
-                                "/api/chat//history/**",
-                                "/api/likedUsers",
-                                "/api/validateToken")
+                                "/api/validateToken",
+                                "/api/hello-backend"
+                        )
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -1,6 +1,7 @@
 package com.app.matchme.services;
 
 import com.app.matchme.entities.User;
+import com.app.matchme.entities.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -34,18 +35,19 @@ public class JWTService {
         }
     }
 
-    public String generateToken(User user) {
+    public String generateToken(UserDetails userDetails) {
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
+
+        if (userDetails instanceof UserPrincipal userPrincipal) {
+            claims.put("id", userPrincipal.getUser().getId());
+        }
 
         return Jwts.builder()
-                .claims()
-                .add(claims)
-                .subject(user.getEmail())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() * 60 * 60 * 30))
-                .and()
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getKey())
                 .compact();
 
@@ -81,6 +83,15 @@ public class JWTService {
         return claimResolver.apply(claims);
     }
 
+    /*private Claims extractAllClaims(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())  // ✅ Correct method
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }*/
+
+
     private Claims extractAllClaims(String token){
         return Jwts.parser()
                 .verifyWith(getKey())
@@ -90,8 +101,13 @@ public class JWTService {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        try {
+            final String userName = extractUserName(token);
+            return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (Exception e) {
+            System.out.println("JWT validation failed: " + e.getMessage());
+            return false;
+        }
     }
 
     private boolean isTokenExpired(String token) {

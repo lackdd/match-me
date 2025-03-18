@@ -1,15 +1,14 @@
 package com.app.matchme.controllers;
 
-import com.app.matchme.entities.BioDTO;
-import com.app.matchme.entities.ProfileDTO;
-import com.app.matchme.entities.UsernamePictureDTO;
-import com.app.matchme.entities.User;
+import com.app.matchme.entities.*;
 import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.services.JWTService;
 import com.app.matchme.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,6 +22,12 @@ import java.util.stream.Collectors;
 
 public class UserController {
 
+    private final UserRepository userRepository;
+
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @Autowired
     private UserService service;
 
@@ -35,87 +40,74 @@ public class UserController {
     }
 
     @GetMapping("/likedUsers")
-    public ResponseEntity<?> getLikedUsersById(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, fetching liked user id's");
-            Long id = service.extractUserId(token);
-            List<Long> likedUsers = service.getLikedUsersById(id);
-            return ResponseEntity.ok(likedUsers);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<?> getLikedUsersById(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
         }
+        Long id = userPrincipal.getId();
+        /*service.extractUserId(token);*/
+        List<Long> likedUsers = service.getLikedUsersById(id);
+        return ResponseEntity.ok(likedUsers);
     }
 
     @GetMapping("/pendingRequests")
-    public ResponseEntity<?> getPendingRequests(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, fetching pending requests");
-            Long id = service.extractUserId(token);
-            List<Long> pendingRequests = service.getPendingRequestsById(id);
-            return ResponseEntity.ok(pendingRequests);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<?> getPendingRequests(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
+        Long id = userPrincipal.getId();
+        List<Long> pendingRequests = service.getPendingRequestsById(id);
+        return ResponseEntity.ok(pendingRequests);
     }
 
     @PostMapping("/swiped")
-    public ResponseEntity<?> swiped(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam("matchId") Long matchId, @RequestParam("swipedRight") boolean swipedRight) {
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, adding user id to liked users list");
-            Long id = service.extractUserId(token);
-            User currentUser = service.getUserById(id);
-            User likedUser = service.getUserById(matchId);
-            if(swipedRight) {
-                try {
-                    service.addLikedUserById(matchId, currentUser);
-                    service.addPendingRequestById(id, likedUser);
-                    service.addToSwipedUsers(matchId, currentUser);
-                    Map<String, String> response = new HashMap<>();
-                    response.put("message", "User id added to liked user list");
-                    return ResponseEntity.ok(response);
-                } catch (ResponseStatusException e){
-                    return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
-                }
-            } else {
-                try {
-                    service.addToSwipedUsers(matchId, currentUser);
-                    return ResponseEntity.ok(Map.of("message", "User swiped to left"));
-                } catch (ResponseStatusException e) {
-                    return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
-                }
+    public ResponseEntity<?> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("matchId") Long matchId, @RequestParam("swipedRight") boolean swipedRight) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+        Long id = userPrincipal.getId();
+        User currentUser = service.getUserById(id);
+        User likedUser = service.getUserById(matchId);
+        if (swipedRight) {
+            try {
+                service.addLikedUserById(matchId, currentUser);
+                service.addPendingRequestById(id, likedUser);
+                service.addToSwipedUsers(matchId, currentUser);
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "User id added to liked user list");
+                return ResponseEntity.ok(response);
+            } catch (ResponseStatusException e) {
+                return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
             }
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            try {
+                service.addToSwipedUsers(matchId, currentUser);
+                return ResponseEntity.ok(Map.of("message", "User swiped to left"));
+            } catch (ResponseStatusException e) {
+                return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
+            }
         }
     }
 
     @PostMapping("/addConnection")
-    public ResponseEntity<?> addConnection (@RequestHeader (value = "Authorization", required = false) String authHeader, @RequestParam("matchId") Long matchId) {
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, adding connection to user");
-            Long id = service.extractUserId(token);
-            User currentUser = service.getUserById(id);
-            service.addConnectionById(matchId, currentUser);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Connection added");
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<?> addConnection(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("matchId") Long matchId) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
+        Long id = userPrincipal.getId();
+        User currentUser = service.getUserById(id);
+        service.addConnectionById(matchId, currentUser);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Connection added");
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/deleteConnection")
-    public ResponseEntity<?> deleteConnection (@RequestHeader (value = "Authorization", required = false) String authHeader, @RequestParam("connectionId") Long connectionId) {
-        String token = authHeader.substring(7);
-        Long currentUserId = jwtService.extractUserId(token);
+    public ResponseEntity<?> deleteConnection (@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("connectionId") Long connectionId) {
+        if(userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+        Long currentUserId = userPrincipal.getId();
         User currentUser = service.getUserById(currentUserId);
         try {
             service.deleteConnectionById(connectionId, currentUser);
@@ -126,9 +118,11 @@ public class UserController {
     }
 
     @DeleteMapping("/deletePendingRequest")
-    public ResponseEntity<?> deletePendingRequest(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestParam("pendingRequestId") Long pendingRequestId) {
-        String token = authHeader.substring(7);
-        Long currentUserId = jwtService.extractUserId(token);
+    public ResponseEntity<?> deletePendingRequest(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("pendingRequestId") Long pendingRequestId) {
+        if(userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+        Long currentUserId = userPrincipal.getId();
         User currentUser = service.getUserById(currentUserId);
         try {
             service.deletePendingRequestById(pendingRequestId, currentUser);
@@ -143,12 +137,6 @@ public class UserController {
         String email = request.get("email");
         boolean exists = service.checkEmail(email);
         return Collections.singletonMap("exists", exists);
-    }
-
-
-    @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        return service.verify(user);
     }
 
     @PostMapping("/validateToken")
@@ -167,109 +155,69 @@ public class UserController {
     }
 
     @GetMapping("/connections")
-    public ResponseEntity<?> getConnections(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, fetching /connections data");
-            Long id = service.extractUserId(token);
-            List<Long> connections = service.getUserConnectionsById(id);
-
-            if (connections.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(connections);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<?> getConnections(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
         }
+        Long id = userPrincipal.getId();
+        List<Long> connections = service.getUserConnectionsById(id);
+
+        if (connections.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(connections);
     }
 
     @GetMapping("/recommendations")
-    public ResponseEntity<?> getRecommendations(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, fetching /recommendations data");
-            Long id = service.extractUserId(token);
+    public ResponseEntity<?> getRecommendations(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+        }
+            Long id = userPrincipal.getId();
             List<Long> recommendedUserIds = service.findMatches(id);
-
             if (recommendedUserIds.isEmpty()) {
                 System.out.println("Recommendations empty");
                 return ResponseEntity.noContent().build();
             }
             return ResponseEntity.ok(recommendedUserIds);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> validateUser(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid token: Missing or incorrect format");
+    public ResponseEntity<?> validateUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
         }
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, fetching /me data");
-            // extract user details from token and send them to frontend
-            Long id = service.extractUserId(token);
-            Optional <UsernamePictureDTO> userOptional = service.getUserNameAndPictureById(id);
-
-            return userOptional
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        Long id = userPrincipal.getId();
+        Optional<UsernamePictureDTO> userOptional = service.getUserNameAndPictureById(id);
+        return userOptional
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/me/profile")
-    public ResponseEntity<?> validateUserProfile(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+    public ResponseEntity<?> validateUserProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
         }
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, fetching /me/profile data");
-            // extract user details from token and send them to frontend
-            Long id = service.extractUserId(token);
-            Optional <ProfileDTO> userOptional = service.getUserProfileById(id);
+        Long id = userPrincipal.getId();
+        Optional<ProfileDTO> userOptional = service.getUserProfileById(id);
 
-            return userOptional
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+        return userOptional
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/me/bio")
-    public ResponseEntity<?> validateUserBio(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token: Missing or incorrect format");
+    public ResponseEntity<?> validateUserBio(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
         }
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid, fetching /me(bio data");
-            // extract user details from token and send them to frontend
-            Long id = service.extractUserId(token);
-            Optional <BioDTO> userOptional = service.getUserBioById(id);
+        Long id = userPrincipal.getId();
+        Optional<BioDTO> userOptional = service.getUserBioById(id);
 
-            return userOptional
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-    }
-
-    private final UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        return userOptional
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/hello-backend")
@@ -296,19 +244,13 @@ public class UserController {
     }
 
     @PostMapping("/getUsersByIds")
-    public ResponseEntity<List<UsernamePictureDTO>> getUsersByIds(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestBody List<Long> ids) {
-        String token = authHeader.substring(7);
-        boolean isValid = service.validate(token);
-        if (isValid) {
-            List<UsernamePictureDTO> users = ids.stream()
-                    .map(id -> service.getUserNameAndPictureById(id))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(users);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<List<UsernamePictureDTO>> getUsersByIds(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody List<Long> ids) {
+        List<UsernamePictureDTO> users = ids.stream()
+                .map(id -> service.getUserNameAndPictureById(id))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/users/{id}/profile")

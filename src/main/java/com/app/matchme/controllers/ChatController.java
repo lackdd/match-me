@@ -3,17 +3,21 @@ package com.app.matchme.controllers;
 import com.app.matchme.entities.ChatMessage;
 import com.app.matchme.entities.ChatMessageDTO;
 import com.app.matchme.entities.User;
+import com.app.matchme.entities.UserPrincipal;
 import com.app.matchme.mappers.ChatMessageMapper;
 import com.app.matchme.repositories.ChatMessageRepository;
 import com.app.matchme.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,9 +35,13 @@ public class ChatController {
     @Autowired
     private ChatMessageRepository repo;
 
-    @GetMapping("/history/{userId1}/{userId2}")
-    public List<ChatMessageDTO> getChatHistory(@RequestHeader(value = "Authorization", required = false) String authHeader, @PathVariable Long userId1, @PathVariable Long userId2) {
-        List<ChatMessage> messages = repo.findBySenderAndReceiverOrReceiverAndSender(userId1, userId2);
+    @GetMapping("/history/{userId}")
+    public List<ChatMessageDTO> getChatHistory(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long userId) {
+        if (userPrincipal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+        }
+        Long currentUserId = userPrincipal.getId();
+        List<ChatMessage> messages = repo.findBySenderAndReceiverOrReceiverAndSender(currentUserId, userId);
 
         return messages.stream()
                 .map(ChatMessageMapper::toDTO)
@@ -42,8 +50,12 @@ public class ChatController {
 
     // instead of sendTo use simpMessagingTemplate to deliver message to specific user
     @MessageMapping("/private-message")
-    public void sendPrivateMessage(@Payload ChatMessageDTO messageDTO) {
-        User sender = userService.getUserById(messageDTO.getSenderId());
+    public void sendPrivateMessage(@AuthenticationPrincipal UserPrincipal userPrincipal, @Payload ChatMessageDTO messageDTO) {
+        if (userPrincipal == null) {
+            System.out.println("Message blocked: User not authenticated.");
+            return;
+        }
+        User sender = userPrincipal.getUser();
         User receiver = userService.getUserById(messageDTO.getReceiverId());
         String senderUsername = sender.getUsername();
         String receiverUsername = receiver.getUsername();
