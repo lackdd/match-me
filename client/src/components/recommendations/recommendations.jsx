@@ -15,14 +15,12 @@ import { GiSettingsKnobs } from "react-icons/gi";
 function Recommendations() {
 	const matchContainerRef = useRef(null);
 	const [loading, setLoading] = useState(true)
-	const [resetKey, setResetKey] = useState(0); // Forces re-render when match changes
 	const [matchIDs, setMatchIDs] = useState(['']);
 	const [matches, setMatches] = useState({});
 	const [currentMatchNum, setCurrentMatchNum] = useState(0)
 	const [currentMatch, setCurrentMatch] = useState({})
 
 	const token = useRef(sessionStorage.getItem("token"));
-	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -44,6 +42,9 @@ function Recommendations() {
 					// todo fetch matchIDs when creating an account (and additionally in the background when logging in) so fetching here can be skipped if matches are already available
 					// todo add matchIDs to database and check if available before fetching
 					setMatchIDs(response.data);
+					if (response.data.length === 0) {
+						setLoading(false);
+					}
 				} catch (error) {
 					if (axios.isCancel(error)) {
 						console.log("Fetch aborted");
@@ -67,7 +68,6 @@ function Recommendations() {
 
 	// if match ids are fetched from server then fetch the data for all the ids
 	useEffect(() => {
-		console.log(matchIDs);
 
 		if (matchIDs.length > 1) {
 			const getMatchData = async() => {
@@ -108,8 +108,8 @@ function Recommendations() {
 			}
 			getMatchData()
 		} else {
+			// setLoading(false); // disable loading state
 			console.log("No match IDs to fetch data for");
-			// todo display error to user
 			// setLoading(false);
 		}
 
@@ -128,8 +128,6 @@ function Recommendations() {
 
 	// set current match data and format it
 	useEffect(() => {
-
-		console.log(matches[currentMatchNum]);
 
 		if (matches[currentMatchNum] !== undefined) {
 			console.log("not undefined");
@@ -177,6 +175,7 @@ function Recommendations() {
 		const likeUser = async () => {
 			try {
 				const response = await axios.post(
+					// todo use new /swiped API
 					`${VITE_BACKEND_URL}/api/addLikedUser?matchId=${Number(currentMatch.id)}`,
 					null,
 					// {matchId: currentMatch.id},
@@ -523,7 +522,7 @@ function Recommendations() {
 				</div>
 			</div>
 			<div
-				className='buttons-container'
+				className='match-buttons-container'
 				onTouchStart={handleTouchStart}
 				onTouchMove={handleTouchMove}
 				onTouchEnd={handleTouchEnd}
