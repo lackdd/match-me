@@ -23,19 +23,19 @@
     position: relative;
 
     // Hover and active states for like/dislike buttons
-    &:has(+ .buttons-container .like:hover) {
+    &:has(+ .match-buttons-container .like:hover) {
       border-color: variables.$button-green;
     }
 
-    &:has(+ .buttons-container .dislike:hover) {
+    &:has(+ .match-buttons-container .dislike:hover) {
       border-color: variables.$button-red;
     }
 
-    &:has(+ .buttons-container .like:active) {
+    &:has(+ .match-buttons-container .like:active) {
       // Add effects for like active state
     }
 
-    &:has(+ .buttons-container .dislike:active) {
+    &:has(+ .match-buttons-container .dislike:active) {
       // Add effects for dislike active state
     }
 
@@ -284,7 +284,7 @@
     }
   }
 
-  .buttons-container {
+  .match-buttons-container {
     width: 18rem;
     height: 4rem;
     border: 1px solid black;
@@ -293,7 +293,7 @@
     box-shadow: variables.$default-button-shadow;
     padding: 0 0.75rem;
     position: absolute;
-    bottom: -2rem;
+    bottom: 4.25rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -303,7 +303,7 @@
     transition: all 0.1s ease-in-out;
 
     @media (max-width: 768px) {
-      bottom: -1.5rem;
+      bottom: 1.5rem;
     }
 
     .like, .dislike {
@@ -374,10 +374,12 @@
   }
 
   .no-matches {
-    justify-self: center;
-    width: fit-content;
     height: 100%;
+    width: fit-content;
+    display: flex;
+    place-items: center;
     text-align: center;
+    font-size: 1.3rem;
   }
 
   // Endless spinner animation
@@ -407,7 +409,7 @@
 
     .profile-card-container {
       height: 80vh;
-      margin-top: 1.25rem;
+      margin-top: 2.5rem;
       padding-top: 1rem;
       padding-bottom: 2.25rem;
       justify-content: flex-start;
@@ -459,8 +461,8 @@
     }
     }
 
-    .buttons-container {
-      bottom: -2rem;
+    .match-buttons-container {
+      bottom: 2rem;
     }
 
     //.picture-container .extra-picture-container {
