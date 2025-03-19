@@ -161,7 +161,7 @@ function Connections() {
 
 				{connections === currentConnections && (
 					<div className='connections-buttons-container'>
-						<button className='chat'><BsChat /></button>
+						{/*<button className='chat'><BsChat /></button>*/}
 						<button className='delete' onClick={() => {
 							deleteConnection(connection.id, connection.username);
 							// await getConnectionIds();
