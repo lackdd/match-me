@@ -26,7 +26,7 @@ export function useSwipe() {
 		if (touchStartX.current === null || touchEndX.current === null) return;
 
 		const swipeDistance = touchStartX.current - touchEndX.current;
-		const minSwipeDistance = 200; // Minimum distance to be considered a swipe
+		const minSwipeDistance = 220; // Minimum distance to be considered a swipe
 
 		if (swipeDistance > minSwipeDistance) {
 			// right to left swipe
