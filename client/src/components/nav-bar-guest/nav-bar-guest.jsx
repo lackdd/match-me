@@ -15,22 +15,22 @@ function NavigatorGuest() {
 		<>
 			<nav className='nav-container-guest default'>
 				<div className='logo-container'>
-					<NavLink to='/'>
+					<NavLink to='/' tabIndex={-1}>
 						<img src='logo_black.png' alt='Jammer' className='nav-bar-logo'/>
 					</NavLink>
 				</div>
 				<div className='links-container'>
-					<NavLink to='/features' className={({ isActive }) =>
+					<NavLink to='/features' tabIndex={-1} className={({ isActive }) =>
 						`features ${isActive ? 'current' : ''}`
 					}>
 						FEATURES
 					</NavLink>
-					<NavLink to='/about' className={({ isActive }) =>
+					<NavLink to='/about' tabIndex={-1} className={({ isActive }) =>
 						`about ${isActive ? 'current' : ''}`
 					}>
 						ABOUT
 					</NavLink>
-					<NavLink to='/support' className={({ isActive }) =>
+					<NavLink to='/support' tabIndex={-1} className={({ isActive }) =>
 						`support ${isActive ? 'current' : ''}`
 					}>
 						SUPPORT
@@ -38,13 +38,13 @@ function NavigatorGuest() {
 				</div>
 				<div className='nav-buttons-container'>
 					{/* again a tag to force rerender of nav bar*/}
-					<NavLink to='/register'>
-						<button className='button signup' title='Get started'>
+					<NavLink to='/register' tabIndex={-1}>
+						<button className='button signup' title='Get started' tabIndex={-1}>
 							Get started
 						</button>
 					</NavLink>
-					<NavLink to='/login'>
-						<button className='button login' title='Log in'>
+					<NavLink to='/login' tabIndex={-1}>
+						<button className='button login' title='Log in' tabIndex={-1}>
 							Log in
 						</button>
 					</NavLink>

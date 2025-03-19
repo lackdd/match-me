@@ -114,7 +114,7 @@ function NavigatorUser() {
 		<>
 			<nav className='nav-container-user default'>
 				<div className='profile-container'>
-					<NavLink to='/dashboard' className={({ isActive }) =>
+					<NavLink to='/dashboard' tabIndex={-1} className={({ isActive }) =>
 						`profile-link ${isActive ? 'current' : ''}`
 					}>
 						{/*<img src={profilePicture} alt='Profile' className='profile-picture'/>*/}
@@ -127,24 +127,24 @@ function NavigatorUser() {
 					</NavLink>
 				</div>
 				<div className='links-container'>
-					<NavLink to='/connections' data-type-reqnum={pendingReqNum} className={({ isActive }) =>
+					<NavLink to='/connections' tabIndex={-1} data-type-reqnum={pendingReqNum} className={({ isActive }) =>
 						`connections ${isActive ? 'current' : ''}`
 					}>
 						CONNECTIONS
 					</NavLink>
-					<NavLink to='/chats' className={({ isActive }) =>
+					<NavLink to='/chats' tabIndex={-1} className={({ isActive }) =>
 						`chats ${isActive ? 'current' : ''}`
 					}>
 						CHATS
 					</NavLink>
-					<NavLink to='/recommendations' className={({ isActive }) =>
+					<NavLink to='/recommendations' tabIndex={-1} className={({ isActive }) =>
 						`recommendations ${isActive ? 'current' : ''}`
 					}>
 						RECOMMENDATIONS
 					</NavLink>
 				</div>
 				<div className='nav-buttons-container'>
-					<button className='button logout' title='Log out' onClick={handleLogout}>
+					<button className='button logout' title='Log out' tabIndex={-1} onClick={handleLogout}>
 						Log out
 					</button>
 				</div>
