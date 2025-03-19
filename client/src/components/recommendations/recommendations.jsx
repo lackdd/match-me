@@ -604,7 +604,7 @@ function Recommendations() {
 								width: swipeProgress === 0
 									? "3rem"// Expands only when swipeProgress > 1
 									: `calc(4rem + ${(swipeProgress * 100)}px)` , // Default width
-								transition: swipeProgress > 0 ? "width 0.1s ease-out" : "width 0.2s ease-in",
+								transition: swipeProgress > 0 ? "all 0.1s ease-out" : "all 0.2s ease-in",
 								height: swipeProgress === 0 ? "3rem" : "calc(4rem - 2px)",
 							}}
 					>
@@ -623,7 +623,7 @@ function Recommendations() {
 							}}
 							style={{
 								// width: `calc(4rem + ${swipeProgress * 100}px)`, // Expands with swipe
-								transition: swipeProgress > 0 ? 'width 0.1s ease-out' : 'width 0.2s ease-in',
+								transition: swipeProgress > 0 ? 'all 0.1s ease-out' : 'all 0.2s ease-in',
 								width: swipeProgress === 0
 									? "3rem"// Expands only when swipeProgress > 1
 									: `calc(4rem + ${(swipeProgress * 100)}px)` , // Default width
