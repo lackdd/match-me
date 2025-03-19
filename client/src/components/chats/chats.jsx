@@ -89,7 +89,7 @@ function Chats() {
 					<div className='extra-chats-container'>
 					<div className='connections' id={'connections'}>
 						{connectionDetails.length === 0 ? (
-							<p>No connections</p>
+							<p className={'no-connections-message'}>No connections</p>
 						) : (
 							connectionDetails.map((connection) => (
 								<button className={`picture-name-button ${selectedUserId === connection.id ? 'selected' : ''}`} key={connection.id} onClick={() => {

@@ -43,6 +43,16 @@
       overflow-x: hidden;
 
 
+      .no-connections-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        font-size: 1.5rem;
+      }
+
+
       @media (max-width: 768px) {
         width: 100%;
         padding: 1.25rem;
