@@ -12,6 +12,9 @@ import { useAuth } from '../utils/AuthContext.jsx';
 
 // react icons
 import { GiSettingsKnobs } from "react-icons/gi";
+import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
+
 
 function Recommendations() {
 	const matchContainerRef = useRef(null);
@@ -28,7 +31,7 @@ function Recommendations() {
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-	const { handleTouchStart, handleTouchEnd, handleTouchMove } = useSwipe();
+	const { handleTouchStart, handleTouchEnd, handleTouchMove, swipeProgress } = useSwipe();
 
 	useEffect(() => {
 
@@ -314,9 +317,54 @@ function Recommendations() {
 	// }, [matches]);
 
 
+	const resetButtons = () => {
+		console.log(
+			"Resetting buttons..."
+		);
+		//reset buttons styles
+		const dislikeButton = document.getElementById('dislike-button');
+		const likeButton = document.getElementById('like-button');
+		const arrows = document.getElementsByClassName('arrow')
+		dislikeButton.classList.remove('hidden');
+		dislikeButton.classList.remove('swiping');
+		likeButton.classList.remove('hidden');
+		likeButton.classList.remove('swiping');
+		[...arrows].map(arrow => {arrow.classList.remove('hidden');});
+	}
+
+	const toggleDislikeButtons = () => {
+		const dislikeButton = document.getElementById('dislike-button');
+		dislikeButton.classList.toggle('hidden');
+
+		const likeButton = document.getElementById('like-button');
+		likeButton.classList.toggle('flex-end');
+		likeButton.classList.toggle('swiping');
+
+
+		toggleArrows();
+
+	}
+
+	const toggleLikeButtons = () => {
+		const likeButton = document.getElementById('like-button');
+		likeButton.classList.toggle('hidden');
+
+		const dislikeButton = document.getElementById('dislike-button');
+		dislikeButton.classList.toggle('swiping');
+
+		toggleArrows();
+
+	}
+
+	const toggleArrows = () => {
+		const arrows = document.getElementsByClassName('arrow');
+		[...arrows].map(arrow => {arrow.classList.toggle('hidden');});
+	}
+
+
 	return (
 		<>
-		<div className='recommendations-container'>
+		<div className='recommendations-container' onClick={resetButtons}>
 			<div className='settings-popup' id={'settings-popup'}>
 				<div className='settings-content'>
 
@@ -526,19 +574,66 @@ function Recommendations() {
 					<span>{currentMatch.age}, {currentMatch.gender}</span>
 				</div>
 			</div>
+
+			{/*	default buttons */}
 			<div
-				className='match-buttons-container'
-				onTouchStart={handleTouchStart}
-				onTouchMove={handleTouchMove}
-				onTouchEnd={handleTouchEnd}
-			>
-				<button className='dislike' onClick={() => swipe("dislike")}>
-					<IoPlaySkipForward style={{ color: 'white', width: '70%', height: '70%' }} />
+				className='match-buttons-container default'>
+				<button className='dislike-button' onClick={() => swipe("dislike")}>
+					<IoPlaySkipForward style={{ color: 'white', width: '70%', height: '70%' }} id={'svg-dislike'}/>
 				</button>
-				<button className='like' onClick={() => swipe("like")}>
-					<FaPlay style={{ color: 'white', width: '55%', height: '55%' }} />
+				<button className='like-button' onClick={() => swipe("like")}>
+					<FaPlay style={{ color: 'white', width: '55%', height: '55%' }} id={'svg-like'} />
 				</button>
 			</div>
+
+
+				{/* mobile buttons */}
+				<div
+					className='match-buttons-container mobile-buttons'>
+					<button className='dislike-button' id={'dislike-button'}
+							onTouchStart={() => {
+								handleTouchStart();
+								toggleLikeButtons();
+							}}
+							onTouchMove={handleTouchMove}
+							onTouchEnd={() => {
+								handleTouchEnd(() => swipe("dislike"));
+								toggleLikeButtons();
+							}}
+							style={{
+								width: swipeProgress === 0
+									? "3rem"// Expands only when swipeProgress > 1
+									: `calc(4rem + ${(swipeProgress * 100)}px)` , // Default width
+								transition: swipeProgress > 0 ? "width 0.1s ease-out" : "width 0.2s ease-in",
+								height: swipeProgress === 0 ? "3rem" : "calc(4rem - 2px)",
+							}}
+					>
+						<IoIosArrowForward className={'swipe-right arrow'} id={'swipe-right'}/>
+						<IoPlaySkipForward style={{ color: 'white', width: '2.5rem', height: '2.5rem'}} id={'svg-dislike'}/>
+					</button>
+					<button className='like-button' id={'like-button'}
+							onTouchStart={() => {
+								handleTouchStart();
+								toggleDislikeButtons();
+							}}
+							onTouchMove={handleTouchMove}
+							onTouchEnd={() => {
+								handleTouchEnd(() => swipe("like"));
+								toggleDislikeButtons();
+							}}
+							style={{
+								// width: `calc(4rem + ${swipeProgress * 100}px)`, // Expands with swipe
+								transition: swipeProgress > 0 ? 'width 0.1s ease-out' : 'width 0.2s ease-in',
+								width: swipeProgress === 0
+									? "3rem"// Expands only when swipeProgress > 1
+									: `calc(4rem + ${(swipeProgress * 100)}px)` , // Default width
+								height: swipeProgress === 0 ? "3rem" : "calc(4rem - 2px)",
+							}}
+					>
+						<IoIosArrowBack className={'swipe-left arrow'} id={'swipe-left'}/>
+						<FaPlay style={{ color: 'white', width: '1.75rem', height: '1.75rem'}} id={'svg-like'} />
+					</button>
+				</div>
 
 				<div className='user-stats-container'>
 					<div className='user-stats'>{swipedCount} {swipedCount === 1 ? "swipe" : "swipes"}</div>

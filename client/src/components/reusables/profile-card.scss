@@ -74,6 +74,7 @@
 
         @media (max-width: 768px) {
           max-width: 60%;
+          justify-content: flex-start;
         }
 
         @media (min-width: 769px) {
@@ -288,94 +289,7 @@
     }
   }
 
-  .match-buttons-container {
-    width: 18rem;
-    height: 4rem;
-    border: 1px solid black;
-    border-radius: 50px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: variables.$default-button-shadow;
-    padding: 0 0.75rem;
-    position: absolute;
-    bottom: 4.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.1s ease-in-out;
 
-    //@media (max-width: 768px) {
-    //  bottom: 1.5rem;
-    //}
-
-    .like, .dislike {
-      height: 3rem;
-      width: 3rem;
-      border: 1px solid black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .like {
-      background-color: variables.$button-green;
-      padding-left: 5px;
-    }
-
-    .dislike {
-      background-color: variables.$button-red;
-    }
-
-    &:has(.like:hover) {
-      background-color: variables.$button-green;
-      box-shadow: variables.$upper-inset-shadow-hover;
-
-      .dislike {
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      .like {
-        border: none;
-        box-shadow: none;
-        width: 100%;
-        position: relative;
-
-        svg {
-          position: absolute;
-          right: 30%;
-          top: 20%;
-          scale: 1.3;
-        }
-      }
-    }
-
-    &:has(.dislike:hover) {
-      background-color: variables.$button-red;
-      box-shadow: variables.$upper-inset-shadow-hover;
-
-      .like {
-        opacity: 0;
-        visibility: hidden;
-      }
-
-      .dislike {
-        border: none;
-        box-shadow: none;
-        width: 100%;
-        position: relative;
-
-        svg {
-          position: absolute;
-          left: 25%;
-          top: 15%;
-          scale: 1.3;
-        }
-      }
-    }
-  }
 
   .no-matches {
     height: 100%;
@@ -463,10 +377,6 @@
         }
       }
     }
-    }
-
-    .match-buttons-container {
-      bottom: 2rem;
     }
 
     //.picture-container .extra-picture-container {
