@@ -609,7 +609,7 @@ function Recommendations() {
 							}}
 					>
 						<IoIosArrowForward className={'swipe-right arrow'} id={'swipe-right'}/>
-						<IoPlaySkipForward style={{ color: 'white', width: '2.5rem', height: '2.5rem'}} id={'svg-dislike'}/>
+						<IoPlaySkipForward style={{ color: 'white', width: '2rem', height: '2rem'}} id={'svg-dislike'}/>
 					</button>
 					<button className='like-button' id={'like-button'}
 							onTouchStart={() => {
@@ -631,7 +631,7 @@ function Recommendations() {
 							}}
 					>
 						<IoIosArrowBack className={'swipe-left arrow'} id={'swipe-left'}/>
-						<FaPlay style={{ color: 'white', width: '1.75rem', height: '1.75rem'}} id={'svg-like'} />
+						<FaPlay style={{ color: 'white', width: '1.5rem', height: '1.5rem'}} id={'svg-like'} />
 					</button>
 				</div>
 
