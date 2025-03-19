@@ -110,8 +110,8 @@
           //}
 
           img.profile-picture {
-            width: 90%;  // Allow the image to take up full available width
-            height: 90%;  // Set the height to 100% of the parent container
+            //width: 90%;  // Allow the image to take up full available width
+            //height: 90%;  // Set the height to 100% of the parent container
             max-height: 100%; // Make sure the image does not exceed the height of its parent
             max-width: 100%;  // Ensure it doesn't exceed the width of the container
             //max-width: 40rem;
@@ -181,7 +181,7 @@
           display: none;
         }
 
-        @media (max-width: 440px) {
+        @media (max-width: 786px) {
           &.default {
             display: none; // Hide on small screens
           }
@@ -252,6 +252,7 @@
       //align-self: center;
       //padding: 3rem 0;
       //height: 30%;
+      flex: 1;
       margin-top: 1.5rem;
 
       @media (max-width: 440px) {
@@ -267,7 +268,8 @@
     .name-container {
       text-align: center;
       color: variables.$main-blue;
-      margin-top: auto;
+      height: fit-content;
+      //margin-top: auto;
       margin-bottom: 1rem;
 
       @media (max-width: 768px) {
@@ -302,9 +304,9 @@
     align-items: center;
     transition: all 0.1s ease-in-out;
 
-    @media (max-width: 768px) {
-      bottom: 1.5rem;
-    }
+    //@media (max-width: 768px) {
+    //  bottom: 1.5rem;
+    //}
 
     .like, .dislike {
       height: 3rem;
@@ -475,7 +477,8 @@
 
     .description-container {
       font-size: 0.8rem;
-      padding: 2rem 0 0 0 ;
+      padding: 2rem 0 0 0;
+      flex: 1;
       //height: 25%;
     }
 

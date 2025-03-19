@@ -20,7 +20,7 @@ function Recommendations() {
 	const [matchIDs, setMatchIDs] = useState(['']);
 	const [matches, setMatches] = useState({});
 	const [currentMatchNum, setCurrentMatchNum] = useState(0);
-	const [currentMatch, setCurrentMatch] = useState({});
+	const [currentMatch, setCurrentMatch] = useState(null);
 	const [fetchMoreMatches, setFetchMoreMatches] = useState(false);
 	const { tokenValue } = useAuth();
 
@@ -285,7 +285,12 @@ function Recommendations() {
 	useEffect(() => {
 		const formattedMatch = formatMatchData(matches[currentMatchNum]);
 
-		setCurrentMatch(formattedMatch);
+		console.log("formatted match", formattedMatch);
+
+		if (formattedMatch.id) {
+			setCurrentMatch(formattedMatch);
+		}
+
 	}, [currentMatchNum, matches]);
 
 	// // todo doesnt work because it needs matchContainer to be available but it's available only when currentMatch is available but using currentMatch as dependency causes the evenlistener to be added and removed on every like/dislike click
