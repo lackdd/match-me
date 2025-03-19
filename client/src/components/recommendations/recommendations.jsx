@@ -8,6 +8,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useSwipe} from './useSwipe.jsx';
 import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
+import { useAuth } from '../utils/AuthContext.jsx';
 
 // react icons
 import { GiSettingsKnobs } from "react-icons/gi";
@@ -21,8 +22,9 @@ function Recommendations() {
 	const [currentMatchNum, setCurrentMatchNum] = useState(0);
 	const [currentMatch, setCurrentMatch] = useState({});
 	const [fetchMoreMatches, setFetchMoreMatches] = useState(false);
+	const { tokenValue } = useAuth();
 
-	const token = useRef(sessionStorage.getItem("token"));
+	// const token = useRef(sessionStorage.getItem("token"));
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -47,7 +49,7 @@ function Recommendations() {
 				try {
 					// const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`)
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`, {
-							headers: { Authorization: `Bearer ${token.current}` },
+							headers: { Authorization: `Bearer ${tokenValue}` },
 						signal,
 						});
 					// todo fetch matchIDs when creating an account (and additionally in the background when logging in) so fetching here can be skipped if matches are already available
@@ -88,12 +90,12 @@ function Recommendations() {
 
 						// fetch profile pic and name
 						const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
-							headers: { Authorization: `Bearer ${token.current}` }
+							headers: { Authorization: `Bearer ${tokenValue}` }
 						});
 
 						// fetch other bio data
 						const userPromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
-							headers: { Authorization: `Bearer ${token.current}` }
+							headers: { Authorization: `Bearer ${tokenValue}` }
 						});
 
 						// Return both promises for the same id
@@ -216,7 +218,7 @@ function Recommendations() {
 							matchId : currentMatch.id,
 							swipedRight: swipedRight},
 						headers: {
-							"Authorization": `Bearer ${token.current}`,
+							"Authorization": `Bearer ${tokenValue}`,
 							"Content-Type": "application/json"
 						},
 					}

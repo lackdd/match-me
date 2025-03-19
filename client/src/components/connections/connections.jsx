@@ -1,6 +1,7 @@
 import './connections.scss'
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
+import { useAuth } from '../utils/AuthContext.jsx';
 
 // react icons
 import { FaRegCircleStop } from "react-icons/fa6";
@@ -23,9 +24,10 @@ function Connections() {
 	const toDeleteId = useRef(0);
 	// const toDeleteName = useRef("");
 	const [toDeleteName, setToDeleteName] = useState("");
+	const { tokenValue } = useAuth();
 
 	const modal = document.getElementById('loadingModal');
-	const token = useRef(sessionStorage.getItem("token"));
+	// const token = useRef(sessionStorage.getItem("token"));
 	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -66,13 +68,13 @@ function Connections() {
 			const [currentConnectionsResponse, pendingConnectionsResponse] = await Promise.all([
 				axios.get(`${VITE_BACKEND_URL}/api/connections`, {
 					headers: {
-						"Authorization": `Bearer ${token.current}`,
+						"Authorization": `Bearer ${tokenValue}`,
 						"Content-Type": "application/json"},
 					signal,
 				}),
 				axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {
 					headers: {
-						"Authorization": `Bearer ${token.current}`,
+						"Authorization": `Bearer ${tokenValue}`,
 						"Content-Type": "application/json"},
 					signal,
 				}),
@@ -104,7 +106,7 @@ function Connections() {
 				const requests = ids.map(id =>
 					axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
 						headers: {
-							"Authorization": `Bearer ${token.current}`,
+							"Authorization": `Bearer ${tokenValue}`,
 							"Content-Type": "application/json"},
 						signal,
 					})
@@ -237,7 +239,7 @@ function Connections() {
 			//Remove the connection from the state
 			axios.delete(`${VITE_BACKEND_URL}/api/${endpoint}`, {
 				headers: {
-					"Authorization": `Bearer ${token.current}`,
+					"Authorization": `Bearer ${tokenValue}`,
 					"Content-Type": "application/json"},
 				params: { [paramKey] : toDeleteId.current } // Include request parameters here
 			});
@@ -266,7 +268,7 @@ function Connections() {
 		try {
 			axios.post(`${VITE_BACKEND_URL}/api/addConnection`, null, {
 				headers: {
-					"Authorization": `Bearer ${token.current}`,
+					"Authorization": `Bearer ${tokenValue}`,
 					"Content-Type": "application/json"
 				},
 				params: {matchId: requestId} // Correct parameter name
@@ -286,7 +288,7 @@ function Connections() {
 		try {
 			axios.delete(`${VITE_BACKEND_URL}/api/deletePendingRequest`, {
 				headers: {
-					"Authorization": `Bearer ${token.current}`,
+					"Authorization": `Bearer ${tokenValue}`,
 					"Content-Type": "application/json"
 				},
 				params: {pendingRequestId: requestId} // Include request parameters here

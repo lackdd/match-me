@@ -15,13 +15,14 @@ import axios from 'axios';
 function NavigatorUser() {
 	// const { setIsUserLoggedIn } = useContext(AuthContext);
 	const navigate = useNavigate();
-	const { isUserLoggedIn, logout } = useAuth();
+	const { isUserLoggedIn, logout, token } = useAuth();
 	const [username, setUsername] = useState("");
 	const [profilePicture, setProfilePicture] = useState("");
 	const [gender, setGender] = useState("");
 	const [pendingReqNum, setPendingReqNum] = useState("");
+	const { tokenValue } = useAuth();
 
-	const token = useRef(sessionStorage.getItem("token"));
+	// const token = useRef(sessionStorage.getItem("token"));
 	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -40,7 +41,7 @@ function NavigatorUser() {
 
 		try {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/me`,{
-				headers: { Authorization: `Bearer ${token.current}` },
+				headers: { Authorization: `Bearer ${tokenValue}` },
 		});
 
 			setUsername(response.data.username.split(' ')[0]);
@@ -61,7 +62,7 @@ function NavigatorUser() {
 
 		try {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/me/profile`,{
-				headers: { Authorization: `Bearer ${token.current}` },
+				headers: { Authorization: `Bearer ${tokenValue}` },
 			});
 
 			setGender(response.data.gender);
@@ -82,7 +83,7 @@ function NavigatorUser() {
 		try {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {
 					headers: {
-						"Authorization": `Bearer ${token.current}`,
+						"Authorization": `Bearer ${tokenValue}`,
 						"Content-Type": "application/json"},
 				});
 

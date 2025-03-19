@@ -9,6 +9,7 @@ import { GiSettingsKnobs } from 'react-icons/gi';
 import { FaSpotify } from 'react-icons/fa';
 import {useSwipe} from '../recommendations/useSwipe.jsx';
 import axios from 'axios';
+import { useAuth } from '../utils/AuthContext.jsx';
 
 import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
 
@@ -16,8 +17,9 @@ function Dashboard() {
 	const [loading, setLoading] = useState(true)
 	const [myData, setMyData] = useState(null);
 	const [liked, setLiked] = useState(0);
+	const { tokenValue } = useAuth();
 
-	const token = useRef(sessionStorage.getItem("token"));
+	// const token = useRef(sessionStorage.getItem("token"));
 	// console.log("Token: ", token.current)
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -32,19 +34,19 @@ function Dashboard() {
 
 					const [res1, res2, res3, res4] = await Promise.all([
 						axios.get(`${VITE_BACKEND_URL}/api/me`, {
-							headers: { Authorization: `Bearer ${token.current}` },
+							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
 						}),
 						axios.get(`${VITE_BACKEND_URL}/api/me/profile`, {
-							headers: { Authorization: `Bearer ${token.current}` },
+							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
 						}),
 						axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
-							headers: { Authorization: `Bearer ${token.current}` },
+							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
 						}),
 						axios.get(`${VITE_BACKEND_URL}/api/likedUsers`, {
-							headers: { Authorization: `Bearer ${token.current}` },
+							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
 						})
 					]);
