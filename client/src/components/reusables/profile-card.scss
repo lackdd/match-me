@@ -254,6 +254,8 @@
       //height: 30%;
       flex: 1;
       margin-top: 1.5rem;
+      overflow-x: hidden;
+      overflow-y: scroll;
 
       @media (max-width: 440px) {
         font-size: 0.8rem;
