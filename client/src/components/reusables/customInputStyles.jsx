@@ -7,6 +7,7 @@ export const customStyles = {
 		// height: '2.5rem',  // Set to 'auto' so it adjusts based on content
 		// maxWidth: '12.187rem',
 		// width: '100%',
+		width: '100%',
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
