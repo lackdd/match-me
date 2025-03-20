@@ -14,7 +14,7 @@ export const formatData = (data) => {
 
 // helped function to format location data (remove "County")
 export const formatLocation = (data) => {
-	return data.replaceAll(" County", "")
+	// return data.replaceAll(" County", "")
 }
 
 // open settings popup
