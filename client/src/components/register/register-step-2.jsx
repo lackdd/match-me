@@ -16,7 +16,7 @@ import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 import {useEffect} from 'react';
 
-const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData }) => {
+export const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData, data }) => {
 	return (
 		<div className={'line large'}>
 			<label id={id}>
@@ -39,13 +39,16 @@ const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger
 					options={options}
 					isOptionDisabled={() => (watch(id) || []).length >= 3}
 					styles={customStyles}
-					value={watch(id) || []}
-					isValid={!errors[id] && (watch(id) || []).length > 0}
+					value={watch(id) || (data ? data : [])}
+					isValid={!errors[id] && (watch(id) || (data ? data : [])).length > 0}
 					isError={errors[id]} // Check if error exists
 					onChange={(selectedOption) => {
 						setValue(id, selectedOption, {shouldValidate: true});
-						setFormTwoData((prev) => ({...prev, [id]: selectedOption})); // Persist data correctly
 						handleCloseMenu(selectedOption);
+
+						if (setFormTwoData) {
+							setFormTwoData((prev) => ({...prev, [id]: selectedOption})); // Persist data correctly
+						}
 
 						if (!selectedOption || selectedOption.length === 0) {
 							setError(id, {message: 'Required'});
