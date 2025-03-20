@@ -77,7 +77,7 @@ export const dashboardFormValidationSchema =
 				.min(1, "Required"),
 
 		// step 3
-		experience: yup
+		yearsOfMusicExperience: yup
 			.number()
 			.required("Required")
 			.typeError("Required")
@@ -94,7 +94,7 @@ export const dashboardFormValidationSchema =
 		)
 			.typeError("Required")
 			.required("Required"), // Ensures it's not empty
-		musicLink: yup
+		linkToMusic: yup
 			.string()
 			.url("Must be a link")
 			.notRequired(),

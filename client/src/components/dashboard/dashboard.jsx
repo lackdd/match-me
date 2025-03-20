@@ -72,6 +72,7 @@ function Dashboard() {
 					const goalsWithMusic = backToObject(res2.data.goalsWithMusic, goalsOptions);
 					const preferredMethod = backToObject(res2.data.preferredMethod, methodsOptions);
 					const preferredMusicGenres = backToObject(res2.data.preferredMusicGenres, genreOptions);
+					const location = res2.data.location ? {value: res2.data.location, label: res2.data.location} : "";
 
 					console.log(additionalInterests);
 
@@ -85,7 +86,8 @@ function Dashboard() {
 						personalityTraits,
 						goalsWithMusic,
 						preferredMethod,
-						preferredMusicGenres
+						preferredMusicGenres,
+						location,
 						// gender: res2.data.gender.charAt(0).toUpperCase() + res2.data.gender.slice(1)
                         // bio: res3.data
                     });

@@ -303,54 +303,57 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				<label id='experience' className={'short'}>
 					Years of music experience*
 					<br/>
+					{/*<div className={'with-button'}>*/}
+					{/*	<input*/}
+					{/*		type='number'*/}
+					{/*		id='experience'*/}
+					{/*		name={'experience'}*/}
+					{/*		className={`not-react-select focus-highlight short */}
+					{/*		${errors.experience ? 'error' : ''}*/}
+					{/*		${!errors.experience && watch('experience') ? 'valid' : ''}`}*/}
+					{/*		placeholder='Enter number of years'*/}
+					{/*		// autoFocus={true}*/}
+					{/*		{...register('experience')}*/}
+					{/*		autoComplete={'off'}*/}
+					{/*		min={0}*/}
+					{/*		// max={formOneData.age}*/}
+					{/*		max={120}*/}
+					{/*		// value={formThreeData.experience || ''}*/}
+					{/*		value={watch('experience') || myData.yearsOfMusicExperience}*/}
+					{/*		onChange={(value) => {*/}
+					{/*			// const value = e.target.value ? parseInt(e.target.value, 10) : 0;*/}
+					{/*			// setValue('experience', value, {shouldValidate: true});*/}
+					{/*			// setMyData((prev) => ({...prev, experience: value}));*/}
+					{/*			setValue("experience", value);  // ✅ Set entire object, not just string*/}
+					{/*			// setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value }));*/}
+					{/*			clearErrors("experience");*/}
+					{/*		}}*/}
+					{/*		onBlur={() => trigger('experience')} // Trigger validation when user leaves the field*/}
+					{/*	/>*/}
+					{/*	<IncrementDecrementButtons id={'experience'} watch={watch} setValue={setValue} trigger={trigger} />*/}
+					{/*	/!*setMyData={setFormThreeData}*!/*/}
+					{/*</div>*/}
 					<div className={'with-button'}>
-						{/*<input*/}
-						{/*	type="text"*/}
-						{/*	placeholder="Enter your first name"*/}
-						{/*	className={`not-react-select long focus-highlight */}
-						{/*	${errors.firstName ? "error" : ""}*/}
-						{/*	${!errors.firstName && watch('firstName') ? "valid" : ""}`}*/}
-						{/*	{...register("firstName")}*/}
-						{/*	autoComplete={"off"}*/}
-						{/*	// value={myData.firstName}*/}
-						{/*	value={watch('firstName') || myData.firstName}*/}
-						{/*	// autoFocus={'on'}*/}
-						{/*	onBlur={() => trigger('firstName')} // Trigger validation when user leaves the field*/}
-						{/*	// onChange={(value) => {*/}
-						{/*	// 	setMyData((prev) => ({ ...prev, firstName: value }));*/}
-						{/*	// }}*/}
-						{/*/>*/}
 						<input
+							id={'yearsOfMusicExperience'}
 							type='number'
-							id='experience'
-							name={'experience'}
-							className={`not-react-select focus-highlight short 
-							${errors.experience ? 'error' : ''}
-							${!errors.experience && watch('experience') ? 'valid' : ''}`}
-							placeholder='Enter number of years'
-							// autoFocus={true}
-							{...register('experience')}
+							placeholder='Enter number in years'
+							className={`not-react-select long focus-highlight 
+							${errors.yearsOfMusicExperience ? 'error' : ''}
+							${!errors.yearsOfMusicExperience && watch('yearsOfMusicExperience') ? 'valid' : ''}`}
+							{...register('yearsOfMusicExperience')}
 							autoComplete={'off'}
 							min={0}
-							// max={formOneData.age}
-							max={120}
-							// value={formThreeData.experience || ''}
-							value={watch('experience') || myData.yearsOfMusicExperience}
+							max={myData.age}
+							onBlur={() => trigger('yearsOfMusicExperience')} // Trigger validation when user leaves the field
 							onChange={(value) => {
-								// const value = e.target.value ? parseInt(e.target.value, 10) : 0;
-								// setValue('experience', value, {shouldValidate: true});
-								// setMyData((prev) => ({...prev, experience: value}));
-								setValue("experience", value);  // ✅ Set entire object, not just string
-								// setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value }));
-								clearErrors("experience");
+								// setMyData((prev) => ({ ...prev, age: value }));
 							}}
-							onBlur={() => trigger('experience')} // Trigger validation when user leaves the field
 						/>
-						<IncrementDecrementButtons id={'experience'} watch={watch} setValue={setValue} trigger={trigger} />
-						{/*setMyData={setFormThreeData}*/}
+						<IncrementDecrementButtons id={'yearsOfMusicExperience'} watch={watch} setValue={setValue} trigger={trigger} />
 					</div>
 
-					<ErrorElement errors={errors} id={'experience'}/>
+					<ErrorElement errors={errors} id={'yearsOfMusicExperience'}/>
 				</label>
 
 				{/* todo can't change and valid disappears when cancelled*/}
@@ -359,29 +362,29 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 					<br/>
 					<input
 						type='url'
-						id='music'
-						name={'musicLink'}
+						id='linkToMusic'
+						name={'linkToMusic'}
 						className={`not-react-select focus-highlight short
-						${errors.musicLink ? 'error' : ''}
-						${!errors.musicLink && watch('musicLink') ? 'valid' : ''}`}
+						${errors.linkToMusic ? 'error' : ''}
+						${!errors.linkToMusic && watch('linkToMusic') ? 'valid' : ''}`}
 						placeholder='Link to your Spotify etc'
 						// value={watch('musicLink') || ""}
-						value={watch('musicLink') || myData.linkToMusic}
-						{...register('musicLink')}
+						value={watch('linkToMusic') || myData.linkToMusic}
+						{...register('linkToMusic')}
 						autoComplete={'off'}
 						// onChange={(selectedOption) => {
 						// 	setValue("musicLink", selectedOption);  // ✅ Set entire object, not just string
 						// 	// setMyData((prev) => ({ ...prev, linkToMusic: selectedOption }));
 						// 	clearErrors("musicLink");
 						// }}
-						onBlur={() => trigger('musicLink')} // Trigger validation when user leaves the field
+						onBlur={() => trigger('linkToMusic')} // Trigger validation when user leaves the field
 						onChange={(e) => {
 							const value = e.target.value;
-							setValue('musicLink', value, { shouldValidate: true });
+							setValue('linkToMusic', value, { shouldValidate: true });
 							// setMyData((prev) => ({ ...prev, description: value }));
 						}}
 					/>
-					<ErrorElement errors={errors}  id={'musicLink'}/>
+					<ErrorElement errors={errors}  id={'linkToMusic'}/>
 				</label>
 
 			</div>
@@ -417,38 +420,38 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 						// }}
 						onChange={(selectedOption) => {
 							if (!selectedOption) {
+								// Clear the location value in both the form state and component state
 								setValue('location', null, { shouldValidate: true });
-								// setMyData((prev) => ({ ...prev, location: null }));
-								// console.log("GOOGLE_API_KEY: " + googleApiKey);
-								return;
+								clearErrors('location'); // Optionally clear the error state for location
+							} else {
+								// Handle setting the location from the Google API
+								fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
+									.then(response => response.json())
+									.then(data => {
+										if (data.status === "OK" && data.results.length > 0) {
+											const addressComponents = data.results[0].address_components;
+
+											let region = "";
+											let country = "";
+
+											// Extract administrative area and country explicitly
+											addressComponents.forEach(component => {
+												if (component.types.includes("administrative_area_level_1")) {
+													region = component.long_name;
+												}
+												if (component.types.includes("country")) {
+													country = component.long_name;
+												}
+											});
+
+											const properName = `${region}${country ? `, ${country}` : ""}`;
+
+											// Set the location value in the form state with value and label
+											setValue('location', { value: selectedOption.value, label: properName }, { shouldValidate: true });
+										}
+									})
+									.catch(error => console.error("Geocoding error:", error));
 							}
-
-							fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
-								.then(response => response.json())
-								.then(data => {
-									if (data.status === "OK" && data.results.length > 0) {
-										const addressComponents = data.results[0].address_components;
-
-										let region = "";
-										let country = "";
-
-										// Extract administrative area and country explicitly
-										addressComponents.forEach(component => {
-											if (component.types.includes("administrative_area_level_1")) {
-												region = component.long_name;
-											}
-											if (component.types.includes("country")) {
-												country = component.long_name;
-											}
-										});
-
-										const properName = `${region}${country ? `, ${country}` : ""}`; // Ensure "Tartu County, Estonia"
-
-										setValue('location', { value: selectedOption.value, label: properName }, { shouldValidate: true });
-										// setMyData((prev) => ({ ...prev, location: { value: selectedOption.value, label: properName } }));
-									}
-								})
-								.catch(error => console.error("Geocoding error:", error));
 						}}
 						onBlur={() => trigger('location')} // Trigger validation when user leaves the field
 					/>
