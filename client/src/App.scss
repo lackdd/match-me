@@ -58,18 +58,18 @@ form {
   label {
     width: 100%;
     font-size: 0.875rem;
-
-    .short {
-      width: 12rem;
-
-      @media (max-width: 768px) {
-        width: 42.5vw;
-      }
-    }
-
-    .large {
-      width: 25.25rem;
-    }
+    //
+    //.short {
+    //  width: 12rem;
+    //
+    //  @media (max-width: 768px) {
+    //    width: 42.5vw;
+    //  }
+    //}
+    //
+    //.large {
+    //  width: 25.25rem;
+    //}
   }
    //for testing
   input[type="number"] {
@@ -116,24 +116,22 @@ form {
 }
 
 
-//.large {
-//  width: 100%;
-//
+.line {
+  width: 100%;
+}
+
+//.short {
+//  width: 12rem;
 //
 //}
-
-.short {
-  width: 12rem;
-
-}
-
-.large {
-  width: 25.25rem;
-
-  @media (max-width: 768px) {
-    width: 90vw;
-  }
-}
+//
+//.large {
+//  width: 25.25rem;
+//
+//  @media (max-width: 768px) {
+//    width: 90vw;
+//  }
+//}
 
 
 // links
