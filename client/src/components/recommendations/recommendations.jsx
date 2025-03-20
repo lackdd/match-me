@@ -27,6 +27,7 @@ function Recommendations() {
 	const [fetchMoreMatches, setFetchMoreMatches] = useState(false);
 	const { tokenValue } = useAuth();
 
+
 	// const token = useRef(sessionStorage.getItem("token"));
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -399,8 +400,10 @@ function Recommendations() {
 				className='profile-card-container'>
 
 				<div className='settings-container'>
-					<button className='settings-button' onClick={openSettings}>
-						<GiSettingsKnobs />
+					<button className='settings-button' onClick={() => {
+						openSettings;
+					}}>
+						<GiSettingsKnobs/>
 					</button>
 				</div>
 
