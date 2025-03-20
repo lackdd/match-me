@@ -1,7 +1,7 @@
 import './recommendations.scss'
 import '../reusables/profile-card.scss'
 import '../reusables/settings-popup.scss'
-import '../register/loadingAnimation.scss'
+import '../reusables/loadingAnimation.scss'
 import {FaPlay, FaSpotify} from 'react-icons/fa';
 import {IoPlaySkipForward} from 'react-icons/io5';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
