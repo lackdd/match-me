@@ -1,0 +1,32 @@
+@use '../../variables';
+
+.error-line {
+  width: 100%;
+  color: red;
+  height: 1rem;
+  font-size: 0.7rem;
+
+  .error-text {
+    text-align: right;
+    padding-right: 5px;
+  }
+}
+
+.error {
+  background-color: variables.$error-red;
+  accent-color: variables.$error-red;
+
+  &:focus {
+    background-color: white !important;
+    //color: black;
+  }
+
+}
+
+.valid {
+  background-color: variables.$valid-green;
+
+  &:focus {
+    background-color: white;
+  }
+}

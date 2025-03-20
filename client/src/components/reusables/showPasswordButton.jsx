@@ -1,4 +1,5 @@
 import {FiEye, FiEyeOff} from 'react-icons/fi';
+import './showPasswordButton.scss'
 
 
 export function ShowPasswordButton({showPassword, setShowPassword, login = false}) {

@@ -1,3 +1,5 @@
+import './errorElement.scss'
+
 export const ErrorElement = ({errors, id}) => {
 	return (
 		<div className={'error-line'}>
