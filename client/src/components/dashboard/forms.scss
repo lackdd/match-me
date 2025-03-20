@@ -1,17 +1,20 @@
 @use '../../variables';
 
-.step-one-dashboard, .step-two-dashboard, .step-three-dashboard {
+.step-one-dashboard, .step-two-dashboard, .step-three-dashboard, .dashboard-form {
   width: 90%;
+  height: 100%;
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   margin-bottom: 2rem;
+  overflow-y: scroll;
+  padding: 0 1rem 0 1rem;
 
 
   .form-title {
     width: 100%;
-    text-align: center;
+    //text-align: center;
   }
 
   .line {
