@@ -53,6 +53,7 @@ export function BioForm3() {
 	}, []);
 
 
+
 	const fetchPlaces = useCallback((input) => {
 		if (!input || !apiLoaded || !autocompleteServiceRef.current) return;
 
