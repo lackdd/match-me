@@ -9,15 +9,17 @@ import {stepThreeSchema} from '../reusables/validationSchema.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx'
+import {useGooglePlacesApi} from '../reusables/useGooglePlacesApi.jsx'
 
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 const googleApi = import.meta.env.VITE_GOOGLE_API;
 
 function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
 	const [inputValue, setInputValue] = useState("");
-	const [options, setOptions] = useState([]);
-	const autocompleteServiceRef = useRef(null);
-	const [apiLoaded, setApiLoaded] = useState(false);
+	// const [options, setOptions] = useState([]);
+	// const autocompleteServiceRef = useRef(null);
+	// const [apiLoaded, setApiLoaded] = useState(false);
+	const { apiLoaded, autocompleteServiceRef, fetchPlaces, options } = useGooglePlacesApi();
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -33,18 +35,18 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 		mode: "onChange",
 	});
 
-	useEffect(() => {
-		const checkGoogleApi = setInterval(() => {
-			if (window.google?.maps?.places) {
-				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-				setApiLoaded(true);
-				console.log("Google API is loaded");
-				clearInterval(checkGoogleApi);
-			}
-		}, 100);
-
-		return () => clearInterval(checkGoogleApi); // Cleanup interval when unmounting
-	}, []);
+	// useEffect(() => {
+	// 	const checkGoogleApi = setInterval(() => {
+	// 		if (window.google?.maps?.places) {
+	// 			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+	// 			setApiLoaded(true);
+	// 			console.log("Google API is loaded");
+	// 			clearInterval(checkGoogleApi);
+	// 		}
+	// 	}, 100);
+	//
+	// 	return () => clearInterval(checkGoogleApi); // Cleanup interval when unmounting
+	// }, []);
 
 	// useEffect(() => {
 	// 	if (window.google && window.google.maps && window.google.maps.places) {
@@ -52,30 +54,30 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 	// 	}
 	// }, []);
 
-	const fetchPlaces = useCallback((input) => {
-		if (!input || !apiLoaded || !autocompleteServiceRef.current) return;
-
-		autocompleteServiceRef.current.getPlacePredictions(
-			{
-				input,
-				types: ['administrative_area_level_1'],
-				componentRestrictions: { country: "est" },
-				language: 'en'
-			},
-			(predictions, status) => {
-				if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-					setOptions(
-						predictions.map((place) => ({
-							value: place.place_id,
-							label: place.description,
-						}))
-					);
-				} else {
-					setOptions([]);
-				}
-			}
-		);
-	}, [apiLoaded]);
+	// const fetchPlaces = useCallback((input) => {
+	// 	if (!input || !apiLoaded || !autocompleteServiceRef.current) return;
+	//
+	// 	autocompleteServiceRef.current.getPlacePredictions(
+	// 		{
+	// 			input,
+	// 			types: ['administrative_area_level_1'],
+	// 			componentRestrictions: { country: "est" },
+	// 			language: 'en'
+	// 		},
+	// 		(predictions, status) => {
+	// 			if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
+	// 				setOptions(
+	// 					predictions.map((place) => ({
+	// 						value: place.place_id,
+	// 						label: place.description,
+	// 					}))
+	// 				);
+	// 			} else {
+	// 				setOptions([]);
+	// 			}
+	// 		}
+	// 	);
+	// }, [apiLoaded]);
 
 	return (
 		<form className='step-three'
