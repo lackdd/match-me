@@ -180,3 +180,84 @@ export const stepFiveSchema = (formFiveData) =>
 			.required("Required")
 			.typeError("Required"),
 	});
+
+
+
+export const stepOneSchemaDashboard =
+	yup.object().shape({
+		firstName: yup.string()
+			.required("Required")
+			.matches(/[a-zA-Z]+/g, "Must use letters")
+			.max(30, "Max 30 characters"),
+		lastName: yup.string()
+			.required("Required")
+			.matches(/[a-zA-Z]+/g, "Must use letters")
+			.max(30, "Max 30 characters"),
+		gender: yup.object()
+			.shape({
+				label: yup.string(),
+				value: yup.string()
+			})
+			.required("Required")
+			.typeError("Required"),
+		age: yup.number()
+			.required("Required")
+			.typeError("Required")
+			.min(16, "Minimum age is 16")
+			.max(120, "Maximum age is 120"),
+	});
+
+
+export const stepTwoSchemaDashboard =
+	yup.object().shape({
+		preferredMethods:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+		preferredGenres:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+		additionalInterests:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+		personalityTraits:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+		goals:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+	});

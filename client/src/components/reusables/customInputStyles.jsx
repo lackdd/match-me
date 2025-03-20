@@ -5,6 +5,8 @@ export const customStyles = {
 		minHeight: '2rem',  // Ensure it starts with a height of 2rem
 		height: 'auto',  // Set to 'auto' so it adjusts based on content
 		// height: '2.5rem',  // Set to 'auto' so it adjusts based on content
+		// maxWidth: '12.187rem',
+		// width: '100%',
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'flex-start',
@@ -23,7 +25,6 @@ export const customStyles = {
 		borderColor: state.isFocused ? 'rgb(254, 110, 121)' : 'rgb(97, 97, 97)',
 		boxShadow: state.isFocused ? '0 0 5px rgb(254, 110, 121)' : 'none',
 		'&:hover': { borderColor: '#rgb(254, 110, 121)' },
-		// overflow: 'hidden',
 		transition: 'height 0.2s ease-in-out', // Smooth transition for height change
 
 	}),
@@ -31,6 +32,9 @@ export const customStyles = {
 		...provided,
 		width: state.selectProps.wideMenu === true ? '25.25rem' : '100%',
 		borderRadius: '0 0 10px 10px',
+		// borderRadius:
+		// 	state.isFocused && state.selectProps.menuIsOpen
+		// 		? (state.selectProps.menuTop ? '10px 10px 0 0' : '0 0 10px 10px'): '10px' ,
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -42,8 +46,10 @@ export const customStyles = {
 		boxShadow: 'none'
 	}),
 
-	menuList: (provided) => ({
+	menuList: (provided, state) => ({
 		...provided,
+		borderRadius: state.selectProps.menuTop ? '10px 10px 0 0' : ' 0 0 10px 10px',
+		width: '100%',
 		padding: '0',
 		margin: '0',
 		maxHeight: '11rem',
@@ -62,7 +68,8 @@ export const customStyles = {
 		padding: '5px 10px',
 		cursor: 'pointer',
 		alignItems: 'center',
-		width: state.selectProps.wideMenu === true ? '25.25rem' : '12rem', // Ensuring menu width matches control
+		width: '100%',
+		// width: state.selectProps.wideMenu === true ? '25.25rem' : '12rem', // Ensuring menu width matches control
 		'&:active': {
 			backgroundColor: 'rgb(254, 110, 121)',
 		},
@@ -76,7 +83,7 @@ export const customStyles = {
 		// display: 'flex',
 		// alignItems: 'center',
 		// justifyContent: 'flex-start',
-		padding: '0 5px 0 5px',
+		padding: '0 10px 0 10px',
 		margin: '0 0',
 		boxSizing: 'border-box',
 		flexWrap: 'wrap', // Prevent the container from wrapping the items
@@ -84,8 +91,9 @@ export const customStyles = {
 		lineHeight: '2rem',
 	}),
 
-	singleValue: (provided) => ({
+	singleValue: (provided, state) => ({
 		...provided,
+		textAlign: 'left',
 	}),
 
 	input: (provided) => ({
@@ -151,6 +159,8 @@ export const customStyles = {
 		display: 'flex',
 		alignItems: 'center',
 		textAlign: 'left',
+		overflow: 'hidden',
+		whiteSpace: 'nowrap',
 	}),
 
 	// Styling for the selected items (multiValue)
