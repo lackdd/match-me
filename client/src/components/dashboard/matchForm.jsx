@@ -1,6 +1,6 @@
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepFiveSchema} from '../register/validationSchema.jsx';
+import {stepFiveSchema} from '../reusables/validationSchema.jsx';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {
@@ -9,8 +9,8 @@ import {
 	matchAgeOptions, matchExperienceOptions,
 	matchGenderOptions, matchLocationsOptions,
 	methodsOptions
-} from '../register/inputOptions.jsx';
-import {customStyles} from '../register/customInputStyles.jsx';
+} from '../reusables/inputOptions.jsx';
+import {customStyles} from '../reusables/customInputStyles.jsx';
 import {handleCloseMenu} from '../register/register.jsx';
 import React from 'react';
 
