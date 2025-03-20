@@ -26,7 +26,11 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger, setForm
 					const currentValue = watch(id) ? parseInt(watch(id)) : 0;
 					const newValue = currentValue + 1;
 					setValue(id, newValue, { shouldValidate: true });
-					setFormData((prev) => ({ ...prev, [id]: newValue }));
+
+					if (setFormData) {
+						setFormData((prev) => ({ ...prev, [id]: newValue }));
+					}
+
 					console.log(watch(id));
 				}}>
 				<IoIosArrowUp/>
@@ -48,7 +52,9 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger, setForm
 					const currentValue = watch(id) ? parseInt(watch(id)) : 0;
 					const newValue = Math.max(0, currentValue - 1);
 					setValue(id, newValue, { shouldValidate: true });
-					setFormData((prev) => ({ ...prev, [id]: newValue }));
+					if (setFormData) {
+						setFormData((prev) => ({ ...prev, [id]: newValue }));
+					}
 					console.log(watch(id));
 				}}>
 				<IoIosArrowDown/>
