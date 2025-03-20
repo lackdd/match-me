@@ -1,15 +1,15 @@
 import Select from 'react-select';
-import {genderOptions} from './inputOptions.jsx';
-import {customStyles} from './customInputStyles.jsx';
+import {genderOptions} from '../reusables/inputOptions.jsx';
+import {customStyles} from '../reusables/customInputStyles.jsx';
 import makeAnimated from 'react-select/animated';
 import { useForm } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepOneSchema} from './validationSchema.jsx';
-import {ErrorElement} from './errorElement.jsx';
+import {stepOneSchema} from '../reusables/validationSchema.jsx';
+import {ErrorElement} from '../reusables/errorElement.jsx';
 import axios from "axios";
 import {useState} from 'react';
-import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx';
-import {ShowPasswordButton} from './showPasswordButton.jsx';
+import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx';
+import {ShowPasswordButton} from '../reusables/showPasswordButton.jsx';
 
 
 

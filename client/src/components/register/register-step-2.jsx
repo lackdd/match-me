@@ -4,16 +4,16 @@ import {
 	interestsOptions,
 	personalityTraitsOptions,
 	goalsOptions,
-} from './inputOptions.jsx';
-import {customStyles} from './customInputStyles.jsx';
+} from '../reusables/inputOptions.jsx';
+import {customStyles} from '../reusables/customInputStyles.jsx';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepTwoSchema} from './validationSchema.jsx';
+import {stepTwoSchema} from '../reusables/validationSchema.jsx';
 import {handleCloseMenu} from './register.jsx';
-import {ErrorElement} from './errorElement.jsx';
-import {PreviousNextButtons} from './previousNextButtons.jsx';
+import {ErrorElement} from '../reusables/errorElement.jsx';
+import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 import {useEffect} from 'react';
 
 const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData }) => {

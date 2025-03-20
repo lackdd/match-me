@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import './loadingAnimation.scss'
+import '../reusables/loadingAnimation.scss'
 import {useEffect, useState} from 'react';
 
 // step 6 of registration

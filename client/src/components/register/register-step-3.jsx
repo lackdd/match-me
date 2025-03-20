@@ -1,14 +1,14 @@
 
 // step 3 of registration
 import Select from 'react-select';
-import {customStyles} from './customInputStyles.jsx';
+import {customStyles} from '../reusables/customInputStyles.jsx';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepThreeSchema} from './validationSchema.jsx';
-import {ErrorElement} from './errorElement.jsx';
-import {PreviousNextButtons} from './previousNextButtons.jsx';
-import {IncrementDecrementButtons} from './incrementDecrementButtons.jsx'
+import {stepThreeSchema} from '../reusables/validationSchema.jsx';
+import {ErrorElement} from '../reusables/errorElement.jsx';
+import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
+import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx'
 
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 const googleApi = import.meta.env.VITE_GOOGLE_API;

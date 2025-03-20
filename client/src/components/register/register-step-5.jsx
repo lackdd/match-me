@@ -9,13 +9,13 @@ import {
 	matchGenderOptions,
 	matchExperienceOptions,
 	methodsOptions, matchLocationsOptions
-} from './inputOptions.jsx';
-import {customStyles} from './customInputStyles.jsx';
+} from '../reusables/inputOptions.jsx';
+import {customStyles} from '../reusables/customInputStyles.jsx';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepFiveSchema} from './validationSchema.jsx';
-import {ErrorElement} from './errorElement.jsx';
-import {PreviousNextButtons} from './previousNextButtons.jsx';
+import {stepFiveSchema} from '../reusables/validationSchema.jsx';
+import {ErrorElement} from '../reusables/errorElement.jsx';
+import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 
 const matchAgeToRange = (age) => {
 	age = parseInt(age)
