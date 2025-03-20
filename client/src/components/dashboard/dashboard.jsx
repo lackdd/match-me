@@ -2,9 +2,11 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import './dashboard.scss';
 import '../reusables/settings-popup.scss'
 import '../reusables/profile-card.scss'
-import '../register/loadingAnimation.scss'
+import '../reusables/loadingAnimation.scss'
 import { MatchForm } from './matchForm.jsx';
 import { BioForm1 } from './bioForm-1.jsx';
+import { BioForm2 } from './bioForm-2.jsx';
+import { BioForm3 } from './bioForm-3.jsx';
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { FaSpotify } from 'react-icons/fa';
 import {useSwipe} from '../recommendations/useSwipe.jsx';
@@ -18,6 +20,7 @@ function Dashboard() {
 	const [myData, setMyData] = useState(null);
 	const [liked, setLiked] = useState(0);
 	const { tokenValue } = useAuth();
+	const [formData, setFormData] = useState(null);
 
 	// const token = useRef(sessionStorage.getItem("token"));
 	// console.log("Token: ", token.current)
@@ -135,6 +138,8 @@ function Dashboard() {
 						<div className="settings-content">
 							<div className='forms-container'>
 								<BioForm1/>
+								<BioForm2/>
+								<BioForm3/>
 							</div>
 							<div className="settings-buttons-container">
 								<button className="save" onClick={closeSettings}>

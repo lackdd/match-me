@@ -22,6 +22,39 @@
     padding-bottom: 1rem !important;
     margin-top: 1rem !important;
   }
+
+  .settings-content {
+    height: 100%;
+    width: 100% !important;
+    max-width: 40rem;
+    padding: 0 1rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    .forms-container {
+      padding: 2rem 0 2rem 0;
+      width: 100%;
+      height: 90%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+
+    .settings-buttons-container {
+      height: 10%;
+      width: 100% !important;
+      margin: 0 !important;
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: space-around !important;
+    }
+  }
+
+
 }
 
 

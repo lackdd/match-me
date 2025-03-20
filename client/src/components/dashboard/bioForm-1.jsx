@@ -1,13 +1,19 @@
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepOneSchema} from '../register/validationSchema.jsx';
-{/*import {ErrorElement} from '../register/errorElement.jsx';*/}
-import Select from 'react-select';
-import {customStyles} from '../register/customInputStyles.jsx';
-import {genderOptions} from '../register/inputOptions.jsx';
-import {IncrementDecrementButtons} from '../register/incrementDecrementButtons.jsx';
-import './dashboard.scss'
-import '../register/register.scss'
+import {stepOneSchemaDashboard} from '../reusables/validationSchema.jsx';
+import Select, {mergeStyles} from 'react-select';
+import {customStyles} from '../reusables/customInputStyles.jsx';
+import {dashboardFormStyles} from './dashboardFormStyles.jsx';
+import {genderOptions} from '../reusables/inputOptions.jsx';
+import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx';
+import './forms.scss'
+// import '../register/register.scss'
+import '../reusables/incrementDecrementButtons.scss'
+import '../reusables/errorElement.scss'
+import {ErrorElement} from '../reusables/errorElement.jsx';
+import {useEffect} from 'react';
+
+const combinedStyles = mergeStyles(customStyles, dashboardFormStyles)
 
 export function BioForm1() {
 	// Initialize react-hook-form with Yup schema
@@ -21,18 +27,23 @@ export function BioForm1() {
 		trigger,
 		formState: { errors },
 	} = useForm({
-		defaultValues: {
+		defaultValues: { //todo get values from server
 			firstName: "",
 			lastName: "",
-			gender: "",
+			gender: null,
 			age: "",
 		},
-		resolver: yupResolver(stepOneSchema),
+		// resolver: stepOneSchemaDashboard,
+		resolver: yupResolver(stepOneSchemaDashboard),
 		mode: 'onChange',
 	});
 
+	useEffect(() => {
+		console.log("Errors changed:", errors);
+	}, [errors]);
+
 	return (
-		<form className="step-one"
+		<form className="step-one-dashboard"
 			  onSubmit={handleSubmit((data) => {
 				  // onSubmit(data, formOneData, setFormOneData);
 				  console.log("Errors on submit: ", errors);
@@ -45,12 +56,12 @@ export function BioForm1() {
 
 			{/* First Name */}
 			<div className="line">
-				<label className="short">
+				<label className="long">
 					First name*
 					<input
 						type="text"
 						placeholder="Enter your first name"
-						className={`not-react-select short focus-highlight 
+						className={`not-react-select long focus-highlight 
 							${errors.firstName ? "error" : ""}
 							${!errors.firstName && watch('firstName') ? "valid" : ""}`}
 						{...register("firstName")}
@@ -58,41 +69,43 @@ export function BioForm1() {
 						// autoFocus={'on'}
 						onBlur={() => trigger('firstName')} // Trigger validation when user leaves the field
 					/>
-					{/*/!*<ErrorElement errors={errors}  id={'firstName'}/>*!/*/}
+					<ErrorElement errors={errors}  id={'firstName'}/>
 
 				</label>
 
 				{/* Last Name */}
-				<label className="short">
+				<label className="long">
 					Last name*
 					<input
 						type="text"
 						placeholder="Enter your last name"
-						className={`not-react-select short focus-highlight 
+						className={`not-react-select long focus-highlight 
 							${errors.lastName ? "error" : ""}
 							${!errors.lastName && watch('lastName') ? "valid" : ""}`}
 						{...register("lastName")}
 						autoComplete={"off"}
 						onBlur={() => trigger('lastName')} // Trigger validation when user leaves the field
 					/>
-					{/*<ErrorElement errors={errors}  id={'lastName'}/>*/}
+					<ErrorElement errors={errors}  id={'lastName'}/>
 				</label>
 			</div>
 
 			{/* Gender and Age */}
 			<div className="line">
-				<label className="short">
+				<label className="long">
 					Gender*
 					<Select
-						className={`basic-single short`}
+						className={`basic-single long`}
 						classNamePrefix="select"
-						menuWidth="short"
+						// menuWidth="short"
+						wideMenu={false}
 						name={"gender"}
 						isValid={!errors.gender && watch('gender') !== ''}
 						isError={errors.gender} // Set error if cleared
 						isClearable
 						isSearchable
-						styles={customStyles}
+						styles={combinedStyles}
+						menuTop={false}
 						// components={makeAnimated()}
 						options={genderOptions}
 						placeholder="Select gender"
@@ -109,17 +122,17 @@ export function BioForm1() {
 						onBlur={() => trigger('gender')} // Trigger validation when user leaves the field
 					/>
 
-					{/*<ErrorElement errors={errors}  id={'gender'}/>*/}
+					<ErrorElement errors={errors}  id={'gender'}/>
 				</label>
 
-				<label className="short">
+				<label className="long">
 					Age*
 					<div className={'with-button'}>
 						<input
 							id={'age'}
 							type='number'
 							placeholder='Enter your age'
-							className={`not-react-select short focus-highlight 
+							className={`not-react-select long focus-highlight 
 							${errors.age ? 'error' : ''}
 							${!errors.age && watch('age') ? 'valid' : ''}`}
 							{...register('age')}
@@ -131,7 +144,7 @@ export function BioForm1() {
 						<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger} />
 					</div>
 
-					{/*<ErrorElement errors={errors} id={'age'}/>*/}
+					<ErrorElement errors={errors} id={'age'}/>
 				</label>
 			</div>
 

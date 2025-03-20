@@ -28,18 +28,15 @@
       width: 100%;
     }
 
-    .short {
-      width: 95%;
-    }
 
     label {
       height: fit-content;
-
-      //&.short {
-      //  width: 100%;
-      //  height: fit-content;
-      //}
-
     }
+
+  }
+
+  .form-description-container {
+    min-height: 9rem;
+    padding-top: 0.5rem;
   }
 }
