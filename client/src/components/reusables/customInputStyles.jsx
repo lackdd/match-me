@@ -31,7 +31,7 @@ export const customStyles = {
 	}),
 	menu: (provided, state) => ({
 		...provided,
-		width: state.selectProps.wideMenu === true ? '25.25rem' : '100%',
+		// width: state.selectProps.wideMenu === true ? '25.25rem' : '100%',
 		borderRadius: '0 0 10px 10px',
 		// borderRadius:
 		// 	state.isFocused && state.selectProps.menuIsOpen
