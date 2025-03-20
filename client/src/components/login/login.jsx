@@ -3,8 +3,8 @@ import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 // import {AuthContext} from "../../main.jsx";
-import {ErrorElement} from '../register/errorElement.jsx';
-import {ShowPasswordButton} from '../register/showPasswordButton.jsx';
+import {ErrorElement} from '../reusables/errorElement.jsx';
+import {ShowPasswordButton} from '../reusables/showPasswordButton.jsx';
 import { useAuth } from '../utils/AuthContext.jsx';
 
 function Login() {
