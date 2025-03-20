@@ -73,7 +73,12 @@
       position: relative;
       margin: 0.75rem;
       padding: 0;
-      transition: margin 0.3s linear;
+      transition: all 0.2s ease-in;
+
+      //&[data-swipe-progress] {
+      //  width: calc(4rem + (var(--swipe-progress) * 100px));
+      //  height: calc(4rem - 2px);
+      //}
 
       &.hidden {
         display: none;
