@@ -9,6 +9,8 @@ function Features() {
 		<>
 			<div className='features-container'>
 
+				<h1 className={'blinking-text'}>Features</h1>
+
 				<div className='features-list'>
 
 					<div className='feature default' id={'matches'}>

@@ -4,6 +4,27 @@
   @include variables.whole-page;
   @include variables.centered-column;
 
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    transition: translate 0.5s ease-out;
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 -120vw;
+    }
+
+    &.blinking-text {
+      background: linear-gradient(to right, variables.$main-pink, variables.$main-blue, variables.$main-pink);
+      background-size: 500% 100%;
+      background-position: -400% 0;
+      color: transparent;
+      -webkit-background-clip: text;  /* Make the background visible on the text */
+      animation: leftToRightColorChange 5s linear infinite;
+    }
+  }
+
+
 
   .features-list {
     max-width: 50rem;
@@ -14,6 +35,10 @@
     gap: 2rem;
     align-items: center;
     justify-content: flex-start;
+
+    @media (max-width: 768px) {
+      width: 90%;
+    }
 
     .feature {
       display: flex;
@@ -28,6 +53,12 @@
       background-color: transparent;
       border-radius: 20px;
       padding: 1.5rem;
+
+
+      @media (max-width: 480px) {
+        gap: 1rem;
+        padding: 0.5rem;
+      }
 
       &:hover {
         //color: variables.$main-pink;
@@ -70,6 +101,11 @@
         transition: fill 0.5s ease-in-out, transform 0.5s ease-in-out, color 0.5s ease-in-out;
         fill: black;
 
+        @media (max-width: 768px) {
+          width: 7rem;
+          height: 7rem;
+        }
+
         &:has(> div:hover) {
           transform: rotateX(360deg);
           fill: white;
@@ -81,6 +117,14 @@
         font-size: 1rem;
         font-weight: 700;
         width: 70%;
+
+        @media (max-width: 768px) {
+          font-size: 0.8rem;
+        }
+
+        @media (max-width: 480px) {
+          width: 90%;
+        }
 
         &:has( > div.reverse) {
           text-align: right;
@@ -105,13 +149,12 @@
 
 @keyframes leftToRightColorChange {
   0% {
-    fill: pink;
+    background-position: 200% 0;  /* Start the gradient off-screen */
   }
   50% {
-    fill: blue;
+    background-position: 0 0;  /* Move the gradient fully to the left */
   }
   100% {
-    fill: purple;
+    background-position: -200% 0;  /* Move the gradient back off-screen */
   }
 }
-
