@@ -8,7 +8,13 @@ import { FaSpotify } from 'react-icons/fa';
 import {useSwipe} from '../recommendations/useSwipe.jsx';
 import axios from 'axios';
 import { useAuth } from '../utils/AuthContext.jsx';
-import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
+import {
+	formatData,
+	formatLocation,
+	closeSettings,
+	openSettings,
+	changePicture, changeImage
+} from '../reusables/profile-card-functions.jsx';
 import {DashboardForm} from './dashboardForm.jsx';
 import {
 	genderOptions,
@@ -17,6 +23,8 @@ import {
 	methodsOptions,
 	personalityTraitsOptions
 } from '../reusables/inputOptions.jsx';
+import {AdvancedImage} from '@cloudinary/react';
+import {getOptimizedImage} from '../utils/cloudinary.jsx';
 
 function Dashboard() {
 	const [loading, setLoading] = useState(true)
@@ -25,6 +33,7 @@ function Dashboard() {
 	const [liked, setLiked] = useState(0);
 	const { tokenValue } = useAuth();
 	const [formOpen, setFormOpen] = useState(false);
+	const [image, setImage] = useState(null); // todo if image is changed then change this. If this is available then use this to show image. Else you data from backend
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -131,6 +140,7 @@ function Dashboard() {
 			const updatedProfile = {
 				...myDataFormatted,
 				location: formatLocation(myDataFormatted.location),
+				// location: myDataFormatted.location,
 				preferredMusicGenres: Array.isArray(myDataFormatted.preferredMusicGenres)
 					? formatData(myDataFormatted.preferredMusicGenres)
 					: myDataFormatted.preferredMusicGenres,
@@ -156,7 +166,12 @@ function Dashboard() {
 				}));
 			}
 		}
-	}, [myDataFormatted]);
+	}, [myData]);
+
+
+	useEffect(() => {
+		console.log("MyDataFormatted: ", myDataFormatted);
+	}, [myDataFormatted])
 
 
 	// format data for form
@@ -211,22 +226,20 @@ function Dashboard() {
 			{!loading && (
 				<>
 				<div className="extra-dashboard-container">
+
+					{/*<div className="settings-popup" id="picture-popup">*/}
+					{/*	<div className="settings-content">*/}
+					{/*		<div className='forms-container'>*/}
+					{/*			*/}
+					{/*		</div>*/}
+					{/*	</div>*/}
+					{/*</div>*/}
+
 					<div className="settings-popup" id="settings-popup">
 						<div className="settings-content">
 							<div className='forms-container'>
-								{/*<BioForm1/>*/}
-								{/*<BioForm2/>*/}
-								{/*<BioForm3/>*/}
 								<DashboardForm myData={myData} setMyData={setMyData} formOpen={formOpen}/>
 							</div>
-							{/*<div className="settings-buttons-container">*/}
-							{/*	<button className="save" onClick={closeSettings}>*/}
-							{/*		Save*/}
-							{/*	</button>*/}
-							{/*	<button className="cancel" onClick={closeSettings}>*/}
-							{/*		Cancel*/}
-							{/*	</button>*/}
-							{/*</div>*/}
 						</div>
 					</div>
 
@@ -248,27 +261,39 @@ function Dashboard() {
 						<div className="picture-bio-container">
 							<div className="picture-container">
 								<div className="extra-picture-container">
-									{myDataFormatted.gender === 'male' && (
-										<img
-											src="profile_pic_male.jpg"
-											alt="profile picture"
-											className="profile-picture"
+									{/*{myDataFormatted.profilePicture && <AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>}*/}
+									{/*<label className={"choose-picture"}>*/}
+										<input type='file'
+											   accept={"image/*"}
+											   name={'image'}
+											   onChange={() => changeImage(setMyDataFormatted, setImage)}
+											   className='file-upload'
+											   title={'click to change picture'}
 										/>
-									)}
-									{myDataFormatted.gender === 'female' && (
-										<img
-											src="profile_pic_female.jpg"
-											alt="profile picture"
-											className="profile-picture"
-										/>
-									)}
-									{myDataFormatted.gender === 'other' && (
-										<img
-											src="default_profile_picture.png"
-											alt="profile picture"
-											className="profile-picture"
-										/>
-									)}
+										{myDataFormatted.gender === 'male' && (
+											<img
+												src="profile_pic_male.jpg"
+												alt="profile picture"
+												className="profile-picture"
+												// onClick={changePicture(myDataFormatted, setMyDataFormatted)}
+											/>
+										)}
+										{myDataFormatted.gender === 'female' && (
+											<img
+												src="profile_pic_female.jpg"
+												alt="profile picture"
+												className="profile-picture"
+											/>
+										)}
+										{myDataFormatted.gender === 'other' && (
+											<img
+												src="default_profile_picture.png"
+												alt="profile picture"
+												className="profile-picture"
+											/>
+										)}
+									{/*</label>*/}
+
 									{myDataFormatted.linkToMusic && (
 										<div className="music-link">
 											<FaSpotify style={{ color: '#31D165' }} />

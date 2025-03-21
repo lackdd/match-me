@@ -98,6 +98,8 @@
           position: relative;
           //margin-right: 4rem; // You can adjust as needed
           box-sizing: border-box;  // Ensure box-sizing is consistent
+          border: 1px solid transparent;
+          border-radius: 50%;
 
 
           @media (max-width: 768px) {
@@ -130,7 +132,7 @@
           .music-link {
             position: absolute;
             bottom: 10%;
-            right: 10%;
+            right: 0%;
             //width: clamp(3rem, 5vw, 6rem);
             //height: clamp(3rem, 5vw, 6rem);
             width: 5rem;
@@ -346,7 +348,7 @@
 
             img {
               max-height: 80%;
-              min-height: 10rem;
+              //min-height: 10rem;
             }
 
 
