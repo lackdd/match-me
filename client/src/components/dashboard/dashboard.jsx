@@ -61,12 +61,10 @@ function Dashboard() {
 
 					console.log("Raw additionalInterests:", res2.data.additionalInterests);
 
+					// formatting data (mostly to objects) for dashboard form
 					const firstName = res1.data.username.split(' ')[0];
 					const lastName = res1.data.username.split(' ')[1];
 					const gender = genderOptions.find(gender => gender.value === res2.data.gender);
-
-					// const formattedInterests = res2.data.additionalInterests.map(interest => interest.replaceAll(',', '').trim());
-					// const additionalInterests = formattedInterests.map(interest => interestsOptions.find(option => option.value === interest)).filter(Boolean);
 					const additionalInterests = backToObject(res2.data.additionalInterests, interestsOptions);
 					const personalityTraits = backToObject(res2.data.personalityTraits, personalityTraitsOptions);
 					const goalsWithMusic = backToObject(res2.data.goalsWithMusic, goalsOptions);
@@ -74,8 +72,8 @@ function Dashboard() {
 					const preferredMusicGenres = backToObject(res2.data.preferredMusicGenres, genreOptions);
 					const location = res2.data.location ? {value: res2.data.location, label: res2.data.location} : "";
 
-					console.log(additionalInterests);
 
+					// data for the form
 					setMyData({
                         ...res1.data,
                         ...res2.data,
@@ -92,11 +90,13 @@ function Dashboard() {
                         // bio: res3.data
                     });
 
+					// data for dashboard itself
 					setMyDataFormatted( {
 							...res1.data,
 							...res2.data,
 					});
 
+					// liked users count
 					setLiked(res4.data.length);
 
 					console.log("Data fetched!");
