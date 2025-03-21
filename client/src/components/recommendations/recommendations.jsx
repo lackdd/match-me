@@ -9,29 +9,35 @@ import axios from 'axios';
 import {useSwipe} from './useSwipe.jsx';
 import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
 import { useAuth } from '../utils/AuthContext.jsx';
+import {RecommendationsForm} from './recommendationsForm.jsx';
 
 // react icons
 import { GiSettingsKnobs } from "react-icons/gi";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
+import {
+	genderOptions, genreOptions,
+	goalsOptions,
+	interestsOptions, matchAgeOptions, matchExperienceOptions, matchGenderOptions, matchLocationsOptions,
+	methodsOptions,
+	personalityTraitsOptions
+} from '../reusables/inputOptions.jsx';
 
 
 function Recommendations() {
 	const matchContainerRef = useRef(null);
 	const [swipedCount, setSwipedCount] = useState(0);
 	const [loading, setLoading] = useState(true);
+	const [loadingSettings, setLoadingSettings] = useState(false);
 	const [matchIDs, setMatchIDs] = useState(['']);
 	const [matches, setMatches] = useState({});
 	const [currentMatchNum, setCurrentMatchNum] = useState(0);
 	const [currentMatch, setCurrentMatch] = useState(null);
 	const [fetchMoreMatches, setFetchMoreMatches] = useState(false);
 	const { tokenValue } = useAuth();
-
-
-	// const token = useRef(sessionStorage.getItem("token"));
+	const [preferencesData, setPreferencesData] = useState(null);
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
 	const { handleTouchStart, handleTouchEnd, handleTouchMove, swipeProgress } = useSwipe();
 
 	useEffect(() => {
@@ -42,6 +48,104 @@ function Recommendations() {
 		}
 
 	}, [currentMatch])
+
+
+	const backToObject = (array, options) => {
+		const formattedArray = array.map(item => item.replaceAll(',', '').trim());
+		const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
+		return arrayOfObjects;
+	}
+
+	const getOptionsForKey = (key) => {
+		switch (key) {
+			case "idealMatchGenre":
+				return genreOptions;
+            case "idealMatchMethod":
+				return methodsOptions;
+			case "idealMatchGoal":
+					return goalsOptions;
+			case "idealMatchAge":
+				return matchAgeOptions;
+			case "idealMatchLocation":
+				return matchLocationsOptions;
+            case "idealMatchYearsOfExperience":
+				return matchExperienceOptions;
+			case "idealMatchGender":
+				return matchGenderOptions;
+            default:
+				return [];
+
+		}
+	}
+
+	useEffect(() =>{
+		const getPreferencesData = async() => {
+			console.log("I'm running");
+
+			try {
+				const response = await axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
+					headers: { Authorization: `Bearer ${tokenValue}` },
+				});
+
+				// formatting data (mostly to objects) for dashboard form
+				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.idealMatchGender);
+				// const idealMatchGender = backToObject(response.data.idealMatchGender, matchGenderOptions);
+				const idealMatchAge = matchAgeOptions.find(age => age.value === response.data.idealMatchAge);
+				// const idealMatchAge = backToObject(response.data.idealMatchAge, matchAgeOptions);
+				const idealMatchLocation = matchLocationsOptions.find(location => location.value === response.data.idealMatchLocation);
+				// const idealMatchLocation = backToObject(response.data.idealMatchLocation, matchLocationsOptions);
+				const idealMatchYearsOfExperience = matchExperienceOptions.find(exp => exp.value === response.data.idealMatchYearsOfExperience);
+				// const idealMatchYearsOfExperience = backToObject(response.data.idealMatchYearsOfExperience, matchExperienceOptions);
+				const idealMatchGenres = backToObject(response.data.idealMatchGenres, genreOptions);
+				const idealMatchMethods = backToObject(response.data.idealMatchMethods, methodsOptions);
+				const idealMatchGoals = backToObject(response.data.idealMatchGoals, goalsOptions);
+
+				console.log("Response: ", response);
+
+				// data for the form
+				// setPreferencesData(
+				// 	Object.fromEntries(
+				// 		Object.entries(response.data)
+				// 			.filter(([key, value]) => key.startsWith("ideal"))
+				// 			// .map(([key, value]) => [key, backToObject(value, getOptionsForKey(key))])
+				// 	)
+				// );
+
+				setPreferencesData({
+					idealMatchGender: idealMatchGender,
+					idealMatchAge: idealMatchAge,
+					idealMatchLocation: idealMatchLocation,
+					idealMatchGenres: idealMatchGenres,
+					idealMatchMethods: idealMatchMethods,
+					idealMatchYearsOfExperience: idealMatchYearsOfExperience,
+					idealMatchGoals: idealMatchGoals,
+				});
+
+				console.log("Data fetched!");
+			} catch (error) {
+				if (axios.isCancel(error)) {
+					console.log("Fetch aborted");
+				} else {
+					if (error.response) {
+						console.error("Backend error:", error.response.data); // Server responded with an error
+					} else {
+						console.error("Request failed:", error.message); // Network error or request issue
+					}
+				}
+			} finally {
+				// setLoading(false);
+				setLoadingSettings(false);
+			}
+		};
+		getPreferencesData();
+
+	}, [])
+
+
+	useEffect(() => {
+		console.log("PreferencesData: ", preferencesData);
+	}, [preferencesData]);
+
 
 	// fetch IDs of matched users
 	useEffect(() => {
@@ -320,7 +424,7 @@ function Recommendations() {
 
 	const resetButtons = () => {
 		console.log(
-			"Resetting buttons..."
+			"Resetting buttons...123"
 		);
 		//reset buttons styles
 		const dislikeButton = document.getElementById('dislike-button');
@@ -365,32 +469,24 @@ function Recommendations() {
 
 	return (
 		<>
-		<div className='recommendations-container' onClick={resetButtons}>
+		<div className='recommendations-container' >
+			{/*onClick={resetButtons}*/}
 
-			<div className='user-stats-container'>
-				<div className='user-stats'>{swipedCount} {swipedCount === 1 ? "swipe" : "swipes"}</div>
-			</div>
+			{!loading && (
+				<div className='user-stats-container'>
+					<div className='user-stats'>{swipedCount} {swipedCount === 1 ? "swipe" : "swipes"}</div>
+				</div>
+			) }
 
-			<div className='settings-popup' id={'settings-popup'}>
-				<div className='settings-content'>
-
-					<form action=''>
-						{/* todo add register step 5 form here auto filled with current user preferences data and add ability to change data*/}
-					</form>
-
-					<div className='settings-buttons-container'>
-
-						<button className='save' onClick={closeSettings}>
-							save
-						</button>
-
-						<button className='cancel' onClick={closeSettings}>
-							cancel
-						</button>
-
+			{!loading && (
+				<div className='settings-popup' id={'settings-popup'}>
+					<div className='settings-content'>
+						<div className='forms-container'>
+							<RecommendationsForm preferencesData={preferencesData} setPreferencesData={setPreferencesData}/>
+						</div>
 					</div>
 				</div>
-			</div>
+			)}
 
 		{loading ? (
 			<div className={'spinner-container'}>
@@ -406,7 +502,9 @@ function Recommendations() {
 
 				<div className='settings-container'>
 					<button className='settings-button' onClick={() => {
-						openSettings;
+						setLoadingSettings(true);
+						// await getPreferencesData();
+						openSettings();
 					}}>
 						<GiSettingsKnobs/>
 					</button>
