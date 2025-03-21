@@ -1,5 +1,6 @@
 @use '../../variables';
 
+
 .dashboard-form, .recommendations-form {
   width: 90%;
   height: 100%;
@@ -15,7 +16,13 @@
   .form-title {
     width: 100%;
     //text-align: center;
+
+    &:has(> .recommendations-form) {
+      margin-bottom: 3rem;
+    }
   }
+
+
 
   .line {
     width: 100%;
@@ -41,5 +48,11 @@
   .form-description-container {
     min-height: 9rem;
     padding-top: 0.5rem;
+  }
+}
+
+.recommendations-form {
+  @media (min-width: 768px) {
+    justify-content: center;
   }
 }

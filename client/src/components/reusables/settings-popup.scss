@@ -16,6 +16,7 @@
   flex-direction: column;
   -webkit-overflow-scrolling: touch;
   overflow: auto;
+  backdrop-filter: blur(10px);
 
 
   .settings-content {
