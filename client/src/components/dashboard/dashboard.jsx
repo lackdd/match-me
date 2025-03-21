@@ -97,7 +97,10 @@ function Dashboard() {
 					});
 
 					// liked users count
-					setLiked(res4.data.length);
+					if (res3.data.length) {
+						setLiked(res3.data.length || 0);
+					}
+
 
 					console.log("Data fetched!");
 				} catch (error) {
