@@ -1,0 +1,63 @@
+import * as yup from 'yup';
+
+export const recommendationsFormValidationSchema =
+	yup.object().shape({
+		idealMatchMethods:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+		idealMatchGenres:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+		idealMatchGoals:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
+		idealMatchGender: yup.object()
+			.shape({
+				label: yup.string(),
+				value: yup.string()
+			})
+			.required("Required")
+			.typeError("Required"),
+		idealMatchAge: yup.object()
+			.shape({
+				label: yup.string(),
+				value: yup.string()
+			})
+			.required("Required")
+			.typeError("Required"),
+		idealMatchYearsOfExperience: yup.object()
+			.shape({
+				label: yup.string(),
+				value: yup.string()
+			})
+			.required("Required")
+			.typeError("Required"),
+		idealMatchLocation: yup.object()
+			.shape({
+				label: yup.string(),
+				value: yup.string()
+			})
+			.required("Required")
+			.typeError("Required"),
+	});
