@@ -366,6 +366,11 @@ function Recommendations() {
 	return (
 		<>
 		<div className='recommendations-container' onClick={resetButtons}>
+
+			<div className='user-stats-container'>
+				<div className='user-stats'>{swipedCount} {swipedCount === 1 ? "swipe" : "swipes"}</div>
+			</div>
+
 			<div className='settings-popup' id={'settings-popup'}>
 				<div className='settings-content'>
 
@@ -636,10 +641,6 @@ function Recommendations() {
 						<IoIosArrowBack className={'swipe-left arrow'} id={'swipe-left'}/>
 						<FaPlay style={{ color: 'white', width: '1.5rem', height: '1.5rem'}} id={'svg-like'} />
 					</button>
-				</div>
-
-				<div className='user-stats-container'>
-					<div className='user-stats'>{swipedCount} {swipedCount === 1 ? "swipe" : "swipes"}</div>
 				</div>
 			</>
 		) : (

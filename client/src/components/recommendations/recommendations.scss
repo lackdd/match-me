@@ -10,13 +10,26 @@
   .user-stats-container {
     text-align: center;
     color: black;
-    margin-top: auto;
     height: 1.75rem;
+    margin-top: 0.5rem;
 
     @media (min-width: 768px) {
-      margin-top: 3rem;
+      margin-top: 1rem;
     }
 
+    // for older screens with have more width and less height
+    @media (max-height: 750px) {
+      display: none;
+    }
+
+  }
+
+  .profile-card-container {
+    margin-top: 0.5rem;
+
+    @screen (max-width: 768px) {
+      margin-top: 0;
+    }
   }
 
   .match-buttons-container {
@@ -36,6 +49,11 @@
     justify-content: space-between;
     align-items: center;
     transition: all 0.1s ease-in-out;
+
+    // for older screens with have more width and less height
+    @media (max-height: 700px) {
+      bottom: 1rem !important;
+    }
 
     &:has(.swiping) {
       padding: 0;
@@ -189,5 +207,9 @@
         }
       }
     }
+  }
+
+  .user-stats-container {
+    //height: 1rem;
   }
 }
