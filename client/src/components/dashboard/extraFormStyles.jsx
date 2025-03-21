@@ -1,4 +1,4 @@
-export const dashboardFormStyles = {
+export const extraFormStyles = {
 	control: (provided, state) => ({
 		...provided,
 		maxWidth: 'none',
