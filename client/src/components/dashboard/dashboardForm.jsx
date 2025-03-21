@@ -2,7 +2,7 @@ import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import Select, {mergeStyles} from 'react-select';
 import {customStyles} from '../reusables/customInputStyles.jsx';
-import {dashboardFormStyles} from './dashboardFormStyles.jsx';
+import {extraFormStyles} from './extraFormStyles.jsx';
 import {
 	genderOptions,
 	genreOptions, goalsOptions,
@@ -24,7 +24,7 @@ import {closeSettings} from '../reusables/profile-card-functions.jsx';
 export function DashboardForm({myData, setMyData, formOpen}) {
 	const [inputValue, setInputValue] = useState("");
 	const { apiLoaded, autocompleteServiceRef, fetchPlaces, options } = useGooglePlacesApi();
-	const combinedStyles = mergeStyles(customStyles, dashboardFormStyles);
+	const combinedStyles = mergeStyles(customStyles, extraFormStyles);
 	const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 
 	// Initialize react-hook-form with Yup schema
@@ -70,7 +70,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 			  })}
 			  autoComplete={'off'}
 			  noValidate
-				id={'dashboard-form'}>
+			  id={'dashboard-form'}>
 
 			{/* step 1 */}
 			<div className="form-title">
@@ -405,7 +405,8 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 						styles={combinedStyles}
 						wideMenu={true}
 						closeMenuOnSelect={true}
-						value={watch('location') || myData.location}
+						// value={watch('location') || myData.location}
+						value={watch('location')}
 						autoComplete={'off'}
 						isValid={
 							!errors.location &&
