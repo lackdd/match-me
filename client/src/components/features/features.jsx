@@ -31,7 +31,7 @@ function Features() {
 					<div className='feature default' id={'more-soon'}>
 						<IoChatboxEllipsesOutline />
 						<p className='text'>
-							Chat securely with your connects to share your passion and ideas. Arrange jam sessions and get to know your connections.
+							Chat securely with your connections to share your passion and ideas. Arrange jam sessions and get to know your connections.
 						</p>
 					</div>
 
