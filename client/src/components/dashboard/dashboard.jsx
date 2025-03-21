@@ -13,7 +13,7 @@ import {
 	formatLocation,
 	closeSettings,
 	openSettings,
-	changePicture, changeImage
+	changeImage
 } from '../reusables/profile-card-functions.jsx';
 import {DashboardForm} from './dashboardForm.jsx';
 import {

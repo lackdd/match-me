@@ -9,7 +9,7 @@
     //color: variables.$main-pink;
     font-size: 3rem;
     margin-bottom: 2rem;
-    transition: translate 0.5s ease;
+    transition: translate 0.5s ease-out;
     //animation: leftToRightColorChange 2s ease-in-out infinite ;
 
     @starting-style {
@@ -31,29 +31,26 @@
 
   .background-image {
     position: absolute;
-    //background-size: cover;
-    //background-position: center;
-    //height: 100vh;
-    //width: 100%;
-    //display: flex;
-    //justify-content: center;
-    //align-items: center;
-    //position: absolute;
-    //top: 0;
-    //left: 0;
-    //z-index: -1;
     filter: invert(100%);
     opacity: 0.2;
 
     &.one {
       top: 20%;
       right: 30%;
+
+      @media (min-width: 768px) {
+        right: 15%;
+      }
+
     }
 
     &.two {
       bottom: 10%;
       left: 30%;
 
+      @media (min-width: 768px) {
+        left: 15%;
+      }
     }
   }
 
@@ -66,7 +63,7 @@
       margin-bottom: 1.5rem;
       width: 70%;
       font-size: 1.1rem;
-      transition: translate 0.5s ease;
+      transition: translate 0.5s ease-out;
 
       @media (max-width: 768px) {
         margin-bottom: 1rem;
