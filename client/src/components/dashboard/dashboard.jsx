@@ -3,10 +3,6 @@ import './dashboard.scss';
 import '../reusables/settings-popup.scss'
 import '../reusables/profile-card.scss'
 import '../reusables/loadingAnimation.scss'
-import { MatchForm } from './matchForm.jsx';
-import { BioForm1 } from './bioForm-1.jsx';
-import { BioForm2 } from './bioForm-2.jsx';
-import { BioForm3 } from './bioForm-3.jsx';
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { FaSpotify } from 'react-icons/fa';
 import {useSwipe} from '../recommendations/useSwipe.jsx';
