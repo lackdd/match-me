@@ -4,12 +4,114 @@
   @include variables.whole-page;
   @include variables.centered-column;
 
+
+  .features-list {
+    max-width: 50rem;
+    height: 80%;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    justify-content: flex-start;
+
+    .feature {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      transition: transform 0.5s ease-out,
+      color 0.1s ease-in,
+      background-color 0.1s ease-in,
+      scale 0.1s ease-in;
+      gap: 3rem;
+      height: 10rem;
+      background-color: transparent;
+      border-radius: 20px;
+      padding: 1.5rem;
+
+      &:hover {
+        //color: variables.$main-pink;
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: scale(1.02);
+      }
+
+      &:hover svg {
+        transform: rotateY(360deg);
+        fill: white;
+        color: white;
+      }
+
+      //&:hover svg {
+      //  animation: leftToRightColorChange 5s linear infinite;
+      //  transform: rotateY(360deg);
+      //}
+
+      &.default {
+        flex-direction: row;
+
+        @starting-style {
+          opacity: 0;
+          transform: translateX(-120vw);
+        }
+      }
+
+      &.reverse {
+        flex-direction: row-reverse;
+
+        @starting-style {
+          opacity: 0;
+          transform: translateX(120vw);
+        }
+      }
+
+      svg {
+        width: 9rem;
+        height: 9rem;
+        transition: fill 0.5s ease-in-out, transform 0.5s ease-in-out, color 0.5s ease-in-out;
+        fill: black;
+
+        &:has(> div:hover) {
+          transform: rotateX(360deg);
+          fill: white;
+        }
+      }
+
+      .text {
+        margin-left: 1rem;
+        font-size: 1rem;
+        font-weight: 700;
+        width: 70%;
+
+        &:has( > div.reverse) {
+          text-align: right;
+        }
+      }
+
+      // use algorithm to find matches
+
+      // chat with connections
+
+      // more coming soon!
+    }
+
+
+  }
+
+
   .coming-soon {
     justify-self: center;
   }
 }
 
-.features {
-  color: variables.$main-pink;
+@keyframes leftToRightColorChange {
+  0% {
+    fill: pink;
+  }
+  50% {
+    fill: blue;
+  }
+  100% {
+    fill: purple;
+  }
 }
 
