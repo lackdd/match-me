@@ -21,10 +21,34 @@
     height: 20rem;
     border-radius: 50%;
     overflow: hidden;
-    background-color: white;
+    background-color: transparent;
     margin-top: 20px;
     align-self: center;
     justify-self: center;
+
+    .loading-image {
+      height: 80%;
+      width: 80%;
+      z-index: 1;
+
+      .spinner-container {
+        height: 80%;
+        width: 80%;
+
+        .spinner {
+          height: 100%;
+          width: 100%;
+          text-align: center;
+          font-size: 1.5rem;
+
+          &:before, &:after {
+            opacity: 0.5;
+          }
+        }
+
+      }
+
+    }
 
     img {
       width: 100%;
@@ -43,6 +67,27 @@
     gap: 1.2rem;
     margin: auto;
     max-width: 100vw;
+
+    .picture-title {
+      align-items: center;
+      width: 100%;
+      text-align: center;
+    }
+
+    .loading-image {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+
+      .spinner-container {
+        //width: 100%;
+        //height: 100%;
+      }
+    }
 
     @media (max-width: 768px) {
       width: 90vw;

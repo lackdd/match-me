@@ -3,8 +3,10 @@
 import {AdvancedImage} from '@cloudinary/react';
 import {getOptimizedImage} from '../utils/cloudinary.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
+import React, {useState} from 'react';
 
 function Step4({stepFunctions, image, imageUrl, onImageChange}) {
+	const [loadingImage, setLoadingImage] = useState(false);
 
 	return (
 		<form className={"step-four"}
@@ -14,14 +16,28 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 			  autoComplete={"off"}
 			  noValidate
 		>
-			<div className='form-title'>
+			<div className='form-title picture-title'>
 				<h1>Choose a profile picture</h1>
 			</div>
 			{/* todo add loading animaton to picture upload */}
 			{/*todo add ability to move picture, zoom in and out*/}
 			<div className={'photo-container'}>
-				{imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>}
-				{!image && <img src={"default_profile_picture.png"} alt={"default picture"}/>}
+
+				{loadingImage && (
+					<div className="loading-image">
+						<div className={'spinner-container'}>
+							<div className='spinner endless'>Loading picture...</div>
+						</div>
+					</div>
+				)}
+
+				{!loadingImage && (
+					<>
+					{imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>}
+					{!image && <img src={"default_profile_picture.png"} alt={"default picture"}/>}
+					</>
+				)}
+
 			</div>
 			<div className={'submit-picture'}>
 
@@ -44,7 +60,7 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 					<input type='file'
 						   accept={"image/*"}
 						   name={'image'}
-						   onChange={onImageChange}
+						   onChange={(event) => onImageChange(event, setLoadingImage)}
 						   className='file-upload'/>
 					Choose picture
 				</label>
