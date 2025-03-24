@@ -24,6 +24,32 @@
 
     .extra-picture-container {
       position: relative;
+      height: 100%;
+      width: 100%;
+
+      .loading-image {
+        height: 80%;
+        width: 80%;
+        z-index: 1;
+
+        .spinner-container {
+          height: 100%;
+          width: 100%;
+
+          .spinner {
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+
+            &:before, &:after {
+              opacity: 0.5;
+            }
+          }
+
+        }
+
+      }
 
       .file-upload {
         position: absolute;
