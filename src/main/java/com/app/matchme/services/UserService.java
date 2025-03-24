@@ -134,6 +134,7 @@ public class UserService {
         List<String> methods = user.getPreferredMethods();
         List<String> goals = user.getGoalsWithMusic();
         Integer experience = user.getYearsOfMusicExperience();
+        // todo fix when idealMatchExperience "any" or "12-15" etc.
         Integer idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
         Integer idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
 
