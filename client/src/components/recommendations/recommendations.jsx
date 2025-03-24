@@ -86,29 +86,17 @@ function Recommendations() {
 					headers: { Authorization: `Bearer ${tokenValue}` },
 				});
 
-				// formatting data (mostly to objects) for dashboard form
+				// formatting data for dashboard form
 				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.idealMatchGender);
-				// const idealMatchGender = backToObject(response.data.idealMatchGender, matchGenderOptions);
 				const idealMatchAge = matchAgeOptions.find(age => age.value === response.data.idealMatchAge);
-				// const idealMatchAge = backToObject(response.data.idealMatchAge, matchAgeOptions);
 				const idealMatchLocation = matchLocationsOptions.find(location => location.value === response.data.idealMatchLocation);
-				// const idealMatchLocation = backToObject(response.data.idealMatchLocation, matchLocationsOptions);
 				const idealMatchYearsOfExperience = matchExperienceOptions.find(exp => exp.value === response.data.idealMatchYearsOfExperience);
-				// const idealMatchYearsOfExperience = backToObject(response.data.idealMatchYearsOfExperience, matchExperienceOptions);
 				const idealMatchGenres = backToObject(response.data.idealMatchGenres, genreOptions);
 				const idealMatchMethods = backToObject(response.data.idealMatchMethods, methodsOptions);
 				const idealMatchGoals = backToObject(response.data.idealMatchGoals, goalsOptions);
 
 				console.log("Response: ", response);
 
-				// data for the form
-				// setPreferencesData(
-				// 	Object.fromEntries(
-				// 		Object.entries(response.data)
-				// 			.filter(([key, value]) => key.startsWith("ideal"))
-				// 			// .map(([key, value]) => [key, backToObject(value, getOptionsForKey(key))])
-				// 	)
-				// );
 
 				setPreferencesData({
 					idealMatchGender: idealMatchGender,
@@ -241,51 +229,6 @@ function Recommendations() {
 		console.log("Matches: ",  matches);
 	}, [matches]);
 
-	// //set format data
-	// useEffect(() => {
-	//
-	// 	setCurrentMatch(prevMatch => {
-	// 		if (!prevMatch) return prevMatch; // Ensure state is not undefined
-	//
-	// 		const newMatch = { ...prevMatch }; // Clone the object
-	//
-	// 		for (let key in newMatch) {
-	// 			if (newMatch.hasOwnProperty(key)) {
-	// 				// console.log(key + " => " + newMatch[key]);
-	// 			}
-	//
-	// 			if (key === 'location') {
-	// 				newMatch[key] = formatLocation(newMatch[key]); // Update location
-	// 			} else if (Array.isArray(newMatch[key])) {
-	// 				console.log("formatting data");
-	// 				newMatch[key] = formatData([...newMatch[key]]); // Clone array before modifying
-	// 			}
-	// 		}
-	//
-	// 		return newMatch;
-	// 	});
-	//
-	// }, [currentMatchNum, matches]);
-
-	// useEffect(() => {
-	// 	if (matches[currentMatchNum]) {
-	// 		const formattedMatch = { ...matches[currentMatchNum] }; // Clone to avoid mutations
-	//
-	// 		for (let key in formattedMatch) {
-	// 			if (key === 'location') {
-	// 				formattedMatch[key] = formatLocation(formattedMatch[key]);
-	// 			} else if (Array.isArray(formattedMatch[key])) {
-	// 				console.log("formatting data");
-	// 				formattedMatch[key] = formatData([...formattedMatch[key]]);
-	// 			}
-	// 		}
-	//
-	// 		// ✅ Only update if the match has actually changed
-	// 		setCurrentMatch(prevMatch => {
-	// 			return JSON.stringify(prevMatch) === JSON.stringify(formattedMatch) ? prevMatch : formattedMatch;
-	// 		});
-	// 	}
-	// }, [currentMatchNum, matches]); // Ensure the effect runs when matches change
 
 	// just to log data
 	useEffect(() => {
@@ -399,26 +342,6 @@ function Recommendations() {
 		}
 
 	}, [currentMatchNum, matches]);
-
-	// // todo doesnt work because it needs matchContainer to be available but it's available only when currentMatch is available but using currentMatch as dependency causes the evenlistener to be added and removed on every like/dislike click
-	// //handle event listener every time user clicks on like or dislike
-	// useEffect(() => {
-	// 	const matchContainer = matchContainerRef.current;
-	// 	if (!matchContainer) {
-	// 		console.log("match container not found");
-	// 		return;
-	// 	}
-	//
-	// 	console.log("Adding event listener on transitionend");
-	// 	// Add event listener once
-	// 	matchContainer.addEventListener("transitionend", resetPosition);
-	//
-	// 	// Cleanup function to remove listener when component unmounts
-	// 	return () => {
-	// 		console.log("Removing event listener on transitionend");
-	// 		matchContainer.removeEventListener("transitionend", resetPosition);
-	// 	};
-	// }, [matches]);
 
 
 	const resetButtons = () => {

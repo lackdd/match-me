@@ -29,12 +29,10 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 
 	// Initialize react-hook-form with Yup schema
 	const {
-		register,
 		handleSubmit,
 		setValue,
 		watch,
 		clearErrors,
-		setError,
 		trigger,
 		reset,
 		formState: { errors },
@@ -44,56 +42,27 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 		mode: "onChange",
 	});
 
+	// on submit send data to backend
+	const Submit = async (formattedData) => {
+		console.log("Sending:", JSON.stringify(formattedData, null, 2));
+		try {
+			const response = await
+				axios.patch(`${VITE_BACKEND_URL}/api/me/bio`, formattedData, {
+					headers: {
+						Authorization: `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'}
 
-
-	// get user preferences data
-	// useEffect(() => {
-	//
-	// 	const getPreferencesData = async() => {
-	// 		const controller = new AbortController(); // Create an abort controller
-	// 		const signal = controller.signal;
-	//
-	// 		try {
-	// 			const response = await axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
-	// 					headers: { Authorization: `Bearer ${tokenValue}` },
-	// 					signal
-	// 			})
-	//
-	// 			// formatting data (mostly to objects) for dashboard form
-	// 			const gender = genderOptions.find(gender => gender.value === response.data.gender);
-	// 			const additionalInterests = backToObject(response.data.additionalInterests, interestsOptions);
-	// 			const personalityTraits = backToObject(response.data.personalityTraits, personalityTraitsOptions);
-	// 			const goalsWithMusic = backToObject(response.data.goalsWithMusic, goalsOptions);
-	// 			const preferredMethod = backToObject(response.data.preferredMethod, methodsOptions);
-	// 			const preferredMusicGenres = backToObject(response.data.preferredMusicGenres, genreOptions);
-	// 			const location = response.data.location ? {value: response.data.location, label: response.data.location} : "";
-	//
-	// 			console.log("Response: ", response);
-	//
-	// 			// data for the form
-	// 			setPreferencesData({
-	// 				...response.data,
-	// 			});
-	//
-	// 			console.log("Data fetched!");
-	// 		} catch (error) {
-	// 			if (axios.isCancel(error)) {
-	// 				console.log("Fetch aborted");
-	// 			} else {
-	// 				if (error.response) {
-	// 					console.error("Backend error:", error.response.data); // Server responded with an error
-	// 				} else {
-	// 					console.error("Request failed:", error.message); // Network error or request issue
-	// 				}
-	// 			}
-	// 		} finally {
-	// 			// setLoading(false);
-	// 		}
-	// 	}
-	// 	getPreferencesData();
-	//
-	// 	return () => controller.abort(); // Cleanup function to abort request
-	// }, [])
+				});
+			console.log("User preferences edited successfully");
+			console.log("Data: ", response.data);
+		} catch (error) {
+			if (error.response) {
+				console.error("Backend error:", error.response.data); // Server responded with an error
+			} else {
+				console.error("Request failed:", error.message); // Network error or request issue
+			}
+		}
+	};
 
 
 	return (
@@ -101,6 +70,18 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 		<form className={"recommendations-form"}
 			  onSubmit={handleSubmit( (data) => {
 				  setPreferencesData(data);
+
+				  const formattedData = {
+					  idealMatchAge: data.idealMatchAge.value,
+					  idealMatchGender: data.idealMatchGender.value,
+					  idealMatchLocation: data.idealMatchLocation.value,
+					  idealMatchYearsOfExperience: data.idealMatchYearsOfExperience.value,
+					  idealMatchMethods: data.idealMatchMethods.map(item => item.value),
+					  idealMatchGenres: data.idealMatchGenres.map(item => item.value),
+					  idealMatchGoals: data.idealMatchGoals.map(item => item.value),
+				  }
+
+				  Submit(formattedData);
 			  })}
 			  autoComplete={'off'}
 			  noValidate
@@ -137,11 +118,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 							// setPreferencesData((prev) => ({...prev, idealMatchGenres: selectedOption})); // Persist data correctly
 							handleCloseMenu(selectedOption);
 
-							if (!selectedOption || selectedOption.length === 0) {
-								setError('idealMatchGenres', {message: 'Required'});
-							} else {
-								clearErrors('idealMatchGenres');
-							}
+							// if (!selectedOption || selectedOption.length === 0) {
+							// 	setError('idealMatchGenres', {message: 'Required'});
+							// } else {
+							// 	clearErrors('idealMatchGenres');
+							// }
 						}}
 						onBlur={() => trigger(name)} // Trigger validation when user leaves the field
 					/>
@@ -178,11 +159,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 							// setPreferencesData((prev) => ({...prev, matchPreferredMethods: selectedOption})); // Persist data correctly
 							handleCloseMenu(selectedOption);
 
-							if (!selectedOption || selectedOption.length === 0) {
-								setError('idealMatchMethods', {message: 'Required'});
-							} else {
-								clearErrors('idealMatchMethods');
-							}
+							// if (!selectedOption || selectedOption.length === 0) {
+							// 	setError('idealMatchMethods', {message: 'Required'});
+							// } else {
+							// 	clearErrors('idealMatchMethods');
+							// }
 						}}
 						onBlur={() => trigger('idealMatchMethods')} // Trigger validation when user leaves the field
 					/>
@@ -217,11 +198,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 							// setPreferencesData((prev) => ({...prev, idealMatchGoals: selectedOption})); // Persist data correctly
 							handleCloseMenu(selectedOption);
 
-							if (!selectedOption || selectedOption.length === 0) {
-								setError('idealMatchGoals', {message: 'Required'});
-							} else {
-								clearErrors('idealMatchGoals');
-							}
+							// if (!selectedOption || selectedOption.length === 0) {
+							// 	setError('idealMatchGoals', {message: 'Required'});
+							// } else {
+							// 	clearErrors('idealMatchGoals');
+							// }
 						}}
 						onBlur={() => trigger('idealMatchGoals')} // Trigger validation when user leaves the field
 					/>
@@ -251,11 +232,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 							setValue('idealMatchGender', selectedOption, {shouldValidate: true});
 							// setPreferencesData((prev) => ({...prev, idealMatchGender: selectedOption})); // Persist data correctly
 
-							if (!selectedOption || Object.keys(selectedOption).length === 0) {
-								setError('idealMatchGender', {message: 'Required'});
-							} else {
-								clearErrors('idealMatchGender');
-							}
+							// if (!selectedOption || Object.keys(selectedOption).length === 0) {
+							// 	setError('idealMatchGender', {message: 'Required'});
+							// } else {
+							// 	clearErrors('idealMatchGender');
+							// }
 						}}
 						onBlur={() => trigger('idealMatchGender')} // Trigger validation when user leaves the field
 					/>
@@ -285,11 +266,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 							setValue('idealMatchAge', selectedOption, {shouldValidate: true});
 							// setPreferencesData((prev) => ({...prev, idealMatchAge: selectedOption})); // Persist data correctly
 
-							if (!selectedOption || Object.keys(selectedOption).length === 0) {
-								setError('idealMatchAge', {message: 'Required'});
-							} else {
-								clearErrors('idealMatchAge');
-							}
+							// if (!selectedOption || Object.keys(selectedOption).length === 0) {
+							// 	setError('idealMatchAge', {message: 'Required'});
+							// } else {
+							// 	clearErrors('idealMatchAge');
+							// }
 						}}
 						onBlur={() => trigger('idealMatchAge')} // Trigger validation when user leaves the field
 					/>
@@ -322,11 +303,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 							setValue('idealMatchYearsOfExperience', selectedOption, {shouldValidate: true});
 							// setPreferencesData((prev) => ({...prev, idealMatchYearsOfExperience: selectedOption})); // Persist data correctly
 
-							if (!selectedOption || Object.keys(selectedOption).length === 0) {
-								setError('idealMatchYearsOfExperience', {message: 'Required'});
-							} else {
-								clearErrors('idealMatchYearsOfExperience');
-							}
+							// if (!selectedOption || Object.keys(selectedOption).length === 0) {
+							// 	setError('idealMatchYearsOfExperience', {message: 'Required'});
+							// } else {
+							// 	clearErrors('idealMatchYearsOfExperience');
+							// }
 						}}
 						onBlur={() => trigger('idealMatchYearsOfExperience')} // Trigger validation when user leaves the field
 					/>
