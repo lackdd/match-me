@@ -83,3 +83,9 @@ export const closeSettings = (event) => {
 	const settingsPopup = document.getElementById('settings-popup')
 	settingsPopup.style.display = 'none';
 }
+
+export const backToObject = (array, options) => {
+	const formattedArray = array.map(item => item.replaceAll(',', '').trim());
+	const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
+	return arrayOfObjects;
+}

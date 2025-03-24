@@ -13,7 +13,8 @@ import {
 	formatLocation,
 	closeSettings,
 	openSettings,
-	changeImage
+	changeImage,
+	backToObject
 } from '../reusables/profile-card-functions.jsx';
 import {DashboardForm} from './dashboardForm.jsx';
 import {
@@ -134,12 +135,6 @@ function Dashboard() {
 	}, [])
 
 
-	const backToObject = (array, options) => {
-		const formattedArray = array.map(item => item.replaceAll(',', '').trim());
-		const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
-		return arrayOfObjects;
-	}
-
 	const formatDataForView = (data) => {
 		if (data !== null && data && isDataFormatted.current === false) {
 			const updatedProfile = {
@@ -176,85 +171,9 @@ function Dashboard() {
 		return data;
 	}
 
-	// // format data for viewing
-	// useEffect(() => {
-	// 	if (myDataFormatted !== null && myDataFormatted && isDataFormatted.current === false) {
-	// 		const updatedProfile = {
-	// 			...myDataFormatted,
-	// 			location: formatLocation(myDataFormatted.location),
-	// 			// location: myDataFormatted.location,
-	// 			preferredMusicGenres: Array.isArray(myDataFormatted.preferredMusicGenres)
-	// 				? formatData(myDataFormatted.preferredMusicGenres)
-	// 				: myDataFormatted.preferredMusicGenres,
-	// 			preferredMethod: Array.isArray(myDataFormatted.preferredMethod)
-	// 				? formatData(myDataFormatted.preferredMethod)
-	// 				: myDataFormatted.preferredMethod,
-	// 			additionalInterests: Array.isArray(myDataFormatted.additionalInterests)
-	// 				? formatData(myDataFormatted.additionalInterests)
-	// 				: myDataFormatted.additionalInterests,
-	// 			personalityTraits: Array.isArray(myDataFormatted.personalityTraits)
-	// 				? formatData(myDataFormatted.personalityTraits)
-	// 				: myDataFormatted.personalityTraits,
-	// 			goalsWithMusic: Array.isArray(myDataFormatted.goalsWithMusic)
-	// 				? formatData(myDataFormatted.goalsWithMusic)
-	// 				: myDataFormatted.goalsWithMusic
-	// 		};
-	//
-	// 		// Check if the profile data has changed before updating the state
-	// 		if (JSON.stringify(updatedProfile) !== JSON.stringify(myDataFormatted)) {
-	// 			setMyDataFormatted((prev) => ({
-	// 				...prev,
-	// 				...updatedProfile
-	// 			}));
-	// 			isDataFormatted.current = true;
-	// 		}
-	// 	}
-	// }, [myDataFormatted]);
-
-
 	useEffect(() => {
 		console.log("MyDataFormatted: ", myDataFormatted);
 	}, [myDataFormatted])
-
-
-	// format data for form
-	// useEffect(() => {
-	//
-	// 	if (myData !== null && myData) {
-	//
-	// 		const updatedProfile = {
-	// 			...myData,
-	// 			// gender: myData.gender.charAt(0).toUpperCase() + myData.gender.slice(1),
-	// 			// gender: genderOptions.find(gender => gender.value === myData.gender),
-	// 			// location: formatLocation(myDataFormatted.location),
-	// 			preferredMusicGenres: Array.isArray(myData.preferredMusicGenres)
-	// 				? (myData.preferredMusicGenres.map(item => item.replaceAll(',', '').trim()))
-	// 				: myData.preferredMusicGenres,
-	// 			preferredMethod: Array.isArray(myData.preferredMethod)
-	// 				? (myData.preferredMethod.map(item => item.replaceAll(',', '').trim()))
-	// 				: myData.preferredMethod,
-	// 			additionalInterests: Array.isArray(myData.additionalInterests)
-	// 				? (myData.additionalInterests.map(item => item.replaceAll(',', '').trim()))
-	// 				: myData.additionalInterests,
-	// 			personalityTraits: Array.isArray(myData.personalityTraits)
-	// 				? (myData.personalityTraits.map(item => item.replaceAll(',', '').trim()))
-	// 				: myData.personalityTraits,
-	// 			goalsWithMusic: Array.isArray(myData.goalsWithMusic)
-	// 				? (myData.goalsWithMusic.map(item => item.replaceAll(',', '').trim()))
-	// 				: myData.goalsWithMusic
-	// 		};
-	//
-	// 		// Check if the profile data has changed before updating the state
-	// 		if (JSON.stringify(updatedProfile) !== JSON.stringify(myData)) {
-	// 			setMyData((prev) => ({
-	// 				...prev,
-	// 				...updatedProfile
-	// 			}));
-	// 			console.log("myData.additionalInterests:", myData.additionalInterests);
-	// 			console.log("Available genderOptions:", genderOptions);
-	// 		}
-	// 	}
-	// }, [myData]);
 
 	return (
 
