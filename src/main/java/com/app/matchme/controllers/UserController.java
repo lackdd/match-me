@@ -213,7 +213,9 @@ public class UserController {
 
     @PatchMapping("/me/profile")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ProfileDTO dto) {
+        System.out.println(dto);
         Long id = userPrincipal.getId();
+        System.out.println(id);
         service.updateProfile(id, dto);
         return ResponseEntity.ok("Profile updated.");
     }

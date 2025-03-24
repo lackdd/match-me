@@ -87,7 +87,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
                       location: data.location.label,
                       description: data.description,
                       experience: data.yearsOfMusicExperience,
-                      linkToMusic: data.musicLink,
+                      linkToMusic: data.linkToMusic,
                       additionalInterests: data.additionalInterests.map(item => item.value),
                       preferredMethod: data.preferredMethod.map(item => item.value),
                       preferredMusicGenres: data.preferredMusicGenres.map(item => item.value),
