@@ -34,6 +34,21 @@ public class ProfileDTO {
         this.yearsOfMusicExperience = yearsOfMusicExperience;
     }
 
+    @Override
+    public String toString() {
+        return "ProfileDTO{" +
+                "preferredMusicGenres=" + preferredMusicGenres +
+                ", preferredMethod=" + preferredMethod +
+                ", additionalInterests=" + additionalInterests +
+                ", personalityTraits=" + personalityTraits +
+                ", goalsWithMusic=" + goalsWithMusic +
+                ", linkToMusic='" + linkToMusic + '\'' +
+                ", location='" + location + '\'' +
+                ", description='" + description + '\'' +
+                ", yearsOfMusicExperience=" + yearsOfMusicExperience +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }
