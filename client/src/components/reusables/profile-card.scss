@@ -298,9 +298,24 @@
     height: 100%;
     width: fit-content;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     place-items: center;
     text-align: center;
     font-size: 1.3rem;
+
+    .change-preferences {
+      width: 10rem;
+      padding: 0.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      place-items: center;
+      background-color: variables.$main-pink;
+      border: none;
+    }
+
   }
 
   // Endless spinner animation
