@@ -194,6 +194,30 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PatchMapping("/me")
+    public ResponseEntity<?> updateProfilePicture(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
+        String profilePicture = body.get("profilePicture");
+        Long id = userPrincipal.getId();
+        service.updateProfilePicture(id, profilePicture);
+        return ResponseEntity.ok("Updated profile picture.");
+    }
+
+    @PatchMapping("/change-password")
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
+        String oldPassword = body.get("oldPassword");
+        String newPassword = body.get("newPassword");
+        Long id = userPrincipal.getId();
+        service.updatePassword(id, oldPassword, newPassword);
+        return ResponseEntity.ok("Password updated.");
+    }
+
+    @PatchMapping("/me/profile")
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ProfileDTO dto) {
+        Long id = userPrincipal.getId();
+        service.updateProfile(id, dto);
+        return ResponseEntity.ok("Profile updated.");
+    }
+
     @GetMapping("/me/profile")
     public ResponseEntity<?> validateUserProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(userPrincipal == null) {
@@ -205,6 +229,13 @@ public class UserController {
         return userOptional
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/me/bio")
+    public ResponseEntity<?> updateBio(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody BioDTO dto) {
+        Long id = userPrincipal.getId();
+        service.updateBio(id, dto);
+        return ResponseEntity.ok("Bio updated");
     }
 
     @GetMapping("/me/bio")

@@ -166,6 +166,92 @@ public class UserService {
                 .map(UserMapper::toUsernamePictureDTO);
     }
 
+    public void updateProfilePicture(Long id, String profilePicture) {
+        if(profilePicture == null || profilePicture.trim().isEmpty()) {
+            throw new IllegalArgumentException("Profile picture URL cannot be empty.");
+        }
+
+        User currentUser = getUserById(id);
+        currentUser.setProfilePicture(profilePicture);
+        repo.save(currentUser);
+    }
+
+    public void updateBio(Long id, BioDTO dto) {
+        User currentUser = getUserById(id);
+        if (dto.getIdealMatchGenres() != null) {
+            currentUser.setIdealMatchGenres(dto.getIdealMatchGenres());
+        }
+        if (dto.getIdealMatchMethods() != null) {
+            currentUser.setIdealMatchMethods(dto.getIdealMatchMethods());
+        }
+        if (dto.getIdealMatchGoals() != null) {
+            currentUser.setIdealMatchGoals(dto.getIdealMatchGoals());
+        }
+        if (dto.getIdealMatchGender() != null) {
+            currentUser.setIdealMatchGender(dto.getIdealMatchGender());
+        }
+        if (dto.getIdealMatchAge() != null) {
+            currentUser.setIdealMatchAge(dto.getIdealMatchAge());
+        }
+        if (dto.getIdealMatchYearsOfExperience() != null) {
+            currentUser.setIdealMatchYearsOfExperience(dto.getIdealMatchYearsOfExperience());
+        }
+        if (dto.getIdealMatchLocation() != null) {
+            currentUser.setIdealMatchLocation(dto.getIdealMatchLocation());
+        }
+        repo.save(currentUser);
+    }
+
+    public void updateProfile(Long id, ProfileDTO dto ) {
+        User currentUser = getUserById(id);
+        if (dto.getPreferredMusicGenres() != null) {
+            currentUser.setPreferredMusicGenres(dto.getPreferredMusicGenres());
+        }
+
+        if (dto.getPreferredMethod() != null) {
+            currentUser.setPreferredMethods(dto.getPreferredMethod());
+        }
+
+        if (dto.getAdditionalInterests() != null) {
+            currentUser.setAdditionalInterests(dto.getAdditionalInterests());
+        }
+
+        if (dto.getPersonalityTraits() != null) {
+            currentUser.setPersonalityTraits(dto.getPersonalityTraits());
+        }
+
+        if (dto.getGoalsWithMusic() != null) {
+            currentUser.setGoalsWithMusic(dto.getGoalsWithMusic());
+        }
+        if (dto.getLinkToMusic() != null) {
+            currentUser.setLinkToMusic(dto.getLinkToMusic());
+        }
+        if (dto.getLocation() != null) {
+            currentUser.setLocation(dto.getLocation());
+        }
+        if (dto.getDescription() != null) {
+            currentUser.setDescription(dto.getDescription());
+        }
+        if (dto.getYearsOfMusicExperience() != null) {
+            currentUser.setYearsOfMusicExperience(dto.getYearsOfMusicExperience());
+        }
+        repo.save(currentUser);
+    }
+
+    public void updatePassword(Long id, String oldPassword, String newPassword) {
+        User currentUser = getUserById(id);
+        if (!encoder.matches(oldPassword, currentUser.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect.");
+        }
+
+        if(newPassword == null || newPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty.");
+        }
+
+        currentUser.setPassword(encoder.encode(newPassword));
+        repo.save(currentUser);
+    }
+
     public Optional<ProfileDTO> getUserProfileById(Long id) {
         return repo.findById(id)
                 .map(UserMapper::toProfileDTO);
