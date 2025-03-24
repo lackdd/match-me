@@ -79,7 +79,7 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of("http://localhost:5173", "https://match-me-20pb.onrender.com/")); // Adjust as needed
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);
         return source;
     }
