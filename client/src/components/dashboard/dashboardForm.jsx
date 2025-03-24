@@ -99,6 +99,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
                       personalityTraits: data.personalityTraits.map(item => item.value),
 				  }
 
+				  console.log("Formatted data: ", formattedData);
+
 				  Submit(formattedData);
 
 				  setMyDataFormatted((prev) => ({
@@ -235,7 +237,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				data={myData.preferredMusicGenres}
 				placeholder={'Preferred music genres'}
 				options={genreOptions}
-				id={'preferredGenres'}
+				id={'preferredMusicGenres'}
 				name={'genres'}
 				register={register}
 				watch={watch}
