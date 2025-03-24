@@ -55,6 +55,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 		console.log("myData: ", myData);
 	}, [myData]);
 
+	// on submit send data to backend
 	const Submit = async (formattedData) => {
 		console.log("Sending:", JSON.stringify(formattedData, null, 2));
 		try {
@@ -80,6 +81,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 		<>
 		<form className="dashboard-form"
 			  onSubmit={handleSubmit((data) => {
+				  setMyData(data);
 
 				  const formattedData = {
                       age: data.age,
@@ -95,11 +97,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
                       personalityTraits: data.personalityTraits.map(item => item.value),
 				  }
 
-				  console.log("Data on submit: ", formattedData);
-
-				  console.log("Data: ", formattedData);
-				  setMyData(data);
 				  Submit(formattedData);
+
 				  setMyDataFormatted((prev) => ({
 					  ...prev,
 					  ...formatDataForView(formattedData)
@@ -177,11 +176,12 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 						menuTop={false}
 						options={genderOptions}
 						placeholder="Select gender"
-						value={watch('gender') || myData.gender}
+						// value={watch('gender') || myData.gender}
+						value={watch('gender')}
 						autoComplete={"off"}
 						onChange={(selectedOption) => {
 							setValue("gender", selectedOption, { shouldValidate: true });  // ✅ Set entire object, not just string
-							setMyData((prev) => ({ ...prev, gender: selectedOption }));
+							// setMyData((prev) => ({ ...prev, gender: selectedOption }));
 							clearErrors("gender");
 						}}
 
@@ -202,7 +202,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							${errors.age ? 'error' : ''}
 							${!errors.age && watch('age') ? 'valid' : ''}`}
 							{...register('age')}
-							value={watch('age') || myData.age}
+							// value={watch('age') || myData.age}
+							value={watch('age')}
 							autoComplete={'off'}
 							min={0}
 							max={120}
@@ -210,7 +211,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							onChange={(e) => {
 								const value = e.target.value ? parseInt(e.target.value, 10) : 0;
 								setValue('age', value, { shouldValidate: true });
-								setMyData((prev) => ({ ...prev, age: value}));
+								// setMyData((prev) => ({ ...prev, age: value}));
 							}}
 						/>
 						<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger} />
@@ -241,7 +242,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				setFormTwoData={setMyData}
+				// setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
@@ -258,7 +259,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				setFormTwoData={setMyData}
+				// setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
@@ -275,7 +276,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				setFormTwoData={setMyData}
+				// setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
@@ -291,7 +292,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				setFormTwoData={setMyData}
+				// setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
@@ -307,7 +308,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				setFormTwoData={setMyData}
+				// setFormTwoData={setMyData}
 			/>
 
 
@@ -330,7 +331,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							${errors.yearsOfMusicExperience ? 'error' : ''}
 							${!errors.yearsOfMusicExperience && (watch('yearsOfMusicExperience') || watch('yearsOfMusicExperience') === 0) ? 'valid' : ''}`}
 							{...register('yearsOfMusicExperience')}
-							value={watch('yearsOfMusicExperience') || myData.yearsOfMusicExperience}
+							// value={watch('yearsOfMusicExperience') || myData.yearsOfMusicExperience}
+							value={watch('yearsOfMusicExperience')}
 							autoComplete={'off'}
 							min={0}
 							max={myData.age}
@@ -344,7 +346,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
                                     return;
 								}
 								setValue('yearsOfMusicExperience', value, { shouldValidate: true });
-								setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value}));
+								// setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value}));
 							}}
 						/>
 						<IncrementDecrementButtons id={'yearsOfMusicExperience'} watch={watch} setValue={setValue} trigger={trigger}/>
@@ -365,14 +367,15 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 						${errors.linkToMusic ? 'error' : ''}
 						${!errors.linkToMusic && watch('linkToMusic') ? 'valid' : ''}`}
 						placeholder='Link to your Spotify etc'
-						value={watch('linkToMusic') || myData.linkToMusic}
+						// value={watch('linkToMusic') || myData.linkToMusic}
+						value={watch('linkToMusic')}
 						{...register('linkToMusic')}
 						autoComplete={'off'}
 						onBlur={() => trigger('linkToMusic')} // Trigger validation when user leaves the field
 						onChange={(e) => {
 							const value = e.target.value;
 							setValue('linkToMusic', value, { shouldValidate: true });
-							setMyData((prev) => ({ ...prev, linkToMusic: value }));
+							// setMyData((prev) => ({ ...prev, linkToMusic: value }));
 						}}
 					/>
 					<ErrorElement errors={errors}  id={'linkToMusic'}/>
@@ -388,7 +391,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					<Select
 						options={options}
 						onInputChange={(val) => {
-							setInputValue(val);
+							// setInputValue(val);
 							fetchPlaces(val);
 						}}
 						placeholder='Search for your city'
@@ -459,11 +462,12 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 						placeholder='Say a few words about yourself...'
 						{...register('description')}
 						autoComplete={'off'}
-						value={watch('description') || myData.description}
+						// value={watch('description') || myData.description}
+						value={watch('description')}
 						onChange={(e) => {
 							const value = e.target.value;
 							setValue('description', value, { shouldValidate: true });
-							setMyData((prev) => ({ ...prev, description: value }));
+							// setMyData((prev) => ({ ...prev, description: value }));
 						}}
 					/>
 					<ErrorElement errors={errors}  id={'description'}/>

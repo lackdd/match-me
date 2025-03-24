@@ -80,7 +80,6 @@ function Recommendations() {
 
 	useEffect(() =>{
 		const getPreferencesData = async() => {
-			console.log("I'm running");
 
 			try {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
