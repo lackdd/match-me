@@ -25,7 +25,7 @@ export const dashboardFormValidationSchema =
 			.max(120, "Maximum age is 120"),
 
 		// step 2
-		preferredMethods:
+		preferredMethod:
 			yup
 				.array()
 				.of(
@@ -65,7 +65,7 @@ export const dashboardFormValidationSchema =
 					})
 				)
 				.min(1, "Required"),
-		goals:
+		goalsWithMusic:
 			yup
 				.array()
 				.of(
