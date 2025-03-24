@@ -37,6 +37,8 @@ function Dashboard() {
 	const [formOpen, setFormOpen] = useState(false);
 	const [imageUrl, setImageUrl] = useState(null); // todo if image is changed then change this. If this is available then use this to show image. Else you data from backend
 	const isDataFormatted = useRef(false);
+	const [error, setError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -116,6 +118,8 @@ function Dashboard() {
 
 					console.log("Data fetched!");
 				} catch (error) {
+					setError(true);
+					setErrorMessage(error.message);
 					if (axios.isCancel(error)) {
 						console.log("Fetch aborted");
 					} else {
@@ -179,237 +183,246 @@ function Dashboard() {
 
 		<div className='dashboard-container'>
 
-			{loading && (
-				<div className={'spinner-container'}>
-					<div className='spinner endless'>Loading profile...</div>
-				</div>
-			)}
-
-			{!loading && (
+			{!error ? (
 				<>
-				<div className="extra-dashboard-container">
-
-					{/*<div className="settings-popup" id="picture-popup">*/}
-					{/*	<div className="settings-content">*/}
-					{/*		<div className='forms-container'>*/}
-					{/*			*/}
-					{/*		</div>*/}
-					{/*	</div>*/}
-					{/*</div>*/}
-
-					<div className="settings-popup" id="settings-popup">
-						<div className="settings-content">
-							<div className='forms-container'>
-								<DashboardForm myData={myData} setMyData={setMyData} setMyDataFormatted={setMyDataFormatted} formatDataForView={formatDataForView}/>
-							</div>
+					{loading && (
+						<div className={'spinner-container'}>
+							<div className='spinner endless'>Loading profile...</div>
 						</div>
-					</div>
+					)}
 
-					<div
-						// ref={matchContainerRef}
-						id="match-container"
-						className="profile-card-container"
-					>
-						<div className="settings-container">
-							<button className="settings-button" onClick={() => {
-								openSettings();
-								setFormOpen(true);
-								// console.log("gender when opening settings: ", myData.gender);
-							}}>
-								<GiSettingsKnobs />
-							</button>
-						</div>
+					{!loading && (
+						<>
+							<div className="extra-dashboard-container">
 
-						<div className="picture-bio-container">
-							<div className="picture-container">
-								<div className="extra-picture-container">
+								{/*<div className="settings-popup" id="picture-popup">*/}
+								{/*	<div className="settings-content">*/}
+								{/*		<div className='forms-container'>*/}
+								{/*			*/}
+								{/*		</div>*/}
+								{/*	</div>*/}
+								{/*</div>*/}
 
-									{/* todo fix so uploaded pictures are actually shown*/}
-									{/*<label className={"choose-picture"}>*/}
+								<div className="settings-popup" id="settings-popup">
+									<div className="settings-content">
+										<div className='forms-container'>
+											<DashboardForm myData={myData} setMyData={setMyData} setMyDataFormatted={setMyDataFormatted} formatDataForView={formatDataForView}/>
+										</div>
+									</div>
+								</div>
 
-									{/*{!loadingImage && imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)} />}*/}
+								<div
+									// ref={matchContainerRef}
+									id="match-container"
+									className="profile-card-container"
+								>
+									<div className="settings-container">
+										<button className="settings-button" onClick={() => {
+											openSettings();
+											setFormOpen(true);
+											// console.log("gender when opening settings: ", myData.gender);
+										}}>
+											<GiSettingsKnobs />
+										</button>
+									</div>
 
-									{loadingImage && (
-										<div className="loading-image">
-											<div className={'spinner-container'}>
-												<div className='spinner endless'>Loading picture...</div>
+									<div className="picture-bio-container">
+										<div className="picture-container">
+											<div className="extra-picture-container">
+
+												{/* todo fix so uploaded pictures are actually shown*/}
+												{/*<label className={"choose-picture"}>*/}
+
+												{/*{!loadingImage && imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)} />}*/}
+
+												{loadingImage && (
+													<div className="loading-image">
+														<div className={'spinner-container'}>
+															<div className='spinner endless'>Loading picture...</div>
+														</div>
+													</div>
+												)}
+
+												{!loadingImage && (
+													<>
+														<input type='file'
+															   accept={"image/*"}
+															   name={'image'}
+															   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}
+															   className='file-upload'
+															   title={'click to change picture'}
+														/>
+														{myDataFormatted.gender === 'male' && (
+															<img
+																src="profile_pic_male.jpg"
+																alt="profile picture"
+																className="profile-picture"
+																// onClick={changePicture(myDataFormatted, setMyDataFormatted)}
+															/>
+														)}
+														{myDataFormatted.gender === 'female' && (
+															<img
+																src="profile_pic_female.jpg"
+																alt="profile picture"
+																className="profile-picture"
+															/>
+														)}
+														{myDataFormatted.gender === 'other' && (
+															<img
+																src="default_profile_picture.png"
+																alt="profile picture"
+																className="profile-picture"
+															/>
+														)}
+													</>
+												)}
+
+												{myDataFormatted.linkToMusic && (
+													<div className="music-link">
+														<FaSpotify style={{ color: '#31D165' }} />
+													</div>
+												)}
 											</div>
 										</div>
-									)}
 
-									{!loadingImage && (
-										<>
-										<input type='file'
-											   accept={"image/*"}
-											   name={'image'}
-											   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}
-											   className='file-upload'
-											   title={'click to change picture'}
-										/>
-										{myDataFormatted.gender === 'male' && (
-											<img
-											src="profile_pic_male.jpg"
-											alt="profile picture"
-											className="profile-picture"
-											// onClick={changePicture(myDataFormatted, setMyDataFormatted)}
-											/>
-											)}
-										{myDataFormatted.gender === 'female' && (
-											<img
-											src="profile_pic_female.jpg"
-											alt="profile picture"
-											className="profile-picture"
-											/>
-											)}
-										{myDataFormatted.gender === 'other' && (
-											<img
-											src="default_profile_picture.png"
-											alt="profile picture"
-											className="profile-picture"
-											/>
-											)}
-										</>
-										)}
-
-									{myDataFormatted.linkToMusic && (
-										<div className="music-link">
-											<FaSpotify style={{ color: '#31D165' }} />
+										<div className="bio-container default">
+											<table className="bio-table">
+												<tbody>
+												<tr>
+													<th style={{ width: '60%' }} className="two-column">
+														Location
+													</th>
+													<td style={{ width: '4%' }}></td>
+													<th style={{ width: '36%' }} className="two-column">
+														Experience
+													</th>
+												</tr>
+												<tr>
+													<td style={{ width: '60%' }}>{myDataFormatted.location}</td>
+													<td style={{ width: '4%' }}></td>
+													<td style={{ width: '36%' }}>
+														{myDataFormatted.yearsOfMusicExperience === 1
+															? `${myDataFormatted.yearsOfMusicExperience} year`
+															: `${myDataFormatted.yearsOfMusicExperience} years`}
+													</td>
+												</tr>
+												<tr>
+													<th className="one-column" colSpan={3}>
+														Genres
+													</th>
+												</tr>
+												<tr>
+													<td colSpan={3}>{myDataFormatted.preferredMusicGenres}</td>
+												</tr>
+												<tr>
+													<th className="one-column" colSpan={3}>
+														Methods
+													</th>
+												</tr>
+												<tr>
+													<td colSpan={3}>{myDataFormatted.preferredMethod}</td>
+												</tr>
+												<tr>
+													<th className="one-column" colSpan={3}>
+														Interests
+													</th>
+												</tr>
+												<tr>
+													<td colSpan={3}>{myDataFormatted.additionalInterests}</td>
+												</tr>
+												<tr>
+													<th className="one-column" colSpan={3}>
+														Personality
+													</th>
+												</tr>
+												<tr>
+													<td colSpan={3}>{myDataFormatted.personalityTraits}</td>
+												</tr>
+												<tr>
+													<th className="one-column" colSpan={3}>
+														Goals
+													</th>
+												</tr>
+												<tr>
+													<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
+												</tr>
+												</tbody>
+											</table>
 										</div>
-									)}
+
+										<div className="bio-container mobile">
+											<table className="bio-table">
+												<tbody>
+												<tr>
+													<th style={{ width: '48%' }} className="two-column">Location</th>
+													<td style={{ width: '4%' }}></td>
+													<th style={{ width: '48%' }} className="two-column">Experience</th>
+												</tr>
+												<tr>
+													<td style={{ width: '48%' }}>{myDataFormatted.location}</td>
+													<td style={{ width: '4%' }}></td>
+													<td style={{ width: '48%' }}>
+														{myDataFormatted.yearsOfMusicExperience === 1
+															? `${myDataFormatted.yearsOfMusicExperience} year`
+															: `${myDataFormatted.yearsOfMusicExperience} years`}
+													</td>
+												</tr>
+												<tr>
+													<th style={{ width: '48%' }} className="two-column">Genres</th>
+													<td style={{ width: '4%' }}></td>
+													<th style={{ width: '48%' }} className="two-column">Methods</th>
+												</tr>
+												<tr>
+													<td style={{ width: '48%' }}>{myDataFormatted.preferredMusicGenres}</td>
+													<td style={{ width: '4%' }}></td>
+													<td style={{ width: '48%' }}>{myDataFormatted.preferredMethod}</td>
+												</tr>
+												<tr>
+													<th style={{ width: '48%' }} className="two-column">Interests</th>
+													<td style={{ width: '4%' }}></td>
+													<th style={{ width: '48%' }} className="two-column">Personality</th>
+												</tr>
+												<tr>
+													<td style={{ width: '48%' }}>{myDataFormatted.additionalInterests}</td>
+													<td style={{ width: '4%' }}></td>
+													<td style={{ width: '48%' }}>{myDataFormatted.personalityTraits}</td>
+												</tr>
+												<tr>
+													<th colSpan={3}>Goals</th>
+												</tr>
+												<tr>
+													<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
+												</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+
+									<div className="description-container">{myDataFormatted.description}</div>
+
+									<div className="name-container">
+										<span className="name">{myDataFormatted.username}</span>
+										<br />
+										<span>
+							{myDataFormatted.age}, {myDataFormatted.gender}
+						</span>
+									</div>
 								</div>
 							</div>
 
-							<div className="bio-container default">
-								<table className="bio-table">
-									<tbody>
-									<tr>
-										<th style={{ width: '60%' }} className="two-column">
-											Location
-										</th>
-										<td style={{ width: '4%' }}></td>
-										<th style={{ width: '36%' }} className="two-column">
-											Experience
-										</th>
-									</tr>
-									<tr>
-										<td style={{ width: '60%' }}>{myDataFormatted.location}</td>
-										<td style={{ width: '4%' }}></td>
-										<td style={{ width: '36%' }}>
-											{myDataFormatted.yearsOfMusicExperience === 1
-												? `${myDataFormatted.yearsOfMusicExperience} year`
-												: `${myDataFormatted.yearsOfMusicExperience} years`}
-										</td>
-									</tr>
-									<tr>
-										<th className="one-column" colSpan={3}>
-											Genres
-										</th>
-									</tr>
-									<tr>
-										<td colSpan={3}>{myDataFormatted.preferredMusicGenres}</td>
-									</tr>
-									<tr>
-										<th className="one-column" colSpan={3}>
-											Methods
-										</th>
-									</tr>
-									<tr>
-										<td colSpan={3}>{myDataFormatted.preferredMethod}</td>
-									</tr>
-									<tr>
-										<th className="one-column" colSpan={3}>
-											Interests
-										</th>
-									</tr>
-									<tr>
-										<td colSpan={3}>{myDataFormatted.additionalInterests}</td>
-									</tr>
-									<tr>
-										<th className="one-column" colSpan={3}>
-											Personality
-										</th>
-									</tr>
-									<tr>
-										<td colSpan={3}>{myDataFormatted.personalityTraits}</td>
-									</tr>
-									<tr>
-										<th className="one-column" colSpan={3}>
-											Goals
-										</th>
-									</tr>
-									<tr>
-										<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
-									</tr>
-									</tbody>
-								</table>
+							<div className='user-stats-container'>
+								<div className='user-stats'>You have liked {liked} {liked === 1 ? "jammer" : "jammers"}</div>
 							</div>
 
-							<div className="bio-container mobile">
-								<table className="bio-table">
-									<tbody>
-									<tr>
-										<th style={{ width: '48%' }} className="two-column">Location</th>
-										<td style={{ width: '4%' }}></td>
-										<th style={{ width: '48%' }} className="two-column">Experience</th>
-									</tr>
-									<tr>
-										<td style={{ width: '48%' }}>{myDataFormatted.location}</td>
-										<td style={{ width: '4%' }}></td>
-										<td style={{ width: '48%' }}>
-											{myDataFormatted.yearsOfMusicExperience === 1
-												? `${myDataFormatted.yearsOfMusicExperience} year`
-												: `${myDataFormatted.yearsOfMusicExperience} years`}
-										</td>
-									</tr>
-									<tr>
-										<th style={{ width: '48%' }} className="two-column">Genres</th>
-										<td style={{ width: '4%' }}></td>
-										<th style={{ width: '48%' }} className="two-column">Methods</th>
-									</tr>
-									<tr>
-										<td style={{ width: '48%' }}>{myDataFormatted.preferredMusicGenres}</td>
-										<td style={{ width: '4%' }}></td>
-										<td style={{ width: '48%' }}>{myDataFormatted.preferredMethod}</td>
-									</tr>
-									<tr>
-										<th style={{ width: '48%' }} className="two-column">Interests</th>
-										<td style={{ width: '4%' }}></td>
-										<th style={{ width: '48%' }} className="two-column">Personality</th>
-									</tr>
-									<tr>
-										<td style={{ width: '48%' }}>{myDataFormatted.additionalInterests}</td>
-										<td style={{ width: '4%' }}></td>
-										<td style={{ width: '48%' }}>{myDataFormatted.personalityTraits}</td>
-									</tr>
-									<tr>
-										<th colSpan={3}>Goals</th>
-									</tr>
-									<tr>
-										<td colSpan={3}>{myDataFormatted.goalsWithMusic}</td>
-									</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-
-						<div className="description-container">{myDataFormatted.description}</div>
-
-						<div className="name-container">
-							<span className="name">{myDataFormatted.username}</span>
-							<br />
-							<span>
-							{myDataFormatted.age}, {myDataFormatted.gender}
-						</span>
-						</div>
-					</div>
-				</div>
-
-					<div className='user-stats-container'>
-						<div className='user-stats'>You have liked {liked} {liked === 1 ? "jammer" : "jammers"}</div>
-					</div>
-
+						</>
+					)}
 				</>
-			)}
+			) : (
+				<div className='api-error'>{errorMessage}</div>
+			)
+			}
+
+
 		</div>
 	);
 }

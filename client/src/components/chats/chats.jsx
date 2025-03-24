@@ -18,6 +18,8 @@ function Chats() {
 	const [connectionDetails, setConnectionDetails] = useState([]);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [selectedUserId, setSelectedUserId] = useState(null);
+	const [error, setError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	useEffect(() => {
 		const fetchConnections = async () => {
@@ -39,6 +41,8 @@ function Chats() {
 					setConnectionDetails(userDetailsResponse.data);
 				}
 			} catch (error) {
+				setError(true);
+				setErrorMessage(error.message);
 				console.log(error.message);
 			} finally {
 				setLoading(false);
@@ -79,42 +83,46 @@ function Chats() {
 	return (
 		<div className='chats-container'>
 
-			{loading && (
-				<div className={'spinner-container'}>
-					<div className='spinner endless'>Loading chats...</div>
-				</div>
+			{!error ? (
+				<>
+					{loading && (
+						<div className={'spinner-container'}>
+							<div className='spinner endless'>Loading chats...</div>
+						</div>
+					)}
+
+					{!loading && (
+						<div className='extra-chats-container'>
+							<div className='connections' id={'connections'}>
+								{connectionDetails.length === 0 ? (
+									<p className={'no-connections-message'}>No connections</p>
+								) : (
+									connectionDetails.map((connection) => (
+										<button className={`picture-name-button ${selectedUserId === connection.id ? 'selected' : ''}`} key={connection.id} onClick={() => {
+											handleButtonClick(connection.id, connection.username);
+											openChat();
+										}}>
+											<img src='profile_pic_female.jpg' alt='' className='profile-picture'/>
+											<div className='name'>{connection.username}</div>
+										</button>
+									))
+								)}
+							</div>
+
+							<div className='chat' id={'chat'}>
+								{selectedUser ? (
+									<Chat receiverUsername={selectedUser} receiverUserId={selectedUserId} />
+								) : (
+									<p className={'no-chat'}>Select a user to start chatting</p>
+								)}
+							</div>
+						</div>
+					)}
+				</>
+			) : (
+				<div className='api-error'>{errorMessage}</div>
 			)}
-
-				{!loading && (
-					<div className='extra-chats-container'>
-					<div className='connections' id={'connections'}>
-						{connectionDetails.length === 0 ? (
-							<p className={'no-connections-message'}>No connections</p>
-						) : (
-							connectionDetails.map((connection) => (
-								<button className={`picture-name-button ${selectedUserId === connection.id ? 'selected' : ''}`} key={connection.id} onClick={() => {
-									handleButtonClick(connection.id, connection.username);
-									openChat();
-								}}>
-									<img src='profile_pic_female.jpg' alt='' className='profile-picture'/>
-									<div className='name'>{connection.username}</div>
-								</button>
-							))
-						)}
-					</div>
-
-					<div className='chat' id={'chat'}>
-				{selectedUser ? (
-					<Chat receiverUsername={selectedUser} receiverUserId={selectedUserId} />
-				) : (
-					<p className={'no-chat'}>Select a user to start chatting</p>
-				)}
-			</div>
-					</div>
-				)}
-
 		</div>
-
 	);
 }
 

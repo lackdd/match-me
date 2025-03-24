@@ -22,6 +22,8 @@ function Connections() {
 	const [currentDataFetched, setCurrentDataFetched] = useState(false);
 	const [pendingDataFetched, setPendingDataFetched] = useState(false);
 	const toDeleteId = useRef(0);
+	const [error, setError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 	// const toDeleteName = useRef("");
 	const [toDeleteName, setToDeleteName] = useState("");
 	const { tokenValue } = useAuth();
@@ -87,6 +89,8 @@ function Connections() {
 			await getConnectionsData(pendingIds, setPendingConnections, setPendingDataFetched);
 
 		} catch (error) {
+			setError(true);
+			setErrorMessage(error.message);
 			if (axios.isCancel(error)) {
 				console.log("Fetch aborted");
 			} else {
@@ -118,6 +122,8 @@ function Connections() {
 				setFetchedState(true); // Indicate that data has been fetched
 
 			} catch (error) {
+				setError(true);
+				setErrorMessage(error.message);
 				if (axios.isCancel(error)) {
 					console.log("Fetch aborted");
 				} else {
@@ -247,6 +253,8 @@ function Connections() {
 			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
 			console.log("Connection deleted!");
 		} catch (error) {
+			setError(true);
+			setErrorMessage(error.message);
 				if (error.response) {
 					console.error("Backend error:", error.response); // Server responded with an error
 				} else {
@@ -275,6 +283,8 @@ function Connections() {
 			})
 
 		} catch (error) {
+			setError(true);
+			setErrorMessage(error.message);
 			if (error.response) {
 				console.error("Backend error:", error.response); // Server responded with an error
 			} else {
@@ -300,6 +310,8 @@ function Connections() {
 			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
 			console.log("Pending request deleted!");
 		} catch (error) {
+			setError(true);
+			setErrorMessage(error.message);
 			if (error.response) {
 				console.error("Backend error:", error.response); // Server responded with an error
 			} else {
@@ -314,75 +326,84 @@ function Connections() {
 	return (
 		<div className='connections-container'>
 
-			<div id="loadingModal" className="modal">
-				<div className="modal-content">
-					<p className='modal-text'>You are about to remove <br/> {toDeleteName}</p>
-						<p style={{marginTop: '0.5rem'}}>Are you sure?</p>
-					<div className='modal-buttons'>
-						{pendingOrCurrent === "current" ? (
-							<button id="acceptButton" onClick={() => {acceptDelete(setCurrentConnections, setCurrentConnectionIds)}}>
-								<span>Yes</span>
-							</button>
-						) : (
-							<button id="acceptButton" onClick={() => {acceptDelete(setPendingConnections, setPendingConnectionIds)}}>
-								<span>Yes</span>
-							</button>
-						)
-						}
 
-						<button id="cancelButton" onClick={() => {cancelDelete()}}>
-							<span>No</span>
-						</button>
-					</div>
-				</div>
-			</div>
+			{!error ? (
+				<>
+					<div id="loadingModal" className="modal">
+						<div className="modal-content">
+							<p className='modal-text'>You are about to remove <br/> {toDeleteName}</p>
+							<p style={{marginTop: '0.5rem'}}>Are you sure?</p>
+							<div className='modal-buttons'>
+								{pendingOrCurrent === "current" ? (
+									<button id="acceptButton" onClick={() => {acceptDelete(setCurrentConnections, setCurrentConnectionIds)}}>
+										<span>Yes</span>
+									</button>
+								) : (
+									<button id="acceptButton" onClick={() => {acceptDelete(setPendingConnections, setPendingConnectionIds)}}>
+										<span>Yes</span>
+									</button>
+								)
+								}
 
-			{loading && (
-				<div className={'spinner-container'}>
-					<div className='spinner endless'>Finding friends...</div>
-				</div>
-			)}
-
-			{!loading && (
-				<div className='extra-connections-container'>
-
-					<div className='current-pending-buttons-container'>
-
-						<button className='current active' onClick={() => {
-							toggleButton(event);
-							setPendingOrCurrent('current');
-						}}>Current connections
-						</button>
-
-						<button className='pending' onClick={() => {
-							toggleButton(event);
-							setPendingOrCurrent('pending');
-						}}>Pending connections
-						</button>
-					</div>
-
-
-					<div className='connections-list'>
-
-						{pendingOrCurrent === 'current' && displayConnections(currentConnections)}
-
-						{pendingOrCurrent === 'pending' && displayConnections(pendingConnections)}
-
-					</div>
-
-					<div className='user-stats-container'>
-						{(pendingOrCurrent === "current" && currentConnections.length > 0) ||
-						(pendingOrCurrent !== "current" && pendingConnections.length > 0) ? (
-							<div className='user-stats'>
-								You have {pendingOrCurrent === "current"
-								? `${currentConnections.length} ${currentConnections.length === 1 ? "connection" : "connections"}`
-								: `${pendingConnections.length} ${pendingConnections.length === 1 ? "request" : "requests"}`
-							}
+								<button id="cancelButton" onClick={() => {cancelDelete()}}>
+									<span>No</span>
+								</button>
 							</div>
-						) : null}
+						</div>
 					</div>
-				</div>
+
+					{loading && (
+						<div className={'spinner-container'}>
+							<div className='spinner endless'>Finding friends...</div>
+						</div>
+					)}
+
+					{!loading && (
+						<div className='extra-connections-container'>
+
+							<div className='current-pending-buttons-container'>
+
+								<button className='current active' onClick={() => {
+									toggleButton(event);
+									setPendingOrCurrent('current');
+								}}>Current connections
+								</button>
+
+								<button className='pending' onClick={() => {
+									toggleButton(event);
+									setPendingOrCurrent('pending');
+								}}>Pending connections
+								</button>
+							</div>
+
+
+							<div className='connections-list'>
+
+								{pendingOrCurrent === 'current' && displayConnections(currentConnections)}
+
+								{pendingOrCurrent === 'pending' && displayConnections(pendingConnections)}
+
+							</div>
+
+							<div className='user-stats-container'>
+								{(pendingOrCurrent === "current" && currentConnections.length > 0) ||
+								(pendingOrCurrent !== "current" && pendingConnections.length > 0) ? (
+									<div className='user-stats'>
+										You have {pendingOrCurrent === "current"
+										? `${currentConnections.length} ${currentConnections.length === 1 ? "connection" : "connections"}`
+										: `${pendingConnections.length} ${pendingConnections.length === 1 ? "request" : "requests"}`
+									}
+									</div>
+								) : null}
+							</div>
+						</div>
+					)}
+				</>
+			) : (
+				<div className='api-error'>{errorMessage}</div>
 			)}
+
+
 		</div>
 	);
 }

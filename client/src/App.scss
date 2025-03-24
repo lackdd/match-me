@@ -41,6 +41,15 @@ html, body {
   overflow-y: hidden;
 }
 
+.api-error {
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+}
+
 // forms
 form {
   display: flex;
