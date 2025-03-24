@@ -83,6 +83,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 			  onSubmit={handleSubmit((data) => {
 				  setMyData(data);
 
+				  console.log("Data at submit: ", data);
+
 				  const formattedData = {
                       age: data.age,
                       gender: data.gender.value,
@@ -345,7 +347,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 									setValue('yearsOfMusicExperience', myData.age, { shouldValidate: true });
                                     return;
 								}
-								// setValue('yearsOfMusicExperience', value, { shouldValidate: true });
+								setValue('yearsOfMusicExperience', value, { shouldValidate: true });
 								// setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value}));
 							}}
 						/>
