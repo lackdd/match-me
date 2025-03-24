@@ -215,7 +215,10 @@ public class UserController {
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ProfileDTO dto) {
         Long id = userPrincipal.getId();
         service.updateProfile(id, dto);
-        return ResponseEntity.ok("Profile updated.");
+        return ResponseEntity.ok(Map.of(
+                "message", "Profile updated successfully",
+                "updatedProfile", dto // Send the profile data back as JSON
+        ));
     }
 
     @GetMapping("/me/profile")
