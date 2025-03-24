@@ -111,9 +111,10 @@ function Register() {
 	};
 
 
-    const onImageChange = async (event) => {
+    const onImageChange = async (event, setLoadingImage) => {
         if (event.target.files && event.target.files[0]) {
             setImage(URL.createObjectURL(event.target.files[0])); // show local preview before upload
+            setLoadingImage(true);
 
             // upload to cloudinary
             const uploadedUrl = await uploadToCloudinary(event.target.files[0]);
@@ -125,7 +126,9 @@ function Register() {
                 console.log("Cloudinary image url:", uploadedUrl);*/
             } else {
                 setError("Failed to upload image.");
+                setLoadingImage(false);
             }
+            setLoadingImage(false);
         }
     };
 
