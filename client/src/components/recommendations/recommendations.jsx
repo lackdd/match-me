@@ -43,11 +43,16 @@ function Recommendations() {
 	useEffect(() => {
 
 		if (currentMatchNum === 9) {
-			setCurrentMatchNum(0);
-			setFetchMoreMatches(prev => !prev);
+			resetMatches();
 		}
 
 	}, [currentMatch])
+
+	const resetMatches = () => {
+		console.log("Getting new matches...");
+		setCurrentMatchNum(0);
+		setFetchMoreMatches(prev => !prev);
+	}
 
 
 	const backToObject = (array, options) => {
@@ -120,7 +125,7 @@ function Recommendations() {
 					}
 				}
 			} finally {
-				// setLoading(false);
+				setLoading(false);
 				setLoadingSettings(false);
 			}
 		};
@@ -139,10 +144,9 @@ function Recommendations() {
 		const controller = new AbortController(); // Create an abort controller
 		const signal = controller.signal;
 
-		if (matchIDs.length <= 1) { // no need to fetch matches if already available
+		// if (matchIDs.length <= 1) { // no need to fetch matches if already available
 			const getAllMatches = async() => {
 				try {
-					// const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`)
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/recommendations`, {
 							headers: { Authorization: `Bearer ${tokenValue}` },
 						signal,
@@ -158,18 +162,17 @@ function Recommendations() {
 						console.log("Fetch aborted");
 					} else {
 						if (error.response) {
-							console.error("Backend error:", error.response.data); // Server responded with an error
+							console.error("Backend error:", error.response); // Server responded with an error
 						} else {
 							console.error("Request failed:", error.message); // Network error or request issue
 						}
-						// todo display error to user
 					}
 				}
 			}
 			getAllMatches();
-		} else {
-			console.log("Matches already fetched:", matchIDs);
-		}
+		// } else {
+		// 	console.log("Matches already fetched:", matchIDs);
+		// }
 
 		return () => controller.abort(); // Cleanup function to abort request
 	}, [fetchMoreMatches])
@@ -404,7 +407,7 @@ function Recommendations() {
 				<div className='settings-popup' id={'settings-popup'}>
 					<div className='settings-content'>
 						<div className='forms-container'>
-							<RecommendationsForm preferencesData={preferencesData} setPreferencesData={setPreferencesData}/>
+							<RecommendationsForm preferencesData={preferencesData} setPreferencesData={setPreferencesData} setLoading={setLoading} resetMatches={resetMatches}/>
 						</div>
 					</div>
 				</div>
@@ -425,7 +428,6 @@ function Recommendations() {
 				<div className='settings-container'>
 					<button className='settings-button' onClick={() => {
 						setLoadingSettings(true);
-						// await getPreferencesData();
 						openSettings();
 					}}>
 						<GiSettingsKnobs/>
@@ -666,6 +668,8 @@ function Recommendations() {
 		) : (
 			<div className='no-matches'>
 				<p>No more matches available.</p>
+				<br/>
+				<button className={'change-preferences'} type={'button'} onClick={openSettings}>Change preferences</button>
 			</div>
 		)}
 

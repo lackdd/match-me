@@ -22,7 +22,7 @@ import {handleCloseMenu} from '../register/register.jsx';
 import {closeSettings} from '../reusables/profile-card-functions.jsx';
 
 
-export function RecommendationsForm({preferencesData, setPreferencesData}) {
+export function RecommendationsForm({preferencesData, setPreferencesData, setLoading, resetMatches}) {
 	const combinedStyles = mergeStyles(customStyles, extraFormStyles);
 	const { tokenValue } = useAuth();
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -55,6 +55,9 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 				});
 			console.log("User preferences edited successfully");
 			console.log("Data: ", response.data);
+
+			resetMatches();
+
 		} catch (error) {
 			if (error.response) {
 				console.error("Backend error:", error.response.data); // Server responded with an error
@@ -69,6 +72,9 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 		<>
 		<form className={"recommendations-form"}
 			  onSubmit={handleSubmit( (data) => {
+				  closeSettings;
+				  setLoading(true);
+
 				  setPreferencesData(data);
 
 				  const formattedData = {
@@ -80,6 +86,8 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 					  idealMatchGenres: data.idealMatchGenres.map(item => item.value),
 					  idealMatchGoals: data.idealMatchGoals.map(item => item.value),
 				  }
+
+				  console.log("Formatted data", formattedData);
 
 				  Submit(formattedData);
 			  })}
@@ -355,7 +363,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData}) {
 		</form>
 		<div className='settings-buttons-container'>
 
-			<button className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`} onClick={closeSettings} type={'submit'} form={'recommendations-form'} disabled={Object.keys(errors).length > 0} >
+			<button className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`} type={'submit'} form={'recommendations-form'} disabled={Object.keys(errors).length > 0} >
 				Save
 			</button>
 
