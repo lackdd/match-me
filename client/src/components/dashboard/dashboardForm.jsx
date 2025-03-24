@@ -20,12 +20,15 @@ import {dashboardFormValidationSchema} from './dashboardFormValidationSchema.jsx
 import {CustomSelect} from '../register/register-step-2.jsx';
 import {useGooglePlacesApi} from '../reusables/useGooglePlacesApi.jsx';
 import {closeSettings} from '../reusables/profile-card-functions.jsx';
+import axios from 'axios';
+import {useAuth} from '../utils/AuthContext.jsx';
 
-export function DashboardForm({myData, setMyData, formOpen}) {
-	const [inputValue, setInputValue] = useState("");
+export function DashboardForm({myData, setMyData, setMyDataFormatted, formatDataForView}) {
 	const { apiLoaded, autocompleteServiceRef, fetchPlaces, options } = useGooglePlacesApi();
 	const combinedStyles = mergeStyles(customStyles, extraFormStyles);
 	const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
+	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+	const { tokenValue } = useAuth();
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -44,14 +47,6 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 		mode: 'onChange',
 	});
 
-	// useEffect(() => {
-	// 	// Make sure the initial values are set
-	// 	console.log("setting musiclink value");
-	// 	if (myData) {
-	// 		setValue('musicLink', myData.linkToMusic || '');
-	// 	}
-	// }, [formOpen]);
-
 	useEffect(() => {
 		console.log("Errors:", errors);
 	}, [errors]);
@@ -60,12 +55,55 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 		console.log("myData: ", myData);
 	}, [myData]);
 
+	const Submit = async (formattedData) => {
+		console.log("Sending:", JSON.stringify(formattedData, null, 2));
+		try {
+			const response = await
+				axios.patch(`${VITE_BACKEND_URL}/api/me/profile`, formattedData, {
+					headers: {
+						Authorization: `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'}
+
+				});
+			console.log("User data edited successfully");
+			console.log("Data: ", response.data);
+		} catch (error) {
+			if (error.response) {
+				console.error("Backend error:", error.response.data); // Server responded with an error
+			} else {
+				console.error("Request failed:", error.message); // Network error or request issue
+			}
+		}
+	};
+
 	return (
 		<>
 		<form className="dashboard-form"
 			  onSubmit={handleSubmit((data) => {
+
+				  const formattedData = {
+                      age: data.age,
+                      gender: data.gender.value,
+                      location: data.location.label,
+                      description: data.description,
+                      experience: data.yearsOfMusicExperience,
+                      linkToMusic: data.musicLink,
+                      additionalInterests: data.additionalInterests.map(item => item.value),
+                      preferredMethod: data.preferredMethod.map(item => item.value),
+                      preferredMusicGenres: data.preferredMusicGenres.map(item => item.value),
+                      goalsWithMusic: data.goalsWithMusic.map(item => item.value),
+                      personalityTraits: data.personalityTraits.map(item => item.value),
+				  }
+
+				  console.log("Data on submit: ", formattedData);
+
+				  console.log("Data: ", formattedData);
 				  setMyData(data);
-				  // onSubmit(data, formOneData, setFormOneData);
+				  Submit(formattedData);
+				  setMyDataFormatted((prev) => ({
+					  ...prev,
+					  ...formatDataForView(formattedData)
+				  }));
 				  console.log("Errors on submit: ", errors);
 			  })}
 			  autoComplete={'off'}
@@ -77,50 +115,50 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				<h1>Basic info</h1>
 			</div>
 
-			{/* First Name */}
-			<div className="line">
-				<label className="long">
-					First name*
-					<input
-						type="text"
-						placeholder="Enter your first name"
-						className={`not-react-select long focus-highlight 
-							${errors.firstName ? "error" : ""}
-							${!errors.firstName && watch('firstName') ? "valid" : ""}`}
-						{...register("firstName")}
-						autoComplete={"off"}
-						// value={myData.firstName}
-						value={watch('firstName') || myData.firstName}
-						// autoFocus={'on'}
-						onBlur={() => trigger('firstName')} // Trigger validation when user leaves the field
-						// onChange={(value) => {
-						// 	setMyData((prev) => ({ ...prev, firstName: value }));
-						// }}
-					/>
-					<ErrorElement errors={errors}  id={'firstName'}/>
+			{/*/!* First Name *!/*/}
+			{/*<div className="line">*/}
+			{/*	<label className="long">*/}
+			{/*		First name**/}
+			{/*		<input*/}
+			{/*			type="text"*/}
+			{/*			placeholder="Enter your first name"*/}
+			{/*			className={`not-react-select long focus-highlight */}
+			{/*				${errors.firstName ? "error" : ""}*/}
+			{/*				${!errors.firstName && watch('firstName') ? "valid" : ""}`}*/}
+			{/*			{...register("firstName")}*/}
+			{/*			autoComplete={"off"}*/}
+			{/*			// value={myData.firstName}*/}
+			{/*			value={watch('firstName') || myData.firstName}*/}
+			{/*			// autoFocus={'on'}*/}
+			{/*			onBlur={() => trigger('firstName')} // Trigger validation when user leaves the field*/}
+			{/*			// onChange={(value) => {*/}
+			{/*			// 	setMyData((prev) => ({ ...prev, firstName: value }));*/}
+			{/*			// }}*/}
+			{/*		/>*/}
+			{/*		<ErrorElement errors={errors}  id={'firstName'}/>*/}
 
-				</label>
+			{/*	</label>*/}
 
-				{/* Last Name */}
-				<label className="long">
-					Last name*
-					<input
-						type="text"
-						placeholder="Enter your last name"
-						className={`not-react-select long focus-highlight 
-							${errors.lastName ? "error" : ""}
-							${!errors.lastName && watch('lastName') ? "valid" : ""}`}
-						{...register("lastName")}
-						autoComplete={"off"}
-						value={watch('lastName') || myData.lastName}
-						onBlur={() => trigger('lastName')} // Trigger validation when user leaves the field
-						// onChange={(value) => {
-						// 	setMyData((prev) => ({ ...prev, lastName: value }));
-						// }}
-					/>
-					<ErrorElement errors={errors}  id={'lastName'}/>
-				</label>
-			</div>
+			{/*	/!* Last Name *!/*/}
+			{/*	<label className="long">*/}
+			{/*		Last name**/}
+			{/*		<input*/}
+			{/*			type="text"*/}
+			{/*			placeholder="Enter your last name"*/}
+			{/*			className={`not-react-select long focus-highlight */}
+			{/*				${errors.lastName ? "error" : ""}*/}
+			{/*				${!errors.lastName && watch('lastName') ? "valid" : ""}`}*/}
+			{/*			{...register("lastName")}*/}
+			{/*			autoComplete={"off"}*/}
+			{/*			value={watch('lastName') || myData.lastName}*/}
+			{/*			onBlur={() => trigger('lastName')} // Trigger validation when user leaves the field*/}
+			{/*			// onChange={(value) => {*/}
+			{/*			// 	setMyData((prev) => ({ ...prev, lastName: value }));*/}
+			{/*			// }}*/}
+			{/*		/>*/}
+			{/*		<ErrorElement errors={errors}  id={'lastName'}/>*/}
+			{/*	</label>*/}
+			{/*</div>*/}
 
 			{/* Gender and Age */}
 			<div className="line">
@@ -129,7 +167,6 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 					<Select
 						className={`basic-single long`}
 						classNamePrefix="select"
-						// menuWidth="short"
 						wideMenu={false}
 						name={"gender"}
 						isValid={!errors.gender && watch('gender') !== ''}
@@ -138,38 +175,16 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 						isSearchable
 						styles={combinedStyles}
 						menuTop={false}
-						// components={makeAnimated()}
 						options={genderOptions}
 						placeholder="Select gender"
-						// value={watch('gender')}
-						// value={genderOptions.find(option => option.value === watch('gender')?.value) || null}
-						// value={myData.gender}
 						value={watch('gender') || myData.gender}
 						autoComplete={"off"}
 						onChange={(selectedOption) => {
-							// setValue("gender", selectedOption?.value || "", { shouldValidate: true, shouldDirty: true });
-							// trigger("gender"); // Ensures validation runs on change
-							// setValue("gender", selectedOption?.value || "", { shouldValidate: true, shouldDirty: true });
-							// console.log("Watch gender:", watch('gender'));
-							// console.log("Select value:", genderOptions.find(option => option.value === watch('gender')));
-							console.log("New selection:", selectedOption); // Debugging
-							console.log("myData.gender:", myData.gender);
-							// if (!selectedOption) {
-							// 	setValue("gender", "");  // Clear value when selection is cleared
-							// } else {
-							// 	setValue("gender", selectedOption || null, { shouldValidate: true, shouldDirty: true });
-							// 	clearErrors("gender");
-							// }
-							setValue("gender", selectedOption);  // ✅ Set entire object, not just string
-							// setMyData((prev) => ({ ...prev, gender: selectedOption }));
+							setValue("gender", selectedOption, { shouldValidate: true });  // ✅ Set entire object, not just string
+							setMyData((prev) => ({ ...prev, gender: selectedOption }));
 							clearErrors("gender");
 						}}
-						// onChange={(selectedOption) => {
-						// 	console.log("New selection:", selectedOption);
-						// 	setValue("gender", selectedOption?.value || "", { shouldValidate: true, shouldDirty: true });
-						// 	trigger("gender"); // Ensures validation updates immediately
-						//
-						// }}
+
 						onBlur={() => trigger('gender')} // Trigger validation when user leaves the field
 					/>
 
@@ -187,12 +202,15 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 							${errors.age ? 'error' : ''}
 							${!errors.age && watch('age') ? 'valid' : ''}`}
 							{...register('age')}
+							value={watch('age') || myData.age}
 							autoComplete={'off'}
 							min={0}
 							max={120}
 							onBlur={() => trigger('age')} // Trigger validation when user leaves the field
-							onChange={(value) => {
-								// setMyData((prev) => ({ ...prev, age: value }));
+							onChange={(e) => {
+								const value = e.target.value ? parseInt(e.target.value, 10) : 0;
+								setValue('age', value, { shouldValidate: true });
+								setMyData((prev) => ({ ...prev, age: value}));
 							}}
 						/>
 						<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger} />
@@ -214,7 +232,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				data={myData.preferredMusicGenres}
 				placeholder={'Preferred music genres'}
 				options={genreOptions}
-				id={'preferredGenresDashboard'}
+				id={'preferredGenres'}
 				name={'genres'}
 				register={register}
 				watch={watch}
@@ -223,7 +241,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				// setFormTwoData={setMyData}
+				setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
@@ -231,7 +249,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				data={myData.preferredMethod}
 				placeholder={'Preferred methods'}
 				options={methodsOptions}
-				id={'preferredMethodsDashboard'}
+				id={'preferredMethod'}
 				name={'methods'}
 				register={register}
 				watch={watch}
@@ -240,7 +258,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				// setFormTwoData={setMyData}
+				setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
@@ -248,7 +266,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				data={myData.additionalInterests}
 				placeholder={'Additional interests'}
 				options={interestsOptions}
-				id={'additionalInterestsDashboard'}
+				id={'additionalInterests'}
 				name={'interests'}
 				register={register}
 				watch={watch}
@@ -257,14 +275,14 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				// setFormTwoData={setMyData}
+				setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
 				data={myData.personalityTraits}
 				placeholder={'Personality traits'}
 				options={personalityTraitsOptions}
-				id={'personalityTraitsDashboard'}
+				id={'personalityTraits'}
 				name={'personality traits'}
 				register={register}
 				watch={watch}
@@ -273,14 +291,14 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				// setFormTwoData={setMyData}
+				setFormTwoData={setMyData}
 			/>
 
 			<CustomSelect
 				data={myData.goalsWithMusic}
 				placeholder={'Goals'}
 				options={goalsOptions}
-				id={'goalsDashboard'}
+				id={'goalsWithMusic'}
 				name={'goals'}
 				register={register}
 				watch={watch}
@@ -289,7 +307,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
-				// setFormTwoData={setMyData}
+				setFormTwoData={setMyData}
 			/>
 
 
@@ -303,36 +321,6 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 				<label id='experience' className={'short'}>
 					Years of music experience*
 					<br/>
-					{/*<div className={'with-button'}>*/}
-					{/*	<input*/}
-					{/*		type='number'*/}
-					{/*		id='experience'*/}
-					{/*		name={'experience'}*/}
-					{/*		className={`not-react-select focus-highlight short */}
-					{/*		${errors.experience ? 'error' : ''}*/}
-					{/*		${!errors.experience && watch('experience') ? 'valid' : ''}`}*/}
-					{/*		placeholder='Enter number of years'*/}
-					{/*		// autoFocus={true}*/}
-					{/*		{...register('experience')}*/}
-					{/*		autoComplete={'off'}*/}
-					{/*		min={0}*/}
-					{/*		// max={formOneData.age}*/}
-					{/*		max={120}*/}
-					{/*		// value={formThreeData.experience || ''}*/}
-					{/*		value={watch('experience') || myData.yearsOfMusicExperience}*/}
-					{/*		onChange={(value) => {*/}
-					{/*			// const value = e.target.value ? parseInt(e.target.value, 10) : 0;*/}
-					{/*			// setValue('experience', value, {shouldValidate: true});*/}
-					{/*			// setMyData((prev) => ({...prev, experience: value}));*/}
-					{/*			setValue("experience", value);  // ✅ Set entire object, not just string*/}
-					{/*			// setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value }));*/}
-					{/*			clearErrors("experience");*/}
-					{/*		}}*/}
-					{/*		onBlur={() => trigger('experience')} // Trigger validation when user leaves the field*/}
-					{/*	/>*/}
-					{/*	<IncrementDecrementButtons id={'experience'} watch={watch} setValue={setValue} trigger={trigger} />*/}
-					{/*	/!*setMyData={setFormThreeData}*!/*/}
-					{/*</div>*/}
 					<div className={'with-button'}>
 						<input
 							id={'yearsOfMusicExperience'}
@@ -340,17 +328,26 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 							placeholder='Enter number in years'
 							className={`not-react-select long focus-highlight 
 							${errors.yearsOfMusicExperience ? 'error' : ''}
-							${!errors.yearsOfMusicExperience && watch('yearsOfMusicExperience') ? 'valid' : ''}`}
+							${!errors.yearsOfMusicExperience && (watch('yearsOfMusicExperience') || watch('yearsOfMusicExperience') === 0) ? 'valid' : ''}`}
 							{...register('yearsOfMusicExperience')}
+							value={watch('yearsOfMusicExperience') || myData.yearsOfMusicExperience}
 							autoComplete={'off'}
 							min={0}
 							max={myData.age}
 							onBlur={() => trigger('yearsOfMusicExperience')} // Trigger validation when user leaves the field
-							onChange={(value) => {
-								// setMyData((prev) => ({ ...prev, age: value }));
+							onChange={(e) => {
+								const value = e.target.value ? parseInt(e.target.value, 10) : 0;
+
+								if (value > myData.age) {
+									setError('yearsOfMusicExperience', 'Years of music experience cannot exceed age');
+									setValue('yearsOfMusicExperience', myData.age, { shouldValidate: true });
+                                    return;
+								}
+								setValue('yearsOfMusicExperience', value, { shouldValidate: true });
+								setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value}));
 							}}
 						/>
-						<IncrementDecrementButtons id={'yearsOfMusicExperience'} watch={watch} setValue={setValue} trigger={trigger} />
+						<IncrementDecrementButtons id={'yearsOfMusicExperience'} watch={watch} setValue={setValue} trigger={trigger}/>
 					</div>
 
 					<ErrorElement errors={errors} id={'yearsOfMusicExperience'}/>
@@ -368,20 +365,14 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 						${errors.linkToMusic ? 'error' : ''}
 						${!errors.linkToMusic && watch('linkToMusic') ? 'valid' : ''}`}
 						placeholder='Link to your Spotify etc'
-						// value={watch('musicLink') || ""}
 						value={watch('linkToMusic') || myData.linkToMusic}
 						{...register('linkToMusic')}
 						autoComplete={'off'}
-						// onChange={(selectedOption) => {
-						// 	setValue("musicLink", selectedOption);  // ✅ Set entire object, not just string
-						// 	// setMyData((prev) => ({ ...prev, linkToMusic: selectedOption }));
-						// 	clearErrors("musicLink");
-						// }}
 						onBlur={() => trigger('linkToMusic')} // Trigger validation when user leaves the field
 						onChange={(e) => {
 							const value = e.target.value;
 							setValue('linkToMusic', value, { shouldValidate: true });
-							// setMyData((prev) => ({ ...prev, description: value }));
+							setMyData((prev) => ({ ...prev, linkToMusic: value }));
 						}}
 					/>
 					<ErrorElement errors={errors}  id={'linkToMusic'}/>
@@ -405,7 +396,6 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 						styles={combinedStyles}
 						wideMenu={true}
 						closeMenuOnSelect={true}
-						// value={watch('location') || myData.location}
 						value={watch('location')}
 						autoComplete={'off'}
 						isValid={
@@ -415,10 +405,6 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 							watch('location').value
 						}
 						isError={!!errors.location} // Check if error exists
-						// onChange={(selectedOption) => {
-						// 	setValue('location', selectedOption, {shouldValidate: true});
-						// 	setFormThreeData((prev) => ({...prev, location: selectedOption})); // Persist data correctly
-						// }}
 						onChange={(selectedOption) => {
 							if (!selectedOption) {
 								// Clear the location value in both the form state and component state
@@ -477,7 +463,7 @@ export function DashboardForm({myData, setMyData, formOpen}) {
 						onChange={(e) => {
 							const value = e.target.value;
 							setValue('description', value, { shouldValidate: true });
-							// setMyData((prev) => ({ ...prev, description: value }));
+							setMyData((prev) => ({ ...prev, description: value }));
 						}}
 					/>
 					<ErrorElement errors={errors}  id={'description'}/>

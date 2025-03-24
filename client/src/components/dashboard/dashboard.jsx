@@ -35,6 +35,7 @@ function Dashboard() {
 	const { tokenValue } = useAuth();
 	const [formOpen, setFormOpen] = useState(false);
 	const [imageUrl, setImageUrl] = useState(null); // todo if image is changed then change this. If this is available then use this to show image. Else you data from backend
+	const isDataFormatted = useRef(false);
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -96,10 +97,12 @@ function Dashboard() {
                         // bio: res3.data
                     });
 
+					// const formattedRes2 = formatDataForView(res2.data);
+
 					// data for dashboard itself
 					setMyDataFormatted( {
 							...res1.data,
-							...res2.data,
+							...formatDataForView(res2.data),
 					});
 
 					setImageUrl(...res1.data.profilePicture)
@@ -137,39 +140,76 @@ function Dashboard() {
 		return arrayOfObjects;
 	}
 
-	// format data for viewing
-	useEffect(() => {
-		if (myDataFormatted !== null && myDataFormatted) {
+	const formatDataForView = (data) => {
+		if (data !== null && data && isDataFormatted.current === false) {
 			const updatedProfile = {
-				...myDataFormatted,
-				location: formatLocation(myDataFormatted.location),
+				...data,
+				location: formatLocation(data.location),
 				// location: myDataFormatted.location,
-				preferredMusicGenres: Array.isArray(myDataFormatted.preferredMusicGenres)
-					? formatData(myDataFormatted.preferredMusicGenres)
-					: myDataFormatted.preferredMusicGenres,
-				preferredMethod: Array.isArray(myDataFormatted.preferredMethod)
-					? formatData(myDataFormatted.preferredMethod)
-					: myDataFormatted.preferredMethod,
-				additionalInterests: Array.isArray(myDataFormatted.additionalInterests)
-					? formatData(myDataFormatted.additionalInterests)
-					: myDataFormatted.additionalInterests,
-				personalityTraits: Array.isArray(myDataFormatted.personalityTraits)
-					? formatData(myDataFormatted.personalityTraits)
-					: myDataFormatted.personalityTraits,
-				goalsWithMusic: Array.isArray(myDataFormatted.goalsWithMusic)
-					? formatData(myDataFormatted.goalsWithMusic)
-					: myDataFormatted.goalsWithMusic
+				preferredMusicGenres: Array.isArray(data.preferredMusicGenres)
+					? formatData(data.preferredMusicGenres)
+					: data.preferredMusicGenres,
+				preferredMethod: Array.isArray(data.preferredMethod)
+					? formatData(data.preferredMethod)
+					: data.preferredMethod,
+				additionalInterests: Array.isArray(data.additionalInterests)
+					? formatData(data.additionalInterests)
+					: data.additionalInterests,
+				personalityTraits: Array.isArray(data.personalityTraits)
+					? formatData(data.personalityTraits)
+					: data.personalityTraits,
+				goalsWithMusic: Array.isArray(data.goalsWithMusic)
+					? formatData(data.goalsWithMusic)
+					: data.goalsWithMusic
 			};
+			return updatedProfile;
 
 			// Check if the profile data has changed before updating the state
-			if (JSON.stringify(updatedProfile) !== JSON.stringify(myDataFormatted)) {
-				setMyDataFormatted((prev) => ({
-					...prev,
-					...updatedProfile
-				}));
-			}
+			// if (JSON.stringify(updatedProfile) !== JSON.stringify(data)) {
+			// 	setMyDataFormatted((prev) => ({
+			// 		...prev,
+			// 		...updatedProfile
+			// 	}));
+			// 	isDataFormatted.current = true;
+			// }
 		}
-	}, [myData]);
+		return data;
+	}
+
+	// // format data for viewing
+	// useEffect(() => {
+	// 	if (myDataFormatted !== null && myDataFormatted && isDataFormatted.current === false) {
+	// 		const updatedProfile = {
+	// 			...myDataFormatted,
+	// 			location: formatLocation(myDataFormatted.location),
+	// 			// location: myDataFormatted.location,
+	// 			preferredMusicGenres: Array.isArray(myDataFormatted.preferredMusicGenres)
+	// 				? formatData(myDataFormatted.preferredMusicGenres)
+	// 				: myDataFormatted.preferredMusicGenres,
+	// 			preferredMethod: Array.isArray(myDataFormatted.preferredMethod)
+	// 				? formatData(myDataFormatted.preferredMethod)
+	// 				: myDataFormatted.preferredMethod,
+	// 			additionalInterests: Array.isArray(myDataFormatted.additionalInterests)
+	// 				? formatData(myDataFormatted.additionalInterests)
+	// 				: myDataFormatted.additionalInterests,
+	// 			personalityTraits: Array.isArray(myDataFormatted.personalityTraits)
+	// 				? formatData(myDataFormatted.personalityTraits)
+	// 				: myDataFormatted.personalityTraits,
+	// 			goalsWithMusic: Array.isArray(myDataFormatted.goalsWithMusic)
+	// 				? formatData(myDataFormatted.goalsWithMusic)
+	// 				: myDataFormatted.goalsWithMusic
+	// 		};
+	//
+	// 		// Check if the profile data has changed before updating the state
+	// 		if (JSON.stringify(updatedProfile) !== JSON.stringify(myDataFormatted)) {
+	// 			setMyDataFormatted((prev) => ({
+	// 				...prev,
+	// 				...updatedProfile
+	// 			}));
+	// 			isDataFormatted.current = true;
+	// 		}
+	// 	}
+	// }, [myDataFormatted]);
 
 
 	useEffect(() => {
@@ -241,7 +281,7 @@ function Dashboard() {
 					<div className="settings-popup" id="settings-popup">
 						<div className="settings-content">
 							<div className='forms-container'>
-								<DashboardForm myData={myData} setMyData={setMyData} formOpen={formOpen}/>
+								<DashboardForm myData={myData} setMyData={setMyData} setMyDataFormatted={setMyDataFormatted} formatDataForView={formatDataForView}/>
 							</div>
 						</div>
 					</div>
