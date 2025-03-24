@@ -28,12 +28,13 @@ import {getOptimizedImage} from '../utils/cloudinary.jsx';
 
 function Dashboard() {
 	const [loading, setLoading] = useState(true)
+	const [loadingImage, setLoadingImage] = useState(false);
 	const [myData, setMyData] = useState(null);
 	const [myDataFormatted, setMyDataFormatted] = useState(null);
 	const [liked, setLiked] = useState(0);
 	const { tokenValue } = useAuth();
 	const [formOpen, setFormOpen] = useState(false);
-	const [image, setImage] = useState(null); // todo if image is changed then change this. If this is available then use this to show image. Else you data from backend
+	const [imageUrl, setImageUrl] = useState(null); // todo if image is changed then change this. If this is available then use this to show image. Else you data from backend
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -100,6 +101,8 @@ function Dashboard() {
 							...res1.data,
 							...res2.data,
 					});
+
+					setImageUrl(...res1.data.profilePicture)
 
 					// liked users count
 					if (res3.data.length) {
@@ -261,38 +264,53 @@ function Dashboard() {
 						<div className="picture-bio-container">
 							<div className="picture-container">
 								<div className="extra-picture-container">
-									{/*{myDataFormatted.profilePicture && <AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>}*/}
+
+									{/* todo fix so uploaded pictures are actually shown*/}
 									{/*<label className={"choose-picture"}>*/}
+
+									{/*{!loadingImage && imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)} />}*/}
+
+									{loadingImage && (
+										<div className="loading-image">
+											<div className={'spinner-container'}>
+												<div className='spinner endless'>Loading picture...</div>
+											</div>
+										</div>
+									)}
+
+									{!loadingImage && (
+										<>
 										<input type='file'
 											   accept={"image/*"}
 											   name={'image'}
-											   onChange={() => changeImage(setMyDataFormatted, setImage)}
+											   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}
 											   className='file-upload'
 											   title={'click to change picture'}
 										/>
 										{myDataFormatted.gender === 'male' && (
 											<img
-												src="profile_pic_male.jpg"
-												alt="profile picture"
-												className="profile-picture"
-												// onClick={changePicture(myDataFormatted, setMyDataFormatted)}
+											src="profile_pic_male.jpg"
+											alt="profile picture"
+											className="profile-picture"
+											// onClick={changePicture(myDataFormatted, setMyDataFormatted)}
 											/>
-										)}
+											)}
 										{myDataFormatted.gender === 'female' && (
 											<img
-												src="profile_pic_female.jpg"
-												alt="profile picture"
-												className="profile-picture"
+											src="profile_pic_female.jpg"
+											alt="profile picture"
+											className="profile-picture"
 											/>
-										)}
+											)}
 										{myDataFormatted.gender === 'other' && (
 											<img
-												src="default_profile_picture.png"
-												alt="profile picture"
-												className="profile-picture"
+											src="default_profile_picture.png"
+											alt="profile picture"
+											className="profile-picture"
 											/>
+											)}
+										</>
 										)}
-									{/*</label>*/}
 
 									{myDataFormatted.linkToMusic && (
 										<div className="music-link">
