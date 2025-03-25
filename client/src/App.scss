@@ -60,9 +60,9 @@ form {
   height: 36.25rem;
   gap: 0.15rem;
 
-  //@media (max-width: 768px) {
-  //  width: 90vw;
-  //}
+  @media (max-width: 768px) {
+    width: 90%;
+  }
 
   label {
     width: 100%;
@@ -127,6 +127,10 @@ form {
 
 .line {
   width: 100%;
+
+    //@media (max-width: 768px) {
+    //  width: 90%;
+    //}
 }
 
 //.short {

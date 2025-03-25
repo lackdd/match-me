@@ -22,15 +22,15 @@
   .settings-content {
     @include variables.centered-column;
     width: 50%;
-
-    @media (max-width: 768px) {
-      width: 70%;
-    }
-
-
-    @media (max-width: 440px) {
-      width: 100%;
-    }
+    //
+    //@media (max-width: 768px) {
+    //  width: 70%;
+    //}
+    //
+    //
+    //@media (max-width: 440px) {
+    //  width: 100%;
+    //}
 
 
     .settings-buttons-container {
