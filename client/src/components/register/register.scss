@@ -61,12 +61,14 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
     width: 25.25rem;
     height: 36.25rem;
     gap: 1.2rem;
     margin: auto;
     max-width: 100vw;
+
+
 
     .picture-title {
       align-items: center;
@@ -288,9 +290,9 @@
     position: absolute;
     bottom: 2rem;
 
-    @media (max-width: 440px) {
-      display: none;
-    }
+    //@media (max-width: 440px) {
+    //  display: none;
+    //}
 
     a {
       color: variables.$main-pink;
