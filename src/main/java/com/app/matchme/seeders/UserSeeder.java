@@ -124,7 +124,7 @@ public class UserSeeder implements CommandLineRunner {
             user.setUsername(faker.name().firstName() + " " + faker.name().lastName());
             user.setGender(randomChoice(genderOptions));
             user.setAge(faker.number().numberBetween(12, 120));
-            user.setProfilePicture(faker.internet().avatar());
+            user.setProfilePicture(null);
             user.setLocation(randomCityCountryFromEstonia());
             user.setDescription(faker.lorem().sentence());
             user.setLinkToMusic(faker.internet().url());
