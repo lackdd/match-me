@@ -106,13 +106,12 @@ public class UserService {
         }
     }
 
+    @Transactional
     public List<Long> findMatches(Long id) {
         List<User> users = repo.findAll();
         Optional<User> optionalUser = repo.findById(id);
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
         String idealMatchLocation = currentUser.getIdealMatchLocation();
-
-        System.out.println(currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim());
 
         Integer idealMatchAgeMin;
         Integer idealMatchAgeMax;
@@ -146,7 +145,7 @@ public class UserService {
         return userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
                 .limit(10)
-                .peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))
+                /*.peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))*/
                 .map(entry -> entry.getKey().getId())
                 .collect(Collectors.toList());
     }
