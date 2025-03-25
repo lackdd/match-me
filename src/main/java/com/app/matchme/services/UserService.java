@@ -101,6 +101,11 @@ public class UserService {
         repo.save(currentUser);
     }
 
+    public boolean checkPassword(Long id, String password) {
+        User currentUser = getUserById(id);
+        return encoder.matches(password, currentUser.getPassword());
+    }
+
     public User getUserById(Long id) {
         return repo.findById(id).orElse(null);
     }

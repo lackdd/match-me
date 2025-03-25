@@ -139,6 +139,18 @@ public class UserController {
         return Collections.singletonMap("exists", exists);
     }
 
+    @PostMapping("/check-password")
+    public ResponseEntity<?> checkPassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
+        String password = body.get("password");
+        Long id = userPrincipal.getId();
+        boolean isCorrect = service.checkPassword(id, password);
+        if(isCorrect) {
+            return ResponseEntity.ok("Password matches.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid password, password doesn't match.");
+        }
+    }
+
     @PostMapping("/validateToken")
     public ResponseEntity<?> validateToken(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
