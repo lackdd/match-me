@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import './chats.scss'
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -29,23 +29,43 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const { isUserLoggedIn, tokenValue } = useAuth();
     const [username, setUsername] = useState("");
+    const [beforeId, setBeforeId] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const scrollRef = useRef();
 
-    useEffect(() => {
-        if(!receiverUserId || !userId) return;
-
-        const fetchChatHistory = async () => {
+        const fetchChatHistory = async (isInitial = false) => {
+            if(!receiverUserId || !userId || !hasMore) return;
             try {
-                const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}`, {
+                const url = isInitial
+                    ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=20`
+                    : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=20&beforeId=${beforeId}`;
+                const response = await axios.get(url, {
                     headers: {Authorization: `Bearer ${tokenValue}`},
                 });
-                console.log("Fetched chat history:", response.data);
-                setMessages(response.data);
+
+                if(response.data.length === 0) {
+                    setHasMore(false);
+                } else {
+                    const lastMessage = response.data[response.data.length - 1]?.id;
+                    setBeforeId(lastMessage);
+                    console.log("Fetched chat history:", response.data);
+                    setMessages((prev) => [...response.data, ...prev]);
+                }
             } catch (error) {
                 console.log(error);
             }
         }
-        fetchChatHistory();
+
+    useEffect(() => {
+        fetchChatHistory(true);
     }, [receiverUserId, userId]);
+
+    const handleScroll = () => {
+        const top = scrollRef.current.scrollTop;
+        if (top === 0 && hasMore) {
+            fetchChatHistory();
+        }
+    };
 
     useEffect(() => {
         if(isUserLoggedIn && tokenValue) {
@@ -170,7 +190,11 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                 <button className='toggle-connections' onClick={backToConnections} tabIndex={-1}><IoArrowBack /></button>
                 <h2>{receiverUsername}</h2>
             </div>
-            <div className="chat-messages">
+            <div className="chat-messages"
+                 ref={scrollRef}
+                 onScroll={handleScroll}
+            >
+
                 {messages.map((msg, index) => (
                     <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>
                         {msg.content}
