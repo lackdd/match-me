@@ -192,6 +192,13 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         chat.classList.add('hide-chat');
     }
 
+    const formatTimestamp = (timestamp) => {
+        const trimmed = timestamp.slice(0, 23);
+        const date = new Date(trimmed);
+        const readable = date.toLocaleString();
+        return readable;
+    }
+
     // todo add "typing..." indicator when other user is typing
     return (
         <div className="chat-box" onKeyDown={handleKeyPresses}>
@@ -206,7 +213,8 @@ const Chat = ({receiverUsername, receiverUserId}) => {
 
                 {messages.map((msg, index) => (
                     <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>
-                        {msg.content}
+                        <div className="message-content">{msg.content}</div>
+                        <div className="timestamp">{formatTimestamp(msg.timestamp)}</div>
                     </div>
                 ))}
             </div>
