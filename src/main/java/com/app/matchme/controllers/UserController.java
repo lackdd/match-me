@@ -202,6 +202,13 @@ public class UserController {
         return ResponseEntity.ok("Updated profile picture.");
     }
 
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteProfilePicture(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Long id = userPrincipal.getId();
+        service.deleteProfilePicture(id);
+        return ResponseEntity.ok("Profile picture deleted");
+    }
+
     @PatchMapping("/change-password")
     public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
         String oldPassword = body.get("oldPassword");

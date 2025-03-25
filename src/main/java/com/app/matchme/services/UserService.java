@@ -95,6 +95,12 @@ public class UserService {
         }
     }
 
+    public void deleteProfilePicture(Long id) {
+        User currentUser = getUserById(id);
+        currentUser.setProfilePicture(null);
+        repo.save(currentUser);
+    }
+
     public User getUserById(Long id) {
         return repo.findById(id).orElse(null);
     }
