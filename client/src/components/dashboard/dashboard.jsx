@@ -4,6 +4,7 @@ import '../reusables/settings-popup.scss'
 import '../reusables/profile-card.scss'
 import '../reusables/loadingAnimation.scss'
 import { GiSettingsKnobs } from 'react-icons/gi';
+import { IoClose } from "react-icons/io5";
 import { FaSpotify } from 'react-icons/fa';
 import {useSwipe} from '../recommendations/useSwipe.jsx';
 import axios from 'axios';
@@ -26,6 +27,9 @@ import {
 } from '../reusables/inputOptions.jsx';
 import {AdvancedImage} from '@cloudinary/react';
 import {getOptimizedImage} from '../utils/cloudinary.jsx';
+import {SettingsMenu} from './settings-menu.jsx';
+import {Stats} from './stats.jsx';
+import {ChangePassword} from './change-password.jsx';
 
 function Dashboard() {
 	const [loading, setLoading] = useState(true)
@@ -39,6 +43,7 @@ function Dashboard() {
 	const isDataFormatted = useRef(false);
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
+	const [settingsContent, setSettingsContent] = useState('profile') // 'statistics' and 'password'
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -68,8 +73,6 @@ function Dashboard() {
 							signal
 						})
 					]);
-
-					console.log("Raw additionalInterests:", res2.data.additionalInterests);
 
 					// formatting data (mostly to objects) for dashboard form
 					const firstName = res1.data.username.split(' ')[0];
@@ -205,10 +208,25 @@ function Dashboard() {
 
 								<div className="settings-popup" id="settings-popup">
 									<div className="settings-content">
+
 										<div className='forms-container'>
-											<DashboardForm myData={myData} setMyData={setMyData} setMyDataFormatted={setMyDataFormatted} formatDataForView={formatDataForView}/>
+
+											{settingsContent === 'profile' && (
+												<DashboardForm myData={myData} setMyData={setMyData} setMyDataFormatted={setMyDataFormatted} formatDataForView={formatDataForView}/>
+											)}
+
+											{settingsContent === 'statistics' && (
+												<Stats/>
+											)}
+
+											{settingsContent === 'password' && (
+												<ChangePassword/>
+											)}
+
+
 										</div>
 									</div>
+									<SettingsMenu setSettingsContent={setSettingsContent}/>
 								</div>
 
 								<div
