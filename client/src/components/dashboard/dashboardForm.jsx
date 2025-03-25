@@ -22,6 +22,8 @@ import {useGooglePlacesApi} from '../reusables/useGooglePlacesApi.jsx';
 import {closeSettings} from '../reusables/profile-card-functions.jsx';
 import axios from 'axios';
 import {useAuth} from '../utils/AuthContext.jsx';
+import {IoClose} from 'react-icons/io5';
+
 
 export function DashboardForm({myData, setMyData, setMyDataFormatted, formatDataForView}) {
 	const { apiLoaded, autocompleteServiceRef, fetchPlaces, options } = useGooglePlacesApi();
@@ -79,6 +81,11 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 
 	return (
 		<>
+			<button className='close-settings' type={'button'} onClick={() => {
+				reset();
+				closeSettings();
+			}}><IoClose /></button>
+
 		<form className="dashboard-form"
 			  onSubmit={handleSubmit((data) => {
 				  setMyData(data);
@@ -480,14 +487,14 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 		</form>
 
 			<div className="settings-buttons-container">
-				<button className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`} onClick={closeSettings} type={'submit'} form={'dashboard-form'} disabled={Object.keys(errors).length > 0} >
-					Save
-				</button>
 				<button className="cancel" onClick={() => {
 					reset();
 					closeSettings();
 				}} type={'button'} >
 					Cancel
+				</button>
+				<button className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`} onClick={closeSettings} type={'submit'} form={'dashboard-form'} disabled={Object.keys(errors).length > 0} >
+					Save
 				</button>
 			</div>
 		</>
