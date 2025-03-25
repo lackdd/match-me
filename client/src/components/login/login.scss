@@ -11,7 +11,8 @@
     @extend .login-container; // same as .login-container
     justify-content: center;
     align-items: flex-start;
-    width: 25.25rem;
+    max-width: 25.25rem;
+    width: 90%;
     height: 36.25rem;
     gap: 1.2rem;
 
