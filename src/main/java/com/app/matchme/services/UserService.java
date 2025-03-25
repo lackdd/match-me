@@ -128,10 +128,12 @@ public class UserService {
             idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
         }
 
+        System.out.println(currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim());
+
         Map<User, Integer> userPointsMap = users.stream()
                 .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
                 .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
-                .filter(user -> "anywhere".equals(currentUser.getIdealMatchLocation()) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation))
+                .filter(user -> "anywhere".equals(currentUser.getIdealMatchLocation()) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation) && Objects.equals(user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(), currentUser.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim()))
                 .filter(user -> "any".equals(currentUser.getIdealMatchAge()) || (user.getAge() >= idealMatchExperienceMin && user.getAge() <= idealMatchExperienceMax))
                 .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser, idealMatchExperienceMin, idealMatchExperienceMax)));

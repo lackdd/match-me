@@ -219,7 +219,7 @@ public class UserController {
         service.updateProfile(id, dto);
         return ResponseEntity.ok(Map.of(
                 "message", "Profile updated successfully",
-                "updatedProfile", dto // Send the profile data back as JSON
+                "updatedProfile", dto
         ));
     }
 
