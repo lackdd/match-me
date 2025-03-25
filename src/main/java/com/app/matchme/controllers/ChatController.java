@@ -9,6 +9,9 @@ import com.app.matchme.repositories.ChatMessageRepository;
 import com.app.matchme.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,12 +40,21 @@ public class ChatController {
     private ChatMessageRepository repo;
 
     @GetMapping("/history/{userId}")
-    public List<ChatMessageDTO> getChatHistory(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long userId) {
+    public List<ChatMessageDTO> getChatHistory(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable Long userId,
+            @RequestParam(defaultValue= "20") int limit,
+            @RequestParam(required = false) Long beforeId
+    ) {
         if (userPrincipal == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
         }
         Long currentUserId = userPrincipal.getId();
-        List<ChatMessage> messages = repo.findBySenderAndReceiverOrReceiverAndSender(currentUserId, userId);
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("id").descending());
+
+        List<ChatMessage> messages = repo.findChatMessages(currentUserId, userId, beforeId, pageable);
+
+        Collections.reverse(messages);
 
         return messages.stream()
                 .map(ChatMessageMapper::toDTO)

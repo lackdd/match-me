@@ -37,8 +37,8 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             if(!receiverUserId || !userId || !hasMore) return;
             try {
                 const url = isInitial
-                    ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=20`
-                    : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=20&beforeId=${beforeId}`;
+                    ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
+                    : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
                 const response = await axios.get(url, {
                     headers: {Authorization: `Bearer ${tokenValue}`},
                 });
@@ -46,8 +46,8 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                 if(response.data.length === 0) {
                     setHasMore(false);
                 } else {
-                    const lastMessage = response.data[response.data.length - 1]?.id;
-                    setBeforeId(lastMessage);
+                    const oldestMessageId = response.data[0]?.id;
+                    setBeforeId(oldestMessageId);
                     console.log("Fetched chat history:", response.data);
                     setMessages((prev) => [...response.data, ...prev]);
                 }
@@ -57,7 +57,12 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
 
     useEffect(() => {
-        fetchChatHistory(true);
+        setMessages([]);
+        setBeforeId(0);
+        setHasMore(true);
+        if (receiverUserId && userId) {
+            fetchChatHistory(true);
+        }
     }, [receiverUserId, userId]);
 
     const handleScroll = () => {
@@ -112,8 +117,12 @@ const Chat = ({receiverUsername, receiverUserId}) => {
 
                 // subscribe to private messages for the logged in user
                 stompClient.subscribe(`/user/${normalizedUsername}/queue/messages`, (msg) => {
+                    const newMsg = JSON.parse(msg.body);
                     console.log("📩 Incoming message:", msg.body);
-                    setMessages((prev) => [...prev, JSON.parse(msg.body)]);
+                    setMessages((prev) => {
+                        const exists = prev.some(m => m.id === newMsg.id);
+                        return exists ? prev : [...prev, newMsg];
+                    });
                 });
             },
         });
