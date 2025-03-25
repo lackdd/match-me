@@ -1,0 +1,61 @@
+@use '../../variables';
+
+.settings-menu {
+  width: 100vw;
+  height: 4rem;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+
+
+  & > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 33%;
+    font-size: 0.8rem;
+    text-align: center;
+
+    button {
+      all: unset;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+
+      &:active {
+        transform: scale(1.05);
+        transition: transform 0.2s ease;
+      }
+
+      & > svg {
+        height: 1.6rem;
+        width: 1.6rem;
+        color: black;
+      }
+    }
+  }
+
+
+  .change-password {
+
+  }
+
+  .statistics {
+
+  }
+
+  .edit-profile {
+
+    svg {
+      margin-left: 5px;
+    }
+
+  }
+
+}
