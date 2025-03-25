@@ -112,29 +112,6 @@ public class UserService {
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
         String idealMatchLocation = currentUser.getIdealMatchLocation();
 
-        Map<User, Integer> userPointsMap = users.stream()
-                .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
-                .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
-                .filter(user -> "anywhere".equals(currentUser.getIdealMatchLocation()) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation))
-                .filter(user -> "any".equals(currentUser.getIdealMatchAge()) || user.getAge() >= Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2)) && user.getAge() <= Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 5)))
-                .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
-                .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
-
-        return userPointsMap.entrySet().stream()
-                .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
-                .limit(10)
-                .peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))
-                .map(entry -> entry.getKey().getId())
-                .collect(Collectors.toList());
-    }
-
-    public Integer calculatePoints(User user, User currentUser) {
-        int points = 0;
-        List<String> musicGenres = user.getPreferredMusicGenres();
-        List<String> methods = user.getPreferredMethods();
-        List<String> goals = user.getGoalsWithMusic();
-        Integer experience = user.getYearsOfMusicExperience();
-        // todo fix when idealMatchExperience "any" or "12-15" etc.
         Integer idealMatchExperienceMin;
         Integer idealMatchExperienceMax;
         if (currentUser.getIdealMatchYearsOfExperience().length() > 4) {
@@ -150,6 +127,29 @@ public class UserService {
             idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
             idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
         }
+
+        Map<User, Integer> userPointsMap = users.stream()
+                .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
+                .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
+                .filter(user -> "anywhere".equals(currentUser.getIdealMatchLocation()) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation))
+                .filter(user -> "any".equals(currentUser.getIdealMatchAge()) || (user.getAge() >= idealMatchExperienceMin && user.getAge() <= idealMatchExperienceMax))
+                .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
+                .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser, idealMatchExperienceMin, idealMatchExperienceMax)));
+
+        return userPointsMap.entrySet().stream()
+                .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
+                .limit(10)
+                .peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))
+                .map(entry -> entry.getKey().getId())
+                .collect(Collectors.toList());
+    }
+
+    public Integer calculatePoints(User user, User currentUser, Integer idealMatchExperienceMin, Integer idealMatchExperienceMax) {
+        int points = 0;
+        List<String> musicGenres = user.getPreferredMusicGenres();
+        List<String> methods = user.getPreferredMethods();
+        List<String> goals = user.getGoalsWithMusic();
+        Integer experience = user.getYearsOfMusicExperience();
 
         for (String item : musicGenres) {
             if (currentUser.getIdealMatchGenres().contains(item)) {
