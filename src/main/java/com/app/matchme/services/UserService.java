@@ -135,8 +135,21 @@ public class UserService {
         List<String> goals = user.getGoalsWithMusic();
         Integer experience = user.getYearsOfMusicExperience();
         // todo fix when idealMatchExperience "any" or "12-15" etc.
-        Integer idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
-        Integer idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
+        Integer idealMatchExperienceMin;
+        Integer idealMatchExperienceMax;
+        if (currentUser.getIdealMatchYearsOfExperience().length() > 4) {
+            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 2));
+            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(3, 5));
+        } else if (currentUser.getIdealMatchYearsOfExperience().length() == 4) {
+            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
+            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 4));
+        } else if (currentUser.getIdealMatchYearsOfExperience().trim().equals("any")) {
+            idealMatchExperienceMin = 0;
+            idealMatchExperienceMax = 100;
+        } else {
+            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
+            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
+        }
 
         for (String item : musicGenres) {
             if (currentUser.getIdealMatchGenres().contains(item)) {
@@ -156,7 +169,7 @@ public class UserService {
             }
         }
 
-        if (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax ) {
+        if (currentUser.getIdealMatchYearsOfExperience() == "any" || (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax) ) {
             points++;
         }
         return points;
