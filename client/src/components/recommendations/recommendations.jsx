@@ -129,7 +129,7 @@ function Recommendations() {
 					}
 				}
 			} finally {
-				setLoading(false);
+				// setLoading(false);
 				setLoadingSettings(false);
 			}
 		};
