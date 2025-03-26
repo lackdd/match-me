@@ -17,7 +17,7 @@ import {
 	changeImage,
 	backToObject
 } from '../reusables/profile-card-functions.jsx';
-import {DashboardForm} from './dashboardForm.jsx';
+import {DashboardForm} from './dashboard-settings/dashboardForm.jsx';
 import {
 	genderOptions,
 	genreOptions, goalsOptions,
@@ -27,9 +27,9 @@ import {
 } from '../reusables/inputOptions.jsx';
 import {AdvancedImage} from '@cloudinary/react';
 import {getOptimizedImage} from '../utils/cloudinary.jsx';
-import {SettingsMenu} from './settings-menu.jsx';
-import {Stats} from './stats.jsx';
-import {ChangePassword} from './change-password.jsx';
+import {SettingsMenu} from './dashboard-settings/settings-menu.jsx';
+import {Stats} from './dashboard-settings/stats.jsx';
+import {ChangePassword} from './dashboard-settings/change-password.jsx';
 
 function Dashboard() {
 	const [loading, setLoading] = useState(true)
