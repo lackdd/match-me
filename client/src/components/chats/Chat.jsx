@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect, useRef} from "react";
 import './chats.scss'
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -29,23 +29,48 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const { isUserLoggedIn, tokenValue } = useAuth();
     const [username, setUsername] = useState("");
+    const [beforeId, setBeforeId] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const scrollRef = useRef();
 
-    useEffect(() => {
-        if(!receiverUserId || !userId) return;
-
-        const fetchChatHistory = async () => {
+        const fetchChatHistory = async (isInitial = false) => {
+            if(!receiverUserId || !userId || !hasMore) return;
             try {
-                const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}`, {
+                const url = isInitial
+                    ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
+                    : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
+                const response = await axios.get(url, {
                     headers: {Authorization: `Bearer ${tokenValue}`},
                 });
-                console.log("Fetched chat history:", response.data);
-                setMessages(response.data);
+
+                if(response.data.length === 0) {
+                    setHasMore(false);
+                } else {
+                    const oldestMessageId = response.data[0]?.id;
+                    setBeforeId(oldestMessageId);
+                    console.log("Fetched chat history:", response.data);
+                    setMessages((prev) => [...response.data, ...prev]);
+                }
             } catch (error) {
                 console.log(error);
             }
         }
-        fetchChatHistory();
+
+    useEffect(() => {
+        setMessages([]);
+        setBeforeId(0);
+        setHasMore(true);
+        if (receiverUserId && userId) {
+            fetchChatHistory(true);
+        }
     }, [receiverUserId, userId]);
+
+    const handleScroll = () => {
+        const top = scrollRef.current.scrollTop;
+        if (top === 0 && hasMore) {
+            fetchChatHistory();
+        }
+    };
 
     useEffect(() => {
         if(isUserLoggedIn && tokenValue) {
@@ -92,8 +117,12 @@ const Chat = ({receiverUsername, receiverUserId}) => {
 
                 // subscribe to private messages for the logged in user
                 stompClient.subscribe(`/user/${normalizedUsername}/queue/messages`, (msg) => {
+                    const newMsg = JSON.parse(msg.body);
                     console.log("📩 Incoming message:", msg.body);
-                    setMessages((prev) => [...prev, JSON.parse(msg.body)]);
+                    setMessages((prev) => {
+                        const exists = prev.some(m => m.id === newMsg.id);
+                        return exists ? prev : [...prev, newMsg];
+                    });
                 });
             },
         });
@@ -163,6 +192,13 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         chat.classList.add('hide-chat');
     }
 
+    const formatTimestamp = (timestamp) => {
+        const trimmed = timestamp.slice(0, 23);
+        const date = new Date(trimmed);
+        const readable = date.toLocaleString();
+        return readable;
+    }
+
     // todo add "typing..." indicator when other user is typing
     return (
         <div className="chat-box" onKeyDown={handleKeyPresses}>
@@ -170,10 +206,15 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                 <button className='toggle-connections' onClick={backToConnections} tabIndex={-1}><IoArrowBack /></button>
                 <h2>{receiverUsername}</h2>
             </div>
-            <div className="chat-messages">
+            <div className="chat-messages"
+                 ref={scrollRef}
+                 onScroll={handleScroll}
+            >
+
                 {messages.map((msg, index) => (
                     <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>
-                        {msg.content}
+                        <div className="message-content">{msg.content}</div>
+                        <div className="timestamp">{formatTimestamp(msg.timestamp)}</div>
                     </div>
                 ))}
             </div>

@@ -139,6 +139,18 @@ public class UserController {
         return Collections.singletonMap("exists", exists);
     }
 
+    @PostMapping("/check-password")
+    public ResponseEntity<?> checkPassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
+        String password = body.get("password");
+        Long id = userPrincipal.getId();
+        boolean isCorrect = service.checkPassword(id, password);
+        if(isCorrect) {
+            return ResponseEntity.ok("Password matches.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid password, password doesn't match.");
+        }
+    }
+
     @PostMapping("/validateToken")
     public ResponseEntity<?> validateToken(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -202,6 +214,13 @@ public class UserController {
         return ResponseEntity.ok("Updated profile picture.");
     }
 
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteProfilePicture(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        Long id = userPrincipal.getId();
+        service.deleteProfilePicture(id);
+        return ResponseEntity.ok("Profile picture deleted");
+    }
+
     @PatchMapping("/change-password")
     public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
         String oldPassword = body.get("oldPassword");
@@ -219,7 +238,7 @@ public class UserController {
         service.updateProfile(id, dto);
         return ResponseEntity.ok(Map.of(
                 "message", "Profile updated successfully",
-                "updatedProfile", dto // Send the profile data back as JSON
+                "updatedProfile", dto
         ));
     }
 

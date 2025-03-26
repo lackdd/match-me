@@ -219,12 +219,28 @@
           }
         }
 
+
         .chat-messages {
           //height: calc(100% - 52px - 36px);
+          //height: 400px;
           flex: 1;
           margin: 0.5rem 0 0.5rem 0;
           overflow-y: scroll;
           overflow-x: hidden;
+
+          display: flex;
+          flex-direction: column;
+        }
+
+        .message-content {
+          word-wrap: break-word;
+        }
+
+        .timestamp {
+          font-size: 0.75rem;
+          color: #aaa;
+          margin-top: 4px;
+          align-self: flex-end;
         }
 
         .input-container {
@@ -297,22 +313,25 @@
           padding: 10px 15px;
           margin-bottom: 10px;
           border-radius: 10px;
-          display: inline-block;
-
-          .sent {
-            background-color: #007bff;
-            color: white;
-            align-self: flex-end;
-            text-align: right;
-          }
-
-          .received {
-            background-color: #f1f1f1;
-            color: black;
-            align-self: flex-start;
-            text-align: left;
-          }
+          display: block;
         }
+
+        .message-box.sent {
+          background-color: #007bff;
+          color: white;
+          align-self: flex-end;
+          margin-left: auto;
+          text-align: right;
+        }
+
+        .message-box.received {
+          background-color: #f1f1f1;
+          color: black;
+          align-self: flex-start;
+          margin-right: auto;
+          text-align: left;
+        }
+
       }
     }
   }

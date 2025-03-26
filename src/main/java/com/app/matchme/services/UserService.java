@@ -95,6 +95,17 @@ public class UserService {
         }
     }
 
+    public void deleteProfilePicture(Long id) {
+        User currentUser = getUserById(id);
+        currentUser.setProfilePicture(null);
+        repo.save(currentUser);
+    }
+
+    public boolean checkPassword(Long id, String password) {
+        User currentUser = getUserById(id);
+        return encoder.matches(password, currentUser.getPassword());
+    }
+
     public User getUserById(Long id) {
         return repo.findById(id).orElse(null);
     }
@@ -106,24 +117,46 @@ public class UserService {
         }
     }
 
+    @Transactional
     public List<Long> findMatches(Long id) {
         List<User> users = repo.findAll();
         Optional<User> optionalUser = repo.findById(id);
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
         String idealMatchLocation = currentUser.getIdealMatchLocation();
 
+        Integer idealMatchAgeMin;
+        Integer idealMatchAgeMax;
+        if (currentUser.getIdealMatchAge().length() == 5) {
+            idealMatchAgeMin = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2));
+            idealMatchAgeMax = Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 5));
+        } else if (currentUser.getIdealMatchAge().length() == 6) {
+            idealMatchAgeMin = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2));
+            idealMatchAgeMax = Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 6));
+        } else if (currentUser.getIdealMatchAge().trim().equals("any")) {
+            idealMatchAgeMin = 0;
+            idealMatchAgeMax = 150;
+        } else if (currentUser.getIdealMatchAge().length() == 7) {
+            idealMatchAgeMin = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 3));
+            idealMatchAgeMax = Integer.parseInt(currentUser.getIdealMatchAge().substring(4, 7));
+        } else if (currentUser.getIdealMatchAge().equals("120+")) {
+            idealMatchAgeMin = 120;
+            idealMatchAgeMax = 1000;
+        } else {
+            throw new IllegalArgumentException("Ideal match age not in bounds.");
+        }
+
         Map<User, Integer> userPointsMap = users.stream()
                 .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
                 .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
-                .filter(user -> "anywhere".equals(currentUser.getIdealMatchLocation()) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation))
-                .filter(user -> "any".equals(currentUser.getIdealMatchAge()) || user.getAge() >= Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2)) && user.getAge() <= Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 5)))
+                .filter(user -> "anywhere".equals(currentUser.getIdealMatchLocation()) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation) && Objects.equals(user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(), currentUser.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim()))
+                .filter(user -> "any".equals(currentUser.getIdealMatchAge()) || (user.getAge() >= idealMatchAgeMin && user.getAge() <= idealMatchAgeMax))
                 .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
 
         return userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
                 .limit(10)
-                .peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))
+                /*.peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))*/
                 .map(entry -> entry.getKey().getId())
                 .collect(Collectors.toList());
     }
@@ -134,9 +167,24 @@ public class UserService {
         List<String> methods = user.getPreferredMethods();
         List<String> goals = user.getGoalsWithMusic();
         Integer experience = user.getYearsOfMusicExperience();
-        // todo fix when idealMatchExperience "any" or "12-15" etc.
-        Integer idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
-        Integer idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
+
+        Integer idealMatchExperienceMin;
+        Integer idealMatchExperienceMax;
+        if (currentUser.getIdealMatchYearsOfExperience().length() == 5) {
+            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 2));
+            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(3, 5));
+        } else if (currentUser.getIdealMatchYearsOfExperience().length() == 4) {
+            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
+            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 4));
+        } else if (currentUser.getIdealMatchYearsOfExperience().trim().equals("any")) {
+            idealMatchExperienceMin = 0;
+            idealMatchExperienceMax = 100;
+        } else if (currentUser.getIdealMatchYearsOfExperience().length() == 3) {
+            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
+            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
+        } else {
+            throw new IllegalArgumentException("Ideal match years of experience not in bounds.");
+        }
 
         for (String item : musicGenres) {
             if (currentUser.getIdealMatchGenres().contains(item)) {
@@ -156,7 +204,7 @@ public class UserService {
             }
         }
 
-        if (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax ) {
+        if (currentUser.getIdealMatchYearsOfExperience() == "any" || (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax) ) {
             points++;
         }
         return points;
