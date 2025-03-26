@@ -42,7 +42,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 		setError,
 		trigger,
 		reset,
-		formState: { errors },
+		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: myData,
 		resolver: yupResolver(dashboardFormValidationSchema),
@@ -86,6 +86,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				closeSettings();
 			}}><IoClose /></button>
 
+			{/* todo add animation to show users data change was successful (like an animated checkmark)*/}
 		<form className="dashboard-form"
 			  onSubmit={handleSubmit((data) => {
 				  setMyData(data);
@@ -494,11 +495,13 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					Cancel
 				</button>
 				<button
-					className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
+					// className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
+					className={`save ${!isValid ? 'disabled' : ''}`} // Disabled by default
+					disabled={!isValid} // Only enabled when the form is valid
 					onClick={closeSettings}
 					type={'submit'}
 					form={'dashboard-form'}
-					disabled={Object.keys(errors).length > 0}
+					// disabled={Object.keys(errors).length > 0}
 				>
 					Save
 				</button>

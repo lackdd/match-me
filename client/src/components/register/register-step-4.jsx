@@ -70,6 +70,7 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 			<PreviousNextButtons
 				DeductStep={stepFunctions.DeductStep}
 				errors={{}}
+				isValid={{}}
 			/>
 		</form>
 	)

@@ -28,7 +28,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 		setValue,
 		watch,
 		trigger,
-		formState: { errors },
+		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: formThreeData,
 		resolver: yupResolver(stepThreeSchema(formOneData)),
@@ -241,6 +241,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 			<PreviousNextButtons
 				DeductStep={stepFunctions.DeductStep}
 				errors={errors}
+				isValid={isValid}
 			/>
 		</form>
 	);

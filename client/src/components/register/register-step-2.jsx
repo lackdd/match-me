@@ -76,7 +76,7 @@ function Step2({formTwoData, setFormTwoData, stepFunctions, onSubmit}) {
 		clearErrors,
 		setError,
 		trigger,
-		formState: { errors },
+		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: formTwoData,
 		resolver: yupResolver(stepTwoSchema(formTwoData)),
@@ -175,6 +175,7 @@ function Step2({formTwoData, setFormTwoData, stepFunctions, onSubmit}) {
 			<PreviousNextButtons
                 DeductStep={stepFunctions.DeductStep}
 				errors={errors}
+				isValid={isValid}
             />
 		</form>
 	);

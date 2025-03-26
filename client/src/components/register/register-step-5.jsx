@@ -45,7 +45,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 		clearErrors,
 		setError,
 		trigger,
-		formState: { errors },
+		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: formFiveData,
 		resolver: yupResolver(stepFiveSchema(formFiveData)),
@@ -355,6 +355,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 			<PreviousNextButtons
 				DeductStep={stepFunctions.DeductStep}
 				errors={errors}
+				isValid={isValid}
 				text={'Register'}
 			/>
 		</form>

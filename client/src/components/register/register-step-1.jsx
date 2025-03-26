@@ -31,7 +31,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 		clearErrors,
 		setError,
 		trigger,
-		formState: { errors },
+		formState: { errors, isValid },
 	} = useForm({
 		defaultValues: formOneData,
 		resolver: yupResolver(stepOneSchema(formOneData)),
@@ -244,9 +244,12 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 
 				{/* Submit Button */}
 				<div className='register-buttons-container'>
-					<button className={`next wide small ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
+					<button
+						// className={`next wide small ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
 							type='submit'
-							disabled={Object.keys(errors).length > 0}
+							// disabled={Object.keys(errors).length > 0}
+							className={`next wide small ${!isValid ? 'disabled' : ''}`} // Disabled by default
+							disabled={!isValid} // Only enabled when the form is valid
 					>
 						Next
 					</button>
