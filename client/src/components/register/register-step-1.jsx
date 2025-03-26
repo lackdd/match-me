@@ -4,7 +4,7 @@ import {customStyles} from '../reusables/customInputStyles.jsx';
 import makeAnimated from 'react-select/animated';
 import { useForm } from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepOneSchema} from '../reusables/validationSchema.jsx';
+import {stepOneSchema} from './validationSchema.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import axios from "axios";
 import {useState} from 'react';
@@ -59,8 +59,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							type="text"
 							placeholder="Enter your first name"
 							className={`not-react-select short focus-highlight 
-							${errors.firstName ? "error" : ""}
-							${!errors.firstName && watch('firstName') ? "valid" : ""}`}
+								${errors.firstName ? "error" : ""}
+								${!errors.firstName && watch('firstName') ? "valid" : ""}`}
 							{...register("firstName")}
 							autoComplete={"off"}
 							// autoFocus={'on'}
@@ -77,8 +77,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							type="text"
 							placeholder="Enter your last name"
 							className={`not-react-select short focus-highlight 
-							${errors.lastName ? "error" : ""}
-							${!errors.lastName && watch('lastName') ? "valid" : ""}`}
+								${errors.lastName ? "error" : ""}
+								${!errors.lastName && watch('lastName') ? "valid" : ""}`}
 							{...register("lastName")}
 							autoComplete={"off"}
 							onBlur={() => trigger('lastName')} // Trigger validation when user leaves the field
@@ -128,8 +128,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 								type='number'
 								placeholder='Enter your age'
 								className={`not-react-select short focus-highlight 
-							${errors.age ? 'error' : ''}
-							${!errors.age && watch('age') ? 'valid' : ''}`}
+									${errors.age ? 'error' : ''}
+									${!errors.age && watch('age') ? 'valid' : ''}`}
 								{...register('age')}
 								autoComplete={'off'}
 								min={0}
@@ -151,8 +151,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							type='email'
 							placeholder='Enter your email address'
 							className={`not-react-select focus-highlight 
-							${errors.email ? 'error' : ''}
-							${!errors.email && watch('email') ? 'valid' : ''}`}
+								${errors.email ? 'error' : ''}
+								${!errors.email && watch('email') ? 'valid' : ''}`}
 							{...register('email')}
 							autoComplete={'off'}
 							onBlur={async() => {
@@ -199,7 +199,7 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 								autoComplete={'off'}
 								onBlur={() => trigger('password')} // Trigger validation when user leaves the field
 							/>
-						<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}/>
+						<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} register={true}/>
 						</div>
 						<ErrorElement errors={errors} id={'password'}/>
 					</label>
@@ -215,8 +215,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 							type='password'
 							placeholder='Re-enter password'
 							className={`not-react-select focus-highlight 
-							${errors.rePassword ? 'error' : ''}
-							${!errors.rePassword && watch('rePassword') ? 'valid' : ''}`}
+								${errors.rePassword ? 'error' : ''}
+								${!errors.rePassword && watch('rePassword') ? 'valid' : ''}`}
 							{...register('rePassword')}
 							autoComplete={'off'}
 							onBlur={() => trigger('rePassword')} // Trigger validation when user leaves the field

@@ -1,7 +1,7 @@
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import Select, {mergeStyles} from 'react-select';
-import {customStyles} from '../reusables/customInputStyles.jsx';
+import {customStyles} from '../../reusables/customInputStyles.jsx';
 import {extraFormStyles} from './extraFormStyles.jsx';
 import {
 	genderOptions,
@@ -9,19 +9,19 @@ import {
 	interestsOptions,
 	methodsOptions,
 	personalityTraitsOptions
-} from '../reusables/inputOptions.jsx';
-import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx';
+} from '../../reusables/inputOptions.jsx';
+import {IncrementDecrementButtons} from '../../reusables/incrementDecrementButtons.jsx';
 import './forms.scss'
-import '../reusables/incrementDecrementButtons.scss'
-import '../reusables/errorElement.scss'
-import {ErrorElement} from '../reusables/errorElement.jsx';
+import '../../reusables/incrementDecrementButtons.scss'
+import '../../reusables/errorElement.scss'
+import {ErrorElement} from '../../reusables/errorElement.jsx';
 import React, {useEffect, useState} from 'react';
 import {dashboardFormValidationSchema} from './dashboardFormValidationSchema.jsx';
-import {CustomSelect} from '../register/register-step-2.jsx';
-import {useGooglePlacesApi} from '../reusables/useGooglePlacesApi.jsx';
-import {closeSettings} from '../reusables/profile-card-functions.jsx';
+import {CustomSelect} from '../../register/register-step-2.jsx';
+import {useGooglePlacesApi} from '../../reusables/useGooglePlacesApi.jsx';
+import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 import axios from 'axios';
-import {useAuth} from '../utils/AuthContext.jsx';
+import {useAuth} from '../../utils/AuthContext.jsx';
 import {IoClose} from 'react-icons/io5';
 
 
@@ -210,8 +210,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							type='number'
 							placeholder='Enter your age'
 							className={`not-react-select long focus-highlight 
-							${errors.age ? 'error' : ''}
-							${!errors.age && watch('age') ? 'valid' : ''}`}
+								${errors.age ? 'error' : ''}
+								${!errors.age && watch('age') ? 'valid' : ''}`}
 							{...register('age')}
 							// value={watch('age') || myData.age}
 							value={watch('age')}
@@ -339,8 +339,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							type='number'
 							placeholder='Enter number in years'
 							className={`not-react-select long focus-highlight 
-							${errors.yearsOfMusicExperience ? 'error' : ''}
-							${!errors.yearsOfMusicExperience && (watch('yearsOfMusicExperience') || watch('yearsOfMusicExperience') === 0) ? 'valid' : ''}`}
+								${errors.yearsOfMusicExperience ? 'error' : ''}
+								${!errors.yearsOfMusicExperience && (watch('yearsOfMusicExperience') || watch('yearsOfMusicExperience') === 0) ? 'valid' : ''}`}
 							{...register('yearsOfMusicExperience')}
 							// value={watch('yearsOfMusicExperience') || myData.yearsOfMusicExperience}
 							value={watch('yearsOfMusicExperience')}
@@ -375,8 +375,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 						id='linkToMusic'
 						name={'linkToMusic'}
 						className={`not-react-select focus-highlight short
-						${errors.linkToMusic ? 'error' : ''}
-						${!errors.linkToMusic && watch('linkToMusic') ? 'valid' : ''}`}
+							${errors.linkToMusic ? 'error' : ''}
+							${!errors.linkToMusic && watch('linkToMusic') ? 'valid' : ''}`}
 						placeholder='Link to your Spotify etc'
 						// value={watch('linkToMusic') || myData.linkToMusic}
 						value={watch('linkToMusic')}
@@ -468,8 +468,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 						id='description'
 						name={'description'}
 						className={`form-description-container focus-highlight
-						${errors.description ? 'error' : ''}
-						${!errors.description && watch('description') ? 'valid' : ''}`}
+							${errors.description ? 'error' : ''}
+							${!errors.description && watch('description') ? 'valid' : ''}`}
 						placeholder='Say a few words about yourself...'
 						{...register('description')}
 						autoComplete={'off'}
@@ -493,7 +493,13 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				}} type={'button'} >
 					Cancel
 				</button>
-				<button className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`} onClick={closeSettings} type={'submit'} form={'dashboard-form'} disabled={Object.keys(errors).length > 0} >
+				<button
+					className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
+					onClick={closeSettings}
+					type={'submit'}
+					form={'dashboard-form'}
+					disabled={Object.keys(errors).length > 0}
+				>
 					Save
 				</button>
 			</div>

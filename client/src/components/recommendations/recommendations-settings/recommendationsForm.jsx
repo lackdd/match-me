@@ -8,18 +8,18 @@ import {
 	matchGenderOptions,
 	matchExperienceOptions,
 	methodsOptions, matchLocationsOptions, genderOptions, interestsOptions, personalityTraitsOptions
-} from '../reusables/inputOptions.jsx';
-import {customStyles} from '../reusables/customInputStyles.jsx';
-import {extraFormStyles} from '../dashboard/extraFormStyles.jsx';
+} from '../../reusables/inputOptions.jsx';
+import {customStyles} from '../../reusables/customInputStyles.jsx';
+import {extraFormStyles} from '../../dashboard/dashboard-settings/extraFormStyles.jsx';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {recommendationsFormValidationSchema} from './recommendationsFormValidationSchema.jsx';
-import {ErrorElement} from '../reusables/errorElement.jsx';
-import {useAuth} from '../utils/AuthContext.jsx';
+import {ErrorElement} from '../../reusables/errorElement.jsx';
+import {useAuth} from '../../utils/AuthContext.jsx';
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
-import {handleCloseMenu} from '../register/register.jsx';
-import {closeSettings} from '../reusables/profile-card-functions.jsx';
+import {handleCloseMenu} from '../../register/register.jsx';
+import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 
 
 export function RecommendationsForm({preferencesData, setPreferencesData, setLoading, resetMatches}) {

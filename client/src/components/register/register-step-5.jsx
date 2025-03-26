@@ -13,7 +13,7 @@ import {
 import {customStyles} from '../reusables/customInputStyles.jsx';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepFiveSchema} from '../reusables/validationSchema.jsx';
+import {stepFiveSchema} from './validationSchema.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 

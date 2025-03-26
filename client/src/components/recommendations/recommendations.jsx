@@ -9,7 +9,7 @@ import axios from 'axios';
 import {useSwipe} from './useSwipe.jsx';
 import { formatData, formatLocation, closeSettings, openSettings } from '../reusables/profile-card-functions.jsx';
 import { useAuth } from '../utils/AuthContext.jsx';
-import {RecommendationsForm} from './recommendationsForm.jsx';
+import {RecommendationsForm} from './recommendations-settings/recommendationsForm.jsx';
 
 // react icons
 import { GiSettingsKnobs } from "react-icons/gi";

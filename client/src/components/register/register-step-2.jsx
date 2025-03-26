@@ -10,7 +10,7 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepTwoSchema} from '../reusables/validationSchema.jsx';
+import {stepTwoSchema} from './validationSchema.jsx';
 import {handleCloseMenu} from './register.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';

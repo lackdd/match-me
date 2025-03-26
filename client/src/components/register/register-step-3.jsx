@@ -5,7 +5,7 @@ import {customStyles} from '../reusables/customInputStyles.jsx';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepThreeSchema} from '../reusables/validationSchema.jsx';
+import {stepThreeSchema} from './validationSchema.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx'
