@@ -110,6 +110,11 @@ export function ChangePassword() {
 						reset();
 					})}
 				>
+
+					<div className="form-title">
+						<h1>Change password</h1>
+					</div>
+
 					<label>
 						Current password
 						<br/>
