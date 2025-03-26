@@ -33,28 +33,58 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     const [hasMore, setHasMore] = useState(true);
     const scrollRef = useRef();
 
-        const fetchChatHistory = async (isInitial = false) => {
-            if(!receiverUserId || !userId || !hasMore) return;
-            try {
-                const url = isInitial
-                    ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
-                    : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
-                const response = await axios.get(url, {
-                    headers: {Authorization: `Bearer ${tokenValue}`},
-                });
+        // const fetchChatHistory = async (isInitial = false) => {
+        //     if(!receiverUserId || !userId || !hasMore) return;
+        //     try {
+        //         const url = isInitial
+        //             ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
+        //             : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
+        //         const response = await axios.get(url, {
+        //             headers: {Authorization: `Bearer ${tokenValue}`},
+        //         });
+        //
+        //         if(response.data.length === 0) {
+        //             setHasMore(false);
+        //         } else {
+        //             const oldestMessageId = response.data[0]?.id;
+        //             setBeforeId(oldestMessageId);
+        //             console.log("Fetched chat history:", response.data);
+        //             setMessages((prev) => [...response.data, ...prev]);
+        //         }
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // }
 
-                if(response.data.length === 0) {
-                    setHasMore(false);
-                } else {
-                    const oldestMessageId = response.data[0]?.id;
-                    setBeforeId(oldestMessageId);
-                    console.log("Fetched chat history:", response.data);
-                    setMessages((prev) => [...response.data, ...prev]);
-                }
-            } catch (error) {
-                console.log(error);
+    const fetchChatHistory = async (isInitial = false) => {
+        if (!receiverUserId || !userId) return;
+
+        try {
+            const url = isInitial
+                ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
+                : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
+
+            const response = await axios.get(url, {
+                headers: { Authorization: `Bearer ${tokenValue}` },
+            });
+
+            if (response.data.length === 0) {
+                setHasMore(false);
+            } else {
+                const oldestMessageId = response.data[0]?.id;
+                setBeforeId(oldestMessageId);
+
+                setMessages((prev) => {
+                    // Ensure no duplicate messages when switching
+                    const newMessages = response.data.filter(msg => !prev.some(m => m.id === msg.id));
+                    return [...newMessages, ...prev];
+                });
             }
+        } catch (error) {
+            console.error("Error fetching chat history:", error);
         }
+    };
+
 
     useEffect(() => {
         setMessages([]);
@@ -66,11 +96,32 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     }, [receiverUserId, userId]);
 
     const handleScroll = () => {
-        const top = scrollRef.current.scrollTop;
-        if (top === 0 && hasMore) {
+        const top = Math.floor(scrollRef.current.scrollTop);
+        const height = Math.floor(scrollRef.current.scrollHeight);
+        const elementHeight = Math.floor(scrollRef.current.clientHeight);
+
+        console.log("calculation: ", top + height);
+        if (top + height === elementHeight && hasMore) {
             fetchChatHistory();
         }
     };
+
+    // const handleScroll = () => {
+    //     if (!scrollRef.current) return;
+    //
+    //     const scrollTop = scrollRef.current.scrollTop;
+    //
+    //     if (scrollTop === 0 && hasMore) {
+    //         const prevHeight = scrollRef.current.scrollHeight; // Store previous height
+    //
+    //         fetchChatHistory().then(() => {
+    //             // Restore scroll position after new messages are prepended
+    //             requestAnimationFrame(() => {
+    //                 scrollRef.current.scrollTop = scrollRef.current.scrollHeight - prevHeight;
+    //             });
+    //         });
+    //     }
+    // };
 
     useEffect(() => {
         if(isUserLoggedIn && tokenValue) {
@@ -211,7 +262,13 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                  onScroll={handleScroll}
             >
 
-                {messages.map((msg, index) => (
+                {/*{messages.map((msg, index) => (*/}
+                {/*    <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>*/}
+                {/*        <div className="message-content">{msg.content}</div>*/}
+                {/*        <div className="timestamp">{formatTimestamp(msg.timestamp)}</div>*/}
+                {/*    </div>*/}
+                {/*))}*/}
+                {[...messages].reverse().map((msg, index) => (
                     <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>
                         <div className="message-content">{msg.content}</div>
                         <div className="timestamp">{formatTimestamp(msg.timestamp)}</div>

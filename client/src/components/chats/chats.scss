@@ -227,9 +227,8 @@
           margin: 0.5rem 0 0.5rem 0;
           overflow-y: scroll;
           overflow-x: hidden;
-
           display: flex;
-          flex-direction: column;
+          flex-direction: column-reverse;
         }
 
         .message-content {
@@ -307,29 +306,44 @@
         }
 
         .message-box {
-          background: pink;
           /*height: 35px;*/
           /*width: 400px;*/
-          padding: 10px 15px;
-          margin-bottom: 10px;
+          padding: 10px 10px;
+          margin: 10px;
           border-radius: 10px;
           display: block;
+          background-color: transparent;
+
+          .message-content {
+            border-radius: 10px;
+            padding: 5px 10px;
+            width: fit-content;
+          }
         }
 
         .message-box.sent {
-          background-color: #007bff;
           color: white;
           align-self: flex-end;
           margin-left: auto;
           text-align: right;
+
+          .message-content {
+            background-color: #007bff;
+            margin-left: auto;
+          }
+
         }
 
         .message-box.received {
-          background-color: #f1f1f1;
           color: black;
           align-self: flex-start;
           margin-right: auto;
           text-align: left;
+
+          .message-content {
+            background-color: #f1f1f1;
+            margin-right: auto;
+          }
         }
 
       }
