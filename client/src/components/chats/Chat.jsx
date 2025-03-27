@@ -133,6 +133,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                     console.log("Logging in as:", response.data.username);
                     setUsername(response.data.username);
                     setUserId(response.data.id);
+                    console.log("user id: " + response.data.id);
                 } catch (error) {
                     console.log(error.message);
                 }
@@ -161,6 +162,9 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         const socket = new SockJS("/ws"); // Use SockJS
         const stompClient = new Client({
             webSocketFactory: () => socket, // WebSocket factory to use SockJS
+            connectHeaders: {
+                Authorization: `Bearer ${tokenValue}`,
+            },
             reconnectDelay: 5000,
             onConnect: () => {
                 console.log("Connected to WebSocket");
@@ -193,7 +197,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             client.publish({
                 destination: "/app/private-message",
                 body: JSON.stringify({
-                    senderId: userId,
+                    /*senderId: userId,*/
                     receiverId: receiverUserId,
                     content: message
                 }),

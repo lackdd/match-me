@@ -68,6 +68,7 @@ public class ChatController {
             System.out.println("Message blocked: User not authenticated.");
             return;
         }
+        System.out.println(userPrincipal.getUser());
         User sender = userPrincipal.getUser();
         User receiver = userService.getUserById(messageDTO.getReceiverId());
         String senderUsername = sender.getUsername();
