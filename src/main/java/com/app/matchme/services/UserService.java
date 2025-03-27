@@ -111,8 +111,8 @@ public class UserService {
     }
 
     public void addToSwipedUsers(Long matchId, User currentUser) {
-        if (!currentUser.getPendingRequests().contains(matchId)) {
-            currentUser.getPendingRequests().add(matchId);
+        if (!currentUser.getSwipedUsers().contains(matchId)) {
+            currentUser.getSwipedUsers().add(matchId);
             repo.save(currentUser);
         }
     }
