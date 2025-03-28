@@ -10,7 +10,8 @@
     @include variables.centered-column;
     @include variables.glass-container;
 
-    width: 90%;
+    width: 70%;
+    max-width: 100rem;
     height: 75vh;
     margin-top: 3rem;
     align-self: center;
@@ -21,6 +22,14 @@
     transition: transform 0.75s 0.1s ease-in;
     padding-bottom: 2rem;
     position: relative;
+
+    @media (max-width: 768px) {
+      width: 80%;
+    }
+
+    @media (max-width: 440px) {
+      width: 90%;
+    }
 
     // Hover and active states for like/dislike buttons
     &:has(+ .match-buttons-container .like:hover) {
@@ -340,7 +349,7 @@
 
 // smalls screen Media Queries
 @media (max-width: 600px) {
-  .recommendations-container, .dashboard-container {
+  //.recommendations-container, .dashboard-container {
 
 
     .profile-card-container {
@@ -419,4 +428,4 @@
       //margin-top: 15px;
       //margin-top: auto;
     }
-  }
+  //}
