@@ -19,6 +19,7 @@
     font-size: 0.8rem;
     text-align: center;
 
+
     button {
       all: unset;
       display: flex;
@@ -28,15 +29,24 @@
       text-align: center;
       cursor: pointer;
 
+      &.current {
+        color: variables.$main-pink;
+      }
+
       &:active {
         transform: scale(1.05);
         transition: transform 0.2s ease;
       }
 
+      &:hover {
+        color: variables.$main-pink;
+        transition: hover 0.2s ease;
+      }
+
       & > svg {
         height: 1.6rem;
         width: 1.6rem;
-        color: black;
+        color: inherit;
       }
     }
   }
