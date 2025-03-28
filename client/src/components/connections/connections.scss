@@ -10,6 +10,19 @@
     background-color: rgba(255, 255, 255, 0.25);
   }
 
+  .settings-content {
+    @include variables.centered-column;
+    width: 100%;
+
+    .profile-card-container {
+      background-color: rgba(255, 255, 255, 0.9);
+
+      td {
+        text-align: left;
+      }
+    }
+  }
+
   .user-stats-container {
     text-align: center;
     color: black;
@@ -135,37 +148,40 @@
         width: 100%;
         padding: 1rem 0.75rem 1rem 0.75rem;
 
-        .picture-name-container {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: flex-start;
+        .profile-button {
+          all: unset;
+          cursor: pointer;
 
-          img {
-            height: 4rem;
-            width: 4rem;
-            border-radius: 50%;
-            aspect-ratio: 1/1;
-            object-fit: cover;
-            object-position: top;
 
-          }
-
-          .name {
-            margin-left: 1rem;
-            width: 45%;
+          .picture-name-container {
             display: flex;
+            flex-direction: row;
             align-items: center;
-            font-size: 1.1rem;
-            text-overflow: fade;
+            justify-content: flex-start;
 
-            @media (max-width: 440px) {
-              font-size: 1rem;
+            img {
+              height: 4rem;
+              width: 4rem;
+              border-radius: 50%;
+              aspect-ratio: 1/1;
+              object-fit: cover;
+              object-position: top;
+
             }
 
+            .name {
+              margin-left: 1rem;
+              width: 45%;
+              display: flex;
+              align-items: center;
+              font-size: 1.1rem;
+              text-overflow: fade;
+
+              @media (max-width: 440px) {
+                font-size: 1rem;
+              }
+            }
           }
-
-
         }
 
         .connections-buttons-container {
@@ -196,10 +212,18 @@
 
             &.accept {
 
+              :hover {
+                color: variables.$button-green;
+              }
+
             }
 
             &.delete {
               margin-left: 1rem;
+
+              :hover {
+                color: variables.$button-red;
+              }
 
               &.confirm {
                 background-color: red;

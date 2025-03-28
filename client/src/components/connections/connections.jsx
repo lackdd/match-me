@@ -1,13 +1,23 @@
 import './connections.scss'
+import '../reusables/profile-card.scss'
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import { useAuth } from '../utils/AuthContext.jsx';
+import {closeSettings, formatData, formatLocation, openSettings} from '../reusables/profile-card-functions.jsx';
 
 // react icons
 import { FaRegCircleStop } from "react-icons/fa6";
 import { FaRegCirclePlay } from "react-icons/fa6";
 import { BsChat } from "react-icons/bs";
 import { FaRegCircleXmark } from "react-icons/fa6"
+import {DashboardForm} from '../dashboard/dashboard-settings/dashboardForm.jsx';
+import {Stats} from '../dashboard/dashboard-settings/stats.jsx';
+import {ChangePassword} from '../dashboard/dashboard-settings/change-password.jsx';
+import {SettingsMenu} from '../dashboard/dashboard-settings/settings-menu.jsx';
+import {IoClose} from 'react-icons/io5';
+import {GiSettingsKnobs} from 'react-icons/gi';
+import {FaSpotify} from 'react-icons/fa';
+
 
 
 
@@ -27,11 +37,11 @@ function Connections() {
 	// const toDeleteName = useRef("");
 	const [toDeleteName, setToDeleteName] = useState("");
 	const { tokenValue } = useAuth();
+	const [toDisplay, setToDisplay] = useState(null);
+	const isDataFormatted = useRef(false);
+
 
 	const modal = document.getElementById('loadingModal');
-	// const token = useRef(sessionStorage.getItem("token"));
-	// console.log("Token: ", token.current)
-
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
@@ -100,6 +110,42 @@ function Connections() {
 		}
 	}
 
+	const formatDataForView = (data) => {
+		if (data !== null && data && isDataFormatted.current === false) {
+			const updatedProfile = {
+				...data,
+				location: formatLocation(data.location),
+				// location: myDataFormatted.location,
+				preferredMusicGenres: Array.isArray(data.preferredMusicGenres)
+					? formatData(data.preferredMusicGenres)
+					: data.preferredMusicGenres,
+				preferredMethod: Array.isArray(data.preferredMethod)
+					? formatData(data.preferredMethod)
+					: data.preferredMethod,
+				additionalInterests: Array.isArray(data.additionalInterests)
+					? formatData(data.additionalInterests)
+					: data.additionalInterests,
+				personalityTraits: Array.isArray(data.personalityTraits)
+					? formatData(data.personalityTraits)
+					: data.personalityTraits,
+				goalsWithMusic: Array.isArray(data.goalsWithMusic)
+					? formatData(data.goalsWithMusic)
+					: data.goalsWithMusic
+			};
+			return updatedProfile;
+
+			// Check if the profile data has changed before updating the state
+			// if (JSON.stringify(updatedProfile) !== JSON.stringify(data)) {
+			// 	setMyDataFormatted((prev) => ({
+			// 		...prev,
+			// 		...updatedProfile
+			// 	}));
+			// 	isDataFormatted.current = true;
+			// }
+		}
+		return data;
+	}
+
 	// fetch data based on ids
 	const getConnectionsData = async(ids, setState, setFetchedState) => {
 		const controller = new AbortController(); // Create an abort controller
@@ -107,18 +153,42 @@ function Connections() {
 
 		if (isDeleting === false) {
 			try {
-				const requests = ids.map(id =>
-					axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
+				const connections = ids.map(id => {
+
+					// fetch profile pic and name
+					const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
 						headers: {
 							"Authorization": `Bearer ${tokenValue}`,
-							"Content-Type": "application/json"},
-						signal,
-					})
-				);
-				const responses = await Promise.all(requests);
-				const users = responses.map(response => response.data); // Extract user data
+							"Content-Type": "application/json",
+							signal,}
+					});
 
-				setState(users);
+					// fetch other bio data
+					const userPromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
+						headers: {
+							"Authorization": `Bearer ${tokenValue}`,
+							"Content-Type": "application/json",
+							signal,}
+					});
+
+					// Return both promises for the same id
+					return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({
+						...formatDataForView(profile.data),   // Merge profile data
+						...user.data, // Merge user data
+					}));
+				});
+
+				// isDataFormatted.current = true;
+
+				// Wait for all promises to resolve
+				const responses = await Promise.all(connections);
+
+				console.log("Responses: ", responses);
+
+				// const users = responses.map(response => response.data); // Extract user data
+				//
+				// setState(users);
+				setState(responses);
 				setFetchedState(true); // Indicate that data has been fetched
 
 			} catch (error) {
@@ -137,6 +207,32 @@ function Connections() {
 			}
 		}
 	}
+
+
+	// useEffect(() => {
+	//
+	// 	const formatConnectionsData = (connections) => {
+	// 		// Map over the connections and format each item
+	// 		return connections.map((connection) => ({
+	// 			...connection, // Spread the existing properties
+	// 			location: formatLocation(connection.location), // Format the location
+	// 			preferredMethod: formatData(connection.preferredMethod),
+	// 		}));
+	// 	};
+	//
+	// 	if (currentConnections.length > 0) {
+	// 		const formattedConnections = formatConnectionsData(currentConnections);
+	// 		setCurrentConnections(formattedConnections);
+	// 	}
+	//
+	// 	if (pendingConnections.length > 0) {
+	// 		const formattedConnections = formatConnectionsData(pendingConnections);
+	// 		setPendingConnections(formattedConnections);
+	// 	}
+	//
+	// }, [currentConnections])
+
+
 
 	// display connections
 	const displayConnections = (connections) => {
@@ -159,11 +255,17 @@ function Connections() {
 		return connections.map((connection, index) => (
 			<div key={index} id={connection.id} className='connection'>
 
-				<div className='picture-name-container'>
-					<img src='profile_pic_female.jpg' alt=''/>
-					{/*<img src={connection.profilePicture} alt={connection.username} className='connection-pic' />*/}
-					<div className='name'>{connection.username}</div>
-				</div>
+				<button className='profile-button' onClick={async(event) => {
+					openSettings();
+					const parentId = getIdOfParent(event);
+					await displayProfile(parentId);
+				}}>
+					<div className='picture-name-container'>
+						<img src='profile_pic_female.jpg' alt=''/>
+						{/*<img src={connection.profilePicture} alt={connection.username} className='connection-pic' />*/}
+						<div className='name'>{connection.username}</div>
+					</div>
+				</button>
 
 				{connections === currentConnections && (
 					<div className='connections-buttons-container'>
@@ -322,9 +424,228 @@ function Connections() {
 		}
 	}
 
+	const getIdOfParent = (event) => {
+		const id = Number(event.currentTarget.parentNode.id);
+		return id;
+	}
+
+
+	const displayProfile = (id) => {
+		let userToDisplay;
+
+		// find the correct user either from current or pending list
+		if (pendingOrCurrent === 'current') {
+			userToDisplay = currentConnections.find((connection) => connection.id === id);
+		} else if (pendingOrCurrent === 'pending') {
+			userToDisplay = pendingConnections.find((connection) => connection.id === id);
+		}
+
+		// if (userToDisplay) {
+		// 	if (!userToDisplay.formatted) {
+		// 		userToDisplay = {
+		// 			...userToDisplay, // Spread the existing properties of userToDisplay
+		// 			// Conditionally format the desired properties
+		// 			location: formatLocation(userToDisplay.location), // Format location
+		// 			preferredMethod: formatData(userToDisplay.preferredMethod),
+		// 			formatted: true,
+		// 		};
+		// 	}
+		// }
+		// console.log("userToDisplay", userToDisplay);
+
+
+		if (userToDisplay) {
+			setToDisplay(
+				<div
+					// key={userToDisplayNum}
+					// ref={matchContainerRef}
+					// id={'match-container'}
+					className='profile-card-container'>
+
+					<div className='picture-bio-container'>
+						<div className='picture-container'>
+							<div className='extra-picture-container'>
+								{/*{userToDisplay.profilePicture ? (*/}
+								{/*	<AdvancedImage cldImg={getOptimizedImage(userToDisplay.profilePicture)}/>*/}
+								{/*) : (*/}
+								{/*	<img*/}
+								{/*		src='default_profile_picture.png'*/}
+								{/*		alt='profile picture'*/}
+								{/*		className='profile-picture'*/}
+								{/*	/>*/}
+								{/*)}*/}
+								{userToDisplay.gender === 'male' && (
+									<img
+										src='profile_pic_male.jpg'
+										alt='profile picture'
+										className='profile-picture'
+									/>
+								)}
+								{userToDisplay.gender === 'female' && (
+									<img
+										src='profile_pic_female.jpg'
+										alt='profile picture'
+										className='profile-picture'
+									/>
+								)}
+								{userToDisplay.gender === 'other' && (
+									<img
+										src='default_profile_picture.png'
+										alt='profile picture'
+										className='profile-picture'
+									/>
+								)}
+								{userToDisplay.linkToMusic ? (
+									<div className='music-link'>
+										<FaSpotify style={{ color: '#31D165' }} />
+									</div>
+								) : ("")
+								}
+
+							</div>
+						</div>
+
+						{/* bigger screen design*/}
+						<div className='bio-container default'>
+
+							<table className='bio-table'>
+								<tbody>
+								<tr>
+									<th style={{ width: '60%' }} className='two-column'>
+										Location
+									</th>
+									<td style={{ width: '4%' }}></td>
+									<th style={{ width: '36%' }} className='two-column'>
+										Experience
+									</th>
+								</tr>
+								<tr>
+									<td style={{ width: '60%' }}>{userToDisplay.location}</td>
+									<td style={{ width: '4%' }}></td>
+									<td style={{ width: '36%' }}>
+										{userToDisplay.yearsOfMusicExperience === 1
+											? `${userToDisplay.yearsOfMusicExperience} year`
+											: `${userToDisplay.yearsOfMusicExperience} years`}
+									</td>
+								</tr>
+								<tr>
+									<th className='one-column' colSpan={3}>
+										Genres
+									</th>
+								</tr>
+								<tr>
+									<td colSpan={3}>{userToDisplay.preferredMusicGenres}</td>
+								</tr>
+								<tr>
+									<th className='one-column' colSpan={3}>
+										Methods
+									</th>
+								</tr>
+								<tr>
+									<td colSpan={3}>{userToDisplay.preferredMethod}</td>
+								</tr>
+								<tr>
+									<th className='one-column' colSpan={3}>
+										Interests
+									</th>
+								</tr>
+								<tr>
+									<td colSpan={3}>{userToDisplay.additionalInterests}</td>
+								</tr>
+								<tr>
+									<th className='one-column' colSpan={3}>
+										Personality
+									</th>
+								</tr>
+								<tr>
+									<td colSpan={3}>{userToDisplay.personalityTraits}</td>
+								</tr>
+								<tr>
+									<th className='one-column' colSpan={3}>
+										Goals
+									</th>
+								</tr>
+								<tr>
+									<td colSpan={3}>{userToDisplay.goalsWithMusic}</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+
+						{/*	 mobile design */}
+
+						<div className='bio-container mobile'>
+							<table className='bio-table'>
+								<tbody>
+								<tr>
+									<th style={{ width: '48%' }} className='two-column'>Location</th>
+									<td style={{ width: '4%' }}></td>
+									<th style={{ width: '48%' }} className='two-column'>Experience</th>
+								</tr>
+								<tr>
+									<td style={{ width: '48%' }}>{userToDisplay.location}</td>
+									<td style={{ width: '4%' }}></td>
+									<td style={{ width: '48%' }}>
+										{userToDisplay.yearsOfMusicExperience === 1
+											? `${userToDisplay.yearsOfMusicExperience} year`
+											: `${userToDisplay.yearsOfMusicExperience} years`}
+									</td>
+								</tr>
+								<tr>
+									<th style={{ width: '48%' }} className='two-column'>Genres</th>
+									<td style={{ width: '4%' }}></td>
+									<th style={{ width: '48%' }} className='two-column'>Methods</th>
+								</tr>
+								<tr>
+									<td style={{ width: '48%' }}>{userToDisplay.preferredMusicGenres}</td>
+									<td style={{ width: '4%' }}></td>
+									<td style={{ width: '48%' }}>{userToDisplay.preferredMethod}</td>
+								</tr>
+								<tr>
+									<th style={{ width: '48%' }} className='two-column'>Interests</th>
+									<td style={{ width: '4%' }}></td>
+									<th style={{ width: '48%' }} className='two-column'>Personality</th>
+								</tr>
+								<tr>
+									<td style={{ width: '48%' }}>{userToDisplay.additionalInterests}</td>
+									<td style={{ width: '4%' }}></td>
+									<td style={{ width: '48%' }}>{userToDisplay.personalityTraits}</td>
+								</tr>
+								<tr>
+									<th className='' colSpan={3}>Goals</th>
+								</tr>
+								<tr>
+									<td colSpan={3} className={''}>{userToDisplay.goalsWithMusic}</td>
+								</tr>
+
+								</tbody>
+							</table>
+
+						</div>
+					</div>
+					<div className='description-container'>
+						{userToDisplay.description}
+					</div>
+					<div className='name-container'>
+						<span className='name'>{userToDisplay.username}</span>
+						<br />
+						<span>{userToDisplay.age}, {userToDisplay.gender}</span>
+					</div>
+				</div>
+			)
+		}
+	}
+
 
 	return (
 		<div className='connections-container'>
+
+			<div className="settings-popup" id="settings-popup">
+				<div className="settings-content">
+					<button className='close-settings' type={'button'} onClick={() => {closeSettings(); setToDisplay(null);}}><IoClose /></button>
+					{toDisplay}
+				</div>
+			</div>
 
 
 			{!error ? (

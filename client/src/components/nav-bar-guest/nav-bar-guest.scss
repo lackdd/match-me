@@ -42,11 +42,29 @@
   }
 
 
+
+
   .logo-container {
 
     .nav-bar-logo {
       width: 11.75rem;
       fill: none;
+
+      &:active {
+        transform: scale(1.05);
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+        transition: hover 0.2s ease;
+      }
+
+      & > svg {
+        height: 1.6rem;
+        width: 1.6rem;
+        color: inherit;
+      }
 
       @media (max-width: 768px) {
         width: 2.5rem;
@@ -77,6 +95,20 @@
       //align-items: center;
       //transition: background 0.3s ease, color 0.3s ease;
       //transition: all 0.3s ease-in-out;
+      cursor: pointer;
+
+      svg {
+        &:active {
+          transform: scale(1.05);
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+          filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+          transition: hover 0.2s ease;
+        }
+      }
+
     }
 
     @supports (backdrop-filter: blur(5px))
@@ -156,6 +188,20 @@
     box-shadow: variables.$default-button-shadow;
     position: relative;
 
+
+    .mobile-login {
+      &:active {
+        transform: scale(1.05);
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+        transition: hover 0.2s ease;
+      }
+    }
+
+
     &:has(.signup:hover),
     &:has(.login:hover) {
       box-shadow: none; // Remove shadow when either button is hovered
@@ -186,6 +232,8 @@
       overflow: hidden;
       white-space: nowrap;
       position: absolute;
+
+
 
       @media (max-width: 768px) {
         all: unset;

@@ -89,3 +89,39 @@ export const backToObject = (array, options) => {
 	const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
 	return arrayOfObjects;
 }
+
+// export const formatDataForView = (data, isDataFormatted) => {
+// 	if (data !== null && data && isDataFormatted === false) {
+// 		const updatedProfile = {
+// 			...data,
+// 			location: formatLocation(data.location),
+// 			// location: myDataFormatted.location,
+// 			preferredMusicGenres: Array.isArray(data.preferredMusicGenres)
+// 				? formatData(data.preferredMusicGenres)
+// 				: data.preferredMusicGenres,
+// 			preferredMethod: Array.isArray(data.preferredMethod)
+// 				? formatData(data.preferredMethod)
+// 				: data.preferredMethod,
+// 			additionalInterests: Array.isArray(data.additionalInterests)
+// 				? formatData(data.additionalInterests)
+// 				: data.additionalInterests,
+// 			personalityTraits: Array.isArray(data.personalityTraits)
+// 				? formatData(data.personalityTraits)
+// 				: data.personalityTraits,
+// 			goalsWithMusic: Array.isArray(data.goalsWithMusic)
+// 				? formatData(data.goalsWithMusic)
+// 				: data.goalsWithMusic
+// 		};
+// 		return updatedProfile;
+//
+// 		// Check if the profile data has changed before updating the state
+// 		// if (JSON.stringify(updatedProfile) !== JSON.stringify(data)) {
+// 		// 	setMyDataFormatted((prev) => ({
+// 		// 		...prev,
+// 		// 		...updatedProfile
+// 		// 	}));
+// 		// 	isDataFormatted.current = true;
+// 		// }
+// 	}
+// 	return data;
+// }

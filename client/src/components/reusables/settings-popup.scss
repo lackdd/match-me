@@ -108,3 +108,28 @@
   }
 
 }
+
+.close-settings {
+  all: unset;
+  width: 2rem;
+  height: 2rem;
+  position: absolute;
+  color: white;
+  top: 1rem;
+  left: 1rem;
+  cursor: pointer;
+
+  svg {
+    width: 2rem;
+    height: 2rem;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: rotate(-90deg);
+    }
+
+    &:active {
+      transform: scale(1.1);
+    }
+  }
+}
