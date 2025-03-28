@@ -103,6 +103,7 @@
     padding-right: 1.25rem;
     font-weight: 600;
 
+
     button.logout {
       all: unset;
       color: white;
@@ -131,9 +132,22 @@
       padding-left: 0;
       padding-right: 0;
 
+
       svg {
         width: 2.25rem;
         height: 2.25rem;
+        cursor: pointer;
+
+        &:active {
+          transform: scale(1.05);
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+          filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+          transition: hover 0.2s ease;
+        }
+
       }
 
     }
@@ -199,6 +213,7 @@
       font-size: variables.$font-size-large-button;
       font-weight: variables.$font-weight-large-button;
       transition: all 0.1s ease;
+      cursor: pointer;
       //text-overflow: ellipsis;
       //overflow: hidden;
       //white-space: nowrap;
