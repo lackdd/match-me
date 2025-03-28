@@ -110,6 +110,8 @@ public class UserService {
         return repo.findById(id).orElse(null);
     }
 
+    public User getUserByEmail(String email) {return repo.findByEmail(email).orElse(null);}
+
     public void addToSwipedUsers(Long matchId, User currentUser) {
         if (!currentUser.getSwipedUsers().contains(matchId)) {
             currentUser.getSwipedUsers().add(matchId);

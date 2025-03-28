@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -64,7 +65,9 @@ public class ChatController {
 
     // instead of sendTo use simpMessagingTemplate to deliver message to specific user
     @MessageMapping("/private-message")
-    public void sendPrivateMessage(Principal principal, @Payload ChatMessageDTO messageDTO) {
+    public void sendPrivateMessage(SimpMessageHeaderAccessor headerAccessor, @Payload ChatMessageDTO messageDTO) {
+        Principal principal = headerAccessor.getUser();
+
         if (principal == null) {
             System.out.println("Message blocked: User not authenticated.");
             return;
@@ -72,7 +75,7 @@ public class ChatController {
 
         String email = principal.getName();
         System.out.println("Principal email: " + email);
-        User sender = userService.findByUsername(email);
+        User sender = userService.getUserByEmail(email);
         User receiver = userService.getUserById(messageDTO.getReceiverId());
         String senderUsername = sender.getUsername();
         String receiverUsername = receiver.getUsername();
