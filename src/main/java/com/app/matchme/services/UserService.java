@@ -340,8 +340,16 @@ public class UserService {
     public List<Long> getPendingRequestsById(Long id) {return repo.findUserPendingRequestsById(id);}
 
     public void addConnectionById(Long id, User currentUser) {
+        if (!currentUser.getPendingRequests().contains(id))
+        {
+            System.out.println("You don't have this user in your pending requests, adding connection stopped.");
+            return;
+        }
+        User likedUser = getUserById(id);
         currentUser.getConnections().add(id);
+        likedUser.getConnections().add(currentUser.getId());
         repo.save(currentUser);
+        repo.save(likedUser);
     }
 
     @Transactional

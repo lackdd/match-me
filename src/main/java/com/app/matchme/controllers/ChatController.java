@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,13 +64,15 @@ public class ChatController {
 
     // instead of sendTo use simpMessagingTemplate to deliver message to specific user
     @MessageMapping("/private-message")
-    public void sendPrivateMessage(@AuthenticationPrincipal UserPrincipal userPrincipal, @Payload ChatMessageDTO messageDTO) {
-        if (userPrincipal == null) {
+    public void sendPrivateMessage(Principal principal, @Payload ChatMessageDTO messageDTO) {
+        if (principal == null) {
             System.out.println("Message blocked: User not authenticated.");
             return;
         }
-        System.out.println(userPrincipal.getUser());
-        User sender = userPrincipal.getUser();
+
+        String email = principal.getName();
+        System.out.println("Principal email: " + email);
+        User sender = userService.findByUsername(email);
         User receiver = userService.getUserById(messageDTO.getReceiverId());
         String senderUsername = sender.getUsername();
         String receiverUsername = receiver.getUsername();
