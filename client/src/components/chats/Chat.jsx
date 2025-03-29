@@ -104,7 +104,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         const height = Math.floor(scrollRef.current.scrollHeight);
         const elementHeight = Math.floor(scrollRef.current.clientHeight);
 
-        if (top + height === elementHeight && hasMore) {
+        if (top + height > elementHeight - 100 && hasMore) {
             fetchChatHistory();
         }
     };
