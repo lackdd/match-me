@@ -21,6 +21,8 @@ function Chats() {
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 
+	// fetch all connections by ids
+	// todo sort connections by latest message
 	useEffect(() => {
 		const fetchConnections = async () => {
 			try {
