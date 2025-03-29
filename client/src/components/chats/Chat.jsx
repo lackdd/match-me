@@ -56,6 +56,8 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         //     }
         // }
 
+    // fetch chat history
+    // todo add message when no more history is available
     const fetchChatHistory = async (isInitial = false) => {
         if (!receiverUserId || !userId) return;
 
@@ -95,6 +97,8 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     }, [receiverUserId, userId]);
 
+    // handle scroll behavior in chat to fetch more of chat history when scrolling up
+    // todo fetch more history sooner so user doesn't have to wait for them to load
     const handleScroll = () => {
         const top = Math.floor(scrollRef.current.scrollTop);
         const height = Math.floor(scrollRef.current.scrollHeight);
@@ -191,6 +195,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         };
     }, [username]);
 
+    // send message in chat
     const sendMessage = () => {
         console.log("user id:", userId);
         if (client && message.trim() && receiverUsername) {
@@ -206,6 +211,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     };
 
+    // handle key presses in chat so when user is focused on the chat window they can focus the message input field with "Tab" key
     const handleKeyPresses = (event) => {
         const inputMessage = document.getElementById('message-input');
 
@@ -216,6 +222,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             }
         }
 
+        // handle key presses in chat so when user is focused on the chat window they can send their message with "Enter" key
         const sendButton = document.getElementById('send-message');
 
         // send message with "Enter" key
@@ -231,7 +238,6 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     }
 
     const backToConnections = () => {
-        // todo navigate to connections page
         const connections = document.getElementById('connections')
         const chat = document.getElementById('chat')
 
@@ -246,6 +252,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         chat.classList.add('hide-chat');
     }
 
+    // format time stamp for chat messages
     const formatTimestamp = (timestamp) => {
         const trimmed = timestamp.slice(0, 23);
         const date = new Date(trimmed);
