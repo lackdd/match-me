@@ -46,7 +46,7 @@ export const changeImage = async (event, setMyDataFormatted, setImage, tokenValu
 			}));
 			console.log("Cloudinary image public ID:", publicId);
 			setImage(uploadedUrl)
-			await sendPictureToBackend(uploadedUrl, tokenValue);
+			await sendPictureToBackend(publicId, tokenValue);
 			/*setImageUrl(uploadedUrl); // store the uploaded image url
 			console.log("Cloudinary image url:", uploadedUrl);*/
 		} else {
@@ -56,12 +56,12 @@ export const changeImage = async (event, setMyDataFormatted, setImage, tokenValu
 	setLoadingImage(false);
 };
 
-export const sendPictureToBackend = async(uploadedUrl, tokenValue) => {
+export const sendPictureToBackend = async(publicId, tokenValue) => {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	try {
 		const response = await axios.patch(`${VITE_BACKEND_URL}/api/me`,
-			{profilePicture: uploadedUrl},{
+			{profilePicture: publicId},{
 			headers: {
 				Authorization: `Bearer ${tokenValue}`,
 				'Content-Type': 'application/json'}

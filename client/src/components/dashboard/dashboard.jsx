@@ -30,6 +30,7 @@ import {getOptimizedImage} from '../utils/cloudinary.jsx';
 import {SettingsMenu} from './dashboard-settings/settings-menu.jsx';
 import {Stats} from './dashboard-settings/stats.jsx';
 import {ChangePassword} from './dashboard-settings/change-password.jsx';
+import {CloudinaryImage} from '@cloudinary/url-gen';
 
 function Dashboard() {
 	const [loading, setLoading] = useState(true)
@@ -248,10 +249,6 @@ function Dashboard() {
 										<div className="picture-container">
 											<div className="extra-picture-container">
 
-												{/* todo fix so uploaded pictures are actually shown*/}
-												{/*<label className={"choose-picture"}>*/}
-
-												{/*{!loadingImage && imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)} />}*/}
 
 												{loadingImage && (
 													<div className="loading-image">
@@ -260,6 +257,10 @@ function Dashboard() {
 														</div>
 													</div>
 												)}
+
+												{/* todo fix so uploaded pictures are actually shown*/}
+												{/*{!loadingImage && imageUrl && <AdvancedImage cldImg={getOptimizedImage(myDataFormatted.profilePicture)} />}*/}
+												{/*{!loadingImage && imageUrl && <img src={"default_profile_picture.png"} alt={"default picture"}/>}*/}
 
 												{!loadingImage && (
 													<>
@@ -270,22 +271,11 @@ function Dashboard() {
 															   className='file-upload'
 															   title={'click to change picture'}
 														/>
-														{myDataFormatted.gender === 'male' && (
-															<img
-																src="profile_pic_male.jpg"
-																alt="profile picture"
-																className="profile-picture"
-																// onClick={changePicture(myDataFormatted, setMyDataFormatted)}
-															/>
+														{!myDataFormatted.profilePicture.endsWith("null") && (
+															// <AdvancedImage cldImg={new CloudinaryImage(myDataFormatted.profilePicture)} />
+															<img src={myDataFormatted.profilePicture} alt="Profile" className="profile-picture" />
 														)}
-														{myDataFormatted.gender === 'female' && (
-															<img
-																src="profile_pic_female.jpg"
-																alt="profile picture"
-																className="profile-picture"
-															/>
-														)}
-														{myDataFormatted.gender === 'other' && (
+														{myDataFormatted.profilePicture.endsWith("null") && (
 															<img
 																src="default_profile_picture.png"
 																alt="profile picture"
@@ -294,6 +284,40 @@ function Dashboard() {
 														)}
 													</>
 												)}
+
+												{/*{!loadingImage && (*/}
+												{/*	<>*/}
+												{/*		<input type='file'*/}
+												{/*			   accept={"image/*"}*/}
+												{/*			   name={'image'}*/}
+												{/*			   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}*/}
+												{/*			   className='file-upload'*/}
+												{/*			   title={'click to change picture'}*/}
+												{/*		/>*/}
+												{/*		{myDataFormatted.gender === 'male' && (*/}
+												{/*			<img*/}
+												{/*				src="profile_pic_male.jpg"*/}
+												{/*				alt="profile picture"*/}
+												{/*				className="profile-picture"*/}
+												{/*				// onClick={changePicture(myDataFormatted, setMyDataFormatted)}*/}
+												{/*			/>*/}
+												{/*		)}*/}
+												{/*		{myDataFormatted.gender === 'female' && (*/}
+												{/*			<img*/}
+												{/*				src="profile_pic_female.jpg"*/}
+												{/*				alt="profile picture"*/}
+												{/*				className="profile-picture"*/}
+												{/*			/>*/}
+												{/*		)}*/}
+												{/*		{myDataFormatted.gender === 'other' && (*/}
+												{/*			<img*/}
+												{/*				src="default_profile_picture.png"*/}
+												{/*				alt="profile picture"*/}
+												{/*				className="profile-picture"*/}
+												{/*			/>*/}
+												{/*		)}*/}
+												{/*	</>*/}
+												{/*)}*/}
 
 												{myDataFormatted.linkToMusic && (
 													<div className="music-link">
