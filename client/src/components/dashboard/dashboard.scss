@@ -9,6 +9,7 @@
   .extra-dashboard-container {
     @include variables.centered-column;
     margin-bottom: 1.5rem;
+    max-width: 100%;
   }
 
   //@media (max-width: 768px) {
