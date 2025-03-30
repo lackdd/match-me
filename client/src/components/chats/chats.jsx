@@ -58,6 +58,12 @@ function Chats() {
 							const notification = JSON.parse(notificationMsg.body);
 							console.log("Notification received:", notification);
 
+							// If this is from the currently selected user, mark it as read immediately
+							if (notification.senderId === selectedUserId) {
+								markMessagesAsRead(notification.senderId);
+								return;
+							}
+
 							// Update the unread messages count for this sender
 							setUnreadMessages(prev => ({
 								...prev,
@@ -79,7 +85,7 @@ function Chats() {
 			};
 			fetchUsername();
 		}
-	}, [tokenValue, webSocketClient]);
+	}, [tokenValue, webSocketClient, selectedUserId]);
 
 	// Fetch unread messages count
 	const fetchUnreadCount = async () => {
@@ -107,8 +113,39 @@ function Chats() {
 				unreadCounts[notification.senderId] = notification.count;
 			});
 			setUnreadMessages(unreadCounts);
+
+			// Recalculate total count
+			let total = 0;
+			Object.values(unreadCounts).forEach(count => {
+				total += count;
+			});
+			setTotalUnreadCount(total);
 		} catch (error) {
 			console.error("Error fetching notifications:", error);
+		}
+	};
+
+	// Helper function to mark messages as read
+	const markMessagesAsRead = async (senderId) => {
+		if (!senderId) return;
+
+		try {
+			await axios.post(`${VITE_BACKEND_URL}/api/chat/mark-as-read/${senderId}`, {}, {
+				headers: { Authorization: `Bearer ${tokenValue}` },
+			});
+			console.log("Marked messages from", senderId, "as read");
+
+			// Update local state to show messages as read
+			setUnreadMessages(prev => ({
+				...prev,
+				[senderId]: 0
+			}));
+
+			// Refresh notifications and unread count
+			fetchNotifications();
+			fetchUnreadCount();
+		} catch (error) {
+			console.error("Error marking messages as read:", error);
 		}
 	};
 
@@ -224,7 +261,7 @@ function Chats() {
 					},
 					body: JSON.stringify({
 						receiverId: selectedUserId,
-						status: "INACTIVE"
+						status: "ACTIVE"
 					}),
 				});
 			}
@@ -242,10 +279,23 @@ function Chats() {
 			});
 		}
 
+		// Clear unread messages for this user immediately in the UI
+		setUnreadMessages(prev => ({
+			...prev,
+			[userId]: 0
+		}));
+
+		// Update total unread count
+		setTotalUnreadCount(prevCount => {
+			const currentUnreadCount = unreadMessages[userId] || 0;
+			return Math.max(0, prevCount - currentUnreadCount);
+		});
+
+		// Call API to mark messages as read
+		markMessagesAsRead(userId);
+
 		setSelectedUser(username);
 		setSelectedUserId(userId);
-
-		// Messages will be marked as read in the Chat component
 	};
 
 	const openChat = () => {
@@ -268,15 +318,19 @@ function Chats() {
 	const renderConnectionStatus = (userId) => {
 		const status = userStatuses[userId];
 
-		if (!status || status === 'INACTIVE') {
+		// Convert status to string if it's an object
+		const statusStr = typeof status === 'object' ?
+			(status.status || (status.name ? status.name : 'INACTIVE')) : status;
+
+		if (!statusStr || statusStr === 'INACTIVE') {
 			return <div className="status-dot offline" title="Offline"></div>;
 		}
 
-		if (status === 'TYPING') {
+		if (statusStr === 'TYPING') {
 			return <div className="status-dot typing" title="Typing..."></div>;
 		}
 
-		if (status === 'ACTIVE') {
+		if (statusStr === 'ACTIVE') {
 			return <div className="status-dot online" title="Online"></div>;
 		}
 
@@ -293,6 +347,19 @@ function Chats() {
 				{count > 99 ? '99+' : count}
 			</div>
 		);
+	};
+
+	// Handle messages read callback from Chat component
+	const handleMessagesRead = (userId) => {
+		// Messages were marked as read in the Chat component
+		// Update local state to reflect this
+		setUnreadMessages(prev => ({
+			...prev,
+			[userId]: 0
+		}));
+
+		// Update total count
+		fetchUnreadCount();
 	};
 
 	return (
@@ -339,7 +406,11 @@ function Chats() {
 
 							<div className='chat' id={'chat'}>
 								{selectedUser ? (
-									<Chat receiverUsername={selectedUser} receiverUserId={selectedUserId} />
+									<Chat
+										receiverUsername={selectedUser}
+										receiverUserId={selectedUserId}
+										onMessagesRead={handleMessagesRead}
+									/>
 								) : (
 									<p className={'no-chat'}>
 										Select a user to start chatting
@@ -379,4 +450,3 @@ function Chats() {
 }
 
 export default Chats;
-

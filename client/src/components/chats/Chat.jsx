@@ -8,7 +8,7 @@ import axios from "axios";
 import { IoMdSend } from "react-icons/io";
 import {IoArrowBack} from 'react-icons/io5';
 
-const Chat = ({receiverUsername, receiverUserId}) => {
+const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [client, setClient] = useState(null);
@@ -64,6 +64,11 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                 headers: { Authorization: `Bearer ${tokenValue}` },
             });
             console.log("Marked messages from", receiverUsername, "as read");
+
+            // Notify parent component that messages are read
+            if (onMessagesRead) {
+                onMessagesRead(receiverUserId);
+            }
         } catch (error) {
             console.error("Error marking messages as read:", error);
         }
@@ -129,6 +134,8 @@ const Chat = ({receiverUsername, receiverUserId}) => {
 
     // handle scroll behavior in chat to fetch more of chat history when scrolling up
     const handleScroll = () => {
+        if (!scrollRef.current) return;
+
         const top = Math.floor(scrollRef.current.scrollTop);
         const height = Math.floor(scrollRef.current.scrollHeight);
         const elementHeight = Math.floor(scrollRef.current.clientHeight);
@@ -184,6 +191,11 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                         const exists = prev.some(m => m.id === newMsg.id);
                         return exists ? prev : [...prev, newMsg];
                     });
+
+                    // If this is from the currently active chat, mark it as read
+                    if (newMsg.senderId === receiverUserId || newMsg.senderUsername === receiverUsername) {
+                        markMessagesAsRead();
+                    }
                 });
 
                 // Subscribe to status updates
@@ -309,6 +321,9 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                         status: "ACTIVE"
                     }),
                 });
+
+                // Also mark messages as read when tab becomes visible again
+                markMessagesAsRead();
             }
             // REMOVED: We don't set status to INACTIVE when tab is not visible
         };
