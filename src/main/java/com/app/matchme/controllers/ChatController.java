@@ -1,13 +1,16 @@
 package com.app.matchme.controllers;
 
+import com.app.matchme.dtos.NotificationDTO;
 import com.app.matchme.dtos.StatusMessage;
 import com.app.matchme.dtos.StatusResponse;
 import com.app.matchme.entities.ChatMessage;
 import com.app.matchme.entities.ChatMessageDTO;
+import com.app.matchme.entities.UnreadMessage;
 import com.app.matchme.entities.User;
 import com.app.matchme.entities.UserPrincipal;
 import com.app.matchme.mappers.ChatMessageMapper;
 import com.app.matchme.repositories.ChatMessageRepository;
+import com.app.matchme.repositories.UnreadMessageRepository;
 import com.app.matchme.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -21,12 +24,15 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,6 +50,9 @@ public class ChatController {
 
     @Autowired
     private ChatMessageRepository repo;
+
+    @Autowired
+    private UnreadMessageRepository unreadMessageRepository;
 
     // Store user status in memory
     private static final Map<Long, Status> userStatusMap = new ConcurrentHashMap<>();
@@ -83,6 +92,87 @@ public class ChatController {
         return messages.stream()
                 .map(ChatMessageMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/notifications")
+    public List<NotificationDTO> getUserNotifications(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+        }
+
+        Long userId = userPrincipal.getId();
+        User currentUser = userService.getUserById(userId);
+
+        // Get senders with unread messages
+        List<Long> senderIds = unreadMessageRepository.findDistinctSendersWithUnreadMessages(userId);
+        List<NotificationDTO> notifications = new ArrayList<>();
+
+        for (Long senderId : senderIds) {
+            User sender = userService.getUserById(senderId);
+            long count = unreadMessageRepository.countUnreadMessagesFromSender(userId, senderId);
+
+            // Get the latest unread message
+            List<UnreadMessage> unreadMessages = unreadMessageRepository.findByUserAndReadFalseOrderByMessageTimestampDesc(currentUser)
+                    .stream()
+                    .filter(um -> um.getSender().getId().equals(senderId))
+                    .collect(Collectors.toList());
+
+            if (!unreadMessages.isEmpty()) {
+                UnreadMessage latestUnread = unreadMessages.get(0);
+                ChatMessage latestMessage = latestUnread.getMessage();
+
+                // Create a message preview (first 30 chars)
+                String preview = latestMessage.getContent();
+                if (preview.length() > 30) {
+                    preview = preview.substring(0, 27) + "...";
+                }
+
+                NotificationDTO notification = new NotificationDTO(
+                        senderId,
+                        sender.getUsername(),
+                        latestMessage.getId(),
+                        preview,
+                        count,
+                        latestMessage.getTimestamp()
+                );
+
+                notifications.add(notification);
+            }
+        }
+
+        // Sort by most recent message
+        notifications.sort((a, b) -> b.getLastMessageTime().compareTo(a.getLastMessageTime()));
+
+        return notifications;
+    }
+
+    @GetMapping("/unread-count")
+    public Map<String, Long> getUnreadCount(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+        }
+
+        Long userId = userPrincipal.getId();
+        long count = unreadMessageRepository.countUnreadMessagesForUser(userId);
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("count", count);
+
+        return response;
+    }
+
+    @PostMapping("/mark-as-read/{senderId}")
+    @Transactional
+    public void markMessagesAsRead(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable Long senderId
+    ) {
+        if (userPrincipal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+        }
+
+        Long userId = userPrincipal.getId();
+        unreadMessageRepository.markMessagesAsRead(userId, senderId);
     }
 
     // Endpoint to explicitly set a user's status to INACTIVE/offline
@@ -271,7 +361,7 @@ public class ChatController {
         System.out.println("Sent status of " + target.getUsername() + " (" + currentStatus + ") to " + requester.getUsername());
     }
 
-    // Handle heartbeat to keep track of active users
+    // Handle heartbeat to keep track of active users - IMPROVED
     @MessageMapping("/heartbeat")
     public void handleHeartbeat(SimpMessageHeaderAccessor headerAccessor) {
         Principal principal = headerAccessor.getUser();
@@ -284,10 +374,11 @@ public class ChatController {
         // Update last heartbeat timestamp
         userLastHeartbeat.put(user.getId(), System.currentTimeMillis());
 
-        // Set user as ACTIVE if they were previously INACTIVE
-        if (userStatusMap.getOrDefault(user.getId(), Status.INACTIVE) == Status.INACTIVE) {
-            userStatusMap.put(user.getId(), Status.ACTIVE);
+        // Always set user as ACTIVE when heartbeat is received
+        userStatusMap.put(user.getId(), Status.ACTIVE);
 
+        // Only broadcast if status changed from INACTIVE to ACTIVE
+        if (userStatusMap.getOrDefault(user.getId(), Status.INACTIVE) != Status.ACTIVE) {
             // Broadcast the ACTIVE status to all connections
             StatusResponse response = new StatusResponse(
                     user.getId(),
@@ -309,13 +400,14 @@ public class ChatController {
         }
     }
 
-    // Periodically check for inactive users
-    @Scheduled(fixedRate = 60000) // Run every minute
+    // Periodically check for inactive users - MODIFIED
+    // Increase the inactivity timeout to avoid false offline statuses
+    @Scheduled(fixedRate = 300000) // Run every 5 minutes
     public void checkInactiveUsers() {
         long currentTime = System.currentTimeMillis();
         userLastHeartbeat.forEach((userId, timestamp) -> {
-            // If no heartbeat in 2 minutes, consider user offline
-            if (currentTime - timestamp > 120000) { // 2 minutes
+            // If no heartbeat in 10 minutes, consider user offline
+            if (currentTime - timestamp > 600000) { // 10 minutes (increased from 2 minutes)
                 // Only update if user is not already set to INACTIVE
                 if (userStatusMap.getOrDefault(userId, Status.ACTIVE) != Status.INACTIVE) {
                     userStatusMap.put(userId, Status.INACTIVE);
@@ -358,31 +450,45 @@ public class ChatController {
         Long userId = sessionUserMap.remove(sessionId);
 
         if (userId != null) {
-            // Set user to INACTIVE
-            userStatusMap.put(userId, Status.INACTIVE);
+            // Check if this was the user's last active session
+            boolean hasOtherActiveSessions = false;
+            for (Long sessionUserId : sessionUserMap.values()) {
+                if (sessionUserId.equals(userId)) {
+                    hasOtherActiveSessions = true;
+                    break;
+                }
+            }
 
-            // Broadcast status to connections
-            User user = userService.getUserById(userId);
-            if (user != null) {
-                System.out.println("User " + user.getUsername() + " disconnected, setting to INACTIVE");
+            // Only set to INACTIVE if this was their last active session
+            if (!hasOtherActiveSessions) {
+                // Set user to INACTIVE
+                userStatusMap.put(userId, Status.INACTIVE);
 
-                StatusResponse response = new StatusResponse(
-                        userId,
-                        user.getUsername(),
-                        Status.INACTIVE
-                );
+                // Broadcast status to connections
+                User user = userService.getUserById(userId);
+                if (user != null) {
+                    System.out.println("User " + user.getUsername() + " disconnected, setting to INACTIVE");
 
-                List<Long> connections = user.getConnections();
-                for (Long connectionId : connections) {
-                    User connection = userService.getUserById(connectionId);
-                    if (connection != null) {
-                        messagingTemplate.convertAndSendToUser(
-                                connection.getUsername().trim().replace(" ", "_"),
-                                "/queue/status",
-                                response
-                        );
+                    StatusResponse response = new StatusResponse(
+                            userId,
+                            user.getUsername(),
+                            Status.INACTIVE
+                    );
+
+                    List<Long> connections = user.getConnections();
+                    for (Long connectionId : connections) {
+                        User connection = userService.getUserById(connectionId);
+                        if (connection != null) {
+                            messagingTemplate.convertAndSendToUser(
+                                    connection.getUsername().trim().replace(" ", "_"),
+                                    "/queue/status",
+                                    response
+                            );
+                        }
                     }
                 }
+            } else {
+                System.out.println("User " + userId + " still has other active sessions, not marking as INACTIVE");
             }
         }
     }
@@ -412,6 +518,21 @@ public class ChatController {
         ChatMessage chatMessage = new ChatMessage(sender, receiver, messageDTO.getContent());
         ChatMessage savedMessage = repo.save(chatMessage);
 
+        // Track as unread message for receiver (only if they're not actively in the chat)
+        UnreadMessage unreadMessage = new UnreadMessage(receiver, sender, savedMessage);
+        unreadMessageRepository.save(unreadMessage);
+
+        // Create notification for the unread message
+        long unreadCount = unreadMessageRepository.countUnreadMessagesFromSender(receiver.getId(), sender.getId());
+        NotificationDTO notification = new NotificationDTO(
+                sender.getId(),
+                senderUsername,
+                savedMessage.getId(),
+                messageDTO.getContent().length() > 30 ? messageDTO.getContent().substring(0, 27) + "..." : messageDTO.getContent(),
+                unreadCount,
+                savedMessage.getTimestamp()
+        );
+
         ChatMessageDTO responseDTO = ChatMessageMapper.toDTO(savedMessage);
 
         System.out.println("Sending private message from " + senderUsername + " to " + receiverUsername + " Message content: " + messageDTO.getContent());
@@ -422,6 +543,14 @@ public class ChatController {
                 "/queue/messages",
                 responseDTO
         );
+
+        // Send notification about unread message
+        messagingTemplate.convertAndSendToUser(
+                receiverUsername.trim().replace(" ", "_"),
+                "/queue/notifications",
+                notification
+        );
+
         messagingTemplate.convertAndSendToUser(
                 senderUsername.trim().replace(" ", "_"),
                 "/queue/messages",

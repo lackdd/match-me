@@ -3,9 +3,49 @@
 .chats-container {
   @include variables.whole-page;
   @include variables.centered-column;
+  position: relative;
 
   @media (max-width: 768px) {
     height: calc(100vh - 64px);
+  }
+
+  /* Total unread count badge in header */
+  .total-unread-badge {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background-color: #ff4081;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    z-index: 10;
+
+    svg {
+      position: absolute;
+      font-size: 1.2rem;
+    }
+
+    span {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #ff4081;
+      color: white;
+      border-radius: 50%;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      z-index: 11;
+    }
   }
 
   .extra-chats-container {
@@ -103,12 +143,38 @@
           background-color: rgba(255, 255, 255, 0.5);
         }
 
-        /* Added connection-info wrapper for profile pic and name */
+        /* Update connection-info class to have space for the unread badge */
         .connection-info {
           display: flex;
           flex-direction: row;
           align-items: center;
           flex: 1;
+          overflow: hidden;
+          padding-right: 10px;
+        }
+
+        /* Add connection-indicators container */
+        .connection-indicators {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          min-width: 40px;
+        }
+
+        /* Unread message count badge in connection list */
+        .unread-badge {
+          background-color: #ff4081;
+          color: white;
+          border-radius: 50%;
+          min-width: 20px;
+          height: 20px;
+          padding: 0 4px;
+          margin-right: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.75rem;
+          font-weight: bold;
         }
 
         img {
@@ -123,7 +189,6 @@
             height: 4rem;
             width: 4rem;
           }
-
         }
 
         .name {
@@ -209,8 +274,69 @@
         }
       }
 
+      /* Override for no chat message */
       .no-chat {
-        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      /* Notification list in the chat area when no chat is selected */
+      .unread-notifications {
+        margin-top: 20px;
+        width: 100%;
+        max-width: 500px;
+
+        h3 {
+          font-size: 1.2rem;
+          margin-bottom: 10px;
+          color: #333;
+        }
+
+        .notification-item {
+          background-color: rgba(255, 255, 255, 0.8);
+          border-radius: 8px;
+          padding: 12px;
+          margin-bottom: 10px;
+          display: flex;
+          flex-direction: column;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          position: relative;
+
+          &:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+          }
+
+          .notification-sender {
+            font-weight: bold;
+            margin-bottom: 4px;
+          }
+
+          .notification-preview {
+            color: #555;
+            font-size: 0.9rem;
+          }
+
+          .notification-count {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff4081;
+            color: white;
+            border-radius: 50%;
+            min-width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+          }
+        }
       }
 
       .chat-box {
@@ -218,13 +344,6 @@
         height: 100%;
         display: flex;
         flex-direction: column;
-        //margin: 40px 50px;
-        //height: 600px;
-        //width: 450px;
-        /*border-radius: 10px;*/
-        /*overflow-y: auto;*/
-        /*padding: 10px;*/
-        /*display: flex;*/
 
         .heading-container {
           display: flex;
@@ -310,8 +429,6 @@
 
 
         .chat-messages {
-          //height: calc(100% - 52px - 36px);
-          //height: 400px;
           flex: 1;
           margin: 0.5rem 0 0.5rem 0;
           overflow-y: scroll;
@@ -347,7 +464,6 @@
 
           input {
             flex: 1; /* Makes input take most of the space */
-            //padding: 10px;
             padding: 0 1rem 0 1rem;
             border: none;
             border-radius: 50px; /* Rounded edges for modern look */
@@ -370,7 +486,6 @@
             justify-content: center;
             align-items: center;
             border: none;
-            //border: 1px solid variables.$main-blue;
 
             &:hover {
               background-color: variables.$main-pink-80;
@@ -390,13 +505,10 @@
               width: 1.75rem;
               height: 1.75rem;
             }
-
           }
         }
 
         .message-box {
-          /*height: 35px;*/
-          /*width: 400px;*/
           padding: 10px 10px;
           margin: 10px;
           border-radius: 10px;
@@ -420,7 +532,6 @@
             background-color: #007bff;
             margin-left: auto;
           }
-
         }
 
         .message-box.received {
@@ -434,7 +545,6 @@
             margin-right: auto;
           }
         }
-
       }
     }
   }

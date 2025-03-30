@@ -2,7 +2,7 @@ import './chats.scss'
 import {Link} from 'react-router-dom';
 import Chat from "./Chat";
 import { useAuth } from '../utils/AuthContext.jsx';
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useCallback} from "react";
 import axios from "axios";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -10,6 +10,7 @@ import SockJS from "sockjs-client";
 // react icons
 import { IoArrowBack } from "react-icons/io5";
 import { IoArrowForward } from "react-icons/io5";
+import { FaBell } from "react-icons/fa";
 
 function Chats() {
 	const [loading, setLoading] = useState(true);
@@ -23,6 +24,9 @@ function Chats() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [userStatuses, setUserStatuses] = useState({});
 	const [username, setUsername] = useState("");
+	const [unreadMessages, setUnreadMessages] = useState({});
+	const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+	const [notifications, setNotifications] = useState([]);
 
 	// Fetch user info and subscribe to status updates
 	useEffect(() => {
@@ -49,7 +53,25 @@ function Chats() {
 							}));
 						});
 
-						console.log("Subscribed to status updates in Chats component");
+						// Subscribe to notifications for unread messages
+						webSocketClient.subscribe(`/user/${normalizedUsername}/queue/notifications`, (notificationMsg) => {
+							const notification = JSON.parse(notificationMsg.body);
+							console.log("Notification received:", notification);
+
+							// Update the unread messages count for this sender
+							setUnreadMessages(prev => ({
+								...prev,
+								[notification.senderId]: notification.count
+							}));
+
+							// Update total unread count
+							fetchUnreadCount();
+
+							// Update notifications list
+							fetchNotifications();
+						});
+
+						console.log("Subscribed to status updates and notifications");
 					}
 				} catch (error) {
 					console.log(error.message);
@@ -58,6 +80,37 @@ function Chats() {
 			fetchUsername();
 		}
 	}, [tokenValue, webSocketClient]);
+
+	// Fetch unread messages count
+	const fetchUnreadCount = async () => {
+		try {
+			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/unread-count`, {
+				headers: { Authorization: `Bearer ${tokenValue}` },
+			});
+			setTotalUnreadCount(response.data.count);
+		} catch (error) {
+			console.error("Error fetching unread count:", error);
+		}
+	};
+
+	// Fetch notifications (details about unread messages)
+	const fetchNotifications = async () => {
+		try {
+			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/notifications`, {
+				headers: { Authorization: `Bearer ${tokenValue}` },
+			});
+			setNotifications(response.data);
+
+			// Also update unread counts per sender
+			const unreadCounts = {};
+			response.data.forEach(notification => {
+				unreadCounts[notification.senderId] = notification.count;
+			});
+			setUnreadMessages(unreadCounts);
+		} catch (error) {
+			console.error("Error fetching notifications:", error);
+		}
+	};
 
 	// fetch all connections by ids
 	useEffect(() => {
@@ -91,6 +144,9 @@ function Chats() {
 						response.data.forEach(connectionId => {
 							webSocketClient.publish({
 								destination: "/app/status/request",
+								headers: {
+									Authorization: `Bearer ${tokenValue}`
+								},
 								body: JSON.stringify({
 									receiverId: connectionId
 								}),
@@ -99,6 +155,11 @@ function Chats() {
 						});
 					}
 				}
+
+				// Fetch unread messages and notifications
+				fetchUnreadCount();
+				fetchNotifications();
+
 			} catch (error) {
 				setError(true);
 				setErrorMessage(error.message);
@@ -118,6 +179,33 @@ function Chats() {
 		}
 	}, [tokenValue, userId, webSocketClient]);
 
+	// Request status updates periodically
+	useEffect(() => {
+		const statusRefreshInterval = setInterval(() => {
+			if (webSocketClient && webSocketClient.connected && connections.length > 0) {
+				// Request status updates for all connections
+				connections.forEach(connectionId => {
+					webSocketClient.publish({
+						destination: "/app/status/request",
+						headers: {
+							Authorization: `Bearer ${tokenValue}`
+						},
+						body: JSON.stringify({
+							receiverId: connectionId
+						}),
+					});
+				});
+
+				// Also broadcast our own status
+				if (userId) {
+					broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
+				}
+			}
+		}, 30000); // Every 30 seconds
+
+		return () => clearInterval(statusRefreshInterval);
+	}, [webSocketClient, connections, userId, tokenValue]);
+
 	const handleButtonClick = (userId, username) => {
 		const inputMessage = document.getElementById('message-input');
 
@@ -131,6 +219,9 @@ function Chats() {
 			if (selectedUserId && selectedUserId !== userId) {
 				webSocketClient.publish({
 					destination: "/app/status",
+					headers: {
+						Authorization: `Bearer ${tokenValue}`
+					},
 					body: JSON.stringify({
 						receiverId: selectedUserId,
 						status: "INACTIVE"
@@ -141,6 +232,9 @@ function Chats() {
 			// Set new selected user to ACTIVE
 			webSocketClient.publish({
 				destination: "/app/status",
+				headers: {
+					Authorization: `Bearer ${tokenValue}`
+				},
 				body: JSON.stringify({
 					receiverId: userId,
 					status: "ACTIVE"
@@ -150,6 +244,8 @@ function Chats() {
 
 		setSelectedUser(username);
 		setSelectedUserId(userId);
+
+		// Messages will be marked as read in the Chat component
 	};
 
 	const openChat = () => {
@@ -187,32 +283,28 @@ function Chats() {
 		return <div className="status-dot offline" title="Offline"></div>;
 	};
 
-	// Periodically refresh status to ensure accuracy
-	useEffect(() => {
-		const statusRefreshInterval = setInterval(() => {
-			if (webSocketClient && webSocketClient.connected && connections.length > 0) {
-				// Request status updates for all connections
-				connections.forEach(connectionId => {
-					webSocketClient.publish({
-						destination: "/app/status/request",
-						body: JSON.stringify({
-							receiverId: connectionId
-						}),
-					});
-				});
+	// Render unread message count badge
+	const renderUnreadBadge = (userId) => {
+		const count = unreadMessages[userId];
+		if (!count || count <= 0) return null;
 
-				// Also broadcast our own status
-				if (userId) {
-					broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
-				}
-			}
-		}, 30000); // Every 30 seconds
-
-		return () => clearInterval(statusRefreshInterval);
-	}, [webSocketClient, connections, userId, tokenValue]);
+		return (
+			<div className="unread-badge" title={`${count} unread message${count > 1 ? 's' : ''}`}>
+				{count > 99 ? '99+' : count}
+			</div>
+		);
+	};
 
 	return (
 		<div className='chats-container'>
+			{/* Add total unread count in the header if needed */}
+			{totalUnreadCount > 0 && (
+				<div className="total-unread-badge">
+					<FaBell />
+					<span>{totalUnreadCount}</span>
+				</div>
+			)}
+
 			{!error ? (
 				<>
 					{loading && (
@@ -236,7 +328,10 @@ function Chats() {
 												<img src='profile_pic_female.jpg' alt='' className='profile-picture'/>
 												<div className='name'>{connection.username}</div>
 											</div>
-											{renderConnectionStatus(connection.id)}
+											<div className="connection-indicators">
+												{renderUnreadBadge(connection.id)}
+												{renderConnectionStatus(connection.id)}
+											</div>
 										</button>
 									))
 								)}
@@ -246,7 +341,31 @@ function Chats() {
 								{selectedUser ? (
 									<Chat receiverUsername={selectedUser} receiverUserId={selectedUserId} />
 								) : (
-									<p className={'no-chat'}>Select a user to start chatting</p>
+									<p className={'no-chat'}>
+										Select a user to start chatting
+										{notifications.length > 0 && (
+											<div className="unread-notifications">
+												<h3>Unread Messages</h3>
+												{notifications.map(notification => (
+													<div
+														key={notification.messageId}
+														className="notification-item"
+														onClick={() => {
+															const user = connectionDetails.find(c => c.id === notification.senderId);
+															if (user) {
+																handleButtonClick(user.id, user.username);
+																openChat();
+															}
+														}}
+													>
+														<div className="notification-sender">{notification.senderUsername}</div>
+														<div className="notification-preview">{notification.messagePreview}</div>
+														<div className="notification-count">{notification.count}</div>
+													</div>
+												))}
+											</div>
+										)}
+									</p>
 								)}
 							</div>
 						</div>
@@ -260,3 +379,4 @@ function Chats() {
 }
 
 export default Chats;
+

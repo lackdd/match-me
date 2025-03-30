@@ -72,6 +72,9 @@ export function AuthProvider({ children }) {
 			connections.forEach(connectionId => {
 				client.publish({
 					destination: "/app/status",
+					headers: {
+						Authorization: `Bearer ${token}`
+					},
 					body: JSON.stringify({
 						receiverId: connectionId,
 						status: "ACTIVE"
@@ -103,6 +106,9 @@ export function AuthProvider({ children }) {
 			connections.forEach(connectionId => {
 				client.publish({
 					destination: "/app/status",
+					headers: {
+						Authorization: `Bearer ${actualToken}`
+					},
 					body: JSON.stringify({
 						receiverId: connectionId,
 						status: status
@@ -138,6 +144,9 @@ export function AuthProvider({ children }) {
 			try {
 				webSocketClient.publish({
 					destination: "/app/status/global",
+					headers: {
+						Authorization: `Bearer ${tokenValue}`
+					},
 					body: JSON.stringify({
 						status: "INACTIVE"
 					}),
@@ -212,7 +221,7 @@ export function AuthProvider({ children }) {
 		};
 	}, [VITE_BACKEND_URL]);
 
-	// Handle visibility change (tab switching)
+	// Handle visibility change (tab switching) - FIXED
 	useEffect(() => {
 		const handleVisibilityChange = () => {
 			if (!webSocketClient || !webSocketClient.connected || !userId) return;
@@ -220,11 +229,9 @@ export function AuthProvider({ children }) {
 			if (document.visibilityState === 'visible') {
 				// User has returned to the tab - set status to ACTIVE
 				broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
-			} else {
-				// User has left the tab - we don't set to INACTIVE here as they might come back
-				// Maybe set to IDLE instead if you want an intermediate state
-				// broadcastStatus(webSocketClient, userId, "IDLE", tokenValue);
 			}
+			// IMPORTANT: Don't change the status when the tab is not visible
+			// We keep them as ACTIVE for as long as they're logged in
 		};
 
 		document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -234,16 +241,23 @@ export function AuthProvider({ children }) {
 		};
 	}, [webSocketClient, userId, tokenValue]);
 
-	// Heartbeat system to keep track of active users
+	// Heartbeat system to keep track of active users - IMPROVED
 	useEffect(() => {
 		if (!webSocketClient || !webSocketClient.connected || !userId) return;
 
 		const heartbeatInterval = setInterval(() => {
 			try {
+				// Send heartbeat to keep the connection alive
 				webSocketClient.publish({
 					destination: "/app/heartbeat",
+					headers: {
+						Authorization: `Bearer ${tokenValue}`
+					},
 					body: "{}"
 				});
+
+				// Also rebroadcast ACTIVE status periodically to all connections
+				broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
 			} catch (e) {
 				console.error("Failed to send heartbeat", e);
 			}
@@ -252,7 +266,7 @@ export function AuthProvider({ children }) {
 		return () => {
 			clearInterval(heartbeatInterval);
 		};
-	}, [webSocketClient, userId]);
+	}, [webSocketClient, userId, tokenValue]);
 
 	const login = async (token) => {
 		sessionStorage.setItem("token", token);

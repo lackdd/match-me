@@ -2,14 +2,11 @@ import React, {useState, useEffect, useRef} from "react";
 import './chats.scss'
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-/*import {useAuth} from "../../AuthContext.jsx";*/
 import { useAuth } from '../utils/AuthContext.jsx';
 import axios from "axios";
 
 import { IoMdSend } from "react-icons/io";
 import {IoArrowBack} from 'react-icons/io5';
-
-/*var stompClient = null;*/
 
 const Chat = ({receiverUsername, receiverUserId}) => {
     const [messages, setMessages] = useState([]);
@@ -20,15 +17,6 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     const [peerIsTyping, setPeerIsTyping] = useState(false);
     const [peerIsOnline, setPeerIsOnline] = useState(false);
     const [typingTimeout, setTypingTimeout] = useState(null);
-    /*const [privateMessage, setPrivateMessage] = useState(new Map());
-    const [publicMessage, setPublicMessage] = useState([]);
-    const [chatArea, setChatArea] = useState("PUBLIC");
-    const [userData, setUserData] = useState({
-        username: "",
-        receivername: "",
-        message: "",
-        connected: false,
-    });*/
 
     const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
     const { isUserLoggedIn, tokenValue } = useAuth();
@@ -37,31 +25,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     const [hasMore, setHasMore] = useState(true);
     const scrollRef = useRef();
 
-    // const fetchChatHistory = async (isInitial = false) => {
-    //     if(!receiverUserId || !userId || !hasMore) return;
-    //     try {
-    //         const url = isInitial
-    //             ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
-    //             : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
-    //         const response = await axios.get(url, {
-    //             headers: {Authorization: `Bearer ${tokenValue}`},
-    //         });
-    //
-    //         if(response.data.length === 0) {
-    //             setHasMore(false);
-    //         } else {
-    //             const oldestMessageId = response.data[0]?.id;
-    //             setBeforeId(oldestMessageId);
-    //             console.log("Fetched chat history:", response.data);
-    //             setMessages((prev) => [...response.data, ...prev]);
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-
-    // fetch chat history
-    // todo add message when no more history is available
+    // Fetch chat history
     const fetchChatHistory = async (isInitial = false) => {
         if (!receiverUserId || !userId) return;
 
@@ -91,6 +55,20 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     };
 
+    // Mark messages as read
+    const markMessagesAsRead = async () => {
+        if (!receiverUserId) return;
+
+        try {
+            await axios.post(`${VITE_BACKEND_URL}/api/chat/mark-as-read/${receiverUserId}`, {}, {
+                headers: { Authorization: `Bearer ${tokenValue}` },
+            });
+            console.log("Marked messages from", receiverUsername, "as read");
+        } catch (error) {
+            console.error("Error marking messages as read:", error);
+        }
+    };
+
     // Handle typing indicator
     const handleTyping = () => {
         if (client && receiverUserId) {
@@ -101,6 +79,9 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             if (!isTyping) {
                 client.publish({
                     destination: "/app/status",
+                    headers: {
+                        Authorization: `Bearer ${tokenValue}`
+                    },
                     body: JSON.stringify({
                         receiverId: receiverUserId,
                         status: "TYPING"
@@ -113,6 +94,9 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             const timeout = setTimeout(() => {
                 client.publish({
                     destination: "/app/status",
+                    headers: {
+                        Authorization: `Bearer ${tokenValue}`
+                    },
                     body: JSON.stringify({
                         receiverId: receiverUserId,
                         status: "ACTIVE"
@@ -125,18 +109,25 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     };
 
-
+    // Load messages when receiver changes
     useEffect(() => {
         setMessages([]);
         setBeforeId(0);
         setHasMore(true);
         if (receiverUserId && userId) {
             fetchChatHistory(true);
+            markMessagesAsRead();
         }
     }, [receiverUserId, userId]);
 
+    // Call markMessagesAsRead every time the receiverUserId changes (chat switched)
+    useEffect(() => {
+        if (receiverUserId) {
+            markMessagesAsRead();
+        }
+    }, [receiverUserId]);
+
     // handle scroll behavior in chat to fetch more of chat history when scrolling up
-    // todo fetch more history sooner so user doesn't have to wait for them to load
     const handleScroll = () => {
         const top = Math.floor(scrollRef.current.scrollTop);
         const height = Math.floor(scrollRef.current.scrollHeight);
@@ -147,23 +138,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     };
 
-    // const handleScroll = () => {
-    //     if (!scrollRef.current) return;
-    //
-    //     const scrollTop = scrollRef.current.scrollTop;
-    //
-    //     if (scrollTop === 0 && hasMore) {
-    //         const prevHeight = scrollRef.current.scrollHeight; // Store previous height
-    //
-    //         fetchChatHistory().then(() => {
-    //             // Restore scroll position after new messages are prepended
-    //             requestAnimationFrame(() => {
-    //                 scrollRef.current.scrollTop = scrollRef.current.scrollHeight - prevHeight;
-    //             });
-    //         });
-    //     }
-    // };
-
+    // Fetch user info
     useEffect(() => {
         if(isUserLoggedIn && tokenValue) {
             const fetchUsername =  async () => {
@@ -184,17 +159,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     }, [isUserLoggedIn, tokenValue]);
 
-    /* const registerUser = () => {
-         connect();
-     };*/
-
-    /* const connect = () => {
-         let sock = new SockJS("http://localhost:8080/ws");
-         stompClient = over(sock);
-         stompClient.connect({}, onConnected, onError);
-     };*/
-
-
+    // Set up WebSocket connection
     useEffect(() => {
         if (!username) return;
 
@@ -249,17 +214,21 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                 if (receiverUserId) {
                     stompClient.publish({
                         destination: "/app/status",
+                        headers: {
+                            Authorization: `Bearer ${tokenValue}`
+                        },
                         body: JSON.stringify({
                             receiverId: receiverUserId,
                             status: "ACTIVE"
                         }),
                     });
                     console.log(`Sent ACTIVE status to user ${receiverUserId}`);
+
+                    // Mark messages from this sender as read when opening the chat
+                    markMessagesAsRead();
                 }
             },
         });
-        /*${username}*/
-        /*/${normalizedUsername}*/
 
         stompClient.activate();
         setClient(stompClient);
@@ -269,6 +238,9 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             if (stompClient.connected && receiverUserId) {
                 stompClient.publish({
                     destination: "/app/status",
+                    headers: {
+                        Authorization: `Bearer ${tokenValue}`
+                    },
                     body: JSON.stringify({
                         receiverId: receiverUserId,
                         status: "INACTIVE"
@@ -286,8 +258,10 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         if (client && message.trim() && receiverUsername) {
             client.publish({
                 destination: "/app/private-message",
+                headers: {
+                    Authorization: `Bearer ${tokenValue}`
+                },
                 body: JSON.stringify({
-                    /*senderId: userId,*/
                     receiverId: receiverUserId,
                     content: message
                 }),
@@ -305,6 +279,9 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                 setTimeout(() => {
                     client.publish({
                         destination: "/app/status",
+                        headers: {
+                            Authorization: `Bearer ${tokenValue}`
+                        },
                         body: JSON.stringify({
                             receiverId: receiverUserId,
                             status: "ACTIVE"
@@ -316,7 +293,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     };
 
-    // Handle page visibility change to update active/inactive status
+    // Handle page visibility change to update active/inactive status - FIXED
     useEffect(() => {
         const handleVisibilityChange = () => {
             if (!client || !receiverUserId) return;
@@ -324,20 +301,16 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             if (document.visibilityState === 'visible') {
                 client.publish({
                     destination: "/app/status",
+                    headers: {
+                        Authorization: `Bearer ${tokenValue}`
+                    },
                     body: JSON.stringify({
                         receiverId: receiverUserId,
                         status: "ACTIVE"
                     }),
                 });
-            } else {
-                client.publish({
-                    destination: "/app/status",
-                    body: JSON.stringify({
-                        receiverId: receiverUserId,
-                        status: "INACTIVE"
-                    }),
-                });
             }
+            // REMOVED: We don't set status to INACTIVE when tab is not visible
         };
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -345,14 +318,13 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
-    }, [client, receiverUserId]);
+    }, [client, receiverUserId, tokenValue]);
 
     // handle key presses in chat so when user is focused on the chat window they can focus the message input field with "Tab" key
     const handleKeyPresses = (event) => {
         const inputMessage = document.getElementById('message-input');
 
         if (event.key === "Tab" && inputMessage) {
-
             if (document.activeElement !== inputMessage) {
                 inputMessage.focus();
             }
@@ -378,7 +350,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         const chat = document.getElementById('chat')
 
         if (!chat || !connections) {
-            console.log("chat or connections on found");
+            console.log("chat or connections not found");
             return;
         }
 
@@ -402,7 +374,6 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         handleTyping();
     };
 
-    // todo add "typing..." indicator when other user is typing
     return (
         <div className="chat-box" onKeyDown={handleKeyPresses}>
             <div className='heading-container'>
@@ -422,13 +393,6 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                  ref={scrollRef}
                  onScroll={handleScroll}
             >
-
-                {/*{messages.map((msg, index) => (*/}
-                {/*    <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>*/}
-                {/*        <div className="message-content">{msg.content}</div>*/}
-                {/*        <div className="timestamp">{formatTimestamp(msg.timestamp)}</div>*/}
-                {/*    </div>*/}
-                {/*))}*/}
                 {[...messages].reverse().map((msg, index) => (
                     <div key={index} className={`message-box ${msg.senderUsername === username ? "sent" : "received"}`}>
                         <div className="message-content">{msg.content}</div>
