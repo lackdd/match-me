@@ -16,6 +16,10 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     const [message, setMessage] = useState("");
     const [client, setClient] = useState(null);
     const [userId, setUserId] = useState(null);
+    const [isTyping, setIsTyping] = useState(false);
+    const [peerIsTyping, setPeerIsTyping] = useState(false);
+    const [peerIsOnline, setPeerIsOnline] = useState(false);
+    const [typingTimeout, setTypingTimeout] = useState(null);
     /*const [privateMessage, setPrivateMessage] = useState(new Map());
     const [publicMessage, setPublicMessage] = useState([]);
     const [chatArea, setChatArea] = useState("PUBLIC");
@@ -33,28 +37,28 @@ const Chat = ({receiverUsername, receiverUserId}) => {
     const [hasMore, setHasMore] = useState(true);
     const scrollRef = useRef();
 
-        // const fetchChatHistory = async (isInitial = false) => {
-        //     if(!receiverUserId || !userId || !hasMore) return;
-        //     try {
-        //         const url = isInitial
-        //             ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
-        //             : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
-        //         const response = await axios.get(url, {
-        //             headers: {Authorization: `Bearer ${tokenValue}`},
-        //         });
-        //
-        //         if(response.data.length === 0) {
-        //             setHasMore(false);
-        //         } else {
-        //             const oldestMessageId = response.data[0]?.id;
-        //             setBeforeId(oldestMessageId);
-        //             console.log("Fetched chat history:", response.data);
-        //             setMessages((prev) => [...response.data, ...prev]);
-        //         }
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
+    // const fetchChatHistory = async (isInitial = false) => {
+    //     if(!receiverUserId || !userId || !hasMore) return;
+    //     try {
+    //         const url = isInitial
+    //             ? `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=11`
+    //             : `${VITE_BACKEND_URL}/api/chat/history/${receiverUserId}?limit=4&beforeId=${beforeId}`;
+    //         const response = await axios.get(url, {
+    //             headers: {Authorization: `Bearer ${tokenValue}`},
+    //         });
+    //
+    //         if(response.data.length === 0) {
+    //             setHasMore(false);
+    //         } else {
+    //             const oldestMessageId = response.data[0]?.id;
+    //             setBeforeId(oldestMessageId);
+    //             console.log("Fetched chat history:", response.data);
+    //             setMessages((prev) => [...response.data, ...prev]);
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
 
     // fetch chat history
     // todo add message when no more history is available
@@ -84,6 +88,40 @@ const Chat = ({receiverUsername, receiverUserId}) => {
             }
         } catch (error) {
             console.error("Error fetching chat history:", error);
+        }
+    };
+
+    // Handle typing indicator
+    const handleTyping = () => {
+        if (client && receiverUserId) {
+            // Clear any existing timeout
+            clearTimeout(typingTimeout);
+
+            // Only send TYPING status if we weren't already typing
+            if (!isTyping) {
+                client.publish({
+                    destination: "/app/status",
+                    body: JSON.stringify({
+                        receiverId: receiverUserId,
+                        status: "TYPING"
+                    }),
+                });
+                setIsTyping(true);
+            }
+
+            // Set a timeout to clear typing status after 2 seconds of inactivity
+            const timeout = setTimeout(() => {
+                client.publish({
+                    destination: "/app/status",
+                    body: JSON.stringify({
+                        receiverId: receiverUserId,
+                        status: "ACTIVE"
+                    }),
+                });
+                setIsTyping(false);
+            }, 2000);
+
+            setTypingTimeout(timeout);
         }
     };
 
@@ -132,8 +170,8 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                 try {
                     const response = await axios.get(`${VITE_BACKEND_URL}/api/me`,
                         {
-                        headers: { Authorization: `Bearer ${tokenValue}` },
-                    });
+                            headers: { Authorization: `Bearer ${tokenValue}` },
+                        });
                     console.log("Logging in as:", response.data.username);
                     setUsername(response.data.username);
                     setUserId(response.data.id);
@@ -146,15 +184,15 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         }
     }, [isUserLoggedIn, tokenValue]);
 
-   /* const registerUser = () => {
-        connect();
-    };*/
+    /* const registerUser = () => {
+         connect();
+     };*/
 
-   /* const connect = () => {
-        let sock = new SockJS("http://localhost:8080/ws");
-        stompClient = over(sock);
-        stompClient.connect({}, onConnected, onError);
-    };*/
+    /* const connect = () => {
+         let sock = new SockJS("http://localhost:8080/ws");
+         stompClient = over(sock);
+         stompClient.connect({}, onConnected, onError);
+     };*/
 
 
     useEffect(() => {
@@ -182,6 +220,42 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                         return exists ? prev : [...prev, newMsg];
                     });
                 });
+
+                // Subscribe to status updates
+                stompClient.subscribe(`/user/${normalizedUsername}/queue/status`, (statusMsg) => {
+                    const status = JSON.parse(statusMsg.body);
+                    console.log("👤 Status update received:", status);
+
+                    // Only process if it's from the currently selected user
+                    if (status.userId === receiverUserId) {
+                        if (status.status === 'TYPING') {
+                            console.log(`User ${status.username} is typing...`);
+                            setPeerIsTyping(true);
+                        } else {
+                            setPeerIsTyping(false);
+
+                            if (status.status === 'ACTIVE') {
+                                console.log(`User ${status.username} is online`);
+                                setPeerIsOnline(true);
+                            } else {
+                                console.log(`User ${status.username} is offline`);
+                                setPeerIsOnline(false);
+                            }
+                        }
+                    }
+                });
+
+                // Send ACTIVE status when connected
+                if (receiverUserId) {
+                    stompClient.publish({
+                        destination: "/app/status",
+                        body: JSON.stringify({
+                            receiverId: receiverUserId,
+                            status: "ACTIVE"
+                        }),
+                    });
+                    console.log(`Sent ACTIVE status to user ${receiverUserId}`);
+                }
             },
         });
         /*${username}*/
@@ -190,10 +264,21 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         stompClient.activate();
         setClient(stompClient);
 
+        // Cleanup function
         return () => {
+            if (stompClient.connected && receiverUserId) {
+                stompClient.publish({
+                    destination: "/app/status",
+                    body: JSON.stringify({
+                        receiverId: receiverUserId,
+                        status: "INACTIVE"
+                    }),
+                });
+                console.log(`Sent INACTIVE status to user ${receiverUserId} before disconnecting`);
+            }
             stompClient.deactivate();
         };
-    }, [username]);
+    }, [username, receiverUserId]);
 
     // send message in chat
     const sendMessage = () => {
@@ -207,9 +292,60 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                     content: message
                 }),
             });
+
+            // Clear the message input
             setMessage("");
+
+            // Clear any typing timeout and reset typing status
+            clearTimeout(typingTimeout);
+            setIsTyping(false);
+
+            // Explicitly send ACTIVE status to clear typing indicator
+            if (client.connected) {
+                setTimeout(() => {
+                    client.publish({
+                        destination: "/app/status",
+                        body: JSON.stringify({
+                            receiverId: receiverUserId,
+                            status: "ACTIVE"
+                        }),
+                    });
+                    console.log(`Sent ACTIVE status after sending message to clear typing indicator`);
+                }, 100); // Small delay to ensure message is processed first
+            }
         }
     };
+
+    // Handle page visibility change to update active/inactive status
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!client || !receiverUserId) return;
+
+            if (document.visibilityState === 'visible') {
+                client.publish({
+                    destination: "/app/status",
+                    body: JSON.stringify({
+                        receiverId: receiverUserId,
+                        status: "ACTIVE"
+                    }),
+                });
+            } else {
+                client.publish({
+                    destination: "/app/status",
+                    body: JSON.stringify({
+                        receiverId: receiverUserId,
+                        status: "INACTIVE"
+                    }),
+                });
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [client, receiverUserId]);
 
     // handle key presses in chat so when user is focused on the chat window they can focus the message input field with "Tab" key
     const handleKeyPresses = (event) => {
@@ -260,12 +396,27 @@ const Chat = ({receiverUsername, receiverUserId}) => {
         return readable;
     }
 
+    // handle message input change - trigger typing indicator
+    const handleMessageChange = (e) => {
+        setMessage(e.target.value);
+        handleTyping();
+    };
+
     // todo add "typing..." indicator when other user is typing
     return (
         <div className="chat-box" onKeyDown={handleKeyPresses}>
             <div className='heading-container'>
                 <button className='toggle-connections' onClick={backToConnections} tabIndex={-1}><IoArrowBack /></button>
-                <h2>{receiverUsername}</h2>
+                <div className="user-status-container">
+                    <h2>{receiverUsername}</h2>
+                    <div className="status-indicator">
+                        {peerIsTyping ? (
+                            <span className="typing-indicator">typing...</span>
+                        ) : (
+                            peerIsOnline && <span className="online-indicator">online</span>
+                        )}
+                    </div>
+                </div>
             </div>
             <div className="chat-messages"
                  ref={scrollRef}
@@ -291,7 +442,7 @@ const Chat = ({receiverUsername, receiverUserId}) => {
                     className="input"
                     type="text"
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={handleMessageChange}
                     placeholder="Type a message..."
                 />
                 <button id={'send-message'} onClick={sendMessage} tabIndex={-1}><IoMdSend /></button>
