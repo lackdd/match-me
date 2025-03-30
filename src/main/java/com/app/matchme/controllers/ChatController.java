@@ -1,5 +1,7 @@
 package com.app.matchme.controllers;
 
+import com.app.matchme.dtos.StatusMessage;
+import com.app.matchme.dtos.StatusResponse;
 import com.app.matchme.entities.ChatMessage;
 import com.app.matchme.entities.ChatMessageDTO;
 import com.app.matchme.entities.User;
@@ -63,6 +65,36 @@ public class ChatController {
                 .collect(Collectors.toList());
     }
 
+    @MessageMapping("/status")
+    public void handleStatusupdate(SimpMessageHeaderAccessor headerAccessor, @Payload StatusMessage statusMessage) {
+        Principal principal = headerAccessor.getUser();
+
+        if(principal == null) {
+            System.out.println("Status update blocked: User not authenticated.");
+            return;
+        }
+
+        String email = principal.getName();
+        User sender = userService.getUserByEmail(email);
+        User receiver = userService.getUserById(statusMessage.getReceiverId());
+        String senderUsername = sender.getUsername();
+        String receiverUsername = receiver.getUsername();
+
+        StatusResponse response = new StatusResponse(
+                sender.getId(),
+                senderUsername,
+                statusMessage.getStatus()
+        );
+
+        System.out.println("Status update from " + senderUsername + " to " + receiverUsername + ": " + statusMessage.getStatus());
+
+        messagingTemplate.convertAndSendToUser(
+                receiverUsername.trim().replace(" ", "_"),
+                "/queue/status",
+                response
+        );
+    }
+
     // instead of sendTo use simpMessagingTemplate to deliver message to specific user
     @MessageMapping("/private-message")
     public void sendPrivateMessage(SimpMessageHeaderAccessor headerAccessor, @Payload ChatMessageDTO messageDTO) {
@@ -109,9 +141,12 @@ public class ChatController {
         System.out.println("🚀 Message sent to /user/" + receiverUsername.trim().replace(" ", "_") + "/queue/messages");
     }
 
-    /*public enum Status {
-        JOIN, // when the user joins the chat for the first time
-        MESSAGE, // when the user sends a message
-        LEAVE // when the user leaves the chat (logout)
-    }*/
+    public enum Status {
+        JOIN,
+        TYPING,
+        IDLE,
+        ACTIVE,
+        INACTIVE,
+        LEAVE
+    }
 }
