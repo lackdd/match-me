@@ -27,16 +27,17 @@
 
 
   .features-list {
-    max-width: 55rem;
+    //max-width: 55rem;
+    padding: 0 20% 0 20%;
     height: 80%;
-    width: 85%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 2rem;
     align-items: center;
     justify-content: flex-start;
     overflow-y: scroll;
-    padding: 1rem;
+    //padding: 1rem;
     overflow-x: hidden;
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
@@ -47,7 +48,7 @@
     }
 
     @media (max-width: 768px) {
-      width: 100%;
+      padding: 0 5% 0 5%;
     }
 
     .feature {
@@ -63,6 +64,7 @@
       background-color: transparent;
       border-radius: 20px;
       padding: 1.5rem;
+      width: 100%;
 
 
       @media (max-width: 480px) {
