@@ -252,7 +252,7 @@ export const matchLocationsOptions = [
 // matchAge (gap) options
 export const matchAgeOptions = [
 	{ value: "any", label: "Any" },
-	{ value: "12-21", label: "12-21" },
+	{ value: "16-21", label: "16-21" },
 	{ value: "22-31", label: "22-31" },
 	{ value: "32-41", label: "32-41" },
 	{ value: "42-51", label: "42-51" },

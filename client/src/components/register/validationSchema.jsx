@@ -25,14 +25,17 @@ export const stepOneSchema = (formOneData) =>
 			.max(120, "Maximum age is 120"),
 		email: yup.string()
 			.email("Enter a valid email address")
-			.required("Required"),
+			.required("Required")
+			.max(50, "Max 30 characters"),
 		password: yup.string()
 			.required("Required")
 			.min(3, "Must contain at least 3 characters including 1 number")
+			.max(30, "Max 30 characters")
 			.matches(/[0-9]/, "Must contain at least one number"),
 		rePassword: yup.string()
 			.oneOf([yup.ref("password"), null], "Passwords must match")
-			.required("Re-enter password"),
+			.required("Re-enter password")
+			.max(30, "Max 30 characters"),
 		terms: yup.boolean().oneOf([true], "You must accept the terms and conditions"),
 	});
 
