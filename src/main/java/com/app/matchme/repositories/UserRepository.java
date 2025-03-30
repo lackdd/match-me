@@ -18,7 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query("SELECT u.connections FROM User u WHERE u.id = :userId")
+    @Query("SELECT c FROM User u JOIN u.connections c WHERE u.id = :userId " +
+            "ORDER BY (SELECT MAX(m.timestamp) FROM ChatMessage m " +
+            "WHERE (m.sender.id = u.id AND m.receiver.id = c) OR " +
+            "(m.sender.id = c AND m.receiver.id = u.id)) DESC NULLS LAST")
     List<Long> findUserConnectionsById(@Param("userId") Long userId);
 
     @Query(value = "SELECT connection_id FROM connections WHERE user_id = (SELECT id FROM users WHERE username = :userUsername)", nativeQuery = true)
