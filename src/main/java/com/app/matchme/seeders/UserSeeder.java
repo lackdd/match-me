@@ -1,9 +1,10 @@
 package com.app.matchme.seeders;
 
-
 import com.app.matchme.entities.User;
 import com.app.matchme.repositories.UserRepository;
+import com.app.matchme.utils.GeoUtils;
 import com.github.javafaker.Faker;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class UserSeeder implements CommandLineRunner {
@@ -24,16 +27,24 @@ public class UserSeeder implements CommandLineRunner {
     private final Faker faker = new Faker();
     private static final Random random = new Random();
 
-    private final List<String> estonianCityLocations = Arrays.asList(
-            "Harju County, Estonia", "Tartu County, Estonia", "Ida-Viru County, Estonia", "Pärnu County, Estonia",
-            "Viljandi County, Estonia", "Lääne-Viru County, Estonia", "Ida-Viru County, Estonia", "Harju County, Estonia",
-            "Lääne County, Estonia", "Järva County, Estonia", "Ida-Viru County, Estonia", "Valga County, Estonia",
-            "Rapla County, Estonia", "Saare County, Estonia", "Võru County, Estonia", "Põlva County, Estonia", "Ida-Viru County, Estonia"
-    );
+    // Map of Estonian locations with their approximate coordinates
+    private final Map<String, double[]> estonianLocationCoordinates = new HashMap<String, double[]>() {{
+        put("Harju County, Estonia", new double[]{59.4370, 24.7536});  // Tallinn area
+        put("Tartu County, Estonia", new double[]{58.3780, 26.7290});  // Tartu area
+        put("Ida-Viru County, Estonia", new double[]{59.3560, 27.4138}); // Narva area
+        put("Pärnu County, Estonia", new double[]{58.3859, 24.4971});  // Pärnu area
+        put("Viljandi County, Estonia", new double[]{58.3642, 25.5965}); // Viljandi area
+        put("Lääne-Viru County, Estonia", new double[]{59.3534, 26.3595}); // Rakvere area
+        put("Lääne County, Estonia", new double[]{58.9294, 23.5416}); // Haapsalu area
+        put("Järva County, Estonia", new double[]{58.7869, 25.5600}); // Paide area
+        put("Valga County, Estonia", new double[]{57.7770, 26.0475}); // Valga area
+        put("Rapla County, Estonia", new double[]{58.9964, 24.7895}); // Rapla area
+        put("Saare County, Estonia", new double[]{58.2528, 22.5039}); // Kuressaare area
+        put("Võru County, Estonia", new double[]{57.8334, 27.0156}); // Võru area
+        put("Põlva County, Estonia", new double[]{58.0603, 27.0684}); // Põlva area
+    }};
 
-
-
-
+    private final List<String> estonianCityLocations = new ArrayList<>(estonianLocationCoordinates.keySet());
 
     private final List<String> genderOptions = Arrays.asList("male", "female", "other");
 
@@ -45,7 +56,6 @@ public class UserSeeder implements CommandLineRunner {
         else if (rand < 0.95) return "female";
         else return "other";
     }
-
 
     private final List<String> musicGenres = Arrays.asList(
             "rock", "pop", "jazz", "hip-hop", "classical", "blues", "reggae", "metal",
@@ -104,12 +114,11 @@ public class UserSeeder implements CommandLineRunner {
             "participate_in_jams", "build_music_business", "produce_in_studios",
             "get_signed_to_a_label", "create_unique_music_ideas", "explore_music_collaborations"
     );
-    private final List<String> matchLocationOptions = Arrays.asList("anywhere", "same_city", "same_country");
 
+    private final List<String> matchLocationOptions = Arrays.asList("anywhere", "same_city", "same_country");
 
     @Override
     public void run(String... args) {
-
         if (userRepository.count() > 0) {
             System.out.println("users already exist, stopping seeder");
             return;
@@ -125,11 +134,27 @@ public class UserSeeder implements CommandLineRunner {
             user.setGender(randomChoice(genderOptions));
             user.setAge(faker.number().numberBetween(16, 120));
             user.setProfilePicture(null);
-            user.setLocation(randomCityCountryFromEstonia());
+
+            // Set location with coordinates
+            String locationText = randomCityCountryFromEstonia();
+            user.setLocation(locationText);
+
+            // Set coordinates based on location
+            double[] coordinates = estonianLocationCoordinates.get(locationText);
+            if (coordinates != null) {
+                // Add some randomness to coordinates to spread users around
+                double lat = coordinates[0] + (random.nextDouble() - 0.5) * 0.1; // +/- 0.05 degrees (approx 5km)
+                double lng = coordinates[1] + (random.nextDouble() - 0.5) * 0.1; // +/- 0.05 degrees
+                Point point = GeoUtils.createPoint(lat, lng);
+                user.setCoordinates(point);
+            }
+
+            // Set max match radius - random between 10-200km
+            user.setMaxMatchRadius(random.nextInt(191) + 10); // 10-200km
+
             user.setDescription(faker.lorem().sentence());
             user.setLinkToMusic(faker.internet().url());
             user.setYearsOfMusicExperience(faker.number().numberBetween(0, 10));
-
 
             user.setPreferredMusicGenres(randomList(musicGenres, 1, 3));
             user.setPreferredMethods(randomList(methods, 1, 3));
@@ -141,9 +166,6 @@ public class UserSeeder implements CommandLineRunner {
             user.setIdealMatchMethods(randomList(methods, 1, 3));
             user.setIdealMatchGoals(randomList(goals, 1, 3));
 
-
-
-            //user.setIdealMatchGender(randomChoice(genderOptions));
             user.setIdealMatchGender(getWeightedRandomGender());
             user.setIdealMatchAge(getWeightedRandomAgeRange());
             user.setIdealMatchLocation(randomChoice(matchLocationOptions));
@@ -153,9 +175,8 @@ public class UserSeeder implements CommandLineRunner {
         }
 
         userRepository.saveAll(users);
-        System.out.println("100 users successfully inserted");
+        System.out.println("100 users successfully inserted with geolocation data");
     }
-
 
     private String randomChoice(List<String> options) {
         return options.get(random.nextInt(options.size()));

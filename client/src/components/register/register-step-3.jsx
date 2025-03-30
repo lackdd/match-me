@@ -1,4 +1,3 @@
-
 // step 3 of registration
 import Select from 'react-select';
 import {customStyles} from '../reusables/customInputStyles.jsx';
@@ -10,16 +9,24 @@ import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx'
 import {useGooglePlacesApi} from '../reusables/useGooglePlacesApi.jsx'
+import {useGeolocation} from '../reusables/useGeolocation.jsx'
 
 const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 const googleApi = import.meta.env.VITE_GOOGLE_API;
 
 function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onSubmit}) {
 	const [inputValue, setInputValue] = useState("");
-	// const [options, setOptions] = useState([]);
-	// const autocompleteServiceRef = useRef(null);
-	// const [apiLoaded, setApiLoaded] = useState(false);
+	const [useCurrentLocation, setUseCurrentLocation] = useState(false);
+	const [maxMatchRadius, setMaxMatchRadius] = useState(formThreeData.maxMatchRadius || 50);
+
 	const { apiLoaded, autocompleteServiceRef, fetchPlaces, options } = useGooglePlacesApi();
+
+	// Use our geolocation hook
+	const geolocation = useGeolocation({
+		enableHighAccuracy: true,
+		maximumAge: 30000, // 30 seconds
+		timeout: 27000 // 27 seconds
+	});
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -35,49 +42,71 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 		mode: "onChange",
 	});
 
-	// useEffect(() => {
-	// 	const checkGoogleApi = setInterval(() => {
-	// 		if (window.google?.maps?.places) {
-	// 			autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-	// 			setApiLoaded(true);
-	// 			console.log("Google API is loaded");
-	// 			clearInterval(checkGoogleApi);
-	// 		}
-	// 	}, 100);
-	//
-	// 	return () => clearInterval(checkGoogleApi); // Cleanup interval when unmounting
-	// }, []);
+	// Update form data when geolocation is available
+	useEffect(() => {
+		if (useCurrentLocation && geolocation.loaded && geolocation.coordinates.lat) {
+			setValue('latitude', geolocation.coordinates.lat, { shouldValidate: true });
+			setValue('longitude', geolocation.coordinates.lng, { shouldValidate: true });
 
-	// useEffect(() => {
-	// 	if (window.google && window.google.maps && window.google.maps.places) {
-	// 		autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
-	// 	}
-	// }, []);
+			setFormThreeData((prev) => ({
+				...prev,
+				latitude: geolocation.coordinates.lat,
+				longitude: geolocation.coordinates.lng
+			}));
 
-	// const fetchPlaces = useCallback((input) => {
-	// 	if (!input || !apiLoaded || !autocompleteServiceRef.current) return;
-	//
-	// 	autocompleteServiceRef.current.getPlacePredictions(
-	// 		{
-	// 			input,
-	// 			types: ['administrative_area_level_1'],
-	// 			componentRestrictions: { country: "est" },
-	// 			language: 'en'
-	// 		},
-	// 		(predictions, status) => {
-	// 			if (status === window.google.maps.places.PlacesServiceStatus.OK && predictions) {
-	// 				setOptions(
-	// 					predictions.map((place) => ({
-	// 						value: place.place_id,
-	// 						label: place.description,
-	// 					}))
-	// 				);
-	// 			} else {
-	// 				setOptions([]);
-	// 			}
-	// 		}
-	// 	);
-	// }, [apiLoaded]);
+			// Get location name using reverse geocoding
+			if (geolocation.coordinates.lat && geolocation.coordinates.lng) {
+				fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${geolocation.coordinates.lat},${geolocation.coordinates.lng}&key=${googleApiKey}`)
+					.then(response => response.json())
+					.then(data => {
+						if (data.status === "OK" && data.results.length > 0) {
+							const addressComponents = data.results[0].address_components;
+
+							let region = "";
+							let country = "";
+
+							// Extract city and country from address components
+							addressComponents.forEach(component => {
+								if (component.types.includes("administrative_area_level_1")) {
+									region = component.long_name;
+								}
+								if (component.types.includes("country")) {
+									country = component.long_name;
+								}
+							});
+
+							const formattedLocation = `${region}${country ? `, ${country}` : ""}`;
+
+							// Create an object similar to what Select would produce
+							const locationObj = {
+								value: "geo_" + geolocation.coordinates.lat + "_" + geolocation.coordinates.lng,
+								label: formattedLocation
+							};
+
+							setValue('location', locationObj, { shouldValidate: true });
+							setFormThreeData((prev) => ({ ...prev, location: locationObj }));
+						}
+					})
+					.catch(error => console.error("Geocoding error:", error));
+			}
+		}
+	}, [geolocation, useCurrentLocation, setValue, setFormThreeData, googleApiKey]);
+
+	// Handle max distance change
+	const handleMaxDistanceChange = (e) => {
+		const value = parseInt(e.target.value, 10);
+		setMaxMatchRadius(value);
+		setValue('maxMatchRadius', value, { shouldValidate: true });
+		setFormThreeData((prev) => ({
+			...prev,
+			maxMatchRadius: value
+		}));
+	};
+
+	// Toggle current location usage
+	const toggleLocationUse = () => {
+		setUseCurrentLocation(!useCurrentLocation);
+	};
 
 	return (
 		<form className='step-three'
@@ -106,7 +135,6 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							autoComplete={'off'}
 							min={0}
 							max={formOneData.age}
-							// value={formThreeData.experience || ''}
 							value={watch('experience')}
 							onChange={(e) => {
 								const value = e.target.value ? parseInt(e.target.value, 10) : 0;
@@ -143,77 +171,167 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 					/>
 					<ErrorElement errors={errors}  id={'musicLink'}/>
 				</label>
-
 			</div>
-			<div className={'line large'}>
 
+			<div className={'line large'}>
 				<label id='location' className={'long'}>
 					Location*
 					<br/>
-					<Select
-						options={options}
-						onInputChange={(val) => {
-							setInputValue(val);
-							fetchPlaces(val);
-						}}
-						placeholder='Search for your city'
-						isClearable={true}
-						styles={customStyles}
-						wideMenu={true}
-						closeMenuOnSelect={true}
-						value={watch('location') || ""}
-						autoComplete={'off'}
-						isValid={
-							!errors.location &&
-							watch('location') &&
-							watch('location').label &&
-							watch('location').value
-						}
-						isError={!!errors.location} // Check if error exists
-						// onChange={(selectedOption) => {
-						// 	setValue('location', selectedOption, {shouldValidate: true});
-						// 	setFormThreeData((prev) => ({...prev, location: selectedOption})); // Persist data correctly
-						// }}
-						onChange={(selectedOption) => {
-							if (!selectedOption) {
-								setValue('location', null, { shouldValidate: true });
-								setFormThreeData((prev) => ({ ...prev, location: null }));
-								// console.log("GOOGLE_API_KEY: " + googleApiKey);
-								return;
+					<div className="location-toggle">
+						<div className={`location-option ${!useCurrentLocation ? 'active' : ''}`} onClick={() => setUseCurrentLocation(false)}>
+							Search for location
+						</div>
+						<div className={`location-option ${useCurrentLocation ? 'active' : ''}`} onClick={() => setUseCurrentLocation(true)}>
+							Use my current location
+						</div>
+					</div>
+
+					{!useCurrentLocation ? (
+						<Select
+							options={options}
+							onInputChange={(val) => {
+								setInputValue(val);
+								fetchPlaces(val);
+							}}
+							placeholder='Search for your city'
+							isClearable={true}
+							styles={customStyles}
+							wideMenu={true}
+							closeMenuOnSelect={true}
+							value={watch('location') || ""}
+							autoComplete={'off'}
+							isValid={
+								!errors.location &&
+								watch('location') &&
+								watch('location').label &&
+								watch('location').value
 							}
+							isError={!!errors.location} // Check if error exists
+							onChange={(selectedOption) => {
+								if (!selectedOption) {
+									setValue('location', null, { shouldValidate: true });
+									setFormThreeData((prev) => ({ ...prev, location: null }));
+									return;
+								}
 
-							fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
-								.then(response => response.json())
-								.then(data => {
-									if (data.status === "OK" && data.results.length > 0) {
-										const addressComponents = data.results[0].address_components;
+								fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
+									.then(response => response.json())
+									.then(data => {
+										if (data.status === "OK" && data.results.length > 0) {
+											const addressComponents = data.results[0].address_components;
+											const geometry = data.results[0].geometry;
 
-										let region = "";
-										let country = "";
+											let region = "";
+											let country = "";
 
-										// Extract administrative area and country explicitly
-										addressComponents.forEach(component => {
-											if (component.types.includes("administrative_area_level_1")) {
-												region = component.long_name;
+											// Extract administrative area and country explicitly
+											addressComponents.forEach(component => {
+												if (component.types.includes("administrative_area_level_1")) {
+													region = component.long_name;
+												}
+												if (component.types.includes("country")) {
+													country = component.long_name;
+												}
+											});
+
+											const properName = `${region}${country ? `, ${country}` : ""}`; // Ensure "Tartu County, Estonia"
+
+											// Store the location object with the proper name
+											const locationObj = {
+												value: selectedOption.value,
+												label: properName
+											};
+
+											setValue('location', locationObj, { shouldValidate: true });
+
+											// Also store latitude and longitude if available
+											if (geometry && geometry.location) {
+												setValue('latitude', geometry.location.lat, { shouldValidate: true });
+												setValue('longitude', geometry.location.lng, { shouldValidate: true });
+
+												setFormThreeData((prev) => ({
+													...prev,
+													location: locationObj,
+													latitude: geometry.location.lat,
+													longitude: geometry.location.lng
+												}));
+											} else {
+												setFormThreeData((prev) => ({ ...prev, location: locationObj }));
 											}
-											if (component.types.includes("country")) {
-												country = component.long_name;
-											}
-										});
-
-										const properName = `${region}${country ? `, ${country}` : ""}`; // Ensure "Tartu County, Estonia"
-
-										setValue('location', { value: selectedOption.value, label: properName }, { shouldValidate: true });
-										setFormThreeData((prev) => ({ ...prev, location: { value: selectedOption.value, label: properName } }));
-									}
-								})
-								.catch(error => console.error("Geocoding error:", error));
-						}}
-						onBlur={() => trigger('location')} // Trigger validation when user leaves the field
-					/>
-					<ErrorElement errors={errors}  id={'location'}/>
+										}
+									})
+									.catch(error => console.error("Geocoding error:", error));
+							}}
+							onBlur={() => trigger('location')} // Trigger validation when user leaves the field
+						/>
+					) : (
+						<div className="current-location-display">
+							{geolocation.loaded ? (
+								geolocation.error ? (
+									<div className="location-error">
+										Error accessing your location. Please allow location access or use search instead.
+										<div className="error-details">{geolocation.error.message}</div>
+									</div>
+								) : (
+									geolocation.coordinates.lat ? (
+										<div className="location-info">
+											<div className="location-name">
+												{watch('location')?.label || "Detecting your location..."}
+											</div>
+											<div className="coordinates">
+												Lat: {geolocation.coordinates.lat.toFixed(4)},
+												Lng: {geolocation.coordinates.lng.toFixed(4)}
+											</div>
+										</div>
+									) : (
+										<div className="loading-location">Waiting for your coordinates...</div>
+									)
+								)
+							) : (
+								<div className="loading-location">Requesting location access...</div>
+							)}
+						</div>
+					)}
+					<ErrorElement errors={errors} id={'location'}/>
 				</label>
 			</div>
+
+			{/* Max match radius slider */}
+			<div className={'line large'}>
+				<label id='maxMatchRadius' className={'long'}>
+					Maximum matching distance (km)*
+					<br/>
+					<div className="distance-slider-container">
+						<input
+							type="range"
+							min="5"
+							max="500"
+							step="5"
+							value={maxMatchRadius}
+							className="distance-slider"
+							onChange={handleMaxDistanceChange}
+							{...register('maxMatchRadius')}
+						/>
+						<div className="distance-value">{maxMatchRadius} km</div>
+					</div>
+					<div className="distance-labels">
+						<span>5 km</span>
+						<span>500 km</span>
+					</div>
+					<ErrorElement errors={errors} id={'maxMatchRadius'}/>
+				</label>
+			</div>
+
+			{/* Hidden inputs for latitude and longitude */}
+			<input
+				type="hidden"
+				{...register('latitude')}
+			/>
+			<input
+				type="hidden"
+				{...register('longitude')}
+			/>
+
 			<div className={'line large'}>
 				<label id='description'>
 					Description
@@ -235,7 +353,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							setFormThreeData((prev) => ({ ...prev, description: value }));
 						}}
 					/>
-					<ErrorElement errors={errors}  id={'description'}/>
+					<ErrorElement errors={errors} id={'description'}/>
 				</label>
 			</div>
 			<PreviousNextButtons

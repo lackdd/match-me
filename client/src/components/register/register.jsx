@@ -14,9 +14,9 @@ import {Link} from 'react-router-dom';
 import axios from "axios";
 
 export const handleCloseMenu = (selected) => {
-	if (selected.length >= 3) {
-		document.activeElement.blur()
-	}
+    if (selected.length >= 3) {
+        document.activeElement.blur()
+    }
 };
 
 
@@ -71,19 +71,22 @@ function Register() {
         rePassword: "",
     })
 
-	// step 2 data
-	const [formTwoData, setFormTwoData] = useState({
-		preferredGenres: [],
-		preferredMethods: [],
-		additionalInterests: [],
-		personalityTraits: [],
-		goals: [],
-	})
+    // step 2 data
+    const [formTwoData, setFormTwoData] = useState({
+        preferredGenres: [],
+        preferredMethods: [],
+        additionalInterests: [],
+        personalityTraits: [],
+        goals: [],
+    })
 
     // step 3 data
     const [formThreeData, setFormThreeData] = useState({
         experience: "",
         location: [],
+        latitude: null,
+        longitude: null,
+        maxMatchRadius: 50,
         musicLink: "",
         description: "",
     })
@@ -92,10 +95,10 @@ function Register() {
     const [image, setImage] = useState(null)
     const [imageUrl, setImageUrl] = useState(null);
 
-	// step 5 data
-	const [formFiveData, setFormFiveData] = useState({
-		matchPreferredGenres: [],
-		matchPreferredMethods: [],
+    // step 5 data
+    const [formFiveData, setFormFiveData] = useState({
+        matchPreferredGenres: [],
+        matchPreferredMethods: [],
         matchGoals: [],
         matchGender: "",
         matchAge: "",
@@ -103,12 +106,12 @@ function Register() {
         matchLocation: "",
     })
 
-	// Handle form submission
-	const onSubmit = (data, form, setForm) => {
-		setForm(data);
-		console.log("Valid form data:", form);
-		stepFunctions.AddStep();
-	};
+    // Handle form submission
+    const onSubmit = (data, form, setForm) => {
+        setForm(data);
+        console.log("Valid form data:", form);
+        stepFunctions.AddStep();
+    };
 
 
     const onImageChange = async (event, setLoadingImage) => {
@@ -132,10 +135,10 @@ function Register() {
         }
     };
 
-	function AddStep(e) {
-		// e.preventDefault();
-		setCurrentStep(currentStep + 1)
-	}
+    function AddStep(e) {
+        // e.preventDefault();
+        setCurrentStep(currentStep + 1)
+    }
 
     function DeductStep() {
         setCurrentStep(currentStep - 1)
@@ -159,6 +162,7 @@ function Register() {
         const idealMatchAgeValue = formFiveData.matchAge.value;
         const idealMatchLocationValue = formFiveData.matchLocation.value;
         const idealMatchYearsOfExperienceValue = formFiveData.matchExperience.value;
+
         const userDetails = {
             email: formOneData.email,
             password: formOneData.password,
@@ -175,6 +179,9 @@ function Register() {
             yearsOfMusicExperience: formThreeData.experience,
             description: formThreeData.description,
             location: formThreeData.location.label,
+            latitude: formThreeData.latitude,
+            longitude: formThreeData.longitude,
+            maxMatchRadius: formThreeData.maxMatchRadius,
             idealMatchMethods: idealMatchMethodsValues,
             idealMatchGender: formFiveData.matchGender.value,
             idealMatchGenres: idealMatchGenresValues,
@@ -183,106 +190,109 @@ function Register() {
             idealMatchLocation: idealMatchLocationValue,
             idealMatchYearsOfExperience: idealMatchYearsOfExperienceValue
         };
+
         console.log("Sending:", JSON.stringify(userDetails, null, 2));
         try {
             const response = await
                 axios.post(`${VITE_BACKEND_URL}/api/register`, userDetails);
             console.log("User created successfully");
         } catch (error) {
-            if (error.response.status === 400) {
+            if (error.response && error.response.status === 400) {
                 console.log("Failed to register:", error.response.data);
+            } else {
+                console.error("Error during registration:", error);
             }
         }
     };
 
 
-	return (
+    return (
 
-		<>
-			{currentStep === 6 && (
-				<Step6/>
-			)}
+        <>
+            {currentStep === 6 && (
+                <Step6/>
+            )}
 
-			{currentStep !== 6 && (
-			<div className='register-container'>
+            {currentStep !== 6 && (
+                <div className='register-container'>
 
-				{currentStep !== 6 &&
-				(<div className={'exit-container'}>
-					{/* again a tag to force rerender of nav bar*/}
-					<Link to={'/'}>
-						<button className={'button exit'}>Exit</button>
-					</Link>
-				</div>
-				)}
-				{currentStep !== 6 && (
-				<div className={'account-creation'}>
-					Account creation {currentStep}/6
-				</div>
-				)}
-				<div className={'forms-container'}>
-					{currentStep === 1 && (
-						<Step1
-							formOneData={formOneData}
-							setFormOneData={setFormOneData}
-							stepFunctions={stepFunctions}
-							error={error} setError={setError}
-							onSubmit={onSubmit}
-						/>
-					)}
-					{currentStep === 2 && (
-						<Step2
-							formTwoData={formTwoData}
-							setFormTwoData={setFormTwoData}
-							onSubmit={onSubmit}
-							stepFunctions={stepFunctions}
-							handleCloseMenu={handleCloseMenu}
-						/>
-					)}
-					{currentStep === 3 && (
-						<Step3
-							formThreeData={formThreeData}
-							setFormThreeData={setFormThreeData}
-							onSubmit={onSubmit}
-							stepFunctions={stepFunctions}
-							error={error} setError={setError}
-							formOneData={formOneData}
-						/>
-					)}
-					{currentStep === 4 && (
-						<Step4
-							image={image}
-							imageUrl={imageUrl}
-							stepFunctions={stepFunctions}
-							onImageChange={onImageChange}
-							onSubmit={onSubmit}
-						/>
-					)}
-					{currentStep === 5 && (
-						<Step5
-							stepFunctions={stepFunctions}
-							Submit={Submit}
-							formFiveData={formFiveData}
-							setFormFiveData={setFormFiveData}
-							formOneData={formOneData}
-							formTwoData={formTwoData}
-							formThreeData={formThreeData}
-							handleCloseMenu={handleCloseMenu}
-							onSubmit={onSubmit}
-						/>
-					)}
-				</div>
-				{currentStep === 1 && (
-					<div id='have-account'>
-						Already have an account?
-						&nbsp;
-						<Link to='/login' tabIndex={-1}>Sign in</Link>
-					</div>
-				)}
-			</div>
-			)}
-		</>
-		// </LoadScript>
-	);
+                    {currentStep !== 6 &&
+                        (<div className={'exit-container'}>
+                                {/* again a tag to force rerender of nav bar*/}
+                                <Link to={'/'}>
+                                    <button className={'button exit'}>Exit</button>
+                                </Link>
+                            </div>
+                        )}
+                    {currentStep !== 6 && (
+                        <div className={'account-creation'}>
+                            Account creation {currentStep}/6
+                        </div>
+                    )}
+                    <div className={'forms-container'}>
+                        {currentStep === 1 && (
+                            <Step1
+                                formOneData={formOneData}
+                                setFormOneData={setFormOneData}
+                                stepFunctions={stepFunctions}
+                                error={error} setError={setError}
+                                onSubmit={onSubmit}
+                            />
+                        )}
+                        {currentStep === 2 && (
+                            <Step2
+                                formTwoData={formTwoData}
+                                setFormTwoData={setFormTwoData}
+                                onSubmit={onSubmit}
+                                stepFunctions={stepFunctions}
+                                handleCloseMenu={handleCloseMenu}
+                            />
+                        )}
+                        {currentStep === 3 && (
+                            <Step3
+                                formThreeData={formThreeData}
+                                setFormThreeData={setFormThreeData}
+                                onSubmit={onSubmit}
+                                stepFunctions={stepFunctions}
+                                error={error} setError={setError}
+                                formOneData={formOneData}
+                            />
+                        )}
+                        {currentStep === 4 && (
+                            <Step4
+                                image={image}
+                                imageUrl={imageUrl}
+                                stepFunctions={stepFunctions}
+                                onImageChange={onImageChange}
+                                onSubmit={onSubmit}
+                            />
+                        )}
+                        {currentStep === 5 && (
+                            <Step5
+                                stepFunctions={stepFunctions}
+                                Submit={Submit}
+                                formFiveData={formFiveData}
+                                setFormFiveData={setFormFiveData}
+                                formOneData={formOneData}
+                                formTwoData={formTwoData}
+                                formThreeData={formThreeData}
+                                handleCloseMenu={handleCloseMenu}
+                                onSubmit={onSubmit}
+                            />
+                        )}
+                    </div>
+                    {currentStep === 1 && (
+                        <div id='have-account'>
+                            Already have an account?
+                            &nbsp;
+                            <Link to='/login' tabIndex={-1}>Sign in</Link>
+                        </div>
+                    )}
+                </div>
+            )}
+        </>
+        // </LoadScript>
+    );
 }
 
 export default Register;

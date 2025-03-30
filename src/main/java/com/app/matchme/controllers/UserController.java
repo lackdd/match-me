@@ -317,6 +317,47 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/me/location")
+    public ResponseEntity<?> updateLocation(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                            @RequestBody LocationUpdateDTO locationData) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
+        }
+
+        Long id = userPrincipal.getId();
+        service.updateUserLocation(id, locationData);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Location updated successfully",
+                "updatedLocation", locationData
+        ));
+    }
+
+    @GetMapping("/nearby-users")
+    public ResponseEntity<?> getNearbyUsers(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                            @RequestParam(value = "radius", defaultValue = "50") Integer radiusKm) {
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+        }
+
+        Long id = userPrincipal.getId();
+        User currentUser = service.getUserById(id);
+
+        if (currentUser.getCoordinates() == null) {
+            return ResponseEntity.badRequest().body("User location not set");
+        }
+
+        // This would be a new method in your service that just returns users within radius
+        // without all the other matching criteria
+        List<Long> nearbyUserIds = service.findUsersWithinRadius(id, radiusKm);
+
+        if (nearbyUserIds.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(nearbyUserIds);
+    }
+
     @GetMapping("/users/{id}/bio")
     public ResponseEntity<BioDTO> getUserBioById(@PathVariable Long id) {
         Optional <BioDTO> userOptional = service.getUserBioById(id);

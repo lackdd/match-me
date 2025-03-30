@@ -41,16 +41,16 @@ export const stepOneSchema = (formOneData) =>
 
 export const stepTwoSchema = (formThreeData) =>
 	yup.object().shape({
-	preferredMethods:
-		yup
-			.array()
-			.of(
-				yup.object().shape({
-					label: yup.string().required(),
-					value: yup.string().required(),
-				})
-			)
-			.min(1, "Required"),
+		preferredMethods:
+			yup
+				.array()
+				.of(
+					yup.object().shape({
+						label: yup.string().required(),
+						value: yup.string().required(),
+					})
+				)
+				.min(1, "Required"),
 		preferredGenres:
 			yup
 				.array()
@@ -91,36 +91,51 @@ export const stepTwoSchema = (formThreeData) =>
 					})
 				)
 				.min(1, "Required"),
-});
+	});
 
 export const stepThreeSchema = (formOneData) =>
 	yup.object().shape({
-	experience: yup
-		.number()
-		.required("Required")
-		.typeError("Required")
-		.min(0, "Minimum 0 years")
-		.max(
-			formOneData.age, // Use formOneData.age directly here
-			`Maximum your age: ${formOneData.age}`
-		), // Dynamically use formOneData.age
-	location: yup.object().shape({
+		experience: yup
+			.number()
+			.required("Required")
+			.typeError("Required")
+			.min(0, "Minimum 0 years")
+			.max(
+				formOneData.age, // Use formOneData.age directly here
+				`Maximum your age: ${formOneData.age}`
+			), // Dynamically use formOneData.age
+		location: yup.object().shape({
 				label: yup.string().required(),
 				value: yup.string().required(),
 			}
 		)
-		.typeError("Required")
-		.required("Required"), // Ensures it's not empty
-	musicLink: yup
-		.string()
-		.url("Must be a link")
-		.notRequired(),
-	description: yup
-		.string()
-		.min(0, "")
-		.max(300, "Maximum 300 characters")
-		.notRequired(),
-});
+			.typeError("Required")
+			.required("Required"), // Ensures it's not empty
+		musicLink: yup
+			.string()
+			.url("Must be a link")
+			.notRequired(),
+		description: yup
+			.string()
+			.min(0, "")
+			.max(300, "Maximum 300 characters")
+			.notRequired(),
+		// New geolocation fields
+		latitude: yup
+			.number()
+			.nullable()
+			.transform((value) => (isNaN(value) ? null : value)),
+		longitude: yup
+			.number()
+			.nullable()
+			.transform((value) => (isNaN(value) ? null : value)),
+		maxMatchRadius: yup
+			.number()
+			.min(5, "Minimum 5 km")
+			.max(500, "Maximum 500 km")
+			.default(50)
+			.notRequired(),
+	});
 
 export const stepFiveSchema = (formFiveData) =>
 	yup.object().shape({

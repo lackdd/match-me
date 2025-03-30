@@ -2,36 +2,37 @@ package com.app.matchme.mappers;
 
 import com.app.matchme.entities.*;
 
-
 public class UserMapper {
     public static UserDTO toDTO(User user) {
         if (user == null) {
             return null;
         }
-        return new UserDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getGender(),
-                user.getProfilePicture(),
-                user.getAge(),
-                user.getPreferredMethods(),
-                user.getPreferredMusicGenres(),
-                user.getPersonalityTraits(),
-                user.getAdditionalInterests(),
-                user.getYearsOfMusicExperience(),
-                user.getGoalsWithMusic(),
-                user.getLocation(),
-                user.getLinkToMusic(),
-                user.getDescription(),
-                user.getIdealMatchGoals(),
-                user.getIdealMatchMethods(),
-                user.getIdealMatchGenres(),
-                user.getIdealMatchGender(),
-                user.getIdealMatchAge(),
-                user.getIdealMatchYearsOfExperience(),
-                user.getIdealMatchLocation(),
-                user.getConnections()
-        );
+
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setGender(user.getGender());
+        userDTO.setProfilePicture(user.getProfilePicture());
+        userDTO.setAge(user.getAge());
+        userDTO.setPreferredMethod(user.getPreferredMethods());
+        userDTO.setPreferredMusicGenres(user.getPreferredMusicGenres());
+        userDTO.setPersonalityTraits(user.getPersonalityTraits());
+        userDTO.setAdditionalInterests(user.getAdditionalInterests());
+        userDTO.setYearsOfMusicExperience(user.getYearsOfMusicExperience());
+        userDTO.setGoalsWithMusic(user.getGoalsWithMusic());
+        userDTO.setLocation(user.getLocation());
+        userDTO.setLinkToMusic(user.getLinkToMusic());
+        userDTO.setDescription(user.getDescription());
+        userDTO.setIdealMatchGoals(user.getIdealMatchGoals());
+        userDTO.setIdealMatchMethods(user.getIdealMatchMethods());
+        userDTO.setIdealMatchGenres(user.getIdealMatchGenres());
+        userDTO.setIdealMatchGender(user.getIdealMatchGender());
+        userDTO.setIdealMatchAge(user.getIdealMatchAge());
+        userDTO.setIdealMatchYearsOfExperience(user.getIdealMatchYearsOfExperience());
+        userDTO.setIdealMatchLocation(user.getIdealMatchLocation());
+        userDTO.setConnections(user.getConnections());
+
+        return userDTO;
     }
 
     public static UsernamePictureDTO toUsernamePictureDTO(User user) {
@@ -42,7 +43,12 @@ public class UserMapper {
         String cloudinaryBaseUrl = "https://res.cloudinary.com/djfqpfthj/image/upload/";
         String profilePictureUrl = cloudinaryBaseUrl + user.getProfilePicture();
 
-        return new UsernamePictureDTO(user.getId(), user.getUsername(), profilePictureUrl);
+        UsernamePictureDTO dto = new UsernamePictureDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setProfilePicture(profilePictureUrl);
+
+        return dto;
     }
 
     public static ProfileDTO toProfileDTO(User user) {
@@ -50,7 +56,21 @@ public class UserMapper {
             return null;
         }
 
-        return new ProfileDTO(user.getId(), user.getGender(), user.getAge(), user.getLocation(), user.getLinkToMusic(), user.getDescription(), user.getPreferredMusicGenres(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getAdditionalInterests(), user.getGoalsWithMusic(), user.getYearsOfMusicExperience());
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setId(user.getId());
+        profileDTO.setGender(user.getGender());
+        profileDTO.setAge(user.getAge());
+        profileDTO.setLocation(user.getLocation());
+        profileDTO.setLinkToMusic(user.getLinkToMusic());
+        profileDTO.setDescription(user.getDescription());
+        profileDTO.setPreferredMusicGenres(user.getPreferredMusicGenres());
+        profileDTO.setPreferredMethod(user.getPreferredMethods());
+        profileDTO.setPersonalityTraits(user.getPersonalityTraits());
+        profileDTO.setAdditionalInterests(user.getAdditionalInterests());
+        profileDTO.setGoalsWithMusic(user.getGoalsWithMusic());
+        profileDTO.setYearsOfMusicExperience(user.getYearsOfMusicExperience());
+
+        return profileDTO;
     }
 
     public static BioDTO toBioDTO(User user) {
@@ -58,6 +78,25 @@ public class UserMapper {
             return null;
         }
 
-        return new BioDTO(user.getId(), user.getGender(), user.getAge(), user.getPreferredMusicGenres(), user.getAdditionalInterests(), user.getPreferredMethods(), user.getPersonalityTraits(), user.getGoalsWithMusic(), user.getIdealMatchGenres(), user.getLocation(), user.getYearsOfMusicExperience(), user.getIdealMatchGoals(), user.getIdealMatchMethods(), user.getIdealMatchAge(), user.getIdealMatchGender(), user.getIdealMatchLocation(), user.getIdealMatchYearsOfExperience());
+        BioDTO bioDTO = new BioDTO();
+        bioDTO.setId(user.getId());
+        bioDTO.setGender(user.getGender());
+        bioDTO.setAge(user.getAge());
+        bioDTO.setPreferredMusicGenres(user.getPreferredMusicGenres());
+        bioDTO.setPreferredMethod(user.getPreferredMethods());
+        bioDTO.setAdditionalInterests(user.getAdditionalInterests());
+        bioDTO.setPersonalityTraits(user.getPersonalityTraits());
+        bioDTO.setGoalsWithMusic(user.getGoalsWithMusic());
+        bioDTO.setYearsOfMusicExperience(user.getYearsOfMusicExperience());
+        bioDTO.setLocation(user.getLocation());
+        bioDTO.setIdealMatchGenres(user.getIdealMatchGenres());
+        bioDTO.setIdealMatchMethods(user.getIdealMatchMethods());
+        bioDTO.setIdealMatchGoals(user.getIdealMatchGoals());
+        bioDTO.setIdealMatchGender(user.getIdealMatchGender());
+        bioDTO.setIdealMatchAge(user.getIdealMatchAge());
+        bioDTO.setIdealMatchYearsOfExperience(user.getIdealMatchYearsOfExperience());
+        bioDTO.setIdealMatchLocation(user.getIdealMatchLocation());
+
+        return bioDTO;
     }
 }

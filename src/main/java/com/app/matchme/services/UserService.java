@@ -3,7 +3,9 @@ package com.app.matchme.services;
 import com.app.matchme.entities.*;
 import com.app.matchme.mappers.UserMapper;
 import com.app.matchme.repositories.UserRepository;
+import com.app.matchme.utils.GeoUtils;
 import jakarta.transaction.Transactional;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,7 +41,16 @@ public class UserService {
         if (repo.existsByEmail(user.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
+
         user.setPassword(encoder.encode(user.getPassword()));
+
+        // If coordinates were provided, create a Point object
+        if (user.getCoordinates() == null && user.getLocation() != null) {
+            // Default coordinates for Estonia as fallback (Tallinn)
+            // This should be replaced with proper geocoding in production
+            user.setCoordinates(GeoUtils.createPoint(59.4370, 24.7536));
+        }
+
         return repo.save(user);
     }
 
@@ -121,11 +132,66 @@ public class UserService {
 
     @Transactional
     public List<Long> findMatches(Long id) {
-        List<User> users = repo.findAll();
         Optional<User> optionalUser = repo.findById(id);
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
         String idealMatchLocation = currentUser.getIdealMatchLocation();
 
+        // Potential matches list - will be filtered based on location criteria
+        List<User> potentialMatches;
+
+        // Use proximity-based matching if coordinates are available and location preference isn't "anywhere"
+        if (currentUser.getCoordinates() != null && !"anywhere".equals(idealMatchLocation)) {
+            // If user has coordinates and wants location-based matching
+            int radiusInMeters = currentUser.getMaxMatchRadius() * 1000; // Convert km to meters
+
+            // Get users within the radius for proximity matching
+            if ("same_city".equals(idealMatchLocation) || "same_country".equals(idealMatchLocation)) {
+                // Get users near current user first
+                potentialMatches = repo.findUsersWithinRadius(
+                        currentUser.getCoordinates().getY(), // Latitude
+                        currentUser.getCoordinates().getX(), // Longitude
+                        radiusInMeters,
+                        currentUser.getId()
+                );
+
+                // Apply additional location text filtering
+                if ("same_city".equals(idealMatchLocation)) {
+                    potentialMatches = potentialMatches.stream()
+                            .filter(user -> Objects.equals(user.getLocation(), currentUser.getLocation()))
+                            .collect(Collectors.toList());
+                } else if ("same_country".equals(idealMatchLocation)) {
+                    // Extract country part from location (after the last comma)
+                    potentialMatches = potentialMatches.stream()
+                            .filter(user -> user.getLocation() != null && currentUser.getLocation() != null)
+                            .filter(user -> Objects.equals(
+                                    user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(),
+                                    currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim()))
+                            .collect(Collectors.toList());
+                }
+            } else {
+                // Just proximity-based without text filtering - "near me" type of matching
+                potentialMatches = repo.findUsersWithinRadius(
+                        currentUser.getCoordinates().getY(), // Latitude
+                        currentUser.getCoordinates().getX(), // Longitude
+                        radiusInMeters,
+                        currentUser.getId()
+                );
+            }
+        } else {
+            // Fall back to traditional location text matching if no coordinates or "anywhere" is selected
+            potentialMatches = repo.findAll().stream()
+                    .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
+                    .filter(user -> "anywhere".equals(idealMatchLocation) ||
+                            ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) ||
+                            "same_country".equals(idealMatchLocation) &&
+                                    user.getLocation() != null && currentUser.getLocation() != null &&
+                                    Objects.equals(
+                                            user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(),
+                                            currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim()))
+                    .collect(Collectors.toList());
+        }
+
+        // Apply the remaining matching criteria (same logic as original method)
         Integer idealMatchAgeMin;
         Integer idealMatchAgeMax;
         if (currentUser.getIdealMatchAge().length() == 5) {
@@ -147,10 +213,8 @@ public class UserService {
             throw new IllegalArgumentException("Ideal match age not in bounds.");
         }
 
-        Map<User, Integer> userPointsMap = users.stream()
-                .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
+        Map<User, Integer> userPointsMap = potentialMatches.stream()
                 .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
-                .filter(user -> "anywhere".equals(currentUser.getIdealMatchLocation()) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation) && Objects.equals(user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(), currentUser.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim()))
                 .filter(user -> "any".equals(currentUser.getIdealMatchAge()) || (user.getAge() >= idealMatchAgeMin && user.getAge() <= idealMatchAgeMax))
                 .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
@@ -158,7 +222,6 @@ public class UserService {
         return userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
                 .limit(10)
-                /*.peek(entry -> System.out.println("user id: " + entry.getKey().getId() + " points: " + entry.getValue()))*/
                 .map(entry -> entry.getKey().getId())
                 .collect(Collectors.toList());
     }
@@ -227,6 +290,29 @@ public class UserService {
         repo.save(currentUser);
     }
 
+    // Update a user's location with coordinates
+    public void updateUserLocation(Long userId, LocationUpdateDTO locationData) {
+        User user = getUserById(userId);
+
+        // Update text location if provided
+        if (locationData.getLocation() != null && !locationData.getLocation().trim().isEmpty()) {
+            user.setLocation(locationData.getLocation());
+        }
+
+        // Update coordinates if both lat and long are provided
+        if (locationData.getLatitude() != null && locationData.getLongitude() != null) {
+            Point point = GeoUtils.createPoint(locationData.getLatitude(), locationData.getLongitude());
+            user.setCoordinates(point);
+        }
+
+        // Update max match radius if provided
+        if (locationData.getMaxMatchRadius() != null) {
+            user.setMaxMatchRadius(locationData.getMaxMatchRadius());
+        }
+
+        repo.save(user);
+    }
+
     public void updateBio(Long id, BioDTO dto) {
         User currentUser = getUserById(id);
         if (dto.getIdealMatchGenres() != null) {
@@ -253,8 +339,10 @@ public class UserService {
         repo.save(currentUser);
     }
 
-    public void updateProfile(Long id, ProfileDTO dto ) {
+    public void updateProfile(Long id, ProfileDTO dto) {
         User currentUser = getUserById(id);
+
+        // Update existing fields as before
         if (dto.getPreferredMusicGenres() != null) {
             currentUser.setPreferredMusicGenres(dto.getPreferredMusicGenres());
         }
@@ -274,19 +362,60 @@ public class UserService {
         if (dto.getGoalsWithMusic() != null) {
             currentUser.setGoalsWithMusic(dto.getGoalsWithMusic());
         }
+
         if (dto.getLinkToMusic() != null) {
             currentUser.setLinkToMusic(dto.getLinkToMusic());
         }
+
         if (dto.getLocation() != null) {
             currentUser.setLocation(dto.getLocation());
         }
+
         if (dto.getDescription() != null) {
             currentUser.setDescription(dto.getDescription());
         }
+
         if (dto.getYearsOfMusicExperience() != null) {
             currentUser.setYearsOfMusicExperience(dto.getYearsOfMusicExperience());
         }
+
+        // Handle new geolocation fields
+        if (dto.getLatitude() != null && dto.getLongitude() != null) {
+            Point point = GeoUtils.createPoint(dto.getLatitude(), dto.getLongitude());
+            currentUser.setCoordinates(point);
+        }
+
+        if (dto.getMaxMatchRadius() != null) {
+            currentUser.setMaxMatchRadius(dto.getMaxMatchRadius());
+        }
+
         repo.save(currentUser);
+    }
+
+    @Transactional
+    public List<Long> findUsersWithinRadius(Long userId, Integer radiusKm) {
+        User currentUser = getUserById(userId);
+
+        if (currentUser == null || currentUser.getCoordinates() == null) {
+            return Collections.emptyList();
+        }
+
+        // Convert km to meters for the database query
+        int radiusInMeters = radiusKm * 1000;
+
+        // Use the repository method to find users within radius
+        List<User> nearbyUsers = repo.findUsersWithinRadius(
+                currentUser.getCoordinates().getY(),  // Latitude
+                currentUser.getCoordinates().getX(),  // Longitude
+                radiusInMeters,
+                userId
+        );
+
+        // Map to IDs and filter out the current user (just in case)
+        return nearbyUsers.stream()
+                .map(User::getId)
+                .filter(id -> !id.equals(userId))
+                .collect(Collectors.toList());
     }
 
     public void updatePassword(Long id, String oldPassword, String newPassword) {
