@@ -28,6 +28,16 @@
     color: black;
     margin-top: 1.5rem;
     height: 2rem;
+
+    @media (max-width: 768px) {
+      margin-top: 0;
+    }
+
+
+    @media (max-width: 440px) {
+      margin-top: 1.5rem;
+    }
+
   }
 
   .extra-connections-container {
@@ -117,6 +127,16 @@
       &::-webkit-scrollbar {
         display: none;
       }
+
+      @media (max-width: 768px) {
+        margin-top: 1rem;
+        max-height: 70vh;
+      }
+      //
+      //@media (max-width: 440px) {
+      //  margin-top: 3rem;
+      //  max-height: 60vh;
+      //}
 
       .no-connections-message {
         display: flex;
