@@ -1,7 +1,6 @@
 import './chats.scss'
 import {Link} from 'react-router-dom';
-import Chat from "../chats/Chat";
-/*import {useAuth} from '../../AuthContext.jsx';*/
+import Chat from "./Chat";
 import { useAuth } from '../utils/AuthContext.jsx';
 import React, {useEffect, useState} from "react";
 import axios from "axios";
@@ -15,7 +14,7 @@ import { IoArrowForward } from "react-icons/io5";
 function Chats() {
 	const [loading, setLoading] = useState(true);
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-	const { tokenValue } = useAuth();
+	const { tokenValue, userId, webSocketClient, broadcastStatus } = useAuth();
 	const [connections, setConnections] = useState([]);
 	const [connectionDetails, setConnectionDetails] = useState([]);
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -23,12 +22,11 @@ function Chats() {
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [userStatuses, setUserStatuses] = useState({});
-	const [client, setClient] = useState(null);
 	const [username, setUsername] = useState("");
 
-	// Fetch user info and establish WebSocket connection
+	// Fetch user info and subscribe to status updates
 	useEffect(() => {
-		if (tokenValue) {
+		if (tokenValue && webSocketClient) {
 			const fetchUsername = async () => {
 				try {
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/me`, {
@@ -36,49 +34,32 @@ function Chats() {
 					});
 					setUsername(response.data.username);
 
-					// Set up WebSocket connection once we have the username
-					const normalizedUsername = response.data.username.trim().replace(/\s+/g, "_");
-					const socket = new SockJS("/ws");
-					const stompClient = new Client({
-						webSocketFactory: () => socket,
-						connectHeaders: {
-							Authorization: `Bearer ${tokenValue}`,
-						},
-						reconnectDelay: 5000,
-						onConnect: () => {
-							console.log("Connected to WebSocket in Chats component");
+					// Set up subscription for status updates
+					if (webSocketClient && webSocketClient.connected) {
+						const normalizedUsername = response.data.username.trim().replace(/\s+/g, "_");
 
-							// Subscribe to status updates for all connections
-							stompClient.subscribe(`/user/${normalizedUsername}/queue/status`, (statusMsg) => {
-								const status = JSON.parse(statusMsg.body);
-								console.log("Status update received:", status);
+						// Subscribe to status updates for all connections
+						webSocketClient.subscribe(`/user/${normalizedUsername}/queue/status`, (statusMsg) => {
+							const status = JSON.parse(statusMsg.body);
+							console.log("Status update received in Chats:", status);
 
-								setUserStatuses(prev => ({
-									...prev,
-									[status.userId]: status.status
-								}));
-							});
-						}
-					});
+							setUserStatuses(prev => ({
+								...prev,
+								[status.userId]: status.status
+							}));
+						});
 
-					stompClient.activate();
-					setClient(stompClient);
+						console.log("Subscribed to status updates in Chats component");
+					}
 				} catch (error) {
 					console.log(error.message);
 				}
 			};
 			fetchUsername();
-
-			return () => {
-				if (client) {
-					client.deactivate();
-				}
-			};
 		}
-	}, [tokenValue]);
+	}, [tokenValue, webSocketClient]);
 
 	// fetch all connections by ids
-	// todo sort connections by latest message
 	useEffect(() => {
 		const fetchConnections = async () => {
 			try {
@@ -88,7 +69,7 @@ function Chats() {
 				console.log("Setting connections:", response.data);
 				setConnections(response.data);
 
-				// todo get profile pictures as well
+				// Get user details for all connections
 				if (response.data.length > 0) {
 					const userDetailsResponse = await axios.post(`${VITE_BACKEND_URL}/api/getUsersByIds`,
 						response.data,
@@ -98,12 +79,25 @@ function Chats() {
 					);
 					setConnectionDetails(userDetailsResponse.data);
 
-					// Initialize status for all connections as INACTIVE
+					// Initialize status for all connections - default to INACTIVE
 					const initialStatuses = {};
-					response.data.forEach(userId => {
-						initialStatuses[userId] = 'INACTIVE';
+					response.data.forEach(connectionId => {
+						initialStatuses[connectionId] = 'INACTIVE';
 					});
 					setUserStatuses(initialStatuses);
+
+					// Explicitly request status updates for all connections
+					if (webSocketClient && webSocketClient.connected) {
+						response.data.forEach(connectionId => {
+							webSocketClient.publish({
+								destination: "/app/status/request",
+								body: JSON.stringify({
+									receiverId: connectionId
+								}),
+							});
+							console.log(`Requested status update from user ${connectionId}`);
+						});
+					}
 				}
 			} catch (error) {
 				setError(true);
@@ -113,8 +107,16 @@ function Chats() {
 				setLoading(false);
 			}
 		}
-		fetchConnections();
-	}, []);
+
+		if (tokenValue) {
+			fetchConnections();
+
+			// Also, send our ACTIVE status to all connections when the chat page loads
+			if (webSocketClient && webSocketClient.connected && userId) {
+				broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
+			}
+		}
+	}, [tokenValue, userId, webSocketClient]);
 
 	const handleButtonClick = (userId, username) => {
 		const inputMessage = document.getElementById('message-input');
@@ -123,22 +125,21 @@ function Chats() {
 			inputMessage.focus();
 		}
 
-		// Notify all connections that you're going offline for them
-		if (client && connections.length > 0) {
-			connections.forEach(connectionId => {
-				if (connectionId !== userId) {
-					client.publish({
-						destination: "/app/status",
-						body: JSON.stringify({
-							receiverId: connectionId,
-							status: "INACTIVE"
-						}),
-					});
-				}
-			});
+		// Update active status for the selected user
+		if (webSocketClient && webSocketClient.connected) {
+			// Set previously selected user to INACTIVE
+			if (selectedUserId && selectedUserId !== userId) {
+				webSocketClient.publish({
+					destination: "/app/status",
+					body: JSON.stringify({
+						receiverId: selectedUserId,
+						status: "INACTIVE"
+					}),
+				});
+			}
 
-			// Then notify the selected user you're active
-			client.publish({
+			// Set new selected user to ACTIVE
+			webSocketClient.publish({
 				destination: "/app/status",
 				body: JSON.stringify({
 					receiverId: userId,
@@ -157,7 +158,7 @@ function Chats() {
 		const chat = document.getElementById('chat')
 
 		if (!chat || !connections) {
-			console.log("chat or connections on found");
+			console.log("chat or connections not found");
 			return;
 		}
 
@@ -170,27 +171,48 @@ function Chats() {
 	// Render status indicator for connections list
 	const renderConnectionStatus = (userId) => {
 		const status = userStatuses[userId];
-		console.log(`Rendering status for user ${userId}: ${status}`);
 
-		if (!status || status === undefined) {
-			return <div className="status-dot offline"></div>;
+		if (!status || status === 'INACTIVE') {
+			return <div className="status-dot offline" title="Offline"></div>;
 		}
 
 		if (status === 'TYPING') {
-			return <div className="status-dot typing"></div>;
+			return <div className="status-dot typing" title="Typing..."></div>;
 		}
 
 		if (status === 'ACTIVE') {
-			return <div className="status-dot online"></div>;
+			return <div className="status-dot online" title="Online"></div>;
 		}
 
-		return <div className="status-dot offline"></div>;
+		return <div className="status-dot offline" title="Offline"></div>;
 	};
 
-	// todo add online/offline indicators
+	// Periodically refresh status to ensure accuracy
+	useEffect(() => {
+		const statusRefreshInterval = setInterval(() => {
+			if (webSocketClient && webSocketClient.connected && connections.length > 0) {
+				// Request status updates for all connections
+				connections.forEach(connectionId => {
+					webSocketClient.publish({
+						destination: "/app/status/request",
+						body: JSON.stringify({
+							receiverId: connectionId
+						}),
+					});
+				});
+
+				// Also broadcast our own status
+				if (userId) {
+					broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
+				}
+			}
+		}, 30000); // Every 30 seconds
+
+		return () => clearInterval(statusRefreshInterval);
+	}, [webSocketClient, connections, userId, tokenValue]);
+
 	return (
 		<div className='chats-container'>
-
 			{!error ? (
 				<>
 					{loading && (
