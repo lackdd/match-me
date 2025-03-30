@@ -497,11 +497,11 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				<button
 					// className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
 					className={`save ${isValid ? '' : 'disabled'}`} // Disabled by default
-					disabled={!isValid && errors} // Only enabled when the form is valid
+					//disabled={errors.length > 0} // Only enabled when the form is valid
 					onClick={closeSettings}
 					type={'submit'}
 					form={'dashboard-form'}
-					// disabled={Object.keys(errors).length > 0}
+					disabled={Object.keys(errors).length > 0}
 				>
 					Save
 				</button>
