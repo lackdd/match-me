@@ -312,10 +312,11 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							onChange={handleMaxDistanceChange}
 							{...register('maxMatchRadius')}
 						/>
-						<div className="distance-value">{maxMatchRadius} km</div>
+
 					</div>
 					<div className="distance-labels">
 						<span>5 km</span>
+						<div className="distance-value">{maxMatchRadius} km</div>
 						<span>500 km</span>
 					</div>
 					<ErrorElement errors={errors} id={'maxMatchRadius'}/>

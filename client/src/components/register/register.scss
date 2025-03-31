@@ -114,7 +114,7 @@
       height: 11rem !important;
       width: 100%;
       resize: none;
-      padding-top: 0.5rem;
+      padding: 0.5rem;
     }
 
     .submit-picture, .like-me-container {
@@ -327,9 +327,10 @@
   .location-toggle {
     display: flex;
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
-    border: 1px solid #ddd;
+    border: 1px solid variables.$input-border-grey;
+    background-color: white;
   }
 
   .location-option {
@@ -337,25 +338,27 @@
     text-align: center;
     padding: 8px 0;
     cursor: pointer;
-    background-color: #f5f5f5;
+    background-color: white;
     transition: all 0.2s ease;
 
     &.active {
-      background-color: #e0e0ff;
+      background-color: variables.$main-pink;
       font-weight: bold;
     }
 
     &:hover:not(.active) {
-      background-color: #e8e8e8;
+      background-color: white;
     }
   }
 
   .current-location-display {
-    margin-top: 10px;
+    //margin-top: 10px;
     padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid variables.$input-border-grey;
+    background-color: white;
+    display: flex;
+    flex-direction: row;
 
     .location-name {
       font-weight: bold;
@@ -373,7 +376,7 @@
     }
 
     .location-error {
-      color: #d32f2f;
+      color: variables.$error-red;
 
       .error-details {
         font-size: 0.8em;
@@ -389,11 +392,12 @@
     margin-top: 10px;
 
     .distance-slider {
+      width: 100%;
       flex: 1;
       height: 5px;
       -webkit-appearance: none;
       appearance: none;
-      background: #ddd;
+      background: white;
       outline: none;
       border-radius: 5px;
 
@@ -403,7 +407,7 @@
         width: 15px;
         height: 15px;
         border-radius: 50%;
-        background: #4CAF50;
+        background: variables.$main-blue;
         cursor: pointer;
       }
 
@@ -415,12 +419,6 @@
         cursor: pointer;
       }
     }
-
-    .distance-value {
-      margin-left: 15px;
-      min-width: 60px;
-      text-align: right;
-    }
   }
 
   .distance-labels {
@@ -429,6 +427,14 @@
     margin-top: 5px;
     font-size: 0.8em;
     color: #666;
+
+    .distance-value {
+      text-align: center;
+      color: black;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+
   }
 }
 
