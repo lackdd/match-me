@@ -1,11 +1,4 @@
-package com.app.matchme.entities;
+package com.app.matchme.dtos;
 
-import lombok.Data;
-
-@Data
-public class LocationUpdateDTO {
-    private String location; // Text description
-    private Double latitude;
-    private Double longitude;
-    private Integer maxMatchRadius;
+public record LocationUpdateDTO(String location, Double latitude, Double longitude, Integer maxMatchRadius) {
 }

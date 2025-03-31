@@ -1,40 +1,11 @@
 package com.app.matchme.mappers;
 
+import com.app.matchme.dtos.BioDTO;
+import com.app.matchme.dtos.ProfileDTO;
+import com.app.matchme.dtos.UsernamePictureDTO;
 import com.app.matchme.entities.*;
 
 public class UserMapper {
-    public static UserDTO toDTO(User user) {
-        if (user == null) {
-            return null;
-        }
-
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setGender(user.getGender());
-        userDTO.setProfilePicture(user.getProfilePicture());
-        userDTO.setAge(user.getAge());
-        userDTO.setPreferredMethod(user.getPreferredMethods());
-        userDTO.setPreferredMusicGenres(user.getPreferredMusicGenres());
-        userDTO.setPersonalityTraits(user.getPersonalityTraits());
-        userDTO.setAdditionalInterests(user.getAdditionalInterests());
-        userDTO.setYearsOfMusicExperience(user.getYearsOfMusicExperience());
-        userDTO.setGoalsWithMusic(user.getGoalsWithMusic());
-        userDTO.setLocation(user.getLocation());
-        userDTO.setLinkToMusic(user.getLinkToMusic());
-        userDTO.setDescription(user.getDescription());
-        userDTO.setIdealMatchGoals(user.getIdealMatchGoals());
-        userDTO.setIdealMatchMethods(user.getIdealMatchMethods());
-        userDTO.setIdealMatchGenres(user.getIdealMatchGenres());
-        userDTO.setIdealMatchGender(user.getIdealMatchGender());
-        userDTO.setIdealMatchAge(user.getIdealMatchAge());
-        userDTO.setIdealMatchYearsOfExperience(user.getIdealMatchYearsOfExperience());
-        userDTO.setIdealMatchLocation(user.getIdealMatchLocation());
-        userDTO.setConnections(user.getConnections());
-
-        return userDTO;
-    }
-
     public static UsernamePictureDTO toUsernamePictureDTO(User user) {
         if (user == null) {
             return null;
