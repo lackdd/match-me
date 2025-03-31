@@ -353,7 +353,7 @@
 
   .current-location-display {
     //margin-top: 10px;
-    padding: 7.5px;
+    padding: 7.5px 12px;
     border-radius: 10px;
     border: 1px solid variables.$input-border-grey;
     background-color: white;
@@ -361,6 +361,8 @@
     .location-info {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      width: 100%;
 
 
       .location-name {
@@ -371,7 +373,8 @@
       .coordinates {
         font-size: 0.8em;
         color: #666;
-        padding-left: 1rem;
+        text-align: center;
+        margin-left: 1rem;
       }
 
     }
