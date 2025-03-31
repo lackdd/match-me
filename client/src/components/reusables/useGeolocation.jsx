@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export const useGeolocation = (options = {}) => {
     const [location, setLocation] = useState({
@@ -7,33 +7,8 @@ export const useGeolocation = (options = {}) => {
         error: null,
     });
 
-    // Success handler for geolocation API
-    const onSuccess = (position) => {
-        setLocation({
-            loaded: true,
-            coordinates: {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-            },
-            accuracy: position.coords.accuracy,
-            error: null,
-        });
-    };
-
-    // Error handler for geolocation API
-    const onError = (error) => {
-        setLocation({
-            loaded: true,
-            coordinates: { lat: null, lng: null },
-            error: {
-                code: error.code,
-                message: error.message,
-            },
-        });
-    };
-
-    useEffect(() => {
-        // Check if browser supports geolocation
+    // Function to request location
+    const requestLocation = () => {
         if (!('geolocation' in navigator)) {
             setLocation({
                 loaded: true,
@@ -47,13 +22,32 @@ export const useGeolocation = (options = {}) => {
         }
 
         navigator.geolocation.getCurrentPosition(
-            onSuccess,
-            onError,
+            (position) => {
+                setLocation({
+                    loaded: true,
+                    coordinates: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    },
+                    accuracy: position.coords.accuracy,
+                    error: null,
+                });
+            },
+            (error) => {
+                setLocation({
+                    loaded: true,
+                    coordinates: { lat: null, lng: null },
+                    error: {
+                        code: error.code,
+                        message: error.message,
+                    },
+                });
+            },
             options
         );
-    }, [options]);
+    };
 
-    return location;
+    return { location, requestLocation };
 };
 
 export default useGeolocation;
