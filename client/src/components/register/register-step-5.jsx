@@ -288,7 +288,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 
 			<div className={'line'}>
 				<label id='experience' className={'short'}>
-					Years of music experience*
+					Years of experience*
 					<br/>
 					<Select
 						className='basic-single short'
