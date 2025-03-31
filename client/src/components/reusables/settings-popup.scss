@@ -22,6 +22,7 @@
   .settings-content {
     @include variables.centered-column;
     width: 50%;
+    height: 100%;
     //
     //@media (max-width: 768px) {
     //  width: 70%;
@@ -31,6 +32,27 @@
     //@media (max-width: 440px) {
     //  width: 100%;
     //}
+
+
+    .tc-container {
+      height: 70%;
+      width: 80vw;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: auto;
+      align-items: center;
+      justify-content: flex-start;
+
+      h1 {
+        margin-bottom: 2rem;
+      }
+
+      p {
+        text-align: left;
+      }
+    }
 
 
     .settings-buttons-container {

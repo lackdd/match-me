@@ -7,9 +7,12 @@ import {yupResolver} from '@hookform/resolvers/yup';
 import {stepOneSchema} from './validationSchema.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import axios from "axios";
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {IncrementDecrementButtons} from '../reusables/incrementDecrementButtons.jsx';
 import {ShowPasswordButton} from '../reusables/showPasswordButton.jsx';
+import '../reusables/settings-popup.scss'
+import {closeSettings, openSettings} from '../reusables/profile-card-functions.jsx';
+import {IoClose} from 'react-icons/io5';
 
 
 
@@ -38,8 +41,29 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 		mode: 'onChange',
 	});
 
+	const loremText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a commodo nibh. Donec laoreet mauris quam, posuere posuere purus viverra eget. Curabitur feugiat felis ligula, a placerat erat venenatis quis. In vel viverra odio. Quisque vel turpis lacinia, pulvinar est viverra, sollicitudin nulla. Etiam semper lectus lacus, in consectetur turpis pellentesque vitae. Praesent vehicula sollicitudin convallis. Fusce lobortis sapien eu quam pharetra, non vehicula lorem accumsan. Vivamus in augue quis orci pharetra laoreet. Vestibulum malesuada venenatis ligula, eu sagittis orci dictum at. Nunc cursus posuere mauris eget egestas. Sed hendrerit arcu mattis, eleifend odio a, cursus felis. Vestibulum eu libero mattis, pellentesque mauris ut, vestibulum nunc. Vestibulum id lacinia sapien.\n" +
+		"\n" +
+		"In ut nibh a ligula tincidunt mattis a a nisl. Nunc enim metus, posuere at nisl ut, ullamcorper sagittis lectus. Nulla ornare nunc sed mauris tempor mollis. Donec placerat, urna ac volutpat suscipit, orci diam euismod mi, eget commodo leo purus nec neque. Phasellus egestas nisl eget urna luctus, sollicitudin faucibus odio eleifend. Donec eu fringilla elit. Nulla sed elementum nulla. Curabitur et magna egestas, tristique odio id, consectetur nibh. Vestibulum hendrerit vel mauris ac facilisis.\n" +
+		"\n"
 
 		return (
+			<>
+				<div className="settings-popup" id="settings-popup">
+					<div className="settings-content">
+						<button className='close-settings' type={'button'} onClick={() => {
+							closeSettings();
+						}}><IoClose /></button>
+
+						<div className='tc-container'>
+							<h1>Terms and conditions</h1>
+							<p>{loremText}</p>
+
+						</div>
+					</div>
+
+				</div>
+
+
 			<form className="step-one"
 				  onSubmit={handleSubmit((data) => {
 					  onSubmit(data, formOneData, setFormOneData);
@@ -236,7 +260,9 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 						{...register('terms')}
 						onBlur={() => trigger('terms')} // Trigger validation when user leaves the field
 					/>
-					&nbsp; I agree to the terms and conditions*
+					&nbsp; I agree to the &nbsp;
+					<button className='tc' type={'button'} onClick={openSettings}> terms and conditions</button>
+					*
 				</label>
 				<div className={'terms-error'}>
 					<ErrorElement errors={errors} id={'terms'}/>
@@ -255,6 +281,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 					</button>
 				</div>
 			</form>
+
+			</>
 		);
 	}
 

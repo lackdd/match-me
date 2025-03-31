@@ -18,15 +18,30 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 	const [inputValue, setInputValue] = useState("");
 	const [useCurrentLocation, setUseCurrentLocation] = useState(false);
 	const [maxMatchRadius, setMaxMatchRadius] = useState(formThreeData.maxMatchRadius || 50);
+	const [dots, setDots] = useState(".");
 
 	const { apiLoaded, autocompleteServiceRef, fetchPlaces, options } = useGooglePlacesApi();
 
 	// Use our geolocation hook
-	const geolocation = useGeolocation({
+	const { location: geolocation, requestLocation } = useGeolocation({
 		enableHighAccuracy: true,
 		maximumAge: 30000, // 30 seconds
-		timeout: 27000 // 27 seconds
+		timeout: 27000, // 27 seconds
 	});
+
+// // Only call requestLocation when the user clicks a button
+// 	return (
+// 		<div>
+// 			<button onClick={requestLocation}>Get Location</button>
+// 			{location.loaded && (
+// 				location.error ? (
+// 					<p>Error: {location.error.message}</p>
+// 				) : (
+// 					<p>Latitude: {location.coordinates.lat}, Longitude: {location.coordinates.lng}</p>
+// 				)
+// 			)}
+// 		</div>
+// 	);
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -103,6 +118,15 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 		}));
 	};
 
+	useEffect(() => {
+		if (!geolocation?.loaded) {
+			const interval = setInterval(()	 => {
+				setDots(prev => (prev.length < 3 ? prev + "." : "."));
+			}, 200);
+			return () => clearInterval(interval);
+		}
+	}, [geolocation?.loaded]);
+
 	// Toggle current location usage
 	const toggleLocationUse = () => {
 		setUseCurrentLocation(!useCurrentLocation);
@@ -119,7 +143,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 
 			<div className={'line'}>
 				<label id='experience' className={'short'}>
-					Years of music experience*
+					Years of experience*
 					<br/>
 					<div className={'with-button'}>
 						<input
@@ -178,11 +202,16 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 					Location*
 					<br/>
 					<div className="location-toggle">
-						<div className={`location-option ${!useCurrentLocation ? 'active' : ''}`} onClick={() => setUseCurrentLocation(false)}>
+						<div className={`location-option ${!useCurrentLocation ? 'active' : ''}`} onClick={() => {
+							setUseCurrentLocation(false);
+						}}>
 							Search for location
 						</div>
-						<div className={`location-option ${useCurrentLocation ? 'active' : ''}`} onClick={() => setUseCurrentLocation(true)}>
-							Use my current location
+						<div className={`location-option ${useCurrentLocation ? 'active' : ''}`} onClick={() => {
+							requestLocation();
+							setUseCurrentLocation(true);
+						}}>
+							My current location
 						</div>
 					</div>
 
@@ -265,8 +294,14 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							onBlur={() => trigger('location')} // Trigger validation when user leaves the field
 						/>
 					) : (
-						<div className="current-location-display">
-							{geolocation.loaded ? (
+						<div className="current-location-display" style={{
+							backgroundColor: geolocation?.error
+								? "#F5D9D9" // Red background if there's an error
+								: geolocation?.loaded
+									? "#D4F5D9" // Green background if location is loaded
+									: "white", // Default background
+						}}>
+							{geolocation?.loaded ? (
 								geolocation.error ? (
 									<div className="location-error">
 										Error accessing your location. Please allow location access or use search instead.
@@ -284,11 +319,11 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 											</div>
 										</div>
 									) : (
-										<div className="loading-location">Waiting for your coordinates...</div>
+										<div className="loading-location">Waiting for your coordinates{dots}</div>
 									)
 								)
 							) : (
-								<div className="loading-location">Requesting location access...</div>
+								<div className="loading-location">Requesting location access{dots}</div>
 							)}
 						</div>
 					)}
@@ -299,7 +334,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 			{/* Max match radius slider */}
 			<div className={'line large'}>
 				<label id='maxMatchRadius' className={'long'}>
-					Maximum matching distance (km)*
+					Maximum matching distance
 					<br/>
 					<div className="distance-slider-container">
 						<input
@@ -307,15 +342,16 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 							min="5"
 							max="500"
 							step="5"
-							value={maxMatchRadius}
+							value={watch('maxMatchRadius')}
 							className="distance-slider"
 							onChange={handleMaxDistanceChange}
 							{...register('maxMatchRadius')}
 						/>
-						<div className="distance-value">{maxMatchRadius} km</div>
+
 					</div>
 					<div className="distance-labels">
 						<span>5 km</span>
+						<div className="distance-value">{watch('maxMatchRadius')} km</div>
 						<span>500 km</span>
 					</div>
 					<ErrorElement errors={errors} id={'maxMatchRadius'}/>
