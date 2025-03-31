@@ -7,6 +7,10 @@
   position: relative;
   height: 100vh;
 
+  .close-settings:hover {
+    box-shadow: none;
+  }
+
 
   input[type="file"] {
     display: none;
@@ -234,6 +238,18 @@
       flex-direction: row;
       align-items: center;
       margin-top: 1rem;
+
+      button.tc {
+        all: unset;
+        cursor: pointer;
+        text-decoration: underline;
+
+        &:hover {
+          color: variables.$main-blue;
+        }
+
+      }
+
     }
   }
 
@@ -415,3 +431,4 @@
     color: #666;
   }
 }
+
