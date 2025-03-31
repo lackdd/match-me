@@ -18,6 +18,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 	const [inputValue, setInputValue] = useState("");
 	const [useCurrentLocation, setUseCurrentLocation] = useState(false);
 	const [maxMatchRadius, setMaxMatchRadius] = useState(formThreeData.maxMatchRadius || 50);
+	const [dots, setDots] = useState(".");
 
 	const { apiLoaded, autocompleteServiceRef, fetchPlaces, options } = useGooglePlacesApi();
 
@@ -116,6 +117,15 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 			maxMatchRadius: value
 		}));
 	};
+
+	useEffect(() => {
+		if (!geolocation?.loaded) {
+			const interval = setInterval(()	 => {
+				setDots(prev => (prev.length < 3 ? prev + "." : "."));
+			}, 200);
+			return () => clearInterval(interval);
+		}
+	}, [geolocation?.loaded]);
 
 	// Toggle current location usage
 	const toggleLocationUse = () => {
@@ -309,11 +319,11 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 											</div>
 										</div>
 									) : (
-										<div className="loading-location">Waiting for your coordinates...</div>
+										<div className="loading-location">Waiting for your coordinates{dots}</div>
 									)
 								)
 							) : (
-								<div className="loading-location">Requesting location access...</div>
+								<div className="loading-location">Requesting location access{dots}</div>
 							)}
 						</div>
 					)}
@@ -324,7 +334,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 			{/* Max match radius slider */}
 			<div className={'line large'}>
 				<label id='maxMatchRadius' className={'long'}>
-					Maximum matching distance (km)*
+					Maximum matching distance
 					<br/>
 					<div className="distance-slider-container">
 						<input
