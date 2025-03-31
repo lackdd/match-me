@@ -261,7 +261,8 @@ function Step1({ formOneData, setFormOneData, onSubmit}) {
 						onBlur={() => trigger('terms')} // Trigger validation when user leaves the field
 					/>
 					&nbsp; I agree to the &nbsp;
-					<button className='tc' type={'button'} onClick={openSettings}> terms and conditions*</button>
+					<button className='tc' type={'button'} onClick={openSettings}> terms and conditions</button>
+					*
 				</label>
 				<div className={'terms-error'}>
 					<ErrorElement errors={errors} id={'terms'}/>
