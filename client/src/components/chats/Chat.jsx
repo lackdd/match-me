@@ -422,6 +422,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
                     type="text"
                     value={message}
                     onChange={handleMessageChange}
+                    autoComplete={'off'}
                     placeholder="Type a message..."
                 />
                 <button id={'send-message'} onClick={sendMessage} tabIndex={-1}><IoMdSend /></button>
