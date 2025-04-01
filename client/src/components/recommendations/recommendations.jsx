@@ -104,7 +104,6 @@ function Recommendations() {
 
 				console.log("Response: ", response);
 
-
 				setPreferencesData({
 					idealMatchGender: idealMatchGender,
 					idealMatchAge: idealMatchAge,
@@ -113,6 +112,7 @@ function Recommendations() {
 					idealMatchMethods: idealMatchMethods,
 					idealMatchYearsOfExperience: idealMatchYearsOfExperience,
 					idealMatchGoals: idealMatchGoals,
+					maxMatchRadius: response.data.maxMatchRadius,
 				});
 
 				console.log("Data fetched!");

@@ -7,6 +7,14 @@
   @include variables.centered-column;
   justify-content: flex-start;
 
+  .form-title {
+    margin-bottom: 2rem;
+  }
+
+  .radius {
+    margin-bottom: 1rem;
+  }
+
   .user-stats-container {
     text-align: center;
     color: black;

@@ -60,4 +60,10 @@ export const recommendationsFormValidationSchema =
 			})
 			.required("Required")
 			.typeError("Required"),
+		maxMatchRadius: yup
+			.number()
+			.min(5, "Minimum 5 km")
+			.max(500, "Maximum 500 km")
+			.default(50)
+			.notRequired(),
 	});

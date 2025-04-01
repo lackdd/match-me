@@ -27,6 +27,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 	const { tokenValue } = useAuth();
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
+
 	// Initialize react-hook-form with Yup schema
 	const {
 		handleSubmit,
@@ -35,6 +36,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 		clearErrors,
 		trigger,
 		reset,
+		register,
 		formState: { errors },
 	} = useForm({
 		defaultValues: preferencesData,
@@ -67,6 +69,16 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 		}
 	};
 
+	// Handle max distance change
+	const handleMaxDistanceChange = (e) => {
+		const value = parseInt(e.target.value, 10);
+		setValue('maxMatchRadius', value, { shouldValidate: true });
+		setPreferencesData((prev) => ({
+			...prev,
+			maxMatchRadius: value
+		}));
+	};
+
 
 	return (
 		<>
@@ -85,6 +97,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					  idealMatchMethods: data.idealMatchMethods.map(item => item.value),
 					  idealMatchGenres: data.idealMatchGenres.map(item => item.value),
 					  idealMatchGoals: data.idealMatchGoals.map(item => item.value),
+					  maxMatchRadius: data.maxMatchRadius,
 				  }
 
 				  console.log("Formatted data", formattedData);
@@ -96,6 +109,33 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 			  id={'recommendations-form'}>
 			<div className='form-title'>
 				<h1>Who are you looking for?</h1>
+			</div>
+
+			{/* Max match radius slider */}
+			<div className={'line large radius'}>
+				<label id='maxMatchRadius' className={'long'}>
+					Maximum matching distance
+					<br/>
+					<div className="distance-slider-container">
+						<input
+							type="range"
+							min="5"
+							max="500"
+							step="5"
+							value={watch('maxMatchRadius')}
+							// value={myData.maxMatchRadius || watch('maxMatchRadius')}
+							className="distance-slider"
+							onChange={handleMaxDistanceChange}
+						/>
+
+					</div>
+					<div className="distance-labels">
+						<span>5 km</span>
+						<div className="distance-value">{watch('maxMatchRadius')} km</div>
+						<span>500 km</span>
+					</div>
+					<ErrorElement errors={errors} id={'maxMatchRadius'}/>
+				</label>
 			</div>
 
 			<div className={'line large'}>
