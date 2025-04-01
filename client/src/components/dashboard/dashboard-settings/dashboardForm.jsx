@@ -23,6 +23,7 @@ import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 import axios from 'axios';
 import {useAuth} from '../../utils/AuthContext.jsx';
 import {IoClose} from 'react-icons/io5';
+import useGeolocation from '../../reusables/useGeolocation.jsx';
 
 
 export function DashboardForm({myData, setMyData, setMyDataFormatted, formatDataForView}) {
@@ -31,6 +32,20 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 	const googleApiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 	const { tokenValue } = useAuth();
+
+	const [useCurrentLocation, setUseCurrentLocation] = useState(false);
+	// const [maxMatchRadius, setMaxMatchRadius] = useState(myData.maxMatchRadius || 50);
+	const [dots, setDots] = useState(".");
+	const [inputValue, setInputValue] = useState("");
+
+
+	// Use our geolocation hook
+	const { location: geolocation, requestLocation } = useGeolocation({
+		enableHighAccuracy: true,
+		maximumAge: 30000, // 30 seconds
+		timeout: 27000, // 27 seconds
+	});
+
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -56,6 +71,76 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 	useEffect(() => {
 		console.log("myData: ", myData);
 	}, [myData]);
+
+	// Update form data when geolocation is available
+	useEffect(() => {
+		if (useCurrentLocation && geolocation.loaded && geolocation.coordinates.lat) {
+			setValue('latitude', geolocation.coordinates.lat, { shouldValidate: true });
+			setValue('longitude', geolocation.coordinates.lng, { shouldValidate: true });
+
+			setMyData((prev) => ({
+				...prev,
+				latitude: geolocation.coordinates.lat,
+				longitude: geolocation.coordinates.lng
+			}));
+
+			// Get location name using reverse geocoding
+			if (geolocation.coordinates.lat && geolocation.coordinates.lng) {
+				fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${geolocation.coordinates.lat},${geolocation.coordinates.lng}&key=${googleApiKey}`)
+					.then(response => response.json())
+					.then(data => {
+						if (data.status === "OK" && data.results.length > 0) {
+							const addressComponents = data.results[0].address_components;
+
+							let region = "";
+							let country = "";
+
+							// Extract city and country from address components
+							addressComponents.forEach(component => {
+								if (component.types.includes("administrative_area_level_1")) {
+									region = component.long_name;
+								}
+								if (component.types.includes("country")) {
+									country = component.long_name;
+								}
+							});
+
+							const formattedLocation = `${region}${country ? `, ${country}` : ""}`;
+
+							// Create an object similar to what Select would produce
+							const locationObj = {
+								value: "geo_" + geolocation.coordinates.lat + "_" + geolocation.coordinates.lng,
+								label: formattedLocation
+							};
+
+							setValue('location', locationObj, { shouldValidate: true });
+							setMyData((prev) => ({ ...prev, location: locationObj }));
+						}
+					})
+					.catch(error => console.error("Geocoding error:", error));
+			}
+		}
+	}, [geolocation, useCurrentLocation, setValue, setMyData, googleApiKey]);
+
+	// // Handle max distance change
+	// const handleMaxDistanceChange = (e) => {
+	// 	const value = parseInt(e.target.value, 10);
+	// 	setMaxMatchRadius(value);
+	// 	setValue('maxMatchRadius', value, { shouldValidate: true });
+	// 	setMyData((prev) => ({
+	// 		...prev,
+	// 		maxMatchRadius: value
+	// 	}));
+	// };
+
+	useEffect(() => {
+		if (!geolocation?.loaded) {
+			const interval = setInterval(()	 => {
+				setDots(prev => (prev.length < 3 ? prev + "." : "."));
+			}, 200);
+			return () => clearInterval(interval);
+		}
+	}, [geolocation?.loaded]);
 
 	// on submit send data to backend
 	const Submit = async (formattedData) => {
@@ -105,6 +190,9 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
                       preferredMusicGenres: data.preferredMusicGenres.map(item => item.value),
                       goalsWithMusic: data.goalsWithMusic.map(item => item.value),
                       personalityTraits: data.personalityTraits.map(item => item.value),
+					  // maxMatchRadius: data.maxMatchRadius,
+                      latitude: data.latitude,
+                      longitude: data.longitude,
 				  }
 
 				  console.log("Formatted data: ", formattedData);
@@ -394,44 +482,125 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				</label>
 
 			</div>
-			<div className={'line large'}>
+			{/*<div className={'line large'}>*/}
 
-				{/* todo  inital value not set and valid disappears when cancelled*/}
+			{/*	/!* todo  inital value not set and valid disappears when cancelled*!/*/}
+			{/*	<label id='location' className={'long'}>*/}
+			{/*		Location**/}
+			{/*		<br/>*/}
+			{/*		<Select*/}
+			{/*			options={options}*/}
+			{/*			onInputChange={(val) => {*/}
+			{/*				// setInputValue(val);*/}
+			{/*				fetchPlaces(val);*/}
+			{/*			}}*/}
+			{/*			placeholder='Search for your city'*/}
+			{/*			isClearable={true}*/}
+			{/*			styles={combinedStyles}*/}
+			{/*			wideMenu={true}*/}
+			{/*			closeMenuOnSelect={true}*/}
+			{/*			value={watch('location')}*/}
+			{/*			autoComplete={'off'}*/}
+			{/*			isValid={*/}
+			{/*				!errors.location &&*/}
+			{/*				watch('location') &&*/}
+			{/*				watch('location').label &&*/}
+			{/*				watch('location').value*/}
+			{/*			}*/}
+			{/*			isError={!!errors.location} // Check if error exists*/}
+			{/*			onChange={(selectedOption) => {*/}
+			{/*				if (!selectedOption) {*/}
+			{/*					// Clear the location value in both the form state and component state*/}
+			{/*					setValue('location', null, { shouldValidate: true });*/}
+			{/*					clearErrors('location'); // Optionally clear the error state for location*/}
+			{/*				} else {*/}
+			{/*					// Handle setting the location from the Google API*/}
+			{/*					fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)*/}
+			{/*						.then(response => response.json())*/}
+			{/*						.then(data => {*/}
+			{/*							if (data.status === "OK" && data.results.length > 0) {*/}
+			{/*								const addressComponents = data.results[0].address_components;*/}
+
+			{/*								let region = "";*/}
+			{/*								let country = "";*/}
+
+			{/*								// Extract administrative area and country explicitly*/}
+			{/*								addressComponents.forEach(component => {*/}
+			{/*									if (component.types.includes("administrative_area_level_1")) {*/}
+			{/*										region = component.long_name;*/}
+			{/*									}*/}
+			{/*									if (component.types.includes("country")) {*/}
+			{/*										country = component.long_name;*/}
+			{/*									}*/}
+			{/*								});*/}
+
+			{/*								const properName = `${region}${country ? `, ${country}` : ""}`;*/}
+
+			{/*								// Set the location value in the form state with value and label*/}
+			{/*								setValue('location', { value: selectedOption.value, label: properName }, { shouldValidate: true });*/}
+			{/*							}*/}
+			{/*						})*/}
+			{/*						.catch(error => console.error("Geocoding error:", error));*/}
+			{/*				}*/}
+			{/*			}}*/}
+			{/*			onBlur={() => trigger('location')} // Trigger validation when user leaves the field*/}
+			{/*		/>*/}
+			{/*		<ErrorElement errors={errors}  id={'location'}/>*/}
+			{/*	</label>*/}
+			{/*</div>*/}
+
+			<div className={'line large'}>
 				<label id='location' className={'long'}>
 					Location*
 					<br/>
-					<Select
-						options={options}
-						onInputChange={(val) => {
-							// setInputValue(val);
-							fetchPlaces(val);
-						}}
-						placeholder='Search for your city'
-						isClearable={true}
-						styles={combinedStyles}
-						wideMenu={true}
-						closeMenuOnSelect={true}
-						value={watch('location')}
-						autoComplete={'off'}
-						isValid={
-							!errors.location &&
-							watch('location') &&
-							watch('location').label &&
-							watch('location').value
-						}
-						isError={!!errors.location} // Check if error exists
-						onChange={(selectedOption) => {
-							if (!selectedOption) {
-								// Clear the location value in both the form state and component state
-								setValue('location', null, { shouldValidate: true });
-								clearErrors('location'); // Optionally clear the error state for location
-							} else {
-								// Handle setting the location from the Google API
+					<div className="location-toggle">
+						<div className={`location-option ${!useCurrentLocation ? 'active' : ''}`} onClick={() => {
+							setUseCurrentLocation(false);
+						}}>
+							Search for location
+						</div>
+						<div className={`location-option ${useCurrentLocation ? 'active' : ''}`} onClick={() => {
+							requestLocation();
+							setUseCurrentLocation(true);
+						}}>
+							My current location
+						</div>
+					</div>
+
+					{!useCurrentLocation ? (
+						<Select
+							options={options}
+							onInputChange={(val) => {
+								setInputValue(val);
+								fetchPlaces(val);
+							}}
+							placeholder='Search for your city'
+							isClearable={true}
+							styles={customStyles}
+							wideMenu={true}
+							closeMenuOnSelect={true}
+							value={watch('location') || ""}
+							autoComplete={'off'}
+							isValid={
+								!errors.location &&
+								watch('location') &&
+								watch('location').label &&
+								watch('location').value
+							}
+							isError={!!errors.location} // Check if error exists
+							onChange={(selectedOption) => {
+								if (!selectedOption) {
+									setValue('location', null, { shouldValidate: true });
+									setMyData((prev) => ({ ...prev, location: null }));
+									return;
+								}
+
 								fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
 									.then(response => response.json())
 									.then(data => {
 										if (data.status === "OK" && data.results.length > 0) {
 											const addressComponents = data.results[0].address_components;
+											const geometry = data.results[0].geometry;
 
 											let region = "";
 											let country = "";
@@ -446,20 +615,113 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 												}
 											});
 
-											const properName = `${region}${country ? `, ${country}` : ""}`;
+											const properName = `${region}${country ? `, ${country}` : ""}`; // Ensure "Tartu County, Estonia"
 
-											// Set the location value in the form state with value and label
-											setValue('location', { value: selectedOption.value, label: properName }, { shouldValidate: true });
+											// Store the location object with the proper name
+											const locationObj = {
+												value: selectedOption.value,
+												label: properName
+											};
+
+											setValue('location', locationObj, { shouldValidate: true });
+
+											// Also store latitude and longitude if available
+											if (geometry && geometry.location) {
+												setValue('latitude', geometry.location.lat, { shouldValidate: true });
+												setValue('longitude', geometry.location.lng, { shouldValidate: true });
+
+												setMyData((prev) => ({
+													...prev,
+													location: locationObj,
+													latitude: geometry.location.lat,
+													longitude: geometry.location.lng
+												}));
+											} else {
+												setMyData((prev) => ({ ...prev, location: locationObj }));
+											}
 										}
 									})
 									.catch(error => console.error("Geocoding error:", error));
-							}
-						}}
-						onBlur={() => trigger('location')} // Trigger validation when user leaves the field
-					/>
-					<ErrorElement errors={errors}  id={'location'}/>
+							}}
+							onBlur={() => trigger('location')} // Trigger validation when user leaves the field
+						/>
+					) : (
+						<div className="current-location-display" style={{
+							backgroundColor: geolocation?.error
+								? "#F5D9D9" // Red background if there's an error
+								: geolocation?.loaded
+									? "#D4F5D9" // Green background if location is loaded
+									: "white", // Default background
+						}}>
+							{geolocation?.loaded ? (
+								geolocation.error ? (
+									<div className="location-error">
+										Error accessing your location. Please allow location access or use search instead.
+										<div className="error-details">{geolocation.error.message}</div>
+									</div>
+								) : (
+									geolocation.coordinates.lat ? (
+										<div className="location-info">
+											<div className="location-name">
+												{watch('location')?.label || "Detecting your location..."}
+											</div>
+											<div className="coordinates">
+												Lat: {geolocation.coordinates.lat.toFixed(4)},
+												Lng: {geolocation.coordinates.lng.toFixed(4)}
+											</div>
+										</div>
+									) : (
+										<div className="loading-location">Waiting for your coordinates{dots}</div>
+									)
+								)
+							) : (
+								<div className="loading-location">Requesting location access{dots}</div>
+							)}
+						</div>
+					)}
+					<ErrorElement errors={errors} id={'location'}/>
 				</label>
 			</div>
+
+			{/*/!* Max match radius slider *!/*/}
+			{/*<div className={'line large'}>*/}
+			{/*	<label id='maxMatchRadius' className={'long'}>*/}
+			{/*		Maximum matching distance*/}
+			{/*		<br/>*/}
+			{/*		<div className="distance-slider-container">*/}
+			{/*			<input*/}
+			{/*				type="range"*/}
+			{/*				min="5"*/}
+			{/*				max="500"*/}
+			{/*				step="5"*/}
+			{/*				value={watch('maxMatchRadius')}*/}
+			{/*				// value={myData.maxMatchRadius || watch('maxMatchRadius')}*/}
+			{/*				className="distance-slider"*/}
+			{/*				onChange={handleMaxDistanceChange}*/}
+			{/*				{...register('maxMatchRadius')}*/}
+			{/*			/>*/}
+
+			{/*		</div>*/}
+			{/*		<div className="distance-labels">*/}
+			{/*			<span>5 km</span>*/}
+			{/*			<div className="distance-value">{watch('maxMatchRadius')} km</div>*/}
+			{/*			<span>500 km</span>*/}
+			{/*		</div>*/}
+			{/*		<ErrorElement errors={errors} id={'maxMatchRadius'}/>*/}
+			{/*	</label>*/}
+			{/*</div>*/}
+
+			{/* Hidden inputs for latitude and longitude */}
+			<input
+				type="hidden"
+				{...register('latitude')}
+			/>
+			<input
+				type="hidden"
+				{...register('longitude')}
+			/>
+
+
 			<div className={'line large'}>
 				<label id='description'>
 					Description
