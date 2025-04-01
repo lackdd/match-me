@@ -106,10 +106,10 @@
   justify-content: center;
   border: 2px solid black;
   transition: all 0.1s ease;
+  cursor: pointer;
 
   &:hover {
     scale: 1.1;
-    cursor: pointer;
   }
 
   .settings-button {
