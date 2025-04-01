@@ -82,7 +82,7 @@
         box-sizing: border-box;  // Ensure box-sizing is consistent
 
         @media (max-width: 768px) {
-          max-width: fit-content;
+          //max-width: fit-content;
           justify-content: flex-start;
         }
 
@@ -98,7 +98,7 @@
         .extra-picture-container {
           //width: 100%;  // Allow the image to take up full available width
           //height: 100%;  // Set the height to 100% of the parent container
-          max-height: 100%; // Make sure the image does not exceed the height of its parent
+          //max-height: 100%; // Make sure the image does not exceed the height of its parent
           width: auto;
           //max-width: 100%;  // Ensure it doesn't exceed the width of the container
           aspect-ratio: 1/1;
@@ -125,8 +125,10 @@
           img.profile-picture {
             //width: 90%;  // Allow the image to take up full available width
             //height: 90%;  // Set the height to 100% of the parent container
-            max-height: 100%; // Make sure the image does not exceed the height of its parent
-            max-width: 100%;  // Ensure it doesn't exceed the width of the container
+            //max-height: 100%; // Make sure the image does not exceed the height of its parent
+            //max-width: 100%;  // Ensure it doesn't exceed the width of the container
+            max-width: 70%;
+            max-height: 70%;
             //max-width: 40rem;
             border-radius: 50%;
             aspect-ratio: 1/1;
@@ -140,14 +142,14 @@
           }
 
           .music-link {
-            z-index: 1;
+            z-index: 10;
             position: absolute;
-            bottom: 10%;
-            right: 0;
+            bottom: 15%;
+            right: 15%;
             //width: clamp(3rem, 5vw, 6rem);
             //height: clamp(3rem, 5vw, 6rem);
-            width: 5rem;
-            height: 5rem;
+            width: 4rem;
+            height: 4rem;
             color: white;
             font-size: 1rem;
             text-align: center;
@@ -156,8 +158,10 @@
             transform-origin: center center;
 
             @media (max-width: 768px) {
-              width: 4rem;
-              height: 4rem;
+              //width: 4rem;
+              //height: 4rem;
+              //bottom: 15%;
+              //right: 15%;
             }
 
 
@@ -391,7 +395,7 @@
 
             .music-link {
               bottom: 10%;
-              right: -25%;
+              right: -15%;
               width: 3rem;
               height: 3rem;
             }
@@ -427,9 +431,14 @@
     }
 
     .description-container {
-      font-size: 0.8rem;
+      font-size: 1rem;
       padding: 1rem 0 1rem 0;
       flex: 1;
+
+      @media (max-width: 768px) {
+        font-size: 0.8rem;
+      }
+
       //height: 25%;
     }
 
