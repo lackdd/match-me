@@ -11,6 +11,87 @@
   overflow-y: scroll;
   padding: 0 1rem 0 1rem;
 
+  .location-toggle {
+    display: flex;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid variables.$input-border-grey;
+    background-color: white;
+  }
+
+  .location-option {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    cursor: pointer;
+    background-color: white;
+    transition: all 0.2s ease;
+    color: black;
+
+    &.active {
+      background-color: variables.$main-pink;
+      font-weight: bold;
+    }
+
+    &:hover:not(.active) {
+      background-color: white;
+    }
+  }
+
+  .current-location-display {
+    //margin-top: 10px;
+    padding: 7.5px 12px;
+    border-radius: 10px;
+    border: 1px solid variables.$input-border-grey;
+    background-color: white;
+
+    .location-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+
+      .location-name {
+        font-weight: bold;
+        //margin-bottom: 5px;
+        color: black;
+      }
+
+      .coordinates {
+        font-size: 0.8em;
+        color: #666;
+        text-align: center;
+        margin-left: 1rem;
+      }
+
+    }
+
+    .loading-location {
+      color: #666;
+      font-style: italic;
+    }
+
+    .location-error {
+      color: variables.$error-red;
+
+      .error-details {
+        font-size: 0.8em;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .distance-labels {
+    display: flex !important;
+    justify-content: space-between;
+
+    span {
+      color: variables.$input-border-grey;
+    }
+  }
+
 
   .form-title {
     width: 100%;
@@ -54,4 +135,5 @@
   @media (min-width: 768px) {
     justify-content: center;
   }
+
 }
