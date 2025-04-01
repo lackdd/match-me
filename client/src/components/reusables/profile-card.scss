@@ -137,19 +137,21 @@
             box-sizing: border-box;  // Ensure box-sizing is consistent
 
             @media (max-width: 768px) {
-              max-width: 20rem;
+              //max-width: 20rem;
+              max-width: 90%;
+              max-height: 90%;
             }
           }
 
           .music-link {
-            z-index: 10;
+            z-index: 5;
             position: absolute;
             bottom: 15%;
-            right: 15%;
+            right: 0;
             //width: clamp(3rem, 5vw, 6rem);
             //height: clamp(3rem, 5vw, 6rem);
-            width: 4rem;
-            height: 4rem;
+            width: 3.5rem;
+            height: 3.5rem;
             color: white;
             font-size: 1rem;
             text-align: center;
@@ -157,11 +159,9 @@
             transition: all 0.1s ease-in-out;
             transform-origin: center center;
 
-            @media (max-width: 768px) {
-              //width: 4rem;
-              //height: 4rem;
-              //bottom: 15%;
-              //right: 15%;
+            @media (min-width: 768px) {
+              bottom: 15%;
+              right: 15%;
             }
 
 
@@ -395,9 +395,9 @@
 
             .music-link {
               bottom: 10%;
-              right: -15%;
-              width: 3rem;
-              height: 3rem;
+              right: -10%;
+              //width: 3rem;
+              //height: 3rem;
             }
 
           }
