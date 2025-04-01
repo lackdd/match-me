@@ -5,69 +5,65 @@
   @include variables.centered-column;
 
   .support-form {
-    @include variables.centered-column;
+	@include variables.centered-column;
 
-    form {
-      display: flex;
-      flex-direction: column;
-      //gap: 2.5rem;
+	form {
+	  display: flex;
+	  flex-direction: column;
 
-      label {
-        margin: 0 0 2.5rem 0;
-      }
+	  label {
+		margin: 0 0 2.5rem 0;
+	  }
 
-      label#email {
-        height: 2.375rem;
-        //font-size: 1rem;
-      }
+	  label#email {
+		height: 2.375rem;
+	  }
 
-      label#support {
-        height: 12rem;
-        font-size: 1.5rem;
-      }
+	  label#support {
+		height: 12rem;
+		font-size: 1.5rem;
+	  }
 
-      input, textarea {
-        width: 100%;
-        height: 100%;
-        padding: 0.5rem;
-        box-sizing: border-box;
-        resize: none;
-      }
+	  input, textarea {
+		width: 100%;
+		height: 100%;
+		padding: 0.5rem;
+		box-sizing: border-box;
+		resize: none;
+	  }
 
-      .submit-button {
-        background-color: variables.$main-pink;
-        border: none;
-      }
-    }
+	  .submit-button {
+		background-color: variables.$main-pink;
+		border: none;
+	  }
+	}
   }
+
   .error-message {
-    color: red;
-    text-align: center;
-    height: 1rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
+	color: red;
+	text-align: center;
+	height: 1rem;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+	font-size: 0.875rem;
   }
 
   .hidden {
-    opacity: 0;
+	opacity: 0;
   }
 
   .visible {
-    opacity: 100%;
+	opacity: 100%;
   }
 
   .error {
-    background-color: variables.$error-red;
-    accent-color: variables.$error-red;
+	background-color: variables.$error-red;
+	accent-color: variables.$error-red;
 
-    &:focus {
-      background-color: white !important;
-      //color: black;
-    }
-
+	&:focus {
+	  background-color: white !important;
+	}
   }
-
 }
 
 

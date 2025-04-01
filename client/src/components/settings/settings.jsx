@@ -1,5 +1,4 @@
-import './settings.scss'
-import {Link} from 'react-router-dom';
+import './settings.scss';
 
 function Settings() {
 	return (

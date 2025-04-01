@@ -3,222 +3,208 @@
 .login-container {
   @include variables.whole-page;
   @include variables.centered-column;
-  //justify-items: center; // works as well now instead of flexbox
-  //align-content: center;
   position: relative;
 
   .login-form {
-    @extend .login-container; // same as .login-container
-    justify-content: center;
-    align-items: flex-start;
-    max-width: 25.25rem;
-    width: 90%;
-    height: 36.25rem;
-    gap: 1.2rem;
+	@extend .login-container; // same as .login-container
+	justify-content: center;
+	align-items: flex-start;
+	max-width: 25.25rem;
+	width: 90%;
+	height: 36.25rem;
+	gap: 1.2rem;
 
-    //@media (max-width: 768px) {
-    //  width: 90vw;
-    //}
+	h1 {
+	  font-size: variables.$font-size-h1;
+	  letter-spacing: 0.1rem;
+	}
 
-    h1 {
-      font-size: variables.$font-size-h1;
-      letter-spacing: 0.1rem;
-    }
+	h2 {
+	  font-size: variables.$font-size-h2;
+	}
 
-    h2 {
-      font-size: variables.$font-size-h2;
-    }
+	.form-title {
+	  margin-bottom: 2.5rem;
+	}
 
-    .form-title {
-      margin-bottom: 2.5rem;
-    }
+	label {
+	  width: 100%;
+	}
 
+	#label-password {
+	  display: flex;
+	  flex-direction: row;
+	}
 
+	.error-border {
+	  border-color: red;
+	  text-align: left;
+	}
 
-    label {
-      width: 100%;
-    }
+	.password-input {
+	  margin: 0;
+	}
 
-    #label-password {
-      display: flex;
-      flex-direction: row;
-    }
+	#forgot-password {
+	  font-size: 0.85rem;
+	  text-decoration: none;
+	  color: variables.$main-blue;
 
+	  &:hover {
+		color: variables.$main-blue-80;
+	  }
 
-    .error-border {
-      border-color: red;
-      text-align: left;
-    }
+	  &:active {
+		color: variables.$main-blue-20;
+	  }
+	}
 
-    .password-input {
-      margin: 0;
-    }
+	#remember-me-input {
+	  cursor: pointer;
+	  border-radius: 100px;
+	  font-size: 0.6rem;
+	  margin: 0;
+	  width: 1.25rem;
+	  height: 1.25rem;
 
-    #forgot-password {
-      font-size: 0.85rem;
-      text-decoration: none;
-      color: variables.$main-blue;
+	  &:checked {
+		accent-color: variables.$main-pink;
+	  }
+	}
 
-      &:hover {
-        color: variables.$main-blue-80;
-      }
+	#remember-me-label {
+	  font-size: 0.85rem;
+	  width: 100%;
+	  display: flex;
+	  flex-direction: row;
+	  align-items: center;
+	  margin-top: 2rem;
+	}
 
-      &:active {
-        color: variables.$main-blue-20;
-      }
+	.login-button {
+	  background-color: variables.$main-blue;
+	  border: 1px variables.$main-blue;
 
-    }
+	  &:hover {
+		background-color: variables.$main-blue-80;
+	  }
 
-    #remember-me-input {
-      cursor: pointer;
-      border-radius: 100px;
-      font-size: 0.6rem;
-      margin: 0;
-      width: 1.25rem;
-      height: 1.25rem;
-
-      &:checked {
-        accent-color: variables.$main-pink;
-      }
-    }
-
-    #remember-me-label {
-      font-size: 0.85rem;
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-top: 2rem;
-    }
-
-    .login-button {
-      background-color: variables.$main-blue;
-      border: 1px variables.$main-blue;
-
-      &:hover {
-        background-color: variables.$main-blue-80;
-      }
-
-      &:active {
-        background-color: variables.$main-blue-20;
-      }
-    }
+	  &:active {
+		background-color: variables.$main-blue-20;
+	  }
+	}
   }
 
   .error-message {
-    color: red;
-    text-align: center;
-    height: 1rem;
-    margin-top: 0.5rem;
+	color: red;
+	text-align: center;
+	height: 1rem;
+	margin-top: 0.5rem;
   }
 
   .hidden {
-    opacity: 0;
+	opacity: 0;
   }
 
   .visible {
-    opacity: 100%;
+	opacity: 100%;
   }
 
   #no-account-label {
-    text-align: center;
-    transition: 0.1s all ease;
-    display: block;
-    position: absolute;
-    bottom: 2rem;
+	text-align: center;
+	transition: 0.1s all ease;
+	display: block;
+	position: absolute;
+	bottom: 2rem;
 
-    a {
-      color: variables.$main-pink;
+	a {
+	  color: variables.$main-pink;
 
-      &:hover {
-        color: variables.$main-pink-80;
-      }
+	  &:hover {
+		color: variables.$main-pink-80;
+	  }
 
-      &:active {
-        color: variables.$main-pink-20;
-      }
-
-    }
+	  &:active {
+		color: variables.$main-pink-20;
+	  }
+	}
   }
 
   .with-button {
-    position: relative;
+	position: relative;
 
-    .number-buttons {
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      right: 0;
-      top: 1.5px;
-      justify-content: flex-start;
-      align-items: flex-start;
-      margin-right: 0.15rem;
-      height: 1.375rem;
+	.number-buttons {
+	  display: flex;
+	  flex-direction: column;
+	  position: absolute;
+	  right: 0;
+	  top: 1.5px;
+	  justify-content: flex-start;
+	  align-items: flex-start;
+	  margin-right: 0.15rem;
+	  height: 1.375rem;
 
-      button.number-field {
-        @include variables.centered-column;
-        height: 1.0875rem;
-        width: 2.375rem;
-        border: none;
-        background: transparent;
-        color: variables.$input-border-grey;
-        box-shadow: none;
-        display: flex;
+	  button.number-field {
+		@include variables.centered-column;
+		height: 1.0875rem;
+		width: 2.375rem;
+		border: none;
+		background: transparent;
+		color: variables.$input-border-grey;
+		box-shadow: none;
+		display: flex;
 
-        &:hover, &:focus, &:active {
-          color: rgb(21,21,21);
-        }
+		&:hover, &:focus, &:active {
+		  color: rgb(21, 21, 21);
+		}
 
-        &:focus-visible {
-          outline: 1px solid black;
-        }
+		&:focus-visible {
+		  outline: 1px solid black;
+		}
 
-        svg {
-          height: 1.25rem;
-          width: 1.25rem;
-        }
-      }
-    }
+		svg {
+		  height: 1.25rem;
+		  width: 1.25rem;
+		}
+	  }
+	}
 
-    button.show-password {
-      @include variables.centered-column;
-      position: absolute;
-      right: 0;
-      top: 0;
-      margin-right: 5px;
-      height: 2.375rem;
-      width: 2.375rem;
-      border: none;
-      background: transparent;
-      color: variables.$input-border-grey;
-      box-shadow: none;
-      display: flex;
+	button.show-password {
+	  @include variables.centered-column;
+	  position: absolute;
+	  right: 0;
+	  top: 0;
+	  margin-right: 5px;
+	  height: 2.375rem;
+	  width: 2.375rem;
+	  border: none;
+	  background: transparent;
+	  color: variables.$input-border-grey;
+	  box-shadow: none;
+	  display: flex;
 
-      &:hover, &:focus, &:active {
-        color: rgb(21,21,21);
-      }
+	  &:hover, &:focus, &:active {
+		color: rgb(21, 21, 21);
+	  }
 
-      &:focus-visible {
-        outline: 1px solid black;
-      }
+	  &:focus-visible {
+		outline: 1px solid black;
+	  }
 
-      svg {
-        height: 1.25rem;
-        width: 1.25rem;
-      }
-    }
-
-
+	  svg {
+		height: 1.25rem;
+		width: 1.25rem;
+	  }
+	}
   }
 
   .error {
-    background-color: variables.$error-red;
-    accent-color: variables.$error-red;
+	background-color: variables.$error-red;
+	accent-color: variables.$error-red;
 
-    &:focus {
-      background-color: white !important;
-      //color: black;
-    }
-
+	&:focus {
+	  background-color: white !important;
+	  //color: black;
+	}
   }
 }

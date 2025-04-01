@@ -10,324 +10,278 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  //padding-left: 120px;
-  //padding-right: 120px;
   padding-left: clamp(0.2rem, 6vw, 8rem);
   padding-right: clamp(0.2rem, 6vw, 8rem);
 
   &.default {
-    display: flex;
-    position: sticky;
-    top: 0;
+	display: flex;
+	position: sticky;
+	top: 0;
   }
 
   &.mobile {
-    display: none;
+	display: none;
   }
 
   @media (max-width: 768px) {
-    &.default {
-      display: none; // Hide on small screens
-    }
-    &.mobile {
-      display: flex; // Show mobile nav
-      position: fixed;  // Make it stick to the bottom
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 4rem;
-      justify-content: center;
-      align-items: center;
-    }
+	&.default {
+	  display: none; // Hide on small screens
+	}
+	&.mobile {
+	  display: flex; // Show mobile nav
+	  position: fixed; // Make it stick to the bottom
+	  bottom: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 4rem;
+	  justify-content: center;
+	  align-items: center;
+	}
   }
 
-
-
-
   .logo-container {
+	.nav-bar-logo {
+	  width: 11.75rem;
+	  fill: none;
 
-    .nav-bar-logo {
-      width: 11.75rem;
-      fill: none;
+	  &:active {
+		transform: scale(1.05);
+		transition: transform 0.2s ease;
+	  }
 
-      &:active {
-        transform: scale(1.05);
-        transition: transform 0.2s ease;
-      }
+	  &:hover {
+		filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+		transition: hover 0.2s ease;
+	  }
 
-      &:hover {
-        filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
-        transition: hover 0.2s ease;
-      }
+	  & > svg {
+		height: 1.6rem;
+		width: 1.6rem;
+		color: inherit;
+	  }
 
-      & > svg {
-        height: 1.6rem;
-        width: 1.6rem;
-        color: inherit;
-      }
-
-      @media (max-width: 768px) {
-        width: 2.5rem;
-
-      }
-    }
+	  @media (max-width: 768px) {
+		width: 2.5rem;
+	  }
+	}
   }
 
   .links-container {
-    display: flex;
-    flex-direction: row;
-    //gap: 0.625rem;
-    width: 25rem;
-    //justify-content: space-between;
-    justify-content: center;
-    gap: clamp(1rem, -2.393rem + 9.048vw, 5.75rem);
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-    font-weight: 600;
+	display: flex;
+	flex-direction: row;
+	//gap: 0.625rem;
+	width: 25rem;
+	//justify-content: space-between;
+	justify-content: center;
+	gap: clamp(1rem, -2.393rem + 9.048vw, 5.75rem);
+	padding-left: 1.25rem;
+	padding-right: 1.25rem;
+	font-weight: 600;
 
-    .hamburger {
-      all: unset;
-      color: black;
-      background-color: transparent;
-      border: none;
-      //text-align: center;
-      display: flex;
-      //align-items: center;
-      //transition: background 0.3s ease, color 0.3s ease;
-      //transition: all 0.3s ease-in-out;
-      cursor: pointer;
+	.hamburger {
+	  all: unset;
+	  color: black;
+	  background-color: transparent;
+	  border: none;
+	  display: flex;
+	  cursor: pointer;
 
-      svg {
-        &:active {
-          transform: scale(1.05);
-          transition: transform 0.2s ease;
-        }
+	  svg {
+		&:active {
+		  transform: scale(1.05);
+		  transition: transform 0.2s ease;
+		}
 
-        &:hover {
-          filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
-          transition: hover 0.2s ease;
-        }
-      }
+		&:hover {
+		  filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+		  transition: hover 0.2s ease;
+		}
+	  }
+	}
 
-    }
+	@supports (backdrop-filter: blur(5px)) {
+	  .hamburger-links {
+		z-index: -1;
+		position: fixed;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 5vh;
+		left: 0;
+		top: 0;
+		width: 100vw;
+		height: 100vh;
+		padding-top: 35vh;
+		backdrop-filter: blur(5px);
+		text-align: center;
+		font-size: 1.5rem;
+		// Initially hidden
+		transform: translateY(100%);
+		opacity: 0;
+		// Keyframe animation for sliding in/out
+		animation: slideOut 0.2s ease-out forwards; // Default to slide out
+		&.open {
+		  animation: slideIn 0.2s ease-out forwards; // When open, slide in
+		}
 
-    @supports (backdrop-filter: blur(5px))
-    { .hamburger-links {
-      z-index: -1;
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5vh;
-      left: 0;
-      top: 0;
-      /*top: 80px;*/
-      /*right: -1em;*/
-      width: 100vw;
-      height: 100vh;
-      padding-top: 35vh;
-      /*padding-bottom: 15vh;*/
-      backdrop-filter: blur(5px);
-      /*background: rgba(0, 0, 0, 0.5);*/
-      text-align: center;
-      font-size: 1.5rem;
+		a {
+		  color: white;
+		  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+		}
+	  }
+	}
+	@media (max-width: 768px) {
+	  justify-content: space-around;
+	  svg {
+		width: 2.25rem;
+		height: 2.25rem;
+	  }
+	}
 
-      // Initially hidden
-      transform: translateY(100%);
-      opacity: 0;
+	a {
+	  text-decoration: none;
+	  color: black;
 
-      // Keyframe animation for sliding in/out
-      animation: slideOut 0.2s ease-out forwards; // Default to slide out
+	  &.current {
+		color: variables.$main-pink;
+	  }
 
-      &.open {
-        animation: slideIn 0.2s ease-out forwards; // When open, slide in
-      }
-
-      a {
-        color: white;
-        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-      }
-    }
-    }
-
-
-    @media (max-width: 768px) {
-      justify-content: space-around;
-
-      svg {
-        width: 2.25rem;
-        height: 2.25rem;
-      }
-    }
-
-
-    a {
-      text-decoration: none;
-      color: black;
-
-      &.current {
-        color: variables.$main-pink;
-      }
-
-      &:hover,
-      &:active,
-      &:focus {
-        color: variables.$main-pink;
-      }
-
-    }
+	  &:hover,
+	  &:active,
+	  &:focus {
+		color: variables.$main-pink;
+	  }
+	}
   }
 
   .nav-buttons-container {
-    border: 1px solid black;
-    border-radius: 100px;
-    display: flex;
-    width: 16rem;
-    height: 3.125rem;
-    background-color: white;
-    box-shadow: variables.$default-button-shadow;
-    position: relative;
+	border: 1px solid black;
+	border-radius: 100px;
+	display: flex;
+	width: 16rem;
+	height: 3.125rem;
+	background-color: white;
+	box-shadow: variables.$default-button-shadow;
+	position: relative;
 
+	.mobile-login {
+	  &:active {
+		transform: scale(1.05);
+		transition: transform 0.2s ease;
+	  }
 
-    .mobile-login {
-      &:active {
-        transform: scale(1.05);
-        transition: transform 0.2s ease;
-      }
+	  &:hover {
+		filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+		transition: hover 0.2s ease;
+	  }
+	}
 
-      &:hover {
-        filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
-        transition: hover 0.2s ease;
-      }
-    }
+	&:has(.signup:hover),
+	&:has(.login:hover) {
+	  box-shadow: none; // Remove shadow when either button is hovered
+	}
 
+	@media (max-width: 768px) {
+	  all: unset;
+	  width: 2.5rem;
+	  border: none;
+	  box-shadow: none;
+	  background-color: transparent;
+	  svg {
+		width: 2.5rem;
+		height: 2.5rem;
+		color: black;
+	  }
+	}
 
-    &:has(.signup:hover),
-    &:has(.login:hover) {
-      box-shadow: none; // Remove shadow when either button is hovered
-    }
+	button {
+	  border: none;
+	  padding: 0.625rem 0.625rem * 2;
+	  font-size: variables.$font-size-large-button;
+	  font-weight: variables.$font-weight-large-button;
+	  text-overflow: ellipsis;
+	  overflow: hidden;
+	  white-space: nowrap;
+	  position: absolute;
+	  @media (max-width: 768px) {
+		all: unset;
+	  }
+	}
 
-    @media (max-width: 768px) {
-      all: unset;
-      width: 2.5rem;
-      border: none;
-      box-shadow: none;
-      background-color: transparent;
+	.signup {
+	  box-shadow: none;
+	  cursor: pointer;
+	  color: white;
+	  background-color: variables.$main-pink;
+	  width: 9.75rem;
+	  height: 100%;
+	  z-index: 2;
+	  left: 0;
+	  top: 50%; // Align the top edge of the button to the middle
+	  transform: translateY(-50%); // Move the button up by half its height
+	}
 
-      svg {
-        width: 2.5rem;
-        height: 2.5rem;
-        color: black;
-      }
+	.signup:hover {
+	  width: 100%;
+	  box-shadow: variables.$upper-inset-shadow-hover;
 
-    }
+	  ~ .login {
+	  }
+	}
 
+	.signup:active {
+	  box-shadow: variables.$upper-inset-shadow-click;
+	}
 
-    button {
-      border: none;
-      padding: 0.625rem 0.625rem * 2;
-      font-size: variables.$font-size-large-button;
-      font-weight: variables.$font-weight-large-button;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      position: absolute;
+	.login {
+	  box-shadow: none;
+	  cursor: pointer;
+	  color: variables.$main-blue;
+	  background-color: white;
+	  width: 6.25rem;
+	  height: 100%;
+	  z-index: 1;
+	  right: 0;
+	  top: 50%; // Align the top edge of the button to the middle
+	  transform: translateY(-50%); // Move the button up by half its height
+	}
 
+	.login:hover {
+	  width: 100%;
+	  background-color: variables.$main-blue;
+	  color: white;
+	  z-index: 2;
+	  box-shadow: variables.$upper-inset-shadow-hover;
 
+	  ~ .signup {
+		z-index: 1;
+		box-shadow: none;
+	  }
+	}
 
-      @media (max-width: 768px) {
-        all: unset;
-      }
-    }
-
-    .signup {
-      box-shadow: none;
-      cursor: pointer;
-      color: white;
-      background-color: variables.$main-pink;
-      width: 9.75rem;
-      height: 100%;
-      z-index: 2;
-      left: 0;
-      top: 50%; // Align the top edge of the button to the middle
-      transform: translateY(-50%); // Move the button up by half its height
-    }
-
-    .signup:hover {
-      width: 100%;
-      box-shadow: variables.$upper-inset-shadow-hover;
-
-      ~ .login {
-        //display: none;
-        //visibility: hidden; // Keeps the layout intact
-        //opacity: 0;         // Smoothly fade it out
-        //width: 0;
-        //padding: 0;
-      }
-
-    }
-
-    .signup:active {
-      box-shadow: variables.$upper-inset-shadow-click;
-    }
-
-    .login {
-      box-shadow: none;
-      cursor: pointer;
-      color: variables.$main-blue;
-      background-color: white;
-      width: 6.25rem;
-      height: 100%;
-      z-index: 1;
-      right: 0;
-      top: 50%; // Align the top edge of the button to the middle
-      transform: translateY(-50%); // Move the button up by half its height
-    }
-
-    .login:hover {
-      width: 100%;
-      background-color: variables.$main-blue;
-      color: white;
-      z-index: 2;
-      box-shadow: variables.$upper-inset-shadow-hover;
-
-      ~ .signup {
-        z-index: 1;
-        box-shadow: none;
-        //display: none;
-        //visibility: hidden; // Keeps the layout intact
-        //opacity: 0;         // Smoothly fade it out
-        //width: 0;
-        //padding: 0;
-      }
-    }
-
-    .login:active {
-      box-shadow: variables.$upper-inset-shadow-click;
-    }
-
+	.login:active {
+	  box-shadow: variables.$upper-inset-shadow-click;
+	}
   }
 
   @keyframes slideIn {
-    0% {
-      transform: translateY(100%);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(0);
-      opacity: 1;
-    }
+	0% {
+	  transform: translateY(100%);
+	  opacity: 0;
+	}
+	100% {
+	  transform: translateY(0);
+	  opacity: 1;
+	}
   }
-
   @keyframes slideOut {
-    0% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(100%);
-      opacity: 0;
-    }
+	0% {
+	  transform: translateY(0);
+	  opacity: 1;
+	}
+	100% {
+	  transform: translateY(100%);
+	  opacity: 0;
+	}
   }
-
 }

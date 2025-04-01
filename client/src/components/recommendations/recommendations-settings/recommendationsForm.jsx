@@ -1,16 +1,15 @@
 
 // step 5 of registration
-import Select, {mergeStyles} from 'react-select';
+import Select from 'react-select';
 import {
 	genreOptions,
 	goalsOptions,
 	matchAgeOptions,
 	matchGenderOptions,
 	matchExperienceOptions,
-	methodsOptions, matchLocationsOptions, genderOptions, interestsOptions, personalityTraitsOptions
+	methodsOptions, matchLocationsOptions,
 } from '../../reusables/inputOptions.jsx';
 import {customStyles} from '../../reusables/customInputStyles.jsx';
-import {extraFormStyles} from '../../dashboard/dashboard-settings/extraFormStyles.jsx';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {recommendationsFormValidationSchema} from './recommendationsFormValidationSchema.jsx';
@@ -23,7 +22,6 @@ import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 
 
 export function RecommendationsForm({preferencesData, setPreferencesData, setLoading, resetMatches}) {
-	const combinedStyles = mergeStyles(customStyles, extraFormStyles);
 	const { tokenValue } = useAuth();
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -156,7 +154,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						placeholder='Choose 1-3 genres'
 						options={genreOptions}
 						isOptionDisabled={() => (watch('idealMatchGenres') || []).length >= 3}
-						styles={combinedStyles}
+						styles={customStyles}
 						value={watch('idealMatchGenres')}
 						// value={watch('idealMatchGenres') || preferencesData.idealMatchGenres}
 						isValid={!errors.idealMatchGenres && (watch('idealMatchGenres') || []).length > 0}
@@ -197,7 +195,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						placeholder='Choose 1-3 methods'
 						options={methodsOptions}
 						isOptionDisabled={() => (watch('idealMatchMethods') || []).length >= 3}
-						styles={combinedStyles}
+						styles={customStyles}
 						value={watch('idealMatchMethods')}
 						// value={watch('idealMatchMethods') || preferencesData.idealMatchMethods}
 						isValid={!errors.idealMatchMethods && (watch('idealMatchMethods') || []).length > 0}
@@ -236,7 +234,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						placeholder='Choose 1-3 goals'
 						options={goalsOptions}
 						isOptionDisabled={() => (watch('idealMatchGoals') || []).length >= 3}
-						styles={combinedStyles}
+						styles={customStyles}
 						value={watch('idealMatchGoals')}
 						// value={watch('idealMatchGoals') || preferencesData.idealMatchGoals}
 						isValid={!errors.idealMatchGoals && (watch('idealMatchGoals') || []).length > 0}
@@ -271,7 +269,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						name={'idealMatchGender'}
 						placeholder='Select gender'
 						options={matchGenderOptions}
-						styles={combinedStyles}
+						styles={customStyles}
 						value={watch('idealMatchGender')}
 						// value={watch('idealMatchGender') || preferencesData.idealMatchGender}
 						isValid={!errors.idealMatchGender && watch('idealMatchGender')}
@@ -305,7 +303,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						name={'idealMatchAge'}
 						placeholder='Select age gap'
 						options={matchAgeOptions}
-						styles={combinedStyles}
+						styles={customStyles}
 						value={watch('idealMatchAge')}
 						// value={watch('idealMatchAge') || preferencesData.idealMatchAge}
 						isValid={!errors.idealMatchAge && watch('idealMatchAge')}
@@ -342,7 +340,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						name={'idealMatchYearsOfExperience'}
 						placeholder='Select experience'
 						options={matchExperienceOptions}
-						styles={combinedStyles}
+						styles={customStyles}
 						value={watch('idealMatchYearsOfExperience')}
 						// value={watch('idealMatchYearsOfExperience') || preferencesData.idealMatchYearsOfExperience}
 						isValid={!errors.idealMatchYearsOfExperience && watch('idealMatchYearsOfExperience')}
@@ -376,7 +374,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						name={'idealMatchLocation'}
 						placeholder='Select proximity'
 						options={matchLocationsOptions}
-						styles={combinedStyles}
+						styles={customStyles}
 						value={watch('idealMatchLocation')}
 						// value={watch('idealMatchLocation') || preferencesData.idealMatchLocation}
 						isValid={!errors.idealMatchLocation && watch('idealMatchLocation')}

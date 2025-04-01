@@ -7,8 +7,8 @@
   font-size: 0.7rem;
 
   .error-text {
-    text-align: right;
-    padding-right: 5px;
+	text-align: right;
+	padding-right: 5px;
   }
 }
 
@@ -17,16 +17,15 @@
   accent-color: variables.$error-red;
 
   &:focus {
-    background-color: white !important;
-    //color: black;
+	background-color: white !important;
+	//color: black;
   }
-
 }
 
 .valid {
   background-color: variables.$valid-green;
 
   &:focus {
-    background-color: white;
+	background-color: white;
   }
 }

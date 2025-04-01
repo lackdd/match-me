@@ -1,12 +1,13 @@
 import {IoIosArrowDown, IoIosArrowUp} from 'react-icons/io';
 
+// custom increment and decrement buttons for number fields such as age and experience
 export function IncrementDecrementButtons({id, watch, setValue, trigger, setFormData}) {
 	return (
 		<div
 			className={'number-buttons'}
 			onClick={(e) => {
-				e.preventDefault()
-				trigger(id)
+				e.preventDefault();
+				trigger(id);
 			}}
 		>
 			<button
@@ -18,17 +19,12 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger, setForm
 					if (document.activeElement.id !== id) {
 						document.getElementById(id).focus();
 					}
-					// if (!watch(id)) {
-					// 	setValue(id, 1);
-					// } else {
-					// 	setValue(id, parseInt(watch(id)) + 1);
-					// }
 					const currentValue = watch(id) ? parseInt(watch(id)) : 0;
 					const newValue = currentValue + 1;
-					setValue(id, newValue, { shouldValidate: true });
+					setValue(id, newValue, {shouldValidate: true});
 
 					if (setFormData) {
-						setFormData((prev) => ({ ...prev, [id]: newValue }));
+						setFormData((prev) => ({...prev, [id]: newValue}));
 					}
 
 					console.log(watch(id));
@@ -44,21 +40,16 @@ export function IncrementDecrementButtons({id, watch, setValue, trigger, setForm
 					if (document.activeElement.id !== id) {
 						document.getElementById(id).focus();
 					}
-					// if (!watch(id)) {
-					// 	setValue(id, 1);
-					// } else {
-					// 	setValue(id, parseInt(watch(id)) - 1);
-					// }
 					const currentValue = watch(id) ? parseInt(watch(id)) : 0;
 					const newValue = Math.max(0, currentValue - 1);
-					setValue(id, newValue, { shouldValidate: true });
+					setValue(id, newValue, {shouldValidate: true});
 					if (setFormData) {
-						setFormData((prev) => ({ ...prev, [id]: newValue }));
+						setFormData((prev) => ({...prev, [id]: newValue}));
 					}
 					console.log(watch(id));
 				}}>
 				<IoIosArrowDown/>
 			</button>
 		</div>
-	)
+	);
 }

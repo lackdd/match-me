@@ -1,5 +1,4 @@
 @use '../../variables';
-
 // settings popup
 .settings-popup {
   display: none;
@@ -18,78 +17,63 @@
   overflow: auto;
   backdrop-filter: blur(10px);
 
-
   .settings-content {
-    @include variables.centered-column;
-    width: 50%;
-    height: 100%;
-    //
-    //@media (max-width: 768px) {
-    //  width: 70%;
-    //}
-    //
-    //
-    //@media (max-width: 440px) {
-    //  width: 100%;
-    //}
+	@include variables.centered-column;
+	width: 50%;
+	height: 100%;
 
+	.tc-container {
+	  height: 70%;
+	  width: 80vw;
+	  color: white;
+	  display: flex;
+	  flex-direction: column;
+	  overflow-x: hidden;
+	  overflow-y: auto;
+	  align-items: center;
+	  justify-content: flex-start;
 
-    .tc-container {
-      height: 70%;
-      width: 80vw;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      overflow-y: auto;
-      align-items: center;
-      justify-content: flex-start;
+	  h1 {
+		margin-bottom: 2rem;
+	  }
 
-      h1 {
-        margin-bottom: 2rem;
-      }
+	  p {
+		text-align: left;
+	  }
+	}
 
-      p {
-        text-align: left;
-      }
-    }
+	.settings-buttons-container {
+	  width: 60%;
+	  display: flex;
+	  flex-direction: row;
+	  align-items: center;
+	  justify-content: space-between;
+	  //margin-bottom: auto;
+	  padding-left: 20px;
+	  padding-right: 20px;
 
+	  button {
+		width: 5rem;
+		display: flex;
+		place-items: center;
+		align-items: center;
+		justify-content: center;
+		border: none;
+		border-radius: 50px;
+		color: white;
+		padding: 10px 20px;
+	  }
 
-    .settings-buttons-container {
-      width: 60%;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      //margin-bottom: auto;
-      padding-left: 20px;
-      padding-right: 20px;
+	  .save {
+		background-color: variables.$button-green;
+	  }
 
-      button {
-        width: 5rem;
-        display: flex;
-        place-items: center;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        border-radius: 50px;
-        color: white;
-        padding: 10px 20px;
-      }
-
-      .save {
-        background-color: variables.$button-green;
-      }
-
-      .cancel {
-        background-color: variables.$button-red;
-      }
-
-    }
-
+	  .cancel {
+		background-color: variables.$button-red;
+	  }
+	}
   }
 }
-
 
 // settings button
 .settings-container {
@@ -109,26 +93,24 @@
   cursor: pointer;
 
   &:hover {
-    scale: 1.1;
+	scale: 1.1;
   }
 
   .settings-button {
-    all: unset;
-    color: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	all: unset;
+	color: black;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-    svg {
-      width: 1.75rem;
-      height: 1.75rem;
+	svg {
+	  width: 1.75rem;
+	  height: 1.75rem;
 
-      &:hover {
-
-      }
-    }
+	  &:hover {
+	  }
+	}
   }
-
 }
 
 .close-settings {
@@ -142,16 +124,16 @@
   cursor: pointer;
 
   svg {
-    width: 2rem;
-    height: 2rem;
-    transition: transform 0.2s ease-in-out;
+	width: 2rem;
+	height: 2rem;
+	transition: transform 0.2s ease-in-out;
 
-    &:hover {
-      transform: rotate(-90deg);
-    }
+	&:hover {
+	  transform: rotate(-90deg);
+	}
 
-    &:active {
-      transform: scale(1.1);
-    }
+	&:active {
+	  transform: scale(1.1);
+	}
   }
 }

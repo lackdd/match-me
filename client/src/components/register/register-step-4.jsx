@@ -1,4 +1,3 @@
-
 // step 4 of registration
 import {AdvancedImage} from '@cloudinary/react';
 import {getOptimizedImage} from '../utils/cloudinary.jsx';
@@ -9,11 +8,12 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 	const [loadingImage, setLoadingImage] = useState(false);
 
 	return (
-		<form className={"step-four"}
+		<form className={'step-four'}
 			  onSubmit={(e) => {
 				  stepFunctions.AddStep(e);
-			  e.preventDefault()}}
-			  autoComplete={"off"}
+				  e.preventDefault();
+			  }}
+			  autoComplete={'off'}
 			  noValidate
 		>
 			<div className='form-title picture-title'>
@@ -24,7 +24,7 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 			<div className={'photo-container'}>
 
 				{loadingImage && (
-					<div className="loading-image">
+					<div className='loading-image'>
 						<div className={'spinner-container'}>
 							<div className='spinner endless'>Loading picture...</div>
 						</div>
@@ -33,32 +33,17 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 
 				{!loadingImage && (
 					<>
-					{imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>}
-					{!image && <img src={"default_profile_picture.png"} alt={"default picture"}/>}
+						{imageUrl && <AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>}
+						{!image && <img src={'default_profile_picture.png'} alt={'default picture'}/>}
 					</>
 				)}
 
 			</div>
 			<div className={'submit-picture'}>
 
-				{/*<div className="upload-section">*/}
-				{/*	<h3>Upload Profile Picture</h3>*/}
-
-				{/*	/!* Upload Button *!/*/}
-				{/*	<input type="file" onChange={onImageChange} accept="image/*"/>*/}
-
-				{/*	/!* Show Image Preview After Upload *!/*/}
-				{/*	{imageUrl && (*/}
-				{/*		<div className="image-preview">*/}
-				{/*			<h4>Preview:</h4>*/}
-				{/*			<AdvancedImage cldImg={getOptimizedImage(imageUrl)}/>*/}
-				{/*		</div>*/}
-				{/*	)}*/}
-				{/*</div>*/}
-
-				<label className={"choose-picture"}>
+				<label className={'choose-picture'}>
 					<input type='file'
-						   accept={"image/*"}
+						   accept={'image/*'}
 						   name={'image'}
 						   onChange={(event) => onImageChange(event, setLoadingImage)}
 						   className='file-upload'/>
@@ -73,7 +58,7 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 				isValid={{}}
 			/>
 		</form>
-	)
+	);
 }
 
 export default Step4;

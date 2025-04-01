@@ -1,22 +1,34 @@
 import {
 	genreOptions,
-	methodsOptions,
-	interestsOptions,
-	personalityTraitsOptions,
 	goalsOptions,
+	interestsOptions,
+	methodsOptions,
+	personalityTraitsOptions
 } from '../reusables/inputOptions.jsx';
 import {customStyles} from '../reusables/customInputStyles.jsx';
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {stepTwoSchema} from './validationSchema.jsx';
 import {handleCloseMenu} from './register.jsx';
 import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
-import {useEffect} from 'react';
 
-export const CustomSelect = ({ options, id, name, placeholder, watch, setValue, trigger, errors, setError, clearErrors, setFormTwoData, data }) => {
+
+export const CustomSelect = ({
+								 options,
+								 id,
+								 name,
+								 placeholder,
+								 watch,
+								 setValue,
+								 trigger,
+								 errors,
+								 setError,
+								 clearErrors,
+								 setFormTwoData,
+								 data
+							 }) => {
 	return (
 		<div className={'line large'}>
 			<label id={id}>
@@ -25,7 +37,6 @@ export const CustomSelect = ({ options, id, name, placeholder, watch, setValue, 
 				<Select
 					className='basic-multi-select long'
 					classNamePrefix='select'
-					// components={makeAnimated()}
 					closeMenuOnSelect={false}
 					isClearable={true}
 					isSearchable={true}
@@ -58,12 +69,12 @@ export const CustomSelect = ({ options, id, name, placeholder, watch, setValue, 
 					}}
 					onBlur={() => trigger(id)} // Trigger validation when user leaves the field
 				/>
-				<ErrorElement errors={errors}  id={id}/>
+				<ErrorElement errors={errors} id={id}/>
 			</label>
 
 		</div>
-	)
-}
+	);
+};
 
 function Step2({formTwoData, setFormTwoData, stepFunctions, onSubmit}) {
 
@@ -76,11 +87,11 @@ function Step2({formTwoData, setFormTwoData, stepFunctions, onSubmit}) {
 		clearErrors,
 		setError,
 		trigger,
-		formState: { errors, isValid },
+		formState: {errors, isValid}
 	} = useForm({
 		defaultValues: formTwoData,
 		resolver: yupResolver(stepTwoSchema(formTwoData)),
-		mode: "onBlur",
+		mode: 'onBlur'
 	});
 
 	return (
@@ -102,7 +113,6 @@ function Step2({formTwoData, setFormTwoData, stepFunctions, onSubmit}) {
 				id={'preferredGenres'}
 				name={'genres'}
 				register={register}
-				// autoFocus={'on'}
 				watch={watch}
 				setValue={setValue}
 				trigger={trigger}
@@ -173,10 +183,10 @@ function Step2({formTwoData, setFormTwoData, stepFunctions, onSubmit}) {
 			/>
 
 			<PreviousNextButtons
-                DeductStep={stepFunctions.DeductStep}
+				DeductStep={stepFunctions.DeductStep}
 				errors={errors}
 				isValid={isValid}
-            />
+			/>
 		</form>
 	);
 }

@@ -2,252 +2,219 @@
 
 .recommendations-container {
   position: relative;
-  //min-height: 70vh;
   height: calc(100vh - 64px);
   @include variables.centered-column;
   justify-content: flex-start;
 
   .form-title {
-    margin-bottom: 2rem;
+	margin-bottom: 2rem;
   }
 
   .radius {
-    margin-bottom: 1rem;
+	margin-bottom: 1rem;
   }
 
   .user-stats-container {
-    text-align: center;
-    color: black;
-    height: 1.75rem;
-    margin-top: 0.5rem;
-
-    @media (min-width: 768px) {
-      margin-top: 1rem;
-    }
-
-    // for older screens with have more width and less height
-    @media (max-height: 750px) {
-      display: none;
-    }
-
+	text-align: center;
+	color: black;
+	height: 1.75rem;
+	margin-top: 0.5rem;
+	@media (min-width: 768px) {
+	  margin-top: 1rem;
+	}
+	// for older screens with have more width and less height
+	@media (max-height: 750px) {
+	  display: none;
+	}
   }
 
   .profile-card-container {
-    margin-top: 0.5rem;
-
-    @screen (max-width: 768px) {
-      margin-top: 0;
-    }
+	margin-top: 0.5rem;
+	@screen (max-width: 768px) {
+	  margin-top: 0;
+	}
   }
 
   .match-buttons-container {
-    width: 18rem;
-    height: 4rem;
-    border: 1px solid black;
-    border-radius: 50px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: variables.$default-button-shadow;
-    //padding: 0 0.75rem;
-    position: absolute;
-    bottom: 4.25rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.1s ease-in-out;
+	width: 18rem;
+	height: 4rem;
+	border: 1px solid black;
+	border-radius: 50px;
+	background-color: rgba(255, 255, 255, 0.9);
+	box-shadow: variables.$default-button-shadow;
+	position: absolute;
+	bottom: 4.25rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	transition: all 0.1s ease-in-out;
+	// for older screens with have more width and less height
+	@media (max-height: 700px) {
+	  bottom: 1rem !important;
+	}
 
-    // for older screens with have more width and less height
-    @media (max-height: 700px) {
-      bottom: 1rem !important;
-    }
+	&:has(.swiping) {
+	  padding: 0;
+	}
 
-    &:has(.swiping) {
-      padding: 0;
-    }
+	&.default {
+	  @media (max-width: 768px) {
+		display: none;
+	  }
+	}
 
-    &.default {
-      @media (max-width: 768px) {
-        display: none;
-      }
-    }
+	&.mobile-buttons {
+	  display: none;
+	  @media (max-width: 768px) {
+		display: flex
+	  }
+	}
 
-    &.mobile-buttons {
-      display: none;
+	&:has(.dislike-button.hidden) {
+	  justify-content: flex-end;
+	}
 
-      @media (max-width: 768px) {
-        display: flex
-      }
-    }
+	@media (max-width: 600px) {
+	  bottom: 2rem;
+	}
 
-    &:has(.dislike-button.hidden) {
-      justify-content: flex-end;
-    }
+	.like-button, .dislike-button {
+	  height: 3rem;
+	  width: 3rem;
+	  border: 1px solid black;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  position: relative;
+	  margin: 0.75rem;
+	  padding: 0;
+	  transition: all 0.2s ease-in;
+	  //&[data-swipe-progress] {
+	  //  width: calc(4rem + (var(--swipe-progress) * 100px));
+	  //  height: calc(4rem - 2px);
+	  //}
+	  &.hidden {
+		display: none;
+	  }
 
-    @media (max-width: 600px) {
-      bottom: 2rem;
-    }
+	  &.swiping {
+		width: 4rem;
+		border: none;
+		margin: 0;
+	  }
 
-    .like-button, .dislike-button {
-      height: 3rem;
-      width: 3rem;
-      border: 1px solid black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      margin: 0.75rem;
-      padding: 0;
-      transition: all 0.2s ease-in;
+	  .arrow {
+		display: none;
+		color: grey;
+		width: 1.5rem;
+		height: 1.5rem;
 
-      //&[data-swipe-progress] {
-      //  width: calc(4rem + (var(--swipe-progress) * 100px));
-      //  height: calc(4rem - 2px);
-      //}
+		&.hidden {
+		  display: none;
+		}
 
-      &.hidden {
-        display: none;
-      }
+		@media (max-width: 768px) {
+		  position: absolute;
+		  display: block;
+		}
 
-      &.swiping {
-        //scale: 1.3;
-        //height: calc(4rem - 2px);
-        //height: auto;
-        //max-height: calc(4rem - 2px);
-        //min-height: 3rem;
-        //width: calc(4rem + 15px);
-        width: 4rem;
-        border: none;
-        margin: 0;
+		&.swipe-left {
+		  left: -1.75rem;
+		}
 
-      }
+		&.swipe-right {
+		  right: -1.75rem;
+		}
+	  }
+	}
 
-      .arrow {
-        display: none;
-        color: grey;
-        width: 1.5rem;
-        height: 1.5rem;
+	.like-button {
+	  background-color: variables.$button-green;
+	  padding-left: 5px;
+	}
 
-        &.hidden {
-          display: none;
-        }
+	.dislike-button {
+	  background-color: variables.$button-red;
+	}
 
-        @media (max-width: 768px) {
-          position: absolute;
-          display: block;
-        }
+	@media (min-width: 769px) {
+	  &:has(.like-button:hover) {
+		background-color: variables.$button-green;
+		box-shadow: variables.$upper-inset-shadow-hover;
 
-        &.swipe-left {
-          left: -1.75rem;
-        }
+		.dislike-button {
+		  opacity: 0;
+		  visibility: hidden;
+		}
 
-        &.swipe-right {
-          right: -1.75rem;
-        }
-      }
-    }
+		.like-button {
+		  border: none;
+		  box-shadow: none;
+		  width: 100%;
+		  position: relative;
 
-    .like-button {
-      background-color: variables.$button-green;
-      padding-left: 5px;
+		  svg {
+			position: absolute;
+			right: 30%;
+			top: 20%;
+			scale: 1.3;
+		  }
+		}
+	  }
+	  &:has(.dislike-button:hover) {
+		background-color: variables.$button-red;
+		box-shadow: variables.$upper-inset-shadow-hover;
 
-    }
+		.like-button {
+		  opacity: 0;
+		  visibility: hidden;
+		}
 
-    .dislike-button {
-      background-color: variables.$button-red;
+		.dislike-button {
+		  border: none;
+		  box-shadow: none;
+		  width: 100%;
+		  position: relative;
 
-      //#svg-dislike {
-      //  color: white;
-      //  //width: 70%;
-      //  //height: 70%;
-      //  height: 2.5rem;
-      //  width: 2.5rem;
-      //}
-    }
-
-    @media (min-width: 769px) {
-      &:has(.like-button:hover) {
-        background-color: variables.$button-green;
-        box-shadow: variables.$upper-inset-shadow-hover;
-
-        .dislike-button {
-          opacity: 0;
-          visibility: hidden;
-        }
-
-        .like-button {
-          border: none;
-          box-shadow: none;
-          width: 100%;
-          position: relative;
-
-          svg {
-            position: absolute;
-            right: 30%;
-            top: 20%;
-            scale: 1.3;
-          }
-        }
-      }
-
-      &:has(.dislike-button:hover) {
-        background-color: variables.$button-red;
-        box-shadow: variables.$upper-inset-shadow-hover;
-
-        .like-button {
-          opacity: 0;
-          visibility: hidden;
-        }
-
-        .dislike-button {
-          border: none;
-          box-shadow: none;
-          width: 100%;
-          position: relative;
-
-          svg {
-            position: absolute;
-            left: 25%;
-            top: 15%;
-            scale: 1.3;
-          }
-        }
-      }
-    }
-  }
-
-  .user-stats-container {
-    //height: 1rem;
+		  svg {
+			position: absolute;
+			left: 25%;
+			top: 15%;
+			scale: 1.3;
+		  }
+		}
+	  }
+	}
   }
 
   .settings-content {
-    height: 100%;
-    width: 100% !important;
-    max-width: 40rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+	height: 100%;
+	width: 100% !important;
+	max-width: 40rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
 
-    .forms-container {
-      padding: 2rem 0 2rem 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      //overflow-x: hidden;
-      //overflow-y: scroll;
-    }
+	.forms-container {
+	  padding: 2rem 0 2rem 0;
+	  width: 100%;
+	  height: 100%;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: flex-start;
+	  align-items: center;
+	}
 
-    .settings-buttons-container {
-      height: 10%;
-      width: 100% !important;
-      margin: 0 !important;
-      display: flex !important;
-      flex-direction: row !important;
-      justify-content: space-around !important;
-    }
+	.settings-buttons-container {
+	  height: 10%;
+	  width: 100% !important;
+	  margin: 0 !important;
+	  display: flex !important;
+	  flex-direction: row !important;
+	  justify-content: space-around !important;
+	}
   }
 }

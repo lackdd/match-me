@@ -1,24 +1,13 @@
-import './connections.scss'
-import '../reusables/profile-card.scss'
+import './connections.scss';
+import '../reusables/profile-card.scss';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
-import { useAuth } from '../utils/AuthContext.jsx';
+import {useAuth} from '../utils/AuthContext.jsx';
 import {closeSettings, formatData, formatLocation, openSettings} from '../reusables/profile-card-functions.jsx';
 
-// react icons
-import { FaRegCircleStop } from "react-icons/fa6";
-import { FaRegCirclePlay } from "react-icons/fa6";
-import { BsChat } from "react-icons/bs";
-import { FaRegCircleXmark } from "react-icons/fa6"
-import {DashboardForm} from '../dashboard/dashboard-settings/dashboardForm.jsx';
-import {Stats} from '../dashboard/dashboard-settings/stats.jsx';
-import {ChangePassword} from '../dashboard/dashboard-settings/change-password.jsx';
-import {SettingsMenu} from '../dashboard/dashboard-settings/settings-menu.jsx';
+import {FaRegCirclePlay, FaRegCircleXmark} from 'react-icons/fa6';
 import {IoClose} from 'react-icons/io5';
-import {GiSettingsKnobs} from 'react-icons/gi';
 import {FaSpotify} from 'react-icons/fa';
-
-
 
 
 function Connections() {
@@ -28,15 +17,14 @@ function Connections() {
 	const [pendingConnectionIds, setPendingConnectionIds] = useState([]);
 	const [pendingConnections, setPendingConnections] = useState([]);
 	const [isDeleting, setIsDeleting] = useState(false);
-	const [pendingOrCurrent, setPendingOrCurrent] = useState("current");
+	const [pendingOrCurrent, setPendingOrCurrent] = useState('current');
 	const [currentDataFetched, setCurrentDataFetched] = useState(false);
 	const [pendingDataFetched, setPendingDataFetched] = useState(false);
 	const toDeleteId = useRef(0);
 	const [error, setError] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
-	// const toDeleteName = useRef("");
-	const [toDeleteName, setToDeleteName] = useState("");
-	const { tokenValue } = useAuth();
+	const [errorMessage, setErrorMessage] = useState('');
+	const [toDeleteName, setToDeleteName] = useState('');
+	const {tokenValue} = useAuth();
 	const [toDisplay, setToDisplay] = useState(null);
 	const isDataFormatted = useRef(false);
 
@@ -45,6 +33,7 @@ function Connections() {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
+	// toggle pending and current button styles
 	const toggleButton = useCallback((event) => {
 		// add .active class to the button and remove .active class from the other button
 		const buttons = document.querySelectorAll('.current-pending-buttons-container button');
@@ -58,21 +47,8 @@ function Connections() {
 	}, []);
 
 
-	const getProfile = async() => {
-		const controller = new AbortController();
-		const signal = controller.signal;
-
-		// make a new route to access another users profile
-
-		// fetch /users/{id} and /users/{id}/profile for the data and then display it
-		// try {
-		// 	const response = await axios.get(`${VITE_BACKEND_URL}/api/`)
-		// }
-
-	}
-
 	// fetch connection ids
-	const getConnectionIds = async() => {
+	const getConnectionIds = async () => {
 		const controller = new AbortController(); // Create an abort controller
 		const signal = controller.signal;
 
@@ -80,17 +56,19 @@ function Connections() {
 			const [currentConnectionsResponse, pendingConnectionsResponse] = await Promise.all([
 				axios.get(`${VITE_BACKEND_URL}/api/connections`, {
 					headers: {
-						"Authorization": `Bearer ${tokenValue}`,
-						"Content-Type": "application/json"},
-					signal,
+						'Authorization': `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'
+					},
+					signal
 				}),
 				axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {
 					headers: {
-						"Authorization": `Bearer ${tokenValue}`,
-						"Content-Type": "application/json"},
-					signal,
-				}),
-			])
+						'Authorization': `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'
+					},
+					signal
+				})
+			]);
 
 			const currentIds = currentConnectionsResponse.data || [];
 			const pendingIds = pendingConnectionsResponse.data || [];
@@ -102,14 +80,15 @@ function Connections() {
 			setError(true);
 			setErrorMessage(error.message);
 			if (axios.isCancel(error)) {
-				console.log("Fetch aborted");
+				console.log('Fetch aborted');
 			} else {
-				console.error("Error getting connections: ", (error.message))
+				console.error('Error getting connections: ', (error.message));
 				// todo display error to user
 			}
 		}
-	}
+	};
 
+	// format received data
 	const formatDataForView = (data) => {
 		if (data !== null && data && isDataFormatted.current === false) {
 			const updatedProfile = {
@@ -133,21 +112,12 @@ function Connections() {
 					: data.goalsWithMusic
 			};
 			return updatedProfile;
-
-			// Check if the profile data has changed before updating the state
-			// if (JSON.stringify(updatedProfile) !== JSON.stringify(data)) {
-			// 	setMyDataFormatted((prev) => ({
-			// 		...prev,
-			// 		...updatedProfile
-			// 	}));
-			// 	isDataFormatted.current = true;
-			// }
 		}
 		return data;
-	}
+	};
 
 	// fetch data based on ids
-	const getConnectionsData = async(ids, setState, setFetchedState) => {
+	const getConnectionsData = async (ids, setState, setFetchedState) => {
 		const controller = new AbortController(); // Create an abort controller
 		const signal = controller.signal;
 
@@ -158,36 +128,34 @@ function Connections() {
 					// fetch profile pic and name
 					const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
 						headers: {
-							"Authorization": `Bearer ${tokenValue}`,
-							"Content-Type": "application/json",
-							signal,}
+							'Authorization': `Bearer ${tokenValue}`,
+							'Content-Type': 'application/json',
+							signal
+						}
 					});
 
 					// fetch other bio data
 					const userPromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
 						headers: {
-							"Authorization": `Bearer ${tokenValue}`,
-							"Content-Type": "application/json",
-							signal,}
+							'Authorization': `Bearer ${tokenValue}`,
+							'Content-Type': 'application/json',
+							signal
+						}
 					});
 
 					// Return both promises for the same id
 					return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({
 						...formatDataForView(profile.data),   // Merge profile data
-						...user.data, // Merge user data
+						...user.data // Merge user data
 					}));
 				});
-
-				// isDataFormatted.current = true;
 
 				// Wait for all promises to resolve
 				const responses = await Promise.all(connections);
 
-				console.log("Responses: ", responses);
+				console.log('Responses: ', responses);
 
-				// const users = responses.map(response => response.data); // Extract user data
-				//
-				// setState(users);
+
 				setState(responses);
 				setFetchedState(true); // Indicate that data has been fetched
 
@@ -195,59 +163,33 @@ function Connections() {
 				setError(true);
 				setErrorMessage(error.message);
 				if (axios.isCancel(error)) {
-					console.log("Fetch aborted");
+					console.log('Fetch aborted');
 				} else {
 					if (error.response) {
-						console.error("Backend error:", error.response); // Server responded with an error
+						console.error('Backend error:', error.response); // Server responded with an error
 					} else {
-						console.error("Request failed:", error.message); // Network error or request issue
+						console.error('Request failed:', error.message); // Network error or request issue
 					}
 					// todo display error to user
 				}
 			}
 		}
-	}
-
-
-	// useEffect(() => {
-	//
-	// 	const formatConnectionsData = (connections) => {
-	// 		// Map over the connections and format each item
-	// 		return connections.map((connection) => ({
-	// 			...connection, // Spread the existing properties
-	// 			location: formatLocation(connection.location), // Format the location
-	// 			preferredMethod: formatData(connection.preferredMethod),
-	// 		}));
-	// 	};
-	//
-	// 	if (currentConnections.length > 0) {
-	// 		const formattedConnections = formatConnectionsData(currentConnections);
-	// 		setCurrentConnections(formattedConnections);
-	// 	}
-	//
-	// 	if (pendingConnections.length > 0) {
-	// 		const formattedConnections = formatConnectionsData(pendingConnections);
-	// 		setPendingConnections(formattedConnections);
-	// 	}
-	//
-	// }, [currentConnections])
-
-
+	};
 
 	// display connections
 	const displayConnections = (connections) => {
 		if (connections.length === 0) {
 
-			if (connections === currentConnections && pendingOrCurrent === "current") {
+			if (connections === currentConnections && pendingOrCurrent === 'current') {
 				return (
 					<div className='no-connections-message'>No connections yet</div>
-				)
+				);
 			}
 
-			if (connections === pendingConnections && pendingOrCurrent === "pending") {
+			if (connections === pendingConnections && pendingOrCurrent === 'pending') {
 				return (
 					<div className='no-connections-message'>No requests yet</div>
-				)
+				);
 			}
 
 		}
@@ -255,14 +197,19 @@ function Connections() {
 		return connections.map((connection, index) => (
 			<div key={index} id={connection.id} className='connection'>
 
-				<button className='profile-button' onClick={async(event) => {
+				<button className='profile-button' onClick={async (event) => {
 					openSettings();
 					const parentId = getIdOfParent(event);
 					await displayProfile(parentId);
 				}}>
 					<div className='picture-name-container'>
-						<img src='profile_pic_female.jpg' alt=''/>
-						{/*<img src={connection.profilePicture} alt={connection.username} className='connection-pic' />*/}
+						{connection.profilePicture && !connection.profilePicture.endsWith('null') ? (
+							<img src={connection.profilePicture} alt={connection.username} className='connection-pic'/>
+						) : (
+							<img src='default_profile_picture.png' alt={connection.username}
+								 className='connection-pic'/>
+						)
+						}
 						<div className='name'>{connection.username}</div>
 					</div>
 				</button>
@@ -272,23 +219,24 @@ function Connections() {
 						{/*<button className='chat'><BsChat /></button>*/}
 						<button className='delete' onClick={() => {
 							deleteConnection(connection.id, connection.username);
-							// await getConnectionIds();
 						}}
 						>
-							<FaRegCircleXmark /></button>
+							<FaRegCircleXmark/></button>
 					</div>
 				)}
 
 				{connections === pendingConnections && (
 					<div className='connections-buttons-container'>
-						<button className='accept' onClick={() => acceptRequest(connection.id)}><FaRegCirclePlay /></button>
-						<button className='delete' onClick={() => deleteConnection(connection.id, connection.username)}><FaRegCircleXmark /></button>
+						<button className='accept' onClick={() => acceptRequest(connection.id)}><FaRegCirclePlay/>
+						</button>
+						<button className='delete' onClick={() => deleteConnection(connection.id, connection.username)}>
+							<FaRegCircleXmark/></button>
 					</div>
 				)}
 
 			</div>
-		))
-	}
+		));
+	};
 
 	// fetch current and pending connection ids
 	useEffect(() => {
@@ -305,8 +253,8 @@ function Connections() {
 
 	// log current connections
 	useEffect(() => {
-		console.log("Current connections: ", currentConnections);
-		console.log("Pending connections: ", pendingConnections);
+		console.log('Current connections: ', currentConnections);
+		console.log('Pending connections: ', pendingConnections);
 	}, [pendingConnections, currentConnections]);
 
 	// delete connection
@@ -316,27 +264,27 @@ function Connections() {
 		toDeleteId.current = connectionId;
 		setToDeleteName(connectionName); // Use useState to trigger a re-render
 		modal.style.display = 'flex'; // Show modal
-	}
+	};
 
 	// Handle the accept button click
 	const acceptDelete = (setState, setIdState) => {
 		setIsDeleting(true);
 
-		let endpoint = "";
-		let paramKey = "";
+		let endpoint = '';
+		let paramKey = '';
 
 		if (setState === setPendingConnections) {
-			endpoint = "deletePendingRequest";
-			paramKey =  "pendingRequestId";
+			endpoint = 'deletePendingRequest';
+			paramKey = 'pendingRequestId';
 		}
 
 		if (setState === setCurrentConnections) {
-			endpoint = "deleteConnection";
-			paramKey =  "connectionId";
+			endpoint = 'deleteConnection';
+			paramKey = 'connectionId';
 		}
 
 		if (!endpoint || !paramKey) {
-			console.error("Invalid state setter function provided.");
+			console.error('Invalid state setter function provided.');
 			setIsDeleting(false);
 			return;
 		}
@@ -347,50 +295,52 @@ function Connections() {
 			//Remove the connection from the state
 			axios.delete(`${VITE_BACKEND_URL}/api/${endpoint}`, {
 				headers: {
-					"Authorization": `Bearer ${tokenValue}`,
-					"Content-Type": "application/json"},
-				params: { [paramKey] : toDeleteId.current } // Include request parameters here
+					'Authorization': `Bearer ${tokenValue}`,
+					'Content-Type': 'application/json'
+				},
+				params: {[paramKey]: toDeleteId.current} // Include request parameters here
 			});
 			// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
 			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
-			console.log("Connection deleted!");
+			console.log('Connection deleted!');
 		} catch (error) {
 			setError(true);
 			setErrorMessage(error.message);
-				if (error.response) {
-					console.error("Backend error:", error.response); // Server responded with an error
-				} else {
-					console.error("Request failed:", error.message); // Network error or request issue
-				}
+			if (error.response) {
+				console.error('Backend error:', error.response); // Server responded with an error
+			} else {
+				console.error('Request failed:', error.message); // Network error or request issue
+			}
 		} finally {
 			setIsDeleting(false);
 			modal.style.display = 'none'; // Close the modal
 		}
-	}
+	};
 
 	const cancelDelete = () => {
 		modal.style.display = 'none'; // Close the modal without navigating
-	}
+	};
 
+	// accept pending request
 	const acceptRequest = (requestId) => {
 
 		// add to connections
 		try {
 			axios.post(`${VITE_BACKEND_URL}/api/addConnection`, null, {
 				headers: {
-					"Authorization": `Bearer ${tokenValue}`,
-					"Content-Type": "application/json"
+					'Authorization': `Bearer ${tokenValue}`,
+					'Content-Type': 'application/json'
 				},
 				params: {matchId: requestId} // Correct parameter name
-			})
+			});
 
 		} catch (error) {
 			setError(true);
 			setErrorMessage(error.message);
 			if (error.response) {
-				console.error("Backend error:", error.response); // Server responded with an error
+				console.error('Backend error:', error.response); // Server responded with an error
 			} else {
-				console.error("Request failed:", error.message); // Network error or request issue
+				console.error('Request failed:', error.message); // Network error or request issue
 			}
 		}
 
@@ -400,8 +350,8 @@ function Connections() {
 		try {
 			axios.delete(`${VITE_BACKEND_URL}/api/deletePendingRequest`, {
 				headers: {
-					"Authorization": `Bearer ${tokenValue}`,
-					"Content-Type": "application/json"
+					'Authorization': `Bearer ${tokenValue}`,
+					'Content-Type': 'application/json'
 				},
 				params: {pendingRequestId: requestId} // Include request parameters here
 			});
@@ -410,26 +360,28 @@ function Connections() {
 
 			// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
 			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
-			console.log("Pending request deleted!");
+			console.log('Pending request deleted!');
 		} catch (error) {
 			setError(true);
 			setErrorMessage(error.message);
 			if (error.response) {
-				console.error("Backend error:", error.response); // Server responded with an error
+				console.error('Backend error:', error.response); // Server responded with an error
 			} else {
-				console.error("Request failed:", error.message); // Network error or request issue
+				console.error('Request failed:', error.message); // Network error or request issue
 			}
 		} finally {
 			setIsDeleting(false);
 		}
-	}
+	};
 
+	// get id of parent element
 	const getIdOfParent = (event) => {
 		const id = Number(event.currentTarget.parentNode.id);
 		return id;
-	}
+	};
 
 
+	// display profile of connection
 	const displayProfile = (id) => {
 		let userToDisplay;
 
@@ -439,19 +391,6 @@ function Connections() {
 		} else if (pendingOrCurrent === 'pending') {
 			userToDisplay = pendingConnections.find((connection) => connection.id === id);
 		}
-
-		// if (userToDisplay) {
-		// 	if (!userToDisplay.formatted) {
-		// 		userToDisplay = {
-		// 			...userToDisplay, // Spread the existing properties of userToDisplay
-		// 			// Conditionally format the desired properties
-		// 			location: formatLocation(userToDisplay.location), // Format location
-		// 			preferredMethod: formatData(userToDisplay.preferredMethod),
-		// 			formatted: true,
-		// 		};
-		// 	}
-		// }
-		// console.log("userToDisplay", userToDisplay);
 
 
 		if (userToDisplay) {
@@ -465,41 +404,19 @@ function Connections() {
 					<div className='picture-bio-container'>
 						<div className='picture-container'>
 							<div className='extra-picture-container'>
-								{/*{userToDisplay.profilePicture ? (*/}
-								{/*	<AdvancedImage cldImg={getOptimizedImage(userToDisplay.profilePicture)}/>*/}
-								{/*) : (*/}
-								{/*	<img*/}
-								{/*		src='default_profile_picture.png'*/}
-								{/*		alt='profile picture'*/}
-								{/*		className='profile-picture'*/}
-								{/*	/>*/}
-								{/*)}*/}
-								{userToDisplay.gender === 'male' && (
-									<img
-										src='profile_pic_male.jpg'
-										alt='profile picture'
-										className='profile-picture'
-									/>
-								)}
-								{userToDisplay.gender === 'female' && (
-									<img
-										src='profile_pic_female.jpg'
-										alt='profile picture'
-										className='profile-picture'
-									/>
-								)}
-								{userToDisplay.gender === 'other' && (
-									<img
-										src='default_profile_picture.png'
-										alt='profile picture'
-										className='profile-picture'
-									/>
-								)}
+								{userToDisplay.profilePicture && !userToDisplay.profilePicture.endsWith('null') ? (
+									<img src={userToDisplay.profilePicture} alt={userToDisplay.username}
+										 className='profile-picture'/>
+								) : (
+									<img src='default_profile_picture.png' alt={userToDisplay.username}
+										 className='profile-picture'/>
+								)
+								}
 								{userToDisplay.linkToMusic ? (
 									<div className='music-link'>
-										<FaSpotify style={{ color: '#31D165' }} />
+										<FaSpotify style={{color: '#31D165'}}/>
 									</div>
-								) : ("")
+								) : ('')
 								}
 
 							</div>
@@ -511,18 +428,18 @@ function Connections() {
 							<table className='bio-table'>
 								<tbody>
 								<tr>
-									<th style={{ width: '60%' }} className='two-column'>
+									<th style={{width: '60%'}} className='two-column'>
 										Location
 									</th>
-									<td style={{ width: '4%' }}></td>
-									<th style={{ width: '36%' }} className='two-column'>
+									<td style={{width: '4%'}}></td>
+									<th style={{width: '36%'}} className='two-column'>
 										Experience
 									</th>
 								</tr>
 								<tr>
-									<td style={{ width: '60%' }}>{userToDisplay.location}</td>
-									<td style={{ width: '4%' }}></td>
-									<td style={{ width: '36%' }}>
+									<td style={{width: '60%'}}>{userToDisplay.location}</td>
+									<td style={{width: '4%'}}></td>
+									<td style={{width: '36%'}}>
 										{userToDisplay.yearsOfMusicExperience === 1
 											? `${userToDisplay.yearsOfMusicExperience} year`
 											: `${userToDisplay.yearsOfMusicExperience} years`}
@@ -578,38 +495,38 @@ function Connections() {
 							<table className='bio-table'>
 								<tbody>
 								<tr>
-									<th style={{ width: '48%' }} className='two-column'>Location</th>
-									<td style={{ width: '4%' }}></td>
-									<th style={{ width: '48%' }} className='two-column'>Experience</th>
+									<th style={{width: '48%'}} className='two-column'>Location</th>
+									<td style={{width: '4%'}}></td>
+									<th style={{width: '48%'}} className='two-column'>Experience</th>
 								</tr>
 								<tr>
-									<td style={{ width: '48%' }}>{userToDisplay.location}</td>
-									<td style={{ width: '4%' }}></td>
-									<td style={{ width: '48%' }}>
+									<td style={{width: '48%'}}>{userToDisplay.location}</td>
+									<td style={{width: '4%'}}></td>
+									<td style={{width: '48%'}}>
 										{userToDisplay.yearsOfMusicExperience === 1
 											? `${userToDisplay.yearsOfMusicExperience} year`
 											: `${userToDisplay.yearsOfMusicExperience} years`}
 									</td>
 								</tr>
 								<tr>
-									<th style={{ width: '48%' }} className='two-column'>Genres</th>
-									<td style={{ width: '4%' }}></td>
-									<th style={{ width: '48%' }} className='two-column'>Methods</th>
+									<th style={{width: '48%'}} className='two-column'>Genres</th>
+									<td style={{width: '4%'}}></td>
+									<th style={{width: '48%'}} className='two-column'>Methods</th>
 								</tr>
 								<tr>
-									<td style={{ width: '48%' }}>{userToDisplay.preferredMusicGenres}</td>
-									<td style={{ width: '4%' }}></td>
-									<td style={{ width: '48%' }}>{userToDisplay.preferredMethod}</td>
+									<td style={{width: '48%'}}>{userToDisplay.preferredMusicGenres}</td>
+									<td style={{width: '4%'}}></td>
+									<td style={{width: '48%'}}>{userToDisplay.preferredMethod}</td>
 								</tr>
 								<tr>
-									<th style={{ width: '48%' }} className='two-column'>Interests</th>
-									<td style={{ width: '4%' }}></td>
-									<th style={{ width: '48%' }} className='two-column'>Personality</th>
+									<th style={{width: '48%'}} className='two-column'>Interests</th>
+									<td style={{width: '4%'}}></td>
+									<th style={{width: '48%'}} className='two-column'>Personality</th>
 								</tr>
 								<tr>
-									<td style={{ width: '48%' }}>{userToDisplay.additionalInterests}</td>
-									<td style={{ width: '4%' }}></td>
-									<td style={{ width: '48%' }}>{userToDisplay.personalityTraits}</td>
+									<td style={{width: '48%'}}>{userToDisplay.additionalInterests}</td>
+									<td style={{width: '4%'}}></td>
+									<td style={{width: '48%'}}>{userToDisplay.personalityTraits}</td>
 								</tr>
 								<tr>
 									<th className='' colSpan={3}>Goals</th>
@@ -628,21 +545,24 @@ function Connections() {
 					</div>
 					<div className='name-container'>
 						<span className='name'>{userToDisplay.username}</span>
-						<br />
+						<br/>
 						<span>{userToDisplay.age}, {userToDisplay.gender}</span>
 					</div>
 				</div>
-			)
+			);
 		}
-	}
+	};
 
 
 	return (
 		<div className='connections-container'>
 
-			<div className="settings-popup" id="settings-popup">
-				<div className="settings-content">
-					<button className='close-settings' type={'button'} onClick={() => {closeSettings(); setToDisplay(null);}}><IoClose /></button>
+			<div className='settings-popup' id='settings-popup'>
+				<div className='settings-content'>
+					<button className='close-settings' type={'button'} onClick={() => {
+						closeSettings();
+						setToDisplay(null);
+					}}><IoClose/></button>
 					{toDisplay}
 				</div>
 			</div>
@@ -650,23 +570,29 @@ function Connections() {
 
 			{!error ? (
 				<>
-					<div id="loadingModal" className="modal">
-						<div className="modal-content">
+					<div id='loadingModal' className='modal'>
+						<div className='modal-content'>
 							<p className='modal-text'>You are about to remove <br/> {toDeleteName}</p>
 							<p style={{marginTop: '0.5rem'}}>Are you sure?</p>
 							<div className='modal-buttons'>
-								{pendingOrCurrent === "current" ? (
-									<button id="acceptButton" onClick={() => {acceptDelete(setCurrentConnections, setCurrentConnectionIds)}}>
+								{pendingOrCurrent === 'current' ? (
+									<button id='acceptButton' onClick={() => {
+										acceptDelete(setCurrentConnections, setCurrentConnectionIds);
+									}}>
 										<span>Yes</span>
 									</button>
 								) : (
-									<button id="acceptButton" onClick={() => {acceptDelete(setPendingConnections, setPendingConnectionIds)}}>
+									<button id='acceptButton' onClick={() => {
+										acceptDelete(setPendingConnections, setPendingConnectionIds);
+									}}>
 										<span>Yes</span>
 									</button>
 								)
 								}
 
-								<button id="cancelButton" onClick={() => {cancelDelete()}}>
+								<button id='cancelButton' onClick={() => {
+									cancelDelete();
+								}}>
 									<span>No</span>
 								</button>
 							</div>
@@ -707,12 +633,12 @@ function Connections() {
 							</div>
 
 							<div className='user-stats-container'>
-								{(pendingOrCurrent === "current" && currentConnections.length > 0) ||
-								(pendingOrCurrent !== "current" && pendingConnections.length > 0) ? (
+								{(pendingOrCurrent === 'current' && currentConnections.length > 0) ||
+								(pendingOrCurrent !== 'current' && pendingConnections.length > 0) ? (
 									<div className='user-stats'>
-										You have {pendingOrCurrent === "current"
-										? `${currentConnections.length} ${currentConnections.length === 1 ? "connection" : "connections"}`
-										: `${pendingConnections.length} ${pendingConnections.length === 1 ? "request" : "requests"}`
+										You have {pendingOrCurrent === 'current'
+										? `${currentConnections.length} ${currentConnections.length === 1 ? 'connection' : 'connections'}`
+										: `${pendingConnections.length} ${pendingConnections.length === 1 ? 'request' : 'requests'}`
 									}
 									</div>
 								) : null}

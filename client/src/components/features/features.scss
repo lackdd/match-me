@@ -5,167 +5,149 @@
   @include variables.centered-column;
 
   h1 {
-    font-size: 3rem;
-    margin-bottom: 2rem;
-    transition: translate 0.5s ease-out;
-
-    @starting-style {
-      opacity: 0;
-      translate: 0 -120vw;
-    }
-
-    &.blinking-text {
-      background: linear-gradient(to right, variables.$main-pink, variables.$main-blue, variables.$main-pink);
-      background-size: 500% 100%;
-      background-position: -400% 0;
-      color: transparent;
-      -webkit-background-clip: text;  /* Make the background visible on the text */
-      animation: leftToRightColorChange 5s linear infinite;
-    }
+	font-size: 3rem;
+	margin-bottom: 2rem;
+	transition: translate 0.5s ease-out;
+	@starting-style {
+	  opacity: 0;
+	  translate: 0 -120vw;
+	}
+	&.blinking-text {
+	  background: linear-gradient(to right, variables.$main-pink, variables.$main-blue, variables.$main-pink);
+	  background-size: 500% 100%;
+	  background-position: -400% 0;
+	  color: transparent;
+	  -webkit-background-clip: text; /* Make the background visible on the text */
+	  animation: leftToRightColorChange 5s linear infinite;
+	}
   }
-
-
 
   .features-list {
-    //max-width: 55rem;
-    padding: 0 20% 0 20%;
-    height: 80%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    align-items: center;
-    justify-content: center;
-    overflow-y: scroll;
-    //padding: 1rem;
-    overflow-x: hidden;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+	//max-width: 55rem;
+	padding: 0 20% 0 20%;
+	height: 80%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	align-items: center;
+	justify-content: center;
+	overflow-y: scroll;
+	//padding: 1rem;
+	overflow-x: hidden;
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+	/* Hide scrollbar for Chrome, Safari and Opera */
+	&::-webkit-scrollbar {
+	  display: none;
+	}
 
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    &::-webkit-scrollbar {
-      display: none;
-    }
+	@media (max-width: 768px) {
+	  padding: 0 5% 0 5%;
+	}
+	@media (min-width: 1980px) {
+	  padding: 0 25% 0 25%;
+	}
 
-    @media (max-width: 768px) {
-      padding: 0 5% 0 5%;
-    }
+	.feature {
+	  display: flex;
+	  align-items: center;
+	  justify-content: flex-start;
+	  transition: transform 0.5s ease-out,
+	  color 0.1s ease-in,
+	  background-color 0.1s ease-in,
+	  scale 0.1s ease-in;
+	  gap: 3rem;
+	  height: 10rem;
+	  background-color: transparent;
+	  border-radius: 20px;
+	  padding: 1.5rem;
+	  width: 100%;
+	  @media (max-width: 480px) {
+		gap: 1rem;
+		padding: 0.5rem;
+	  }
 
-    @media (min-width: 1980px) {
-      padding: 0 25% 0 25%;
-    }
+	  &:hover {
+		//color: variables.$main-pink;
+		background-color: rgba(255, 255, 255, 0.3);
+		transform: scale(1.02);
+	  }
 
+	  &:hover svg {
+		transform: rotateY(360deg);
+		fill: white;
+		color: white;
+	  }
 
-    .feature {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      transition: transform 0.5s ease-out,
-      color 0.1s ease-in,
-      background-color 0.1s ease-in,
-      scale 0.1s ease-in;
-      gap: 3rem;
-      height: 10rem;
-      background-color: transparent;
-      border-radius: 20px;
-      padding: 1.5rem;
-      width: 100%;
+	  //&:hover svg {
+	  //  animation: leftToRightColorChange 5s linear infinite;
+	  //  transform: rotateY(360deg);
+	  //}
+	  &.default {
+		flex-direction: row;
+		@starting-style {
+		  opacity: 0;
+		  transform: translateX(-120vw);
+		}
+	  }
 
+	  &.reverse {
+		flex-direction: row-reverse;
+		@starting-style {
+		  opacity: 0;
+		  transform: translateX(120vw);
+		}
+	  }
 
-      @media (max-width: 480px) {
-        gap: 1rem;
-        padding: 0.5rem;
-      }
+	  svg {
+		width: 9rem;
+		height: 9rem;
+		transition: fill 0.5s ease-in-out, transform 0.5s ease-in-out, color 0.5s ease-in-out;
+		fill: black;
+		@media (max-width: 768px) {
+		  width: 7rem;
+		  height: 7rem;
+		}
 
-      &:hover {
-        //color: variables.$main-pink;
-        background-color: rgba(255, 255, 255, 0.3);
-        transform: scale(1.02);
-      }
+		&:has(> div:hover) {
+		  transform: rotateX(360deg);
+		  fill: white;
+		}
+	  }
 
-      &:hover svg {
-        transform: rotateY(360deg);
-        fill: white;
-        color: white;
-      }
+	  .text {
+		margin-left: 1rem;
+		font-size: 1rem;
+		font-weight: 700;
+		width: 70%;
+		@media (max-width: 768px) {
+		  font-size: 0.8rem;
+		}
+		@media (max-width: 480px) {
+		  width: 90%;
+		}
 
-      //&:hover svg {
-      //  animation: leftToRightColorChange 5s linear infinite;
-      //  transform: rotateY(360deg);
-      //}
-
-      &.default {
-        flex-direction: row;
-
-        @starting-style {
-          opacity: 0;
-          transform: translateX(-120vw);
-        }
-      }
-
-      &.reverse {
-        flex-direction: row-reverse;
-
-        @starting-style {
-          opacity: 0;
-          transform: translateX(120vw);
-        }
-      }
-
-      svg {
-        width: 9rem;
-        height: 9rem;
-        transition: fill 0.5s ease-in-out, transform 0.5s ease-in-out, color 0.5s ease-in-out;
-        fill: black;
-
-        @media (max-width: 768px) {
-          width: 7rem;
-          height: 7rem;
-        }
-
-        &:has(> div:hover) {
-          transform: rotateX(360deg);
-          fill: white;
-        }
-      }
-
-      .text {
-        margin-left: 1rem;
-        font-size: 1rem;
-        font-weight: 700;
-        width: 70%;
-
-        @media (max-width: 768px) {
-          font-size: 0.8rem;
-        }
-
-        @media (max-width: 480px) {
-          width: 90%;
-        }
-
-        &:has( > div.reverse) {
-          text-align: right;
-        }
-      }
-    }
-
-
+		&:has( > div.reverse) {
+		  text-align: right;
+		}
+	  }
+	}
   }
 
-
   .coming-soon {
-    justify-self: center;
+	justify-self: center;
   }
 }
 
 @keyframes leftToRightColorChange {
   0% {
-    background-position: 200% 0;  /* Start the gradient off-screen */
+	background-position: 200% 0; /* Start the gradient off-screen */
   }
   50% {
-    background-position: 0 0;  /* Move the gradient fully to the left */
+	background-position: 0 0; /* Move the gradient fully to the left */
   }
   100% {
-    background-position: -200% 0;  /* Move the gradient back off-screen */
+	background-position: -200% 0; /* Move the gradient back off-screen */
   }
 }

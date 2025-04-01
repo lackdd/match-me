@@ -1,13 +1,14 @@
-import './nav-bar-guest.scss'
+import './nav-bar-guest.scss';
 import {NavLink} from 'react-router-dom';
 
 // mobile icons
-import { FiLogIn } from "react-icons/fi";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { IoClose } from "react-icons/io5";
+import {FiLogIn} from 'react-icons/fi';
+import {RxHamburgerMenu} from 'react-icons/rx';
+import {IoClose} from 'react-icons/io5';
 import {useState} from 'react';
 
-<IoClose />
+<IoClose/>;
+
 function NavigatorGuest() {
 	const [hamburger, setHamburger] = useState(false);
 
@@ -20,17 +21,17 @@ function NavigatorGuest() {
 					</NavLink>
 				</div>
 				<div className='links-container'>
-					<NavLink to='/features' tabIndex={-1} className={({ isActive }) =>
+					<NavLink to='/features' tabIndex={-1} className={({isActive}) =>
 						`features ${isActive ? 'current' : ''}`
 					}>
 						FEATURES
 					</NavLink>
-					<NavLink to='/about' tabIndex={-1} className={({ isActive }) =>
+					<NavLink to='/about' tabIndex={-1} className={({isActive}) =>
 						`about ${isActive ? 'current' : ''}`
 					}>
 						ABOUT
 					</NavLink>
-					<NavLink to='/support' tabIndex={-1} className={({ isActive }) =>
+					<NavLink to='/support' tabIndex={-1} className={({isActive}) =>
 						`support ${isActive ? 'current' : ''}`
 					}>
 						SUPPORT
@@ -61,69 +62,53 @@ function NavigatorGuest() {
 				<div className='links-container'>
 
 					<button
-						// className={`hamburger ${hamburger ? "open" : "closed"}`}
-						className="hamburger"
+						className='hamburger'
 						title={'Menu'}
 						onClick={() => setHamburger(!hamburger)}
 					>
 						{hamburger ? (
 							<>
-							<div className={`hamburger-links ${hamburger ? "open" : "closed"}`}>
-								<NavLink to='/features' className={({ isActive }) =>
-									`features ${isActive ? 'current' : ''}`
-								}>
-									Features
-								</NavLink>
-								<NavLink to='/about' className={({ isActive }) =>
-									`about ${isActive ? 'current' : ''}`
-								}>
-									About
-								</NavLink>
-								<NavLink to='/support' className={({ isActive }) =>
-									`support ${isActive ? 'current' : ''}`
-								}>
-									Support
-								</NavLink>
-								<NavLink to='/login' className={({ isActive }) =>
-									`support ${isActive ? 'current' : ''}`
-								}>
-									Login
-								</NavLink>
-								<NavLink to='/register' className={({ isActive }) =>
-									`support ${isActive ? 'current' : ''}`
-								}>
-									Register
-								</NavLink>
-							</div>
-							<IoClose />
+								<div className={`hamburger-links ${hamburger ? 'open' : 'closed'}`}>
+									<NavLink to='/features' className={({isActive}) =>
+										`features ${isActive ? 'current' : ''}`
+									}>
+										Features
+									</NavLink>
+									<NavLink to='/about' className={({isActive}) =>
+										`about ${isActive ? 'current' : ''}`
+									}>
+										About
+									</NavLink>
+									<NavLink to='/support' className={({isActive}) =>
+										`support ${isActive ? 'current' : ''}`
+									}>
+										Support
+									</NavLink>
+									<NavLink to='/login' className={({isActive}) =>
+										`support ${isActive ? 'current' : ''}`
+									}>
+										Login
+									</NavLink>
+									<NavLink to='/register' className={({isActive}) =>
+										`support ${isActive ? 'current' : ''}`
+									}>
+										Register
+									</NavLink>
+								</div>
+								<IoClose/>
 							</>
 						) : (
-							<RxHamburgerMenu />
+							<RxHamburgerMenu/>
 						)}
-						{/*{hamburger && <IoClose/>}*/}
 					</button>
 				</div>
-					<div className='nav-buttons-container'>
-						<NavLink to='/login'>
-							<button className='mobile-login' title='Log in'>
-								<FiLogIn />
-							</button>
-						</NavLink>
-					</div>
-				{/*<div className='buttons-container'>*/}
-				{/*	/!* again a tag to force rerender of nav bar*!/*/}
-				{/*	/!*<NavLink to='/register'>*!/*/}
-				{/*	/!*	<button className='mobile-signup' title='Get started'>*!/*/}
-				{/*	/!*		G*!/*/}
-				{/*	/!*	</button>*!/*/}
-				{/*	/!*</NavLink>*!/*/}
-				{/*	<NavLink to='/login'>*/}
-				{/*		<button className='mobile-login' title='Log in'>*/}
-				{/*			L*/}
-				{/*		</button>*/}
-				{/*	</NavLink>*/}
-
-				{/*</div>*/}
+				<div className='nav-buttons-container'>
+					<NavLink to='/login'>
+						<button className='mobile-login' title='Log in'>
+							<FiLogIn/>
+						</button>
+					</NavLink>
+				</div>
 			</nav>
 		</>
 

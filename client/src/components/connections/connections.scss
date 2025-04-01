@@ -4,360 +4,302 @@
   @include variables.whole-page;
   @include variables.centered-column;
   height: calc(100vh - 64px);
-
   @media (max-width: 440px) {
-    justify-content: flex-start;
-    background-color: rgba(255, 255, 255, 0.25);
+	justify-content: flex-start;
+	background-color: rgba(255, 255, 255, 0.25);
   }
 
   .settings-content {
-    @include variables.centered-column;
-    width: 100%;
+	@include variables.centered-column;
+	width: 100%;
 
-    .profile-card-container {
-      background-color: rgba(255, 255, 255, 0.9);
+	.profile-card-container {
+	  background-color: rgba(255, 255, 255, 0.9);
 
-      td {
-        text-align: left;
-      }
-    }
+	  td {
+		text-align: left;
+	  }
+	}
   }
 
   .user-stats-container {
-    text-align: center;
-    color: black;
-    margin-top: 1.5rem;
-    height: 2rem;
-
-    @media (max-width: 768px) {
-      margin-top: 0;
-    }
-
-
-    @media (max-width: 440px) {
-      margin-top: 1.5rem;
-    }
-
+	text-align: center;
+	color: black;
+	margin-top: 1.5rem;
+	height: 2rem;
+	@media (max-width: 768px) {
+	  margin-top: 0;
+	}
+	@media (max-width: 440px) {
+	  margin-top: 1.5rem;
+	}
   }
 
   .extra-connections-container {
-    @include variables.centered-column;
-    width: 60%;
-    height: 100%;
+	@include variables.centered-column;
+	width: 60%;
+	height: 100%;
+	@media (max-width: 768px) {
+	  width: 80%;
+	  flex-direction: column-reverse;
+	}
+	@media (max-width: 440px) {
+	  width: 100%;
+	  margin-top: 0;
+	  justify-content: flex-end;
+	}
 
-    @media (max-width: 768px) {
-      width: 80%;
-      flex-direction: column-reverse;
-    }
+	.current-pending-buttons-container {
+	  display: flex;
+	  flex-direction: row;
+	  justify-content: space-around;
+	  align-items: center;
+	  justify-self: flex-end;
+	  width: 100%;
+	  height: 3rem;
+	  @media (max-width: 440px) {
+	  }
 
-    @media (max-width: 440px) {
-      width: 100%;
-      margin-top: 0;
-      justify-content: flex-end;
-    }
+	  button {
+		padding: 1.25rem;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: transparent;
+		box-shadow: none;
+		border: 2px solid transparent; /* Set border to transparent initially */
+		color: black;
+		transition: padding 0.1s ease;
+		@media (max-width: 440px) {
+		  padding: 1.25rem 0.5rem 1.25rem 0.5rem;
+		}
 
-    .current-pending-buttons-container {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: center;
-      justify-self: flex-end;
-      width: 100%;
-      height: 3rem;
+		&.active {
+		  cursor: auto;
+		  border: 2px solid black;
+		  //text-decoration: underline;
+		  //color: variables.$main-pink;
+		  &:hover {
+			background-color: transparent;
+			box-shadow: 0 0 0 1px black;
+		  }
+		}
+	  }
+	}
 
-      @media (max-width: 440px) {
-      }
+	.connections-list {
+	  @include variables.centered-column;
+	  @include variables.glass-container;
+	  justify-content: flex-start;
+	  margin-top: 3rem;
+	  min-height: 65vh;
+	  flex: 1;
+	  width: 100%;
+	  max-height: 60vh;
+	  overflow-y: scroll;
+	  overflow-x: hidden;
+	  position: relative;
+	  -ms-overflow-style: none; /* IE and Edge */
+	  scrollbar-width: none; /* Firefox */
+	  /* Hide scrollbar for Chrome, Safari and Opera */
+	  &::-webkit-scrollbar {
+		display: none;
+	  }
 
-      button {
-        padding: 1.25rem;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: transparent;
-        box-shadow: none;
-        border: 2px solid transparent; /* Set border to transparent initially */
-        color: black;
-        transition: padding 0.1s ease;
+	  @media (max-width: 768px) {
+		margin-top: 1rem;
+		max-height: 70vh;
+	  }
 
-        @media (max-width: 440px) {
-          padding: 1.25rem 0.5rem 1.25rem 0.5rem;
-        }
+	  .no-connections-message {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		font-size: 1.5rem;
+	  }
 
-        &.active {
-          cursor: auto;
-          border: 2px solid black;
-          //text-decoration: underline;
-          //color: variables.$main-pink;
+	  @media (max-width: 440px) {
+		max-height: 75vh;
+		background-color: transparent;
+		padding-top: 1.5rem;
+		margin-top: 0;
+		box-shadow: none;
+		border: none;
+		border-radius: 0;
+	  }
 
-          &:hover {
-            background-color: transparent;
-            box-shadow: 0 0 0 1px black;
-          }
-        }
-      }
+	  .connection {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+		padding: 1rem 0.75rem 1rem 0.75rem;
 
+		.profile-button {
+		  all: unset;
+		  cursor: pointer;
+		  flex-grow: 1;
+		  transition: all 0.2s ease;
+		  border-radius: 50px;
+		  border: 1px solid transparent;
 
-      .pending {
+		  &:hover {
+			border: 1px solid white;
+			background-color: rgba(255, 255, 255, 0.5);
+		  }
 
-      }
+		  .picture-name-container {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: flex-start;
 
-      .current {
+			img {
+			  height: 4rem;
+			  width: 4rem;
+			  border-radius: 50%;
+			  aspect-ratio: 1/1;
+			  object-fit: cover;
+			  object-position: top;
+			}
 
-      }
+			.name {
+			  margin-left: 1rem;
+			  width: 45%;
+			  display: flex;
+			  align-items: center;
+			  font-size: 1.1rem;
+			  text-overflow: fade;
+			  @media (max-width: 440px) {
+				font-size: 1rem;
+			  }
+			}
+		  }
+		}
 
-    }
+		.connections-buttons-container {
+		  display: flex;
+		  flex-direction: row;
+		  align-items: center;
+		  justify-content: flex-end;
+		  width: fit-content;
+		  margin-left: auto;
 
-    .connections-list {
-      @include variables.centered-column;
-      @include variables.glass-container;
-      justify-content: flex-start;
-      margin-top: 3rem;
-      min-height: 65vh;
-      flex: 1;
-      width: 100%;
-      max-height: 60vh;
-      overflow-y: scroll;
-      overflow-x: hidden;
-      position: relative;
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
+		  button {
+			width: 4rem;
+			height: 4rem;
+			padding: 0.5rem;
+			text-align: center;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: transparent;
+			border: none;
+			color: black;
+			box-shadow: none;
+			@media (max-width: 440px) {
+			  width: 3.5rem;
+			  height: 3.5rem;
+			}
 
-      /* Hide scrollbar for Chrome, Safari and Opera */
-      &::-webkit-scrollbar {
-        display: none;
-      }
+			&.accept {
+			  :hover {
+				color: variables.$button-green;
+			  }
+			}
 
-      @media (max-width: 768px) {
-        margin-top: 1rem;
-        max-height: 70vh;
-      }
-      //
-      //@media (max-width: 440px) {
-      //  margin-top: 3rem;
-      //  max-height: 60vh;
-      //}
+			&.delete {
+			  margin-left: 1rem;
 
-      .no-connections-message {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        font-size: 1.5rem;
-      }
+			  :hover {
+				color: variables.$button-red;
+			  }
 
+			  &.confirm {
+				background-color: red;
+				background-clip: content-box;
+			  }
+			}
 
-      //@media (max-width: 768px) {
-      //  max-height: 65vh;
-      //  overflow-y: scroll;
-      //}
+			&.chat {
+			}
 
-      @media (max-width: 440px) {
-        max-height: 75vh;
-        background-color: transparent;
-        //border-top: 1px solid white;
-        //border-bottom: 1px solid white;
-        padding-top: 1.5rem;
-        margin-top: 0;
-        //box-shadow:
-        //        0 6px 4px rgba(255, 255, 255, 0.25),    /* Outside shadow */
-        //        0 6px 4px rgba(255, 255, 255, 0.25) inset; /* Inside shadow */
-        box-shadow: none;
-        border: none;
-        border-radius: 0;
-
-      }
-
-      .connection {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
-        padding: 1rem 0.75rem 1rem 0.75rem;
-
-        .profile-button {
-          all: unset;
-          cursor: pointer;
-          flex-grow: 1;
-          transition: all 0.2s ease;
-          border-radius: 50px;
-          border: 1px solid transparent;
-
-          &:hover {
-            border: 1px solid white;
-            background-color: rgba(255, 255, 255, 0.5);
-          }
-
-
-          .picture-name-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-start;
-
-            img {
-              height: 4rem;
-              width: 4rem;
-              border-radius: 50%;
-              aspect-ratio: 1/1;
-              object-fit: cover;
-              object-position: top;
-
-            }
-
-            .name {
-              margin-left: 1rem;
-              width: 45%;
-              display: flex;
-              align-items: center;
-              font-size: 1.1rem;
-              text-overflow: fade;
-
-              @media (max-width: 440px) {
-                font-size: 1rem;
-              }
-            }
-          }
-        }
-
-        .connections-buttons-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-end;
-            width: fit-content;
-            margin-left: auto;
-
-          button {
-            width: 4rem;
-            height: 4rem;
-            padding: 0.5rem;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: transparent;
-            border: none;
-            color: black;
-            box-shadow: none;
-
-            @media (max-width: 440px) {
-              width: 3.5rem;
-              height: 3.5rem;
-            }
-
-            &.accept {
-
-              :hover {
-                color: variables.$button-green;
-              }
-
-            }
-
-            &.delete {
-              margin-left: 1rem;
-
-              :hover {
-                color: variables.$button-red;
-              }
-
-              &.confirm {
-                background-color: red;
-                background-clip: content-box;
-              }
-
-            }
-
-            &.chat {
-            }
-
-            svg {
-              width: 4rem;
-              height: 4rem;
-
-              //@media (max-width: 440px) {
-              //  width: 3.5rem;
-              //  height: 3.5rem;
-              //}
-
-            }
-          }
-        }
-      }
-    }
+			svg {
+			  width: 4rem;
+			  height: 4rem;
+			}
+		  }
+		}
+	  }
+	}
   }
 
   .modal {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1; /* Stay on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    -webkit-overflow-scrolling: touch;
-    overflow: auto;
+	display: none; /* Hidden by default */
+	position: fixed;
+	z-index: 1; /* Stay on top */
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	-webkit-overflow-scrolling: touch;
+	overflow: auto;
 
+	.modal-content {
+	  background-color: #1c1c1c;
+	  padding: 30px;
+	  border-radius: 8px;
+	  text-align: center;
+	  min-width: 300px;
+	  max-width: 500px;
+	  color: #d5d5d5;
+	  position: absolute;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+	}
 
-    .modal-content {
-      background-color: #1c1c1c;
-      padding: 30px;
-      border-radius: 8px;
-      text-align: center;
-      min-width: 300px;
-      max-width: 500px;
-      color: #d5d5d5;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+	.modal-buttons {
+	  display: flex;
+	  flex-direction: row;
+	  align-items: center;
+	  justify-content: space-between;
+	  margin-top: 10px;
+	  padding-left: 20px;
+	  padding-right: 20px;
 
-    .modal-buttons {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 10px;
-      padding-left: 20px;
-      padding-right: 20px;
+	  button {
+		width: 5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: none;
+		border-radius: 50px;
+		color: white;
+		padding: 10px 20px;
+	  }
 
-      button {
-        width: 5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        border-radius: 50px;
-        color: white;
-        padding: 10px 20px;
-      }
+	  #acceptButton {
+		background-color: variables.$button-green;
+	  }
 
+	  #acceptButton:hover {
+		background-color: #4eff4e;
+	  }
 
-      #acceptButton {
-        /*margin: 25px 25px 0px 25px;*/
-        /*margin-right: auto;*/
-        background-color: variables.$button-green;
-      }
+	  #cancelButton {
+		background-color: variables.$button-red;
+	  }
 
-      #acceptButton:hover {
-        background-color: #4eff4e;
-      }
-
-      #cancelButton {
-        /*margin: 25px 25px 0px 25px;*/
-        /*margin-left: auto;*/
-        background-color: variables.$button-red;
-      }
-
-      #cancelButton:hover {
-        background-color: #ff5353;
-      }
-    }
-
+	  #cancelButton:hover {
+		background-color: #ff5353;
+	  }
+	}
   }
 }

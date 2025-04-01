@@ -1,21 +1,21 @@
 import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 import {IoClose} from 'react-icons/io5';
 import React, {useState} from 'react';
-import './change-password.scss'
+import './change-password.scss';
 import {ShowPasswordButton} from '../../reusables/showPasswordButton.jsx';
-import {Link, useNavigate} from 'react-router-dom';
 import {useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
-import {stepOneSchema} from '../../register/validationSchema.jsx';
 import {passwordValidationSchema} from './passwordValidationSchema.jsx';
 import {ErrorElement} from '../../reusables/errorElement.jsx';
 import axios from 'axios';
 import {useAuth} from '../../utils/AuthContext.jsx';
 
+// change password page of /dashboard settings
 export function ChangePassword() {
 	const [showPassword, setShowPassword] = useState(true);
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-	const { tokenValue } = useAuth();
+	const {tokenValue} = useAuth();
+
 	// Initialize react-hook-form with Yup schema
 	const {
 		register,
@@ -26,68 +26,68 @@ export function ChangePassword() {
 		setError,
 		clearErrors,
 		trigger,
-		formState: { errors, isValid },
+		formState: {errors, isValid}
 	} = useForm({
 		defaultValues: {
 			currentPassword: '',
-            newPassword: '',
-            reNewPassword: '',
+			newPassword: '',
+			reNewPassword: ''
 		},
 		resolver: yupResolver(passwordValidationSchema),
-		mode: 'onChange',
+		mode: 'onChange'
 	});
 
-	const checkPassword = async() => {
+	const checkPassword = async () => {
 		try {
 			const passwordMatch = await axios.post(`${VITE_BACKEND_URL}/api/check-password`, {
-				password: watch('currentPassword'),
+					password: watch('currentPassword')
 				},
 				{
-					headers: { Authorization: `Bearer ${tokenValue}` },
-				})
+					headers: {Authorization: `Bearer ${tokenValue}`}
+				});
 
-			console.log("PasswordMatch: ", passwordMatch);
+			console.log('PasswordMatch: ', passwordMatch);
 
-			if (passwordMatch.data === "Password matches.") {
-				console.log("Password matches!");
-				clearErrors('currentPassword')
+			if (passwordMatch.data === 'Password matches.') {
+				console.log('Password matches!');
+				clearErrors('currentPassword');
 			}
 		} catch (error) {
 			if (error.response) {
-				console.error("Backend error:", error.response.data); // Server responded with an error
+				console.error('Backend error:', error.response.data); // Server responded with an error
 				setError('currentPassword', {
 					type: 'manual',
 					message: 'Does not match your password'
 				});
 			} else {
-				console.error("Request failed:", error.message); // Network error or request issue
+				console.error('Request failed:', error.message); // Network error or request issue
 			}
 		}
-	}
+	};
 
-	const updatePassword = async() => {
-		console.log("UpdatePassword function");
+	const updatePassword = async () => {
+		console.log('UpdatePassword function');
 		try {
-            const response = await axios.patch(`${VITE_BACKEND_URL}/api/change-password`, {
-				oldPassword: watch('currentPassword'),
-                newPassword: watch('newPassword'),
-                },
-                {
-                    headers: { Authorization: `Bearer ${tokenValue}` },
-                })
+			const response = await axios.patch(`${VITE_BACKEND_URL}/api/change-password`, {
+					oldPassword: watch('currentPassword'),
+					newPassword: watch('newPassword')
+				},
+				{
+					headers: {Authorization: `Bearer ${tokenValue}`}
+				});
 
-            console.log("Password updated: ", response);
-            reset();
-            clearErrors(); // trigger form validation
-        } catch (error) {
-            if (error.response) {
-                console.error("Backend error:", error.response.data); // Server responded with an error
-                // todo display error to user
-            } else {
-                console.error("Request failed:", error.message); // Network error or request issue
-            }
-        }
-	}
+			console.log('Password updated: ', response);
+			reset();
+			clearErrors(); // trigger form validation
+		} catch (error) {
+			if (error.response) {
+				console.error('Backend error:', error.response.data); // Server responded with an error
+				// todo display error to user
+			} else {
+				console.error('Request failed:', error.message); // Network error or request issue
+			}
+		}
+	};
 
 	return (
 		<>
@@ -96,7 +96,7 @@ export function ChangePassword() {
 				type={'button'}
 				onClick={closeSettings}
 			>
-				<IoClose />
+				<IoClose/>
 			</button>
 			<div className='change-password-content'>
 				{/* todo add animation to show users password change was successful (like an animated checkmark)*/}
@@ -105,13 +105,13 @@ export function ChangePassword() {
 					id={'change-password-form'}
 					autoComplete={'off'}
 					noValidate
-					onSubmit={handleSubmit( () => {
+					onSubmit={handleSubmit(() => {
 						updatePassword();
 						reset();
 					})}
 				>
 
-					<div className="form-title">
+					<div className='form-title'>
 						<h1>Change password</h1>
 					</div>
 
@@ -125,17 +125,18 @@ export function ChangePassword() {
 								placeholder='Enter your current password'
 								value={watch('currentPassword')}
 								className={`not-react-select focus-highlight 
-									${errors.currentPassword ? "error" : ""}
-									${!errors.currentPassword && watch('currentPassword') ? "valid" : ""}`}
-								{...register("currentPassword")}
-								autoComplete={"off"}
+									${errors.currentPassword ? 'error' : ''}
+									${!errors.currentPassword && watch('currentPassword') ? 'valid' : ''}`}
+								{...register('currentPassword')}
+								autoComplete={'off'}
 								onBlur={() => {
 									checkPassword();
 								}}
 							/>
-							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} changePassword={true}/>
+							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}
+												changePassword={true}/>
 						</div>
-						<ErrorElement errors={errors}  id={'currentPassword'}/>
+						<ErrorElement errors={errors} id={'currentPassword'}/>
 
 					</label>
 					<label>
@@ -148,19 +149,20 @@ export function ChangePassword() {
 								placeholder='Enter a new password'
 								value={watch('newPassword')}
 								className={`not-react-select focus-highlight 
-									${errors.newPassword ? "error" : ""}
-									${!errors.newPassword && watch('newPassword') ? "valid" : ""}`}
-								{...register("newPassword")}
-								autoComplete={"off"}
+									${errors.newPassword ? 'error' : ''}
+									${!errors.newPassword && watch('newPassword') ? 'valid' : ''}`}
+								{...register('newPassword')}
+								autoComplete={'off'}
 								onChange={(e) => {
-									setValue("newPassword", e.target.value, { shouldValidate: true }); // Manually update field value
-									trigger("reNewPassword"); // Trigger validation for reNewPassword
+									setValue('newPassword', e.target.value, {shouldValidate: true}); // Manually update field value
+									trigger('reNewPassword'); // Trigger validation for reNewPassword
 								}}
 							/>
-							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} changePassword={true}/>
+							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}
+												changePassword={true}/>
 						</div>
 
-						<ErrorElement errors={errors}  id={'newPassword'}/>
+						<ErrorElement errors={errors} id={'newPassword'}/>
 
 					</label>
 					<label>
@@ -173,23 +175,24 @@ export function ChangePassword() {
 								placeholder='Enter the new password again'
 								value={watch('reNewPassword')}
 								className={`not-react-select focus-highlight 
-									${errors.reNewPassword ? "error" : ""}
-									${!errors.reNewPassword && watch('reNewPassword') ? "valid" : ""}`}
-								{...register("reNewPassword")}
-								autoComplete={"off"}
+									${errors.reNewPassword ? 'error' : ''}
+									${!errors.reNewPassword && watch('reNewPassword') ? 'valid' : ''}`}
+								{...register('reNewPassword')}
+								autoComplete={'off'}
 							/>
-							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} changePassword={true}/>
+							<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword}
+												changePassword={true}/>
 						</div>
 
-						<ErrorElement errors={errors}  id={'reNewPassword'}/>
+						<ErrorElement errors={errors} id={'reNewPassword'}/>
 
 					</label>
 				</form>
-				<div className="settings-buttons-container">
-					<button className="cancel" onClick={() => {
+				<div className='settings-buttons-container'>
+					<button className='cancel' onClick={() => {
 						reset();
 						closeSettings();
-					}} type={'button'} >
+					}} type={'button'}>
 						Cancel
 					</button>
 					<button
@@ -206,5 +209,5 @@ export function ChangePassword() {
 				</div>
 			</div>
 		</>
-	)
+	);
 }

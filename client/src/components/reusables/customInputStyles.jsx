@@ -1,12 +1,10 @@
+// custom styles for react select
 export const customStyles = {
 	control: (provided, state) => ({
 		...provided,
 		fontSize: '0.875rem',
 		minHeight: '2rem',  // Ensure it starts with a height of 2rem
 		height: 'auto',  // Set to 'auto' so it adjusts based on content
-		// height: '2.5rem',  // Set to 'auto' so it adjusts based on content
-		// maxWidth: '12.187rem',
-		// width: '100%',
 		width: '100%',
 		display: 'flex',
 		alignItems: 'center',
@@ -22,21 +20,19 @@ export const customStyles = {
 				: 'white', // default to white
 		borderRadius:
 			state.isFocused && state.selectProps.menuIsOpen
-				? (state.selectProps.menuTop ? '0 0 10px 10px' : '10px 10px 0 0'): '10px' ,
+				? (state.selectProps.menuTop ? '0 0 10px 10px' : '10px 10px 0 0') : '10px',
 		borderColor: state.isFocused ? 'rgb(254, 110, 121)' : 'rgb(97, 97, 97)',
 		boxShadow: state.isFocused ? '0 0 5px rgb(254, 110, 121)' : 'none',
-		'&:hover': { borderColor: '#rgb(254, 110, 121)' },
-		transition: 'height 0.2s ease-in-out', // Smooth transition for height change
+		'&:hover': {borderColor: '#rgb(254, 110, 121)'},
+		transition: 'height 0.2s ease-in-out' // Smooth transition for height change
 
 	}),
 	menu: (provided, state) => ({
 		...provided,
-		// width: state.selectProps.wideMenu === true ? '25.25rem' : '100%',
-		// borderRadius: '0 0 10px 10px',
+		width: '100%',
+		minWidth: '100%',
+		maxWidth: 'none', // Remove any possible restrictions
 		borderRadius: state.selectProps.menuTop ? '10px 10px 0 0' : ' 0 0 10px 10px',
-		// borderRadius:
-		// 	state.isFocused && state.selectProps.menuIsOpen
-		// 		? (state.selectProps.menuTop ? '10px 10px 0 0' : '0 0 10px 10px'): '10px' ,
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
@@ -54,7 +50,7 @@ export const customStyles = {
 		width: '100%',
 		padding: '0',
 		margin: '0',
-		maxHeight: '11rem',
+		maxHeight: '11rem'
 	}),
 
 	option: (provided, state) => ({
@@ -71,42 +67,35 @@ export const customStyles = {
 		cursor: 'pointer',
 		alignItems: 'center',
 		width: '100%',
-		// width: state.selectProps.wideMenu === true ? '25.25rem' : '12rem', // Ensuring menu width matches control
 		'&:active': {
-			backgroundColor: 'rgb(254, 110, 121)',
-		},
+			backgroundColor: 'rgb(254, 110, 121)'
+		}
 	}),
 
 	valueContainer: (provided, state) => ({
 		...provided,
-		// minHeight: '2rem',  // Ensure it starts with a height of 2rem
-		// height: 'auto', // Allow it to adjust based on content
 		height: state.selectProps.containerExpand === true ? 'auto' : '2rem',  // Ensures alignment inside the control
-		// display: 'flex',
-		// alignItems: 'center',
-		// justifyContent: 'flex-start',
 		padding: '0 10px 0 10px',
 		margin: '0 0',
 		boxSizing: 'border-box',
 		flexWrap: 'wrap', // Prevent the container from wrapping the items
-		// overflow: 'hidden',  // Ensure it doesn't overflow
-		lineHeight: '2rem',
+		lineHeight: '2rem'
 	}),
 
 	singleValue: (provided, state) => ({
 		...provided,
 		textAlign: 'left',
+		width: '100%'
 	}),
 
 	input: (provided) => ({
 		...provided,
-		// minHeight: '2rem',
 		height: 'auto',
 		margin: '0',
 		padding: '0',
 		lineHeight: '2rem',
 		boxShadow: 'none !important',
-		boxSizing: 'border-box !important',
+		boxSizing: 'border-box !important'
 
 	}),
 
@@ -116,8 +105,7 @@ export const customStyles = {
 		display: 'flex',
 		alignItems: 'center',
 		textAlign: 'center',
-		paddingLeft: '8px',
-		// boxShadow: 'none !important',
+		paddingLeft: '8px'
 	}),
 
 	dropdownIndicator: (provided, state) => {
@@ -136,8 +124,8 @@ export const customStyles = {
 						: 'rotate(0deg)', // Arrow points down when menu is closed
 			transition: 'transform 0.2s ease-in-out', // Smooth animation
 			':hover': {
-				color: 'rgb(21,21,21)',
-			},
+				color: 'rgb(21,21,21)'
+			}
 		};
 	},
 
@@ -145,13 +133,13 @@ export const customStyles = {
 		...provided,
 		color: state.isFocused ? 'rgb(97, 97, 97)' : 'rgb(97, 97, 97)', // green when focused, grey otherwise
 		':hover': {
-			color: 'rgb(21,21,21)',
-		},
+			color: 'rgb(21,21,21)'
+		}
 	}),
 
 	indicatorSeparator: (provided) => ({
 		...provided,
-		backgroundColor: '#888', // grey separator
+		backgroundColor: '#888' // grey separator
 	}),
 
 	placeholder: (provided) => ({
@@ -162,7 +150,7 @@ export const customStyles = {
 		alignItems: 'center',
 		textAlign: 'left',
 		overflow: 'hidden',
-		whiteSpace: 'nowrap',
+		whiteSpace: 'nowrap'
 	}),
 
 	// Styling for the selected items (multiValue)
@@ -175,7 +163,7 @@ export const customStyles = {
 		display: 'flex', // Allows values to shrink and grow
 		alignItems: 'center',
 		justifyContent: 'flex-start',
-		lineHeight: '100%',
+		lineHeight: '100%'
 	}),
 
 	// Label inside selected items
@@ -185,7 +173,7 @@ export const customStyles = {
 		textAlign: 'left',
 		whiteSpace: 'nowrap',  // Prevent wrapping
 		overflow: 'hidden',  // Prevent overflow from expanding the container
-		textOverflow: 'clip',  // Add ellipsis when the text overflows when is it being removed (animated)
+		textOverflow: 'clip'  // Add ellipsis when the text overflows when is it being removed (animated)
 	}),
 
 	// Remove icon in selected items
@@ -195,6 +183,7 @@ export const customStyles = {
 		cursor: 'pointer',
 		borderRadius: '8px',
 		height: '19px'
-	}),
+	})
+
 
 };

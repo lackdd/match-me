@@ -1,29 +1,22 @@
-import './chats.scss'
-import {Link} from 'react-router-dom';
-import Chat from "./Chat";
-import { useAuth } from '../utils/AuthContext.jsx';
-import React, {useEffect, useState, useCallback} from "react";
-import axios from "axios";
-import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-
-// react icons
-import { IoArrowBack } from "react-icons/io5";
-import { IoArrowForward } from "react-icons/io5";
-import { FaBell } from "react-icons/fa";
+import './chats.scss';
+import Chat from './Chat';
+import {useAuth} from '../utils/AuthContext.jsx';
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
+import {FaBell} from 'react-icons/fa';
 
 function Chats() {
 	const [loading, setLoading] = useState(true);
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-	const { tokenValue, userId, webSocketClient, broadcastStatus } = useAuth();
+	const {tokenValue, userId, webSocketClient, broadcastStatus} = useAuth();
 	const [connections, setConnections] = useState([]);
 	const [connectionDetails, setConnectionDetails] = useState([]);
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [selectedUserId, setSelectedUserId] = useState(null);
 	const [error, setError] = useState(false);
-	const [errorMessage, setErrorMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState('');
 	const [userStatuses, setUserStatuses] = useState({});
-	const [username, setUsername] = useState("");
+	const [username, setUsername] = useState('');
 	const [unreadMessages, setUnreadMessages] = useState({});
 	const [totalUnreadCount, setTotalUnreadCount] = useState(0);
 	const [notifications, setNotifications] = useState([]);
@@ -34,18 +27,18 @@ function Chats() {
 			const fetchUsername = async () => {
 				try {
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/me`, {
-						headers: { Authorization: `Bearer ${tokenValue}` },
+						headers: {Authorization: `Bearer ${tokenValue}`}
 					});
 					setUsername(response.data.username);
 
 					// Set up subscription for status updates
 					if (webSocketClient && webSocketClient.connected) {
-						const normalizedUsername = response.data.username.trim().replace(/\s+/g, "_");
+						const normalizedUsername = response.data.username.trim().replace(/\s+/g, '_');
 
 						// Subscribe to status updates for all connections
 						webSocketClient.subscribe(`/user/${normalizedUsername}/queue/status`, (statusMsg) => {
 							const status = JSON.parse(statusMsg.body);
-							console.log("Status update received in Chats:", status);
+							console.log('Status update received in Chats:', status);
 
 							setUserStatuses(prev => ({
 								...prev,
@@ -56,7 +49,7 @@ function Chats() {
 						// Subscribe to notifications for unread messages
 						webSocketClient.subscribe(`/user/${normalizedUsername}/queue/notifications`, (notificationMsg) => {
 							const notification = JSON.parse(notificationMsg.body);
-							console.log("Notification received:", notification);
+							console.log('Notification received:', notification);
 
 							// If this is from the currently selected user, mark it as read immediately
 							if (notification.senderId === selectedUserId) {
@@ -77,7 +70,7 @@ function Chats() {
 							fetchNotifications();
 						});
 
-						console.log("Subscribed to status updates and notifications");
+						console.log('Subscribed to status updates and notifications');
 					}
 				} catch (error) {
 					console.log(error.message);
@@ -91,11 +84,11 @@ function Chats() {
 	const fetchUnreadCount = async () => {
 		try {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/unread-count`, {
-				headers: { Authorization: `Bearer ${tokenValue}` },
+				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
 			setTotalUnreadCount(response.data.count);
 		} catch (error) {
-			console.error("Error fetching unread count:", error);
+			console.error('Error fetching unread count:', error);
 		}
 	};
 
@@ -103,7 +96,7 @@ function Chats() {
 	const fetchNotifications = async () => {
 		try {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/notifications`, {
-				headers: { Authorization: `Bearer ${tokenValue}` },
+				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
 			setNotifications(response.data);
 
@@ -121,7 +114,7 @@ function Chats() {
 			});
 			setTotalUnreadCount(total);
 		} catch (error) {
-			console.error("Error fetching notifications:", error);
+			console.error('Error fetching notifications:', error);
 		}
 	};
 
@@ -131,9 +124,9 @@ function Chats() {
 
 		try {
 			await axios.post(`${VITE_BACKEND_URL}/api/chat/mark-as-read/${senderId}`, {}, {
-				headers: { Authorization: `Bearer ${tokenValue}` },
+				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
-			console.log("Marked messages from", senderId, "as read");
+			console.log('Marked messages from', senderId, 'as read');
 
 			// Update local state to show messages as read
 			setUnreadMessages(prev => ({
@@ -145,7 +138,7 @@ function Chats() {
 			fetchNotifications();
 			fetchUnreadCount();
 		} catch (error) {
-			console.error("Error marking messages as read:", error);
+			console.error('Error marking messages as read:', error);
 		}
 	};
 
@@ -154,9 +147,9 @@ function Chats() {
 		const fetchConnections = async () => {
 			try {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
-					headers: {Authorization: `Bearer ${tokenValue}`},
+					headers: {Authorization: `Bearer ${tokenValue}`}
 				});
-				console.log("Setting connections:", response.data);
+				console.log('Setting connections:', response.data);
 				setConnections(response.data);
 
 				// Get user details for all connections
@@ -164,7 +157,7 @@ function Chats() {
 					const userDetailsResponse = await axios.post(`${VITE_BACKEND_URL}/api/getUsersByIds`,
 						response.data,
 						{
-							headers: { Authorization: `Bearer ${tokenValue}` },
+							headers: {Authorization: `Bearer ${tokenValue}`}
 						}
 					);
 					setConnectionDetails(userDetailsResponse.data);
@@ -180,13 +173,13 @@ function Chats() {
 					if (webSocketClient && webSocketClient.connected) {
 						response.data.forEach(connectionId => {
 							webSocketClient.publish({
-								destination: "/app/status/request",
+								destination: '/app/status/request',
 								headers: {
 									Authorization: `Bearer ${tokenValue}`
 								},
 								body: JSON.stringify({
 									receiverId: connectionId
-								}),
+								})
 							});
 							console.log(`Requested status update from user ${connectionId}`);
 						});
@@ -204,14 +197,14 @@ function Chats() {
 			} finally {
 				setLoading(false);
 			}
-		}
+		};
 
 		if (tokenValue) {
 			fetchConnections();
 
 			// Also, send our ACTIVE status to all connections when the chat page loads
 			if (webSocketClient && webSocketClient.connected && userId) {
-				broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
+				broadcastStatus(webSocketClient, userId, 'ACTIVE', tokenValue);
 			}
 		}
 	}, [tokenValue, userId, webSocketClient]);
@@ -223,19 +216,19 @@ function Chats() {
 				// Request status updates for all connections
 				connections.forEach(connectionId => {
 					webSocketClient.publish({
-						destination: "/app/status/request",
+						destination: '/app/status/request',
 						headers: {
 							Authorization: `Bearer ${tokenValue}`
 						},
 						body: JSON.stringify({
 							receiverId: connectionId
-						}),
+						})
 					});
 				});
 
 				// Also broadcast our own status
 				if (userId) {
-					broadcastStatus(webSocketClient, userId, "ACTIVE", tokenValue);
+					broadcastStatus(webSocketClient, userId, 'ACTIVE', tokenValue);
 				}
 			}
 		}, 30000); // Every 30 seconds
@@ -243,6 +236,7 @@ function Chats() {
 		return () => clearInterval(statusRefreshInterval);
 	}, [webSocketClient, connections, userId, tokenValue]);
 
+	// Broadcast our status to all connections
 	const handleButtonClick = (userId, username) => {
 		const inputMessage = document.getElementById('message-input');
 
@@ -255,27 +249,27 @@ function Chats() {
 			// Set previously selected user to INACTIVE
 			if (selectedUserId && selectedUserId !== userId) {
 				webSocketClient.publish({
-					destination: "/app/status",
+					destination: '/app/status',
 					headers: {
 						Authorization: `Bearer ${tokenValue}`
 					},
 					body: JSON.stringify({
 						receiverId: selectedUserId,
-						status: "ACTIVE"
-					}),
+						status: 'ACTIVE'
+					})
 				});
 			}
 
 			// Set new selected user to ACTIVE
 			webSocketClient.publish({
-				destination: "/app/status",
+				destination: '/app/status',
 				headers: {
 					Authorization: `Bearer ${tokenValue}`
 				},
 				body: JSON.stringify({
 					receiverId: userId,
-					status: "ACTIVE"
-				}),
+					status: 'ACTIVE'
+				})
 			});
 		}
 
@@ -300,11 +294,11 @@ function Chats() {
 
 	const openChat = () => {
 		// open chat
-		const connections = document.getElementById('connections')
-		const chat = document.getElementById('chat')
+		const connections = document.getElementById('connections');
+		const chat = document.getElementById('chat');
 
 		if (!chat || !connections) {
-			console.log("chat or connections not found");
+			console.log('chat or connections not found');
 			return;
 		}
 
@@ -312,7 +306,7 @@ function Chats() {
 		connections.classList.add('hide-connections');
 		chat.classList.remove('hide-chat');
 		chat.classList.add('show-chat');
-	}
+	};
 
 	// Render status indicator for connections list
 	const renderConnectionStatus = (userId) => {
@@ -323,18 +317,18 @@ function Chats() {
 			(status.status || (status.name ? status.name : 'INACTIVE')) : status;
 
 		if (!statusStr || statusStr === 'INACTIVE') {
-			return <div className="status-dot offline" title="Offline"></div>;
+			return <div className='status-dot offline' title='Offline'></div>;
 		}
 
 		if (statusStr === 'TYPING') {
-			return <div className="status-dot typing" title="Typing..."></div>;
+			return <div className='status-dot typing' title='Typing...'></div>;
 		}
 
 		if (statusStr === 'ACTIVE') {
-			return <div className="status-dot online" title="Online"></div>;
+			return <div className='status-dot online' title='Online'></div>;
 		}
 
-		return <div className="status-dot offline" title="Offline"></div>;
+		return <div className='status-dot offline' title='Offline'></div>;
 	};
 
 	// Render unread message count badge
@@ -343,7 +337,7 @@ function Chats() {
 		if (!count || count <= 0) return null;
 
 		return (
-			<div className="unread-badge" title={`${count} unread message${count > 1 ? 's' : ''}`}>
+			<div className='unread-badge' title={`${count} unread message${count > 1 ? 's' : ''}`}>
 				{count > 99 ? '99+' : count}
 			</div>
 		);
@@ -366,8 +360,8 @@ function Chats() {
 		<div className='chats-container'>
 			{/* Add total unread count in the header if needed */}
 			{totalUnreadCount > 0 && (
-				<div className="total-unread-badge">
-					<FaBell />
+				<div className='total-unread-badge'>
+					<FaBell/>
 					<span>{totalUnreadCount}</span>
 				</div>
 			)}
@@ -387,15 +381,17 @@ function Chats() {
 									<p className={'no-connections-message'}>No connections</p>
 								) : (
 									connectionDetails.map((connection) => (
-										<button className={`picture-name-button ${selectedUserId === connection.id ? 'selected' : ''}`} key={connection.id} onClick={() => {
+										<button
+											className={`picture-name-button ${selectedUserId === connection.id ? 'selected' : ''}`}
+											key={connection.id} onClick={() => {
 											handleButtonClick(connection.id, connection.username);
 											openChat();
 										}}>
-											<div className="connection-info">
+											<div className='connection-info'>
 												<img src='profile_pic_female.jpg' alt='' className='profile-picture'/>
 												<div className='name'>{connection.username}</div>
 											</div>
-											<div className="connection-indicators">
+											<div className='connection-indicators'>
 												{renderUnreadBadge(connection.id)}
 												{renderConnectionStatus(connection.id)}
 											</div>
@@ -415,12 +411,12 @@ function Chats() {
 									<p className={'no-chat'}>
 										Select a user to start chatting
 										{notifications.length > 0 && (
-											<div className="unread-notifications">
+											<div className='unread-notifications'>
 												<h3>Unread Messages</h3>
 												{notifications.map(notification => (
 													<div
 														key={notification.messageId}
-														className="notification-item"
+														className='notification-item'
 														onClick={() => {
 															const user = connectionDetails.find(c => c.id === notification.senderId);
 															if (user) {
@@ -429,9 +425,11 @@ function Chats() {
 															}
 														}}
 													>
-														<div className="notification-sender">{notification.senderUsername}</div>
-														<div className="notification-preview">{notification.messagePreview}</div>
-														<div className="notification-count">{notification.count}</div>
+														<div
+															className='notification-sender'>{notification.senderUsername}</div>
+														<div
+															className='notification-preview'>{notification.messagePreview}</div>
+														<div className='notification-count'>{notification.count}</div>
 													</div>
 												))}
 											</div>

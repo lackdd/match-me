@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './dashboard.scss';
 import '../reusables/settings-popup.scss'
 import '../reusables/profile-card.scss'
@@ -6,13 +6,11 @@ import '../reusables/loadingAnimation.scss'
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { IoClose } from "react-icons/io5";
 import { FaSpotify } from 'react-icons/fa';
-import {useSwipe} from '../recommendations/useSwipe.jsx';
 import axios from 'axios';
 import { useAuth } from '../utils/AuthContext.jsx';
 import {
 	formatData,
 	formatLocation,
-	closeSettings,
 	openSettings,
 	changeImage,
 	backToObject, sendPictureToBackend
@@ -25,12 +23,9 @@ import {
 	methodsOptions,
 	personalityTraitsOptions
 } from '../reusables/inputOptions.jsx';
-import {AdvancedImage} from '@cloudinary/react';
-import {getOptimizedImage} from '../utils/cloudinary.jsx';
 import {SettingsMenu} from './dashboard-settings/settings-menu.jsx';
 import {Stats} from './dashboard-settings/stats.jsx';
 import {ChangePassword} from './dashboard-settings/change-password.jsx';
-import {CloudinaryImage} from '@cloudinary/url-gen';
 
 function Dashboard() {
 	const [loading, setLoading] = useState(true)
@@ -44,7 +39,7 @@ function Dashboard() {
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [settingsContent, setSettingsContent] = useState('profile') // 'statistics' and 'password'
-	const { imageUrl, setImageUrl, username } = useAuth();
+	const { setImageUrl, username } = useAuth();
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -143,6 +138,7 @@ function Dashboard() {
 	}, [])
 
 
+	// format received data
 	const formatDataForView = (data) => {
 		if (data !== null && data && isDataFormatted.current === false) {
 			const updatedProfile = {
@@ -166,22 +162,9 @@ function Dashboard() {
 					: data.goalsWithMusic
 			};
 			return updatedProfile;
-
-			// Check if the profile data has changed before updating the state
-			// if (JSON.stringify(updatedProfile) !== JSON.stringify(data)) {
-			// 	setMyDataFormatted((prev) => ({
-			// 		...prev,
-			// 		...updatedProfile
-			// 	}));
-			// 	isDataFormatted.current = true;
-			// }
 		}
 		return data;
 	}
-
-	useEffect(() => {
-		console.log("MyDataFormatted: ", myDataFormatted);
-	}, [myDataFormatted])
 
 	return (
 
@@ -198,15 +181,6 @@ function Dashboard() {
 					{!loading && (
 						<>
 							<div className="extra-dashboard-container">
-
-								{/*<div className="settings-popup" id="picture-popup">*/}
-								{/*	<div className="settings-content">*/}
-								{/*		<div className='forms-container'>*/}
-								{/*			*/}
-								{/*		</div>*/}
-								{/*	</div>*/}
-								{/*</div>*/}
-
 								<div className="settings-popup" id="settings-popup">
 									<div className="settings-content">
 
@@ -236,11 +210,7 @@ function Dashboard() {
 									className="profile-card-container"
 								>
 									<div className="settings-container">
-										<button className="settings-button" onClick={() => {
-											openSettings();
-											setFormOpen(true);
-											// console.log("gender when opening settings: ", myData.gender);
-										}}>
+										<button className="settings-button" onClick={openSettings}>
 											<GiSettingsKnobs />
 										</button>
 									</div>
@@ -258,9 +228,6 @@ function Dashboard() {
 													</div>
 												)}
 
-												{/* todo fix so uploaded pictures are actually shown*/}
-												{/*{!loadingImage && imageUrl && <AdvancedImage cldImg={getOptimizedImage(myDataFormatted.profilePicture)} />}*/}
-												{/*{!loadingImage && imageUrl && <img src={"default_profile_picture.png"} alt={"default picture"}/>}*/}
 
 												{!loadingImage && (
 													<>
@@ -271,53 +238,14 @@ function Dashboard() {
 															   className='file-upload'
 															   title={'click to change picture'}
 														/>
-														{!myDataFormatted.profilePicture.endsWith("null") && (
-															// <AdvancedImage cldImg={new CloudinaryImage(myDataFormatted.profilePicture)} />
-															<img src={myDataFormatted.profilePicture} alt="Profile" className="profile-picture" />
-														)}
-														{myDataFormatted.profilePicture.endsWith("null") && (
-															<img
-																src="default_profile_picture.png"
-																alt="profile picture"
-																className="profile-picture"
-															/>
-														)}
+														{myDataFormatted.profilePicture && !myDataFormatted.profilePicture.endsWith("null") ? (
+															<img src={myDataFormatted.profilePicture} alt={myDataFormatted.username} className='profile-picture' />
+														) : (
+															<img src="default_profile_picture.png" alt={myDataFormatted.username} className='profile-picture' />
+														)
+														}
 													</>
 												)}
-
-												{/*{!loadingImage && (*/}
-												{/*	<>*/}
-												{/*		<input type='file'*/}
-												{/*			   accept={"image/*"}*/}
-												{/*			   name={'image'}*/}
-												{/*			   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}*/}
-												{/*			   className='file-upload'*/}
-												{/*			   title={'click to change picture'}*/}
-												{/*		/>*/}
-												{/*		{myDataFormatted.gender === 'male' && (*/}
-												{/*			<img*/}
-												{/*				src="profile_pic_male.jpg"*/}
-												{/*				alt="profile picture"*/}
-												{/*				className="profile-picture"*/}
-												{/*				// onClick={changePicture(myDataFormatted, setMyDataFormatted)}*/}
-												{/*			/>*/}
-												{/*		)}*/}
-												{/*		{myDataFormatted.gender === 'female' && (*/}
-												{/*			<img*/}
-												{/*				src="profile_pic_female.jpg"*/}
-												{/*				alt="profile picture"*/}
-												{/*				className="profile-picture"*/}
-												{/*			/>*/}
-												{/*		)}*/}
-												{/*		{myDataFormatted.gender === 'other' && (*/}
-												{/*			<img*/}
-												{/*				src="default_profile_picture.png"*/}
-												{/*				alt="profile picture"*/}
-												{/*				className="profile-picture"*/}
-												{/*			/>*/}
-												{/*		)}*/}
-												{/*	</>*/}
-												{/*)}*/}
 
 												{myDataFormatted.linkToMusic && (
 													<div className="music-link">
@@ -474,7 +402,6 @@ function Dashboard() {
 				<div className='api-error'>{errorMessage}</div>
 			)
 			}
-
 
 		</div>
 	);
