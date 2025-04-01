@@ -27,11 +27,6 @@ export const openSettings = (event) => {
 	settingsPopup.style.display = 'flex';
 }
 
-export const openChangePicture = (event) => {
-	const picturePopup = document.getElementById('picture-popup')
-	picturePopup.style.display = 'flex';
-}
-
 export const changeImage = async (event, setMyDataFormatted, setImage, tokenValue, setLoadingImage) => {
 	if (event.target.files && event.target.files[0]) {
 		// const imageUrl = (URL.createObjectURL(event.target.files[0])); // show local preview before upload
