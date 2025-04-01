@@ -103,4 +103,14 @@ export const dashboardFormValidationSchema =
 			.min(0, "")
 			.max(300, "Maximum 300 characters")
 			.notRequired(),
+
+		// New geolocation fields
+		latitude: yup
+			.number()
+			.nullable()
+			.transform((value) => (isNaN(value) ? null : value)),
+		longitude: yup
+			.number()
+			.nullable()
+			.transform((value) => (isNaN(value) ? null : value)),
 	});
