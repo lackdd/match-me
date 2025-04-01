@@ -113,8 +113,6 @@ public class UserController {
     public ResponseEntity<List<UsernamePictureDTO>> getUsersByIds(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody List<Long> ids) {
         List<UsernamePictureDTO> users = ids.stream()
                 .map(id -> userService.getUserNameAndPictureById(id))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
@@ -145,10 +143,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
         }
         Long id = userPrincipal.getId();
-        Optional<UsernamePictureDTO> userOptional = userService.getUserNameAndPictureById(id);
-        return userOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        UsernamePictureDTO usernamePictureDTO = userService.getUserNameAndPictureById(id);
+        return ResponseEntity.ok(usernamePictureDTO);
     }
 
     @PatchMapping("/me")
@@ -172,11 +168,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
         }
         Long id = userPrincipal.getId();
-        Optional<BioDTO> userOptional = userService.getUserBioById(id);
+        BioDTO bioDTO = userService.getUserBioById(id);
 
-        return userOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(bioDTO);
     }
 
     @PatchMapping("/me/bio")
@@ -208,11 +202,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
         }
         Long id = userPrincipal.getId();
-        Optional<ProfileDTO> userOptional = userService.getUserProfileById(id);
+        ProfileDTO profileDTO = userService.getUserProfileById(id);
 
-        return userOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(profileDTO);
     }
 
     @PatchMapping("/me/profile")
@@ -317,29 +309,23 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public ResponseEntity<UsernamePictureDTO> getUserById(@PathVariable Long id) {
-        Optional <UsernamePictureDTO> userOptional = userService.getUserNameAndPictureById(id);
+        UsernamePictureDTO usernamePictureDTO = userService.getUserNameAndPictureById(id);
 
-        return userOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(usernamePictureDTO);
     }
 
     @GetMapping("/users/{id}/bio")
     public ResponseEntity<BioDTO> getUserBioById(@PathVariable Long id) {
-        Optional <BioDTO> userOptional = userService.getUserBioById(id);
+        BioDTO bioDTO = userService.getUserBioById(id);
 
-        return userOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(bioDTO);
     }
 
     @GetMapping("/users/{id}/profile")
     public ResponseEntity<ProfileDTO> getUserProfileById(@PathVariable Long id) {
-        Optional <ProfileDTO> userOptional = userService.getUserProfileById(id);
+        ProfileDTO profileDTO = userService.getUserProfileById(id);
 
-        return userOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(profileDTO);
     }
 
     @PostMapping("/validateToken")

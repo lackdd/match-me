@@ -5,15 +5,15 @@ import com.app.matchme.dtos.LocationUpdateDTO;
 import com.app.matchme.dtos.ProfileDTO;
 import com.app.matchme.dtos.UsernamePictureDTO;
 import com.app.matchme.entities.*;
+import com.app.matchme.exceptions.BusinessException;
+import com.app.matchme.exceptions.RepositoryException;
 import com.app.matchme.mappers.UserMapper;
 import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.utils.GeoUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,8 +34,7 @@ public class UserService {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public void addConnectionById(Long id, User currentUser) {
-        if (!currentUser.getPendingRequests().contains(id))
-        {
+        if (!currentUser.getPendingRequests().contains(id)) {
             System.out.println("You don't have this user in your pending requests, adding connection stopped.");
             return;
         }
@@ -76,7 +75,7 @@ public class UserService {
         User receiverUser = userRepository.findByUsername(receiver).orElseThrow(() -> new RuntimeException("User not found"));
         Long receiverId = receiverUser.getId();
 
-        if(senderUser.getConnections().contains(receiverId) && receiverUser.getConnections().contains(senderId)) {
+        if (senderUser.getConnections().contains(receiverId) && receiverUser.getConnections().contains(senderId)) {
             System.out.println("Users are confirmed to be connected");
             return true;
         }
@@ -127,7 +126,7 @@ public class UserService {
             }
         }
 
-        if (currentUser.getIdealMatchYearsOfExperience() == "any" || (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax) ) {
+        if (currentUser.getIdealMatchYearsOfExperience() == "any" || (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax)) {
             points++;
         }
         return points;
@@ -144,9 +143,8 @@ public class UserService {
 
     @Transactional
     public void deleteConnectionById(Long connectionId, User currentUser) {
-        User connectedUser = userRepository.findById(connectionId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        if(currentUser.getConnections().contains(connectionId) && connectedUser.getConnections().contains(currentUser.getId())) {
+        User connectedUser = userRepository.findById(connectionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if (currentUser.getConnections().contains(connectionId) && connectedUser.getConnections().contains(currentUser.getId())) {
             currentUser.getConnections().remove(connectionId);
             connectedUser.getConnections().remove(currentUser.getId());
             userRepository.save(currentUser);
@@ -156,11 +154,10 @@ public class UserService {
 
     @Transactional
     public void deletePendingRequestById(Long pendingRequestId, User currentUser) {
-        User otherUser = userRepository.findById(pendingRequestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        User otherUser = userRepository.findById(pendingRequestId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         if (currentUser.getPendingRequests().contains(pendingRequestId)) {
             currentUser.getPendingRequests().remove(pendingRequestId);
-            if(otherUser != null && otherUser.getLikedUsers().contains(currentUser.getId())) {
+            if (otherUser != null && otherUser.getLikedUsers().contains(currentUser.getId())) {
                 otherUser.getLikedUsers().remove(currentUser.getId());
             }
         }
@@ -189,48 +186,26 @@ public class UserService {
             // Get users within the radius for proximity matching
             if ("same_city".equals(idealMatchLocation) || "same_country".equals(idealMatchLocation)) {
                 // Get users near current user first
-                potentialMatches = userRepository.findUsersWithinRadius(
-                        currentUser.getCoordinates().getY(), // Latitude
+                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(), // Latitude
                         currentUser.getCoordinates().getX(), // Longitude
-                        radiusInMeters,
-                        currentUser.getId()
-                );
+                        radiusInMeters, currentUser.getId());
 
                 // Apply additional location text filtering
                 if ("same_city".equals(idealMatchLocation)) {
-                    potentialMatches = potentialMatches.stream()
-                            .filter(user -> Objects.equals(user.getLocation(), currentUser.getLocation()))
-                            .collect(Collectors.toList());
+                    potentialMatches = potentialMatches.stream().filter(user -> Objects.equals(user.getLocation(), currentUser.getLocation())).collect(Collectors.toList());
                 } else if ("same_country".equals(idealMatchLocation)) {
                     // Extract country part from location (after the last comma)
-                    potentialMatches = potentialMatches.stream()
-                            .filter(user -> user.getLocation() != null && currentUser.getLocation() != null)
-                            .filter(user -> Objects.equals(
-                                    user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(),
-                                    currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim()))
-                            .collect(Collectors.toList());
+                    potentialMatches = potentialMatches.stream().filter(user -> user.getLocation() != null && currentUser.getLocation() != null).filter(user -> Objects.equals(user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(), currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim())).collect(Collectors.toList());
                 }
             } else {
                 // Just proximity-based without text filtering - "near me" type of matching
-                potentialMatches = userRepository.findUsersWithinRadius(
-                        currentUser.getCoordinates().getY(), // Latitude
+                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(), // Latitude
                         currentUser.getCoordinates().getX(), // Longitude
-                        radiusInMeters,
-                        currentUser.getId()
-                );
+                        radiusInMeters, currentUser.getId());
             }
         } else {
             // Fall back to traditional location text matching if no coordinates or "anywhere" is selected
-            potentialMatches = userRepository.findAll().stream()
-                    .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
-                    .filter(user -> "anywhere".equals(idealMatchLocation) ||
-                            ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) ||
-                            "same_country".equals(idealMatchLocation) &&
-                                    user.getLocation() != null && currentUser.getLocation() != null &&
-                                    Objects.equals(
-                                            user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(),
-                                            currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim()))
-                    .collect(Collectors.toList());
+            potentialMatches = userRepository.findAll().stream().filter(user -> !Objects.equals(user.getId(), currentUser.getId())).filter(user -> "anywhere".equals(idealMatchLocation) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation) && user.getLocation() != null && currentUser.getLocation() != null && Objects.equals(user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(), currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim())).collect(Collectors.toList());
         }
 
         // Apply the remaining matching criteria (same logic as original method)
@@ -255,17 +230,9 @@ public class UserService {
             throw new IllegalArgumentException("Ideal match age not in bounds.");
         }
 
-        Map<User, Integer> userPointsMap = potentialMatches.stream()
-                .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
-                .filter(user -> "any".equals(currentUser.getIdealMatchAge()) || (user.getAge() >= idealMatchAgeMin && user.getAge() <= idealMatchAgeMax))
-                .filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
-                .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
+        Map<User, Integer> userPointsMap = potentialMatches.stream().filter(user -> !currentUser.getSwipedUsers().contains(user.getId())).filter(user -> "any".equals(currentUser.getIdealMatchAge()) || (user.getAge() >= idealMatchAgeMin && user.getAge() <= idealMatchAgeMax)).filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender())).collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
 
-        return userPointsMap.entrySet().stream()
-                .sorted(Map.Entry.<User, Integer>comparingByValue().reversed())
-                .limit(10)
-                .map(entry -> entry.getKey().getId())
-                .collect(Collectors.toList());
+        return userPointsMap.entrySet().stream().sorted(Map.Entry.<User, Integer>comparingByValue().reversed()).limit(10).map(entry -> entry.getKey().getId()).collect(Collectors.toList());
     }
 
     @Transactional
@@ -280,62 +247,54 @@ public class UserService {
         int radiusInMeters = radiusKm * 1000;
 
         // Use the userRepositorysitory method to find users within radius
-        List<User> nearbyUsers = userRepository.findUsersWithinRadius(
-                currentUser.getCoordinates().getY(),  // Latitude
+        List<User> nearbyUsers = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),  // Latitude
                 currentUser.getCoordinates().getX(),  // Longitude
-                radiusInMeters,
-                userId
-        );
+                radiusInMeters, userId);
 
         // Map to IDs and filter out the current user (just in case)
-        return nearbyUsers.stream()
-                .map(User::getId)
-                .filter(id -> !id.equals(userId))
-                .collect(Collectors.toList());
+        return nearbyUsers.stream().map(User::getId).filter(id -> !id.equals(userId)).collect(Collectors.toList());
     }
 
-    public List<Long> getLikedUsersById(Long id) { return userRepository.findUserLikedUsersById(id); }
+    public List<Long> getLikedUsersById(Long id) {
+        return userRepository.findUserLikedUsersById(id).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
+    }
 
-    public List<Long> getPendingRequestsById(Long id) {return userRepository.findUserPendingRequestsById(id);}
+    public List<Long> getPendingRequestsById(Long id) {
+        return userRepository.findUserPendingRequestsById(id).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
+    }
 
-    public Optional<BioDTO> getUserBioById(Long id) {
-        return userRepository.findById(id)
-                .map(UserMapper::toBioDTO);
+    public BioDTO getUserBioById(Long id) {
+        return userRepository.findById(id).map(UserMapper::toBioDTO).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
     }
 
-    public User getUserByEmail(String email) {return userRepository.findByEmail(email).orElse(null);}
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new RepositoryException("User not found in database with email: " + email));
+    }
 
     public List<Long> getUserConnectionsById(Long id) {
-        return userRepository.findUserConnectionsById(id);
+        return userRepository.findUserConnectionsById(id).orElseThrow(() -> new RepositoryException("User connections not found with id: " + id));
     }
 
-    public Optional<UsernamePictureDTO> getUserNameAndPictureById(Long id) {
-        return userRepository.findById(id)
-                .map(UserMapper::toUsernamePictureDTO);
+    public UsernamePictureDTO getUserNameAndPictureById(Long id) {
+        return userRepository.findById(id).map(UserMapper::toUsernamePictureDTO).orElseThrow(() -> new RepositoryException("No user found with id: " + id));
     }
 
-    public Optional<ProfileDTO> getUserProfileById(Long id) {
-        return userRepository.findById(id)
-                .map(UserMapper::toProfileDTO);
+    public ProfileDTO getUserProfileById(Long id) {
+        return userRepository.findById(id).map(UserMapper::toProfileDTO).orElseThrow(() -> new RepositoryException("No user found with id: " + id));
     }
 
     public User register(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+            throw new BusinessException("Email already exists.");
         }
 
         user.setPassword(encoder.encode(user.getPassword()));
+        user.
 
-        // If coordinates were provided, create a Point object
-        if (user.getCoordinates() == null && user.getLocation() != null) {
-            // Default coordinates for Estonia as fallback (Tallinn)
-            // This should be replaced with proper geocoding in production
-            user.setCoordinates(GeoUtils.createPoint(59.4370, 24.7536));
-        }
 
         return userRepository.save(user);
     }
@@ -372,7 +331,7 @@ public class UserService {
             throw new IllegalArgumentException("Old password is incorrect.");
         }
 
-        if(newPassword == null || newPassword.trim().isEmpty()) {
+        if (newPassword == null || newPassword.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty.");
         }
 
@@ -434,7 +393,7 @@ public class UserService {
     }
 
     public void updateProfilePicture(Long id, String profilePicture) {
-        if(profilePicture == null || profilePicture.trim().isEmpty()) {
+        if (profilePicture == null || profilePicture.trim().isEmpty()) {
             throw new IllegalArgumentException("Profile picture URL cannot be empty.");
         }
 
