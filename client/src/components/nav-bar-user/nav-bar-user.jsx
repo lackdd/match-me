@@ -1,7 +1,7 @@
 import './nav-bar-user.scss'
 import {NavLink, useNavigate} from 'react-router-dom'
 // import {AuthContext} from "../../main.jsx";
-import {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useAuth} from '../utils/AuthContext.jsx';
 
 // mobile icons
@@ -13,68 +13,17 @@ import axios from 'axios';
 
 
 function NavigatorUser() {
-	// const { setIsUserLoggedIn } = useContext(AuthContext);
 	const navigate = useNavigate();
-	const { isUserLoggedIn, logout, token } = useAuth();
-	const [username, setUsername] = useState("");
-	const [profilePicture, setProfilePicture] = useState("");
-	const [gender, setGender] = useState("");
 	const [pendingReqNum, setPendingReqNum] = useState("");
-	const { tokenValue } = useAuth();
-
-	// const token = useRef(sessionStorage.getItem("token"));
-	// console.log("Token: ", token.current)
+	const { tokenValue, imageUrl, username, logout } = useAuth();
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	const handleLogout = async () => {
 		console.log('Logout successful');
-		// sessionStorage.removeItem("token");
-		// setIsUserLoggedIn(false);
 		logout();
 		navigate("/");
 	};
-
-	const getProfileInfo = async() => {
-
-		console.log("Getting username and profile picture");
-
-		try {
-			const response = await axios.get(`${VITE_BACKEND_URL}/api/me`,{
-				headers: { Authorization: `Bearer ${tokenValue}` },
-		});
-
-			setUsername(response.data.username.split(' ')[0]);
-			setProfilePicture(response.data.profilePicture);
-
-		} catch (error) {
-			if (error.response) {
-				console.error("Backend error:", error.response.data); // Server responded with an error
-			} else {
-				console.error("Request failed:", error.message); // Network error or request issue
-			}
-		}
-	}
-
-	const getGender = async() => {
-
-		console.log("Getting gender");
-
-		try {
-			const response = await axios.get(`${VITE_BACKEND_URL}/api/me/profile`,{
-				headers: { Authorization: `Bearer ${tokenValue}` },
-			});
-
-			setGender(response.data.gender);
-
-		} catch (error) {
-			if (error.response) {
-				console.error("Backend error:", error.response.data); // Server responded with an error
-			} else {
-				console.error("Request failed:", error.message); // Network error or request issue
-			}
-		}
-	}
 
 	const getPendingRequests = async() => {
 
@@ -105,11 +54,8 @@ function NavigatorUser() {
 	}
 
 	useEffect(() => {
-		getProfileInfo();
-		getGender();
 		getPendingRequests();
 	}, []);
-
 	return (
 		<>
 			<nav className='nav-container-user default'>
@@ -117,13 +63,20 @@ function NavigatorUser() {
 					<NavLink to='/dashboard' tabIndex={-1} className={({ isActive }) =>
 						`profile-link ${isActive ? 'current' : ''}`
 					}>
-						{/*<img src={profilePicture} alt='Profile' className='profile-picture'/>*/}
-						{(gender === 'male') && <img src='profile_pic_male.jpg' alt={username} className='profile-picture'/>}
-						{(gender === 'female') && <img src='profile_pic_female.jpg' alt={username} className='profile-picture'/>}
-						{(gender !== 'female' && gender !== 'male') && <img src='default_profile_picture.png' alt={username} className='profile-picture'/>}
+						{!imageUrl.endsWith("null") && (
+							// <AdvancedImage cldImg={new CloudinaryImage(myDataFormatted.profilePicture)} />
+							<img src={imageUrl} alt="Profile" className="profile-picture" />
+						)}
+						{imageUrl.endsWith("null") && (
+							<img
+								src="default_profile_picture.png"
+								alt="profile picture"
+								className="profile-picture"
+							/>
+						)}
 
 
-						{username}
+						{username.split(' ')[0]}
 					</NavLink>
 				</div>
 				<div className='links-container'>
@@ -168,9 +121,17 @@ function NavigatorUser() {
 						<NavLink to='/dashboard' className={({ isActive }) =>
 							`profile-link ${isActive ? 'current' : ''}`
 						}>
-							{(gender === 'male') && <img src='profile_pic_male.jpg' alt={username} className='profile-picture'/>}
-							{(gender === 'female') && <img src='profile_pic_female.jpg' alt={username} className='profile-picture'/>}
-							{(gender !== 'female' && gender !== 'male') && <img src='default_profile_picture.png' alt={username} className='profile-picture'/>}
+							{!imageUrl.endsWith("null") && (
+								// <AdvancedImage cldImg={new CloudinaryImage(myDataFormatted.profilePicture)} />
+								<img src={imageUrl} alt="Profile" className="profile-picture" />
+							)}
+							{imageUrl.endsWith("null") && (
+								<img
+									src="default_profile_picture.png"
+									alt="profile picture"
+									className="profile-picture"
+								/>
+							)}
 						</NavLink>
 					</div>
 					<NavLink to='/recommendations' className={({ isActive }) =>
