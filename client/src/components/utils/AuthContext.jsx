@@ -1,7 +1,5 @@
-// AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 
@@ -14,8 +12,30 @@ export function AuthProvider({ children }) {
 	const [username, setUsername] = useState("");
 	const [userId, setUserId] = useState(null);
 	const [webSocketClient, setWebSocketClient] = useState(null);
+	const [imageUrl, setImageUrl] = useState("null");
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-	// const navigate = useNavigate();
+
+	useEffect(() => {
+		const getProfileInfo = async() => {
+
+			console.log("Getting username and profile picture");
+
+			try {
+				const response = await axios.get(`${VITE_BACKEND_URL}/api/me`,{
+					headers: { Authorization: `Bearer ${tokenValue}` },
+				});
+				setImageUrl(response.data.profilePicture);
+
+			} catch (error) {
+				if (error.response) {
+					console.error("Backend error:", error.response.data); // Server responded with an error
+				} else {
+					console.error("Request failed:", error.message); // Network error or request issue
+				}
+			}
+		}
+		getProfileInfo();
+	})
 
 	// Function to set up WebSocket connection
 	const setupWebSocket = async (token, user) => {
@@ -319,7 +339,9 @@ export function AuthProvider({ children }) {
 			username,
 			userId,
 			webSocketClient,
-			broadcastStatus
+			broadcastStatus,
+			imageUrl,
+			setImageUrl,
 		}}>
 			{children}
 		</AuthContext.Provider>
