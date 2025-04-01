@@ -1,10 +1,12 @@
-package com.app.matchme.entities;
+package com.app.matchme.dtos;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class ProfileDTO {
     private Long id;
     private String gender;

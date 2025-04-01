@@ -243,7 +243,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 									return;
 								}
 
-								fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)
+								fetch(/*`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`*/)
 									.then(response => response.json())
 									.then(data => {
 										if (data.status === "OK" && data.results.length > 0) {

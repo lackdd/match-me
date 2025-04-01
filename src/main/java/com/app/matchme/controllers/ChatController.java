@@ -4,10 +4,10 @@ import com.app.matchme.dtos.NotificationDTO;
 import com.app.matchme.dtos.StatusMessage;
 import com.app.matchme.dtos.StatusResponse;
 import com.app.matchme.entities.ChatMessage;
-import com.app.matchme.entities.ChatMessageDTO;
+import com.app.matchme.dtos.ChatMessageDTO;
 import com.app.matchme.entities.UnreadMessage;
 import com.app.matchme.entities.User;
-import com.app.matchme.entities.UserPrincipal;
+import com.app.matchme.dtos.UserPrincipal;
 import com.app.matchme.mappers.ChatMessageMapper;
 import com.app.matchme.repositories.ChatMessageRepository;
 import com.app.matchme.repositories.UnreadMessageRepository;
@@ -141,7 +141,7 @@ public class ChatController {
         }
 
         // Sort by most recent message
-        notifications.sort((a, b) -> b.getLastMessageTime().compareTo(a.getLastMessageTime()));
+        notifications.sort((a, b) -> b.lastMessageTime().compareTo(a.lastMessageTime()));
 
         return notifications;
     }
@@ -242,12 +242,12 @@ public class ChatController {
 
         String email = principal.getName();
         User sender = userService.getUserByEmail(email);
-        User receiver = userService.getUserById(statusMessage.getReceiverId());
+        User receiver = userService.getUserById(statusMessage.receiverId());
         String senderUsername = sender.getUsername();
         String receiverUsername = receiver.getUsername();
 
         // Update status in the map
-        Status status = statusMessage.getStatus();
+        Status status = statusMessage.status();
         userStatusMap.put(sender.getId(), status);
 
         // If status is ACTIVE, update the heartbeat timestamp
@@ -294,7 +294,7 @@ public class ChatController {
         String senderUsername = sender.getUsername();
 
         // Update status in the map
-        Status status = statusMessage.getStatus();
+        Status status = statusMessage.status();
         userStatusMap.put(sender.getId(), status);
 
         // If status is ACTIVE, update the heartbeat timestamp
@@ -340,7 +340,7 @@ public class ChatController {
 
         String email = principal.getName();
         User requester = userService.getUserByEmail(email);
-        User target = userService.getUserById(statusMessage.getReceiverId());
+        User target = userService.getUserById(statusMessage.receiverId());
 
         // Get the current status of the target user
         Status currentStatus = userStatusMap.getOrDefault(target.getId(), Status.INACTIVE);
@@ -506,7 +506,7 @@ public class ChatController {
         String email = principal.getName();
         System.out.println("Principal email: " + email);
         User sender = userService.getUserByEmail(email);
-        User receiver = userService.getUserById(messageDTO.getReceiverId());
+        User receiver = userService.getUserById(messageDTO.receiverId());
         String senderUsername = sender.getUsername();
         String receiverUsername = receiver.getUsername();
 
@@ -515,7 +515,7 @@ public class ChatController {
             return;
         }
 
-        ChatMessage chatMessage = new ChatMessage(sender, receiver, messageDTO.getContent());
+        ChatMessage chatMessage = new ChatMessage(sender, receiver, messageDTO.content());
         ChatMessage savedMessage = repo.save(chatMessage);
 
         // Track as unread message for receiver (only if they're not actively in the chat)
@@ -528,14 +528,14 @@ public class ChatController {
                 sender.getId(),
                 senderUsername,
                 savedMessage.getId(),
-                messageDTO.getContent().length() > 30 ? messageDTO.getContent().substring(0, 27) + "..." : messageDTO.getContent(),
+                messageDTO.content().length() > 30 ? messageDTO.content().substring(0, 27) + "..." : messageDTO.content(),
                 unreadCount,
                 savedMessage.getTimestamp()
         );
 
         ChatMessageDTO responseDTO = ChatMessageMapper.toDTO(savedMessage);
 
-        System.out.println("Sending private message from " + senderUsername + " to " + receiverUsername + " Message content: " + messageDTO.getContent());
+        System.out.println("Sending private message from " + senderUsername + " to " + receiverUsername + " Message content: " + messageDTO.content());
 
         // send message to receiver's private queue
         messagingTemplate.convertAndSendToUser(

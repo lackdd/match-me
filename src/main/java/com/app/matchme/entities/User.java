@@ -1,14 +1,16 @@
 package com.app.matchme.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
+import lombok.Getter;
+import lombok.Setter;
 import org.locationtech.jts.geom.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
 
@@ -66,15 +68,12 @@ public class User {
     private String idealMatchAge;
     private String idealMatchYearsOfExperience;
     private String idealMatchLocation;
-    // keep the text location for display purposes
     private String location;
 
-    // add geospatial coordinates
     @Column(columnDefinition = "geography(Point,4326)")
     private Point coordinates;
 
-    // add maximum matching radius preference (in kilometers)
-    private Integer maxMatchRadius = 50; // Default 50km
+    private Integer maxMatchRadius = 50;
 
     @ElementCollection
     @CollectionTable(name = "liked_user_ids", joinColumns = @JoinColumn(name = "user_id"))

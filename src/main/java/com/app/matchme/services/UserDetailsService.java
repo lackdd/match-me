@@ -1,7 +1,7 @@
 package com.app.matchme.services;
 
 import com.app.matchme.entities.User;
-import com.app.matchme.entities.UserPrincipal;
+import com.app.matchme.dtos.UserPrincipal;
 import com.app.matchme.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

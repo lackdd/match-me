@@ -1,8 +1,12 @@
 package com.app.matchme.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "unread_messages")
 public class UnreadMessage {
 
@@ -24,53 +28,10 @@ public class UnreadMessage {
 
     private boolean read = false;
 
-    public UnreadMessage() {
-    }
-
     public UnreadMessage(User user, User sender, ChatMessage message) {
         this.user = user;
         this.sender = sender;
         this.message = message;
         this.read = false;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public ChatMessage getMessage() {
-        return message;
-    }
-
-    public void setMessage(ChatMessage message) {
-        this.message = message;
-    }
-
-    public boolean isRead() {
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
     }
 }

@@ -1,5 +1,6 @@
-package com.app.matchme.entities;
+package com.app.matchme.dtos;
 
+import com.app.matchme.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
