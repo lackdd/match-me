@@ -7,6 +7,7 @@ import axios from "axios";
 
 import { IoMdSend } from "react-icons/io";
 import {IoArrowBack} from 'react-icons/io5';
+import {IoClose} from 'react-icons/io5';
 
 const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
     const [messages, setMessages] = useState([]);
@@ -389,6 +390,12 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
         handleTyping();
     };
 
+    const clearInput = () => {
+        setMessage('');
+        clearTimeout(typingTimeout);
+        setIsTyping(false);
+    }
+
     return (
         <div className="chat-box" onKeyDown={handleKeyPresses}>
             <div className='heading-container'>
@@ -416,6 +423,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
                 ))}
             </div>
             <div className='input-container'>
+                <button className='delete-input' type={'button'} onClick={clearInput}><IoClose /></button>
                 <input
                     id={'message-input'}
                     className="input"
