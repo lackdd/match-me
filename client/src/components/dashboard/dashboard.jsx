@@ -15,7 +15,7 @@ import {
 	closeSettings,
 	openSettings,
 	changeImage,
-	backToObject
+	backToObject, sendPictureToBackend
 } from '../reusables/profile-card-functions.jsx';
 import {DashboardForm} from './dashboard-settings/dashboardForm.jsx';
 import {
@@ -40,11 +40,11 @@ function Dashboard() {
 	const [liked, setLiked] = useState(0);
 	const { tokenValue } = useAuth();
 	const [formOpen, setFormOpen] = useState(false);
-	const [imageUrl, setImageUrl] = useState(null); // todo if image is changed then change this. If this is available then use this to show image. Else you data from backend
 	const isDataFormatted = useRef(false);
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [settingsContent, setSettingsContent] = useState('profile') // 'statistics' and 'password'
+	const { imageUrl, setImageUrl, username } = useAuth();
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -112,7 +112,7 @@ function Dashboard() {
 							...formatDataForView(res2.data),
 					});
 
-					setImageUrl(...res1.data.profilePicture)
+					// setImageUrl(...res1.data.profilePicture)
 
 					// liked users count
 					if (res3.data.length) {
@@ -323,7 +323,18 @@ function Dashboard() {
 													<div className="music-link">
 														<FaSpotify style={{ color: '#31D165' }} />
 													</div>
+
 												)}
+												<button className="remove-image" onClick={() => {
+													setMyDataFormatted(prev => ({
+														...prev,
+														profilePicture: "null",
+													}));
+													sendPictureToBackend("null", tokenValue);
+													setImageUrl("null");
+												}}>
+													<IoClose />
+												</button>
 											</div>
 										</div>
 
@@ -443,7 +454,7 @@ function Dashboard() {
 									<div className="description-container">{myDataFormatted.description}</div>
 
 									<div className="name-container">
-										<span className="name">{myDataFormatted.username}</span>
+										<span className="name">{username}</span>
 										<br />
 										<span>
 							{myDataFormatted.age}, {myDataFormatted.gender}
