@@ -123,6 +123,10 @@
   left: 1rem;
   cursor: pointer;
 
+  &:hover {
+	box-shadow: none;
+  }
+
   svg {
 	width: 2rem;
 	height: 2rem;
