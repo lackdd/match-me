@@ -11,8 +11,6 @@ public record LocationRequest(
         Double latitude,
         @NotNull(message = "Longitude cannot be null")
         Double longitude,
-        @NotNull(message = "Maximum match radius cannot be null")
-        @PositiveOrZero(message = "Maximum match radius cannot be negative")
         Integer maxMatchRadius
 ) {
 }
