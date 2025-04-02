@@ -70,8 +70,8 @@ function Connections() {
 				})
 			]);
 
-			const currentIds = currentConnectionsResponse.data || [];
-			const pendingIds = pendingConnectionsResponse.data || [];
+			const currentIds = currentConnectionsResponse.data.payload || [];
+			const pendingIds = pendingConnectionsResponse.data.payload || [];
 
 			await getConnectionsData(currentIds, setCurrentConnections, setCurrentDataFetched);
 			await getConnectionsData(pendingIds, setPendingConnections, setPendingDataFetched);
@@ -145,8 +145,8 @@ function Connections() {
 
 					// Return both promises for the same id
 					return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({
-						...formatDataForView(profile.data),   // Merge profile data
-						...user.data // Merge user data
+						...formatDataForView(profile.data.payload),   // Merge profile data
+						...user.data.payload // Merge user data
 					}));
 				});
 

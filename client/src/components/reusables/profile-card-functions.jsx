@@ -62,7 +62,7 @@ export const sendPictureToBackend = async (publicId, tokenValue) => {
 			}
 		);
 		console.log('Profile picture updated successfully');
-		return response.data;
+		return response.data.payload;
 	} catch (error) {
 		if (error.response) {
 			console.error('Backend error:', error.response.data); // Server responded with an error

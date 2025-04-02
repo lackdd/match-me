@@ -71,21 +71,21 @@ function Dashboard() {
 					]);
 
 					// formatting data (mostly to objects) for dashboard form
-					const firstName = res1.data.username.split(' ')[0];
-					const lastName = res1.data.username.split(' ')[1];
-					const gender = genderOptions.find(gender => gender.value === res2.data.gender);
-					const additionalInterests = backToObject(res2.data.additionalInterests, interestsOptions);
-					const personalityTraits = backToObject(res2.data.personalityTraits, personalityTraitsOptions);
-					const goalsWithMusic = backToObject(res2.data.goalsWithMusic, goalsOptions);
-					const preferredMethod = backToObject(res2.data.preferredMethod, methodsOptions);
-					const preferredMusicGenres = backToObject(res2.data.preferredMusicGenres, genreOptions);
-					const location = res2.data.location ? {value: res2.data.location, label: res2.data.location} : "";
+					const firstName = res1.data.payload.username.split(' ')[0];
+					const lastName = res1.data.payload.username.split(' ')[1];
+					const gender = genderOptions.find(gender => gender.value === res2.data.payload.gender);
+					const additionalInterests = backToObject(res2.data.payload.additionalInterests, interestsOptions);
+					const personalityTraits = backToObject(res2.data.payload.personalityTraits, personalityTraitsOptions);
+					const goalsWithMusic = backToObject(res2.data.payload.goalsWithMusic, goalsOptions);
+					const preferredMethod = backToObject(res2.data.payload.preferredMethod, methodsOptions);
+					const preferredMusicGenres = backToObject(res2.data.payload.preferredMusicGenres, genreOptions);
+					const location = res2.data.payload.location ? {value: res2.data.payload.location, label: res2.data.payload.location} : "";
 
 
 					// data for the form
 					setMyData({
-                        ...res1.data,
-                        ...res2.data,
+                        ...res1.data.payload,
+                        ...res2.data.payload,
 						firstName: firstName,
 						lastName: lastName,
 						gender: gender,
@@ -95,23 +95,23 @@ function Dashboard() {
 						preferredMethod,
 						preferredMusicGenres,
 						location,
-						// gender: res2.data.gender.charAt(0).toUpperCase() + res2.data.gender.slice(1)
-                        // bio: res3.data
+						// gender: res2.data.payload.gender.charAt(0).toUpperCase() + res2.data.payload.gender.slice(1)
+                        // bio: res3.data.payload
                     });
 
-					// const formattedRes2 = formatDataForView(res2.data);
+					// const formattedRes2 = formatDataForView(res2.data.payload);
 
 					// data for dashboard itself
 					setMyDataFormatted( {
-							...res1.data,
-							...formatDataForView(res2.data),
+							...res1.data.payload,
+							...formatDataForView(res2.data.payload),
 					});
 
-					// setImageUrl(...res1.data.profilePicture)
+					// setImageUrl(...res1.data.payload.profilePicture)
 
 					// liked users count
-					if (res3.data.length) {
-						setLiked(res3.data.length || 0);
+					if (res3.data.payload.length) {
+						setLiked(res3.data.payload.length || 0);
 					}
 
 

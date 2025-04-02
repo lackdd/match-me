@@ -39,8 +39,8 @@ function NavigatorUser() {
 			});
 
 			// don't display 0
-			if (response.data.length > 0) {
-				setPendingReqNum(response.data.length);
+			if (response.data.payload.length > 0) {
+				setPendingReqNum(response.data.payload.length);
 			} else {
 				setPendingReqNum('');
 			}

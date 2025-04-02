@@ -179,7 +179,7 @@ function Step1({formOneData, setFormOneData, onSubmit}) {
 									try {
 										const response = await
 											axios.post(`${VITE_BACKEND_URL}/api/check-email`, {email: watch('email')});
-										if (response.data.exists) {
+										if (response.data.payload.exists) {
 											setError('email', {type: 'manual', message: 'Email is already in use'});
 											return;
 										}
