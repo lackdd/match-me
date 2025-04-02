@@ -85,16 +85,16 @@ function Login() {
 						{error}
 					</p>
 				</label>
-				<label id='remember-me-label'>
-					<input
-						className={'focus-highlight'}
-						type='checkbox'
-						name='remember'
-						id='remember-me-input'/>
-					&nbsp;
-					{/* todo add functionality to keep token in storagr for 30 days */}
-					Remember for 30 days
-				</label>
+				{/*<label id='remember-me-label'>*/}
+				{/*	<input*/}
+				{/*		className={'focus-highlight'}*/}
+				{/*		type='checkbox'*/}
+				{/*		name='remember'*/}
+				{/*		id='remember-me-input'/>*/}
+				{/*	&nbsp;*/}
+				{/*	/!* todo add functionality to keep token in storagr for 30 days *!/*/}
+				{/*	Remember for 30 days*/}
+				{/*</label>*/}
 				<label>
 					<button
 						className='login-button wide small'

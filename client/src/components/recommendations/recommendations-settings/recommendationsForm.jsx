@@ -1,5 +1,4 @@
 
-// step 5 of registration
 import Select from 'react-select';
 import {
 	genreOptions,
@@ -24,6 +23,7 @@ import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 export function RecommendationsForm({preferencesData, setPreferencesData, setLoading, resetMatches}) {
 	const { tokenValue } = useAuth();
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+	const [maxMatchRadius, setMaxMatchRadius] = useState(preferencesData.maxMatchRadius || 50);
 
 
 	// Initialize react-hook-form with Yup schema
@@ -71,10 +71,34 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 	const handleMaxDistanceChange = (e) => {
 		const value = parseInt(e.target.value, 10);
 		setValue('maxMatchRadius', value, { shouldValidate: true });
+		setMaxMatchRadius(value)
 		setPreferencesData((prev) => ({
 			...prev,
 			maxMatchRadius: value
 		}));
+	};
+
+	// on submit send location data to backend
+	const SubmitLocation = async (maxMatchRadius) => {
+		console.log('Sending:', JSON.stringify(maxMatchRadius, null, 2));
+		try {
+			const response = await
+				axios.post(`${VITE_BACKEND_URL}/api/me/location`, maxMatchRadius, {
+					headers: {
+						Authorization: `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'
+					}
+
+				});
+			console.log('Max radius data edited successfully');
+			console.log('Data: ', response.data);
+		} catch (error) {
+			if (error.response) {
+				console.error('Backend error:', error.response.data); // Server responded with an error
+			} else {
+				console.error('Request failed:', error.message); // Network error or request issue
+			}
+		}
 	};
 
 
@@ -95,10 +119,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					  idealMatchMethods: data.idealMatchMethods.map(item => item.value),
 					  idealMatchGenres: data.idealMatchGenres.map(item => item.value),
 					  idealMatchGoals: data.idealMatchGoals.map(item => item.value),
-					  maxMatchRadius: data.maxMatchRadius,
 				  }
 
-				  console.log("Formatted data", formattedData);
+				  SubmitLocation(data.maxMatchRadius)
+
+				  // console.log("Formatted data", formattedData);
 
 				  Submit(formattedData);
 			  })}
@@ -129,7 +154,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					</div>
 					<div className="distance-labels">
 						<span>5 km</span>
-						<div className="distance-value">{watch('maxMatchRadius')} km</div>
+						<div className="distance-value">{maxMatchRadius} km</div>
 						<span>500 km</span>
 					</div>
 					<ErrorElement errors={errors} id={'maxMatchRadius'}/>
@@ -401,15 +426,15 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 		</form>
 		<div className='settings-buttons-container'>
 
-			<button className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`} type={'submit'} form={'recommendations-form'} disabled={Object.keys(errors).length > 0} >
-				Save
-			</button>
-
 			<button className='cancel' type={'button'} onClick={() => {
 				reset();
 				closeSettings();
 			}}>
 				cancel
+			</button>
+
+			<button className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`} type={'submit'} form={'recommendations-form'} disabled={Object.keys(errors).length > 0} >
+				Save
 			</button>
 
 		</div>

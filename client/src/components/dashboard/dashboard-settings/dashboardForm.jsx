@@ -143,7 +143,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 
 	// on submit send data to backend
 	const Submit = async (formattedData) => {
-		console.log('Sending:', JSON.stringify(formattedData, null, 2));
+		// console.log('Sending:', JSON.stringify(formattedData, null, 2));
 		try {
 			const response = await
 				axios.patch(`${VITE_BACKEND_URL}/api/me/profile`, formattedData, {
@@ -153,7 +153,30 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					}
 
 				});
-			console.log('User data edited successfully');
+			// console.log('User data edited successfully');
+			// console.log('Data: ', response.data);
+		} catch (error) {
+			if (error.response) {
+				console.error('Backend error:', error.response.data); // Server responded with an error
+			} else {
+				console.error('Request failed:', error.message); // Network error or request issue
+			}
+		}
+	};
+
+	// on submit send location data to backend
+	const SubmitLocation = async (locationData) => {
+		console.log('Sending:', JSON.stringify(locationData, null, 2));
+		try {
+			const response = await
+				axios.post(`${VITE_BACKEND_URL}/api/me/location`, locationData, {
+					headers: {
+						Authorization: `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'
+					}
+
+				});
+			console.log('Location data edited successfully');
 			console.log('Data: ', response.data);
 		} catch (error) {
 			if (error.response) {
@@ -190,12 +213,14 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 						  preferredMusicGenres: data.preferredMusicGenres.map(item => item.value),
 						  goalsWithMusic: data.goalsWithMusic.map(item => item.value),
 						  personalityTraits: data.personalityTraits.map(item => item.value),
-						  // maxMatchRadius: data.maxMatchRadius,
-						  latitude: data.latitude,
-						  longitude: data.longitude
 					  };
 
-					  console.log('Formatted data: ', formattedData);
+					  const locationData = {
+						  latitude: data.latitude,
+						  longitude: data.longitude
+					  }
+
+					  SubmitLocation(locationData);
 
 					  Submit(formattedData);
 
@@ -575,7 +600,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 									setInputValue(val);
 									fetchPlaces(val);
 								}}
-								placeholder='Search for your city'
+								placeholder='Search for your county'
 								isClearable={true}
 								styles={customStyles}
 								wideMenu={true}

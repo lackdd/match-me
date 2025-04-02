@@ -1,19 +1,99 @@
-# Match-Me Web - Quick Set-Up for Testing
+# Welcome to Jammer!
 
-Full-stack recommendation application, to connect users based on their mutual musical interests.
+Jammer is a full-stack recommendation application to connect users based on their mutual musical interests such as preferred genres, methods to make music, years of experience with music and other biographical data.
 
-NB! Pls uncomment the script and edit src="https://maps.googleapis.com/maps/api/js?key={insertYourGoogleAPIkeyHere}&loading=async&libraries=places&language=en"> to include your own Google API key in client/index.html please.
+<details>
+<summary>⚙️ Setup</summary>
+<h1>Setup</h1>
 
-Quick set-up for testing:
+Alternatively test the application at our [live website](https://match-me-20pb.onrender.com). \
+**NB! Give the frontend and backend servers a minute to wake up!**
 
-1. Download as a zip folder and extract to anywhere you like for example desktop
-2. Download and install suitable latest PostgreSQL installer at https://www.postgresql.org/download/
-3. During installation set the username as postgres and password as 123, ensure pgadminpsql cli tools are installed, if you already have postgres installed, please open applications.properties from the match-me/src/main/resources project folder and change the password 123 to your own password on line 4 in "spring.datasource.password=123" or change your password to 123 through query tool in postgres, also make sure that the postgres server address is localhost and port 5432
-4. Open pgadmin from the postgres directory and run "CREATE DATABASE matchmedb;" in the query tool
-5. Open the project in your desired IDE
-6. Enter "cd client" in terminal
-7. Enter "npm install" in terminal to get all dependencies
-8. Enter "npm start" in terminal to start the application
-9. Go to localhost:5173 in your web browser to test the app
-    
+<ol>
+<li>Clone the repository</li>
 
+```bash
+git clone https://gitea.kood.tech/andreberezin/match-me.git
+```
+
+<li>Move to the frontend directory</li>
+
+```bash
+cd match-me/client
+```
+
+<li>Install the dependencies</li>
+
+```bash
+npm install
+```
+
+<li>Run the application</li>
+
+```bash
+npm start
+```
+
+<li>Open the application</li>
+
+[Go to localhost:5173](http://localhost:5173)
+
+<li>Enjoy!</li>
+
+
+</ol>
+</details>
+
+<details>
+<summary>🚀 Features</summary>
+<h1>Features</h1>
+<ul>
+<li>Find you matches based on your preferences such as age, gender, location, years of experience, the types of genres you prefer, the way you prefer to make music and what goals you have.</li>
+<li>See your current and pending connections</li>
+<li>Remove or add connections as you wish</li>
+<li>Check out your connections' profiles</li>
+<li>Securely chat with your connections</li>
+<li>See who is online or offline, who is currently typing you a message</li>
+<li>Notifications for unread messages</li>
+<li>Check your own profile</li>
+<li>Change your preferences</li>
+<li>Responsive designs for mobile and desktop</li>
+<li>Swiping feature for mobile</li>
+<li>Geolocation detects your location</li>
+<li>Algorithm finds matches based on your location and the maximum radius you set</li>
+</ul>
+</details>
+
+<details>
+<summary>📖 User guide</summary>
+<h1>User guide</h1>
+<ul>
+<li>Sign up in /register</li>
+<li>Find matches in /recommendations</li>
+<li>Chat in /chats</li>
+<li>Check your own profile in /dashboard</li>
+<li>See your connections in /connections</li>
+</ul>
+</details>
+
+<details>
+<h1>Tech stack</h1>
+<summary>📱 Tech stack</summary>
+
+### Backend
+- ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.1-green)
+- ![Java](https://img.shields.io/badge/Java-17-orange)
+
+### Frontend
+- ![React](https://img.shields.io/badge/React-18.3.1-blue)
+- ![Vite](https://img.shields.io/badge/Vite-6.0.5-yellow)
+- ![React Router](https://img.shields.io/badge/React%20Router-7.1.3-purple)
+
+### General Tools
+- ![Docker](https://img.shields.io/badge/Docker-28.0.0-blue)
+</details>
+
+<details>
+<h1>Notes</h1>
+<summary>🗒️ Notes</summary>
+</details>

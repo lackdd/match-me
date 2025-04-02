@@ -222,7 +222,7 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 								setInputValue(val);
 								fetchPlaces(val);
 							}}
-							placeholder='Search for your city'
+							placeholder='Search for your county'
 							isClearable={true}
 							styles={customStyles}
 							wideMenu={true}
