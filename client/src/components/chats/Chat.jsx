@@ -425,10 +425,8 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 			</div>
 			<div className='input-container'>
 				<button className='delete-input' type={'button'} onClick={clearInput}><IoClose/></button>
-				<input
+				<textarea
 					id={'message-input'}
-					className='input'
-					type='text'
 					value={message}
 					onChange={handleMessageChange}
 					autoComplete={'off'}
