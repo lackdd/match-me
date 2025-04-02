@@ -37,14 +37,9 @@ public class BioDTO {
     @NotNull(message = "Years of music experience is missing")
     @PositiveOrZero( message = "Years of music experience cannot be negative")
     private Integer yearsOfMusicExperience;
-    @NotBlank(message = "Location is missing")
     private String location;
-    @NotNull(message = "Latitude can't be null")
     private Double latitude;
-    @NotNull(message = "Longitude can't be null")
     private Double longitude;
-    @NotNull(message = "Max match radius is missing")
-    @PositiveOrZero(message = "Max match radius cannot be negative")
     private Integer maxMatchRadius;
     @NotNull(message = "Ideal match genres is missing")
     @NotEmpty(message = "Ideal match genres cannot be empty")

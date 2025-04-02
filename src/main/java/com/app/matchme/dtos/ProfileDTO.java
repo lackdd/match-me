@@ -19,14 +19,9 @@ public class ProfileDTO {
     @Size(min = 16, max = 120, message = "Age must be between 16 and 120")
     private Integer age;
     private String linkToMusic;
-    @NotBlank(message = "Location is missing")
     private String location;
-    @NotNull(message = "Latitude can't be null")
     private Double latitude;
-    @NotNull(message = "Longitude can't be null")
     private Double longitude;
-    @NotNull(message = "Max match radius is missing")
-    @PositiveOrZero(message = "Max match radius cannot be negative")
     private Integer maxMatchRadius;
     @Size(max = 300, message = "Description cannot exceed 300 characters")
     private String description;

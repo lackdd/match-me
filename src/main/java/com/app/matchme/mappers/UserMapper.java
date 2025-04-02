@@ -40,6 +40,11 @@ public class UserMapper {
         profileDTO.setAdditionalInterests(user.getAdditionalInterests());
         profileDTO.setGoalsWithMusic(user.getGoalsWithMusic());
         profileDTO.setYearsOfMusicExperience(user.getYearsOfMusicExperience());
+        profileDTO.setMaxMatchRadius(user.getMaxMatchRadius());
+        if (user.getCoordinates() != null) {
+            profileDTO.setLatitude(user.getCoordinates().getY());
+            profileDTO.setLongitude(user.getCoordinates().getX());
+        }
 
         return profileDTO;
     }
@@ -67,6 +72,11 @@ public class UserMapper {
         bioDTO.setIdealMatchAge(user.getIdealMatchAge());
         bioDTO.setIdealMatchYearsOfExperience(user.getIdealMatchYearsOfExperience());
         bioDTO.setIdealMatchLocation(user.getIdealMatchLocation());
+        bioDTO.setMaxMatchRadius(user.getMaxMatchRadius());
+        if (user.getCoordinates() != null) {
+            bioDTO.setLatitude(user.getCoordinates().getY());
+            bioDTO.setLongitude(user.getCoordinates().getX());
+        }
 
         return bioDTO;
     }

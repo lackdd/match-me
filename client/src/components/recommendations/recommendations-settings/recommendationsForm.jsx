@@ -80,10 +80,16 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 
 	// on submit send location data to backend
 	const SubmitLocation = async (maxMatchRadius) => {
+
+		const locationData = {
+			maxMatchRadius: maxMatchRadius
+		};
+
 		console.log('Sending:', JSON.stringify(maxMatchRadius, null, 2));
+
 		try {
 			const response = await
-				axios.post(`${VITE_BACKEND_URL}/api/me/location`, maxMatchRadius, {
+				axios.post(`${VITE_BACKEND_URL}/api/me/location`, locationData, {
 					headers: {
 						Authorization: `Bearer ${tokenValue}`,
 						'Content-Type': 'application/json'

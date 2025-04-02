@@ -216,8 +216,10 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					  };
 
 					  const locationData = {
+						  /*location: data.location.label,*/
 						  latitude: data.latitude,
-						  longitude: data.longitude
+						  longitude: data.longitude,
+						  /*maxMatchRadius: data.maxMatchRadius || 50*/
 					  }
 
 					  SubmitLocation(locationData);
