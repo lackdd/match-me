@@ -92,8 +92,8 @@ function Connections() {
 				}),
 			])
 
-			const currentIds = currentConnectionsResponse.data || [];
-			const pendingIds = pendingConnectionsResponse.data || [];
+			const currentIds = currentConnectionsResponse.data.payload || [];
+			const pendingIds = pendingConnectionsResponse.data.payload || [];
 
 			await getConnectionsData(currentIds, setCurrentConnections, setCurrentDataFetched);
 			await getConnectionsData(pendingIds, setPendingConnections, setPendingDataFetched);
@@ -172,9 +172,9 @@ function Connections() {
 					});
 
 					// Return both promises for the same id
-					return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({
-						...formatDataForView(profile.data),   // Merge profile data
-						...user.data, // Merge user data
+					return Promise.all([profilePromise, userPromise]).then(([profileResponse, userResponse]) => ({
+						...formatDataForView(profileResponse.data.payload),
+						...userResponse.data.payload
 					}));
 				});
 
@@ -376,12 +376,14 @@ function Connections() {
 
 		// add to connections
 		try {
-			axios.post(`${VITE_BACKEND_URL}/api/addConnection`, null, {
+			axios.post(`${VITE_BACKEND_URL}/api/addConnection`,
+				{
+					matchId : requestId
+				}, {
 				headers: {
 					"Authorization": `Bearer ${tokenValue}`,
 					"Content-Type": "application/json"
 				},
-				params: {matchId: requestId} // Correct parameter name
 			})
 
 		} catch (error) {

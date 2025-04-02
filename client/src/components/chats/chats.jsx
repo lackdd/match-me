@@ -36,11 +36,11 @@ function Chats() {
 					const response = await axios.get(`${VITE_BACKEND_URL}/api/me`, {
 						headers: { Authorization: `Bearer ${tokenValue}` },
 					});
-					setUsername(response.data.username);
+					setUsername(response.data.payload.username);
 
 					// Set up subscription for status updates
 					if (webSocketClient && webSocketClient.connected) {
-						const normalizedUsername = response.data.username.trim().replace(/\s+/g, "_");
+						const normalizedUsername = response.data.payload.username.trim().replace(/\s+/g, "_");
 
 						// Subscribe to status updates for all connections
 						webSocketClient.subscribe(`/user/${normalizedUsername}/queue/status`, (statusMsg) => {
@@ -156,29 +156,30 @@ function Chats() {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
 					headers: {Authorization: `Bearer ${tokenValue}`},
 				});
-				console.log("Setting connections:", response.data);
-				setConnections(response.data);
+				console.log("Setting connections:", response.data.payload);
+				setConnections(response.data.payload);
 
 				// Get user details for all connections
-				if (response.data.length > 0) {
+				if (response.data.payload.length > 0) {
 					const userDetailsResponse = await axios.post(`${VITE_BACKEND_URL}/api/getUsersByIds`,
-						response.data,
+						{
+						ids: response.data.payload },
 						{
 							headers: { Authorization: `Bearer ${tokenValue}` },
 						}
 					);
-					setConnectionDetails(userDetailsResponse.data);
+					setConnectionDetails(userDetailsResponse.data.payload);
 
 					// Initialize status for all connections - default to INACTIVE
 					const initialStatuses = {};
-					response.data.forEach(connectionId => {
+					response.data.payload.forEach(connectionId => {
 						initialStatuses[connectionId] = 'INACTIVE';
 					});
 					setUserStatuses(initialStatuses);
 
 					// Explicitly request status updates for all connections
 					if (webSocketClient && webSocketClient.connected) {
-						response.data.forEach(connectionId => {
+						response.data.payload.forEach(connectionId => {
 							webSocketClient.publish({
 								destination: "/app/status/request",
 								headers: {

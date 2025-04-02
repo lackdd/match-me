@@ -1,345 +1,178 @@
 package com.app.matchme.controllers;
 
 import com.app.matchme.dtos.*;
+import com.app.matchme.dtos.apiRequestDtos.*;
 import com.app.matchme.entities.*;
-import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.services.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Validated
 
 public class UserController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @PostMapping("/addConnection")
-    public ResponseEntity<?> addConnection(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("matchId") Long matchId) {
-        if (userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-        }
-        Long id = userPrincipal.getId();
-        User currentUser = userService.getUserById(id);
-        userService.addConnectionById(matchId, currentUser);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Connection added");
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<Long>> addConnection(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                     @RequestBody ConnectionRequest request) {
+        userService.addConnectionById(request.matchId(), userService.getUserById(userPrincipal.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Connection added", request.matchId()));
     }
 
     @PatchMapping("/change-password")
-    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
-        String oldPassword = body.get("oldPassword");
-        String newPassword = body.get("newPassword");
-        Long id = userPrincipal.getId();
-        userService.updatePassword(id, oldPassword, newPassword);
-        return ResponseEntity.ok("Password updated.");
+    public ResponseEntity<ApiResponse<Void>> updatePassword(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                            @RequestBody PasswordChangeRequest request) {
+        userService.updatePassword(userPrincipal.getId(), request.oldPassword(), request.newPassword());
+        return ResponseEntity.ok(new ApiResponse<>("Password changed"));
     }
 
     @PostMapping("/check-email")
-    public Map<String, Boolean> checkEmail(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        boolean exists = userService.checkEmail(email);
-        return Collections.singletonMap("exists", exists);
+    public ResponseEntity<ApiResponse<Boolean>> checkEmail(@Valid @RequestBody CheckEmailRequest request) {
+        return ResponseEntity.ok(new ApiResponse<>("Email checked", userService.checkEmail(request.email())));
     }
 
     @PostMapping("/check-password")
-    public ResponseEntity<?> checkPassword(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
-        String password = body.get("password");
-        Long id = userPrincipal.getId();
-        boolean isCorrect = userService.checkPassword(id, password);
-        if(isCorrect) {
-            return ResponseEntity.ok("Password matches.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid password, password doesn't match.");
-        }
+    public ResponseEntity<ApiResponse<Boolean>> checkPassword(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody PasswordCheckRequest request) {
+        userService.checkPassword(userPrincipal.getId(), request.password());
+        return ResponseEntity.ok(new ApiResponse<>("Password verified", true));
     }
 
     @GetMapping("/connections")
-    public ResponseEntity<?> getConnections(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if (userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
-        }
-        Long id = userPrincipal.getId();
-        List<Long> connections = userService.getUserConnectionsById(id);
-
-        if (connections.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(connections);
+    public ResponseEntity<ApiResponse<List<Long>>> getConnections(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("Connections fetched", userService.getUserConnectionsById(userPrincipal.getId())));
     }
 
     @DeleteMapping("/deleteConnection")
-    public ResponseEntity<?> deleteConnection (@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("connectionId") Long connectionId) {
-        if(userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-        }
-        Long currentUserId = userPrincipal.getId();
-        User currentUser = userService.getUserById(currentUserId);
-        try {
-            userService.deleteConnectionById(connectionId, currentUser);
-            return ResponseEntity.ok("Connection " + connectionId + " deleted.");
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
-        }
+    public ResponseEntity<Void> deleteConnection (@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("connectionId") Long connectionId) {
+            userService.deleteConnectionById(connectionId, userService.getUserById(userPrincipal.getId()));
+            return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/deletePendingRequest")
-    public ResponseEntity<?> deletePendingRequest(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("pendingRequestId") Long pendingRequestId) {
-        if(userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-        }
-        Long currentUserId = userPrincipal.getId();
-        User currentUser = userService.getUserById(currentUserId);
-        try {
-            userService.deletePendingRequestById(pendingRequestId, currentUser);
-            return ResponseEntity.ok("Pending Request " + pendingRequestId + " deleted.");
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
-        }
+    public ResponseEntity<Void> deletePendingRequest(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("pendingRequestId") Long pendingRequestId) {
+            userService.deletePendingRequestById(pendingRequestId, userService.getUserById(userPrincipal.getId()));
+            return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/getUsersByIds")
-    public ResponseEntity<List<UsernamePictureDTO>> getUsersByIds(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody List<Long> ids) {
-        List<UsernamePictureDTO> users = ids.stream()
-                .map(id -> userService.getUserNameAndPictureById(id))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(users);
+    public ResponseEntity<ApiResponse<List<UsernamePictureDTO>>> getUsersByIds(@Valid @RequestBody UserIdsRequest request) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched users by IDs", request.ids().stream().map(userService::getUserNameAndPictureById).toList()));
     }
 
     @PostMapping("/hello-backend")
-    public ResponseEntity<String> helloFrontend(@RequestBody Map<String, String> payload) {
-        String message = payload.get("message");
-        if (message != null && !message.isEmpty()) {
-            return ResponseEntity.ok(message);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message cannot be empty");
+    public ResponseEntity<ApiResponse<String>> helloFrontend(@Valid @RequestBody HelloBackendRequest request) {
+        return ResponseEntity.ok(new ApiResponse<>("Hello from backend", request.message()));
     }
 
     @GetMapping("/likedUsers")
-    public ResponseEntity<?> getLikedUsersById(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
-        }
-        Long id = userPrincipal.getId();
-        /*userService.extractUserId(token);*/
-        List<Long> likedUsers = userService.getLikedUsersById(id);
-        return ResponseEntity.ok(likedUsers);
+    public ResponseEntity<ApiResponse<List<Long>>> getLikedUsersById(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched liked users by ID", userService.getLikedUsersById(userPrincipal.getId())));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> validateUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
-        }
-        Long id = userPrincipal.getId();
-        UsernamePictureDTO usernamePictureDTO = userService.getUserNameAndPictureById(id);
-        return ResponseEntity.ok(usernamePictureDTO);
+    public ResponseEntity<ApiResponse<UsernamePictureDTO>> getUsernameAndProfilePicture(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched username and profile picture", userService.getUserNameAndPictureById(userPrincipal.getId())));
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<?> updateProfilePicture(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody Map<String, String> body) {
-        String profilePicture = body.get("profilePicture");
-        Long id = userPrincipal.getId();
-        userService.updateProfilePicture(id, profilePicture);
-        return ResponseEntity.ok("Updated profile picture.");
+    public ResponseEntity<ApiResponse<Void>> updateProfilePicture(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal, ProfilePictureRequest request) {
+        userService.updateProfilePicture(userPrincipal.getId(), request.profilePicture());
+        return ResponseEntity.ok(new ApiResponse<>("Profile picture updated successfully"));
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<?> deleteProfilePicture(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Long id = userPrincipal.getId();
-        userService.deleteProfilePicture(id);
-        return ResponseEntity.ok("Profile picture deleted");
+    public ResponseEntity<Void> deleteProfilePicture(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        userService.deleteProfilePicture(userPrincipal.getId());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me/bio")
-    public ResponseEntity<?> validateUserBio(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if (userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
-        }
-        Long id = userPrincipal.getId();
-        BioDTO bioDTO = userService.getUserBioById(id);
-
-        return ResponseEntity.ok(bioDTO);
+    public ResponseEntity<ApiResponse<BioDTO>> getUserBio(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched User Bio", userService.getUserBioById(userPrincipal.getId())));
     }
 
     @PatchMapping("/me/bio")
-    public ResponseEntity<?> updateBio(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody BioDTO dto) {
-        Long id = userPrincipal.getId();
-        userService.updateBio(id, dto);
-        return ResponseEntity.ok("Bio updated");
+    public ResponseEntity<ApiResponse<Void>> updateBio(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody BioDTO request) {
+        userService.updateBio(userPrincipal.getId(), request);
+        return ResponseEntity.ok(new ApiResponse<>("Bio updated successfully"));
     }
 
     @PostMapping("/me/location")
-    public ResponseEntity<?> updateLocation(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                            @RequestBody LocationUpdateDTO locationData) {
-        if (userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
-        }
-
-        Long id = userPrincipal.getId();
-        userService.updateUserLocation(id, locationData);
-
-        return ResponseEntity.ok(Map.of(
-                "message", "Location updated successfully",
-                "updatedLocation", locationData
-        ));
+    public ResponseEntity<ApiResponse<Void>> updateLocation(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody LocationRequest request) {
+        userService.updateUserLocation(userPrincipal.getId(), request);
+        return ResponseEntity.ok(new ApiResponse<>("Location updated successfully"));
     }
 
     @GetMapping("/me/profile")
-    public ResponseEntity<?> validateUserProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
-        }
-        Long id = userPrincipal.getId();
-        ProfileDTO profileDTO = userService.getUserProfileById(id);
-
-        return ResponseEntity.ok(profileDTO);
+    public ResponseEntity<ApiResponse<ProfileDTO>> getUserProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched User profile", userService.getUserProfileById(userPrincipal.getId())));
     }
 
     @PatchMapping("/me/profile")
-    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ProfileDTO dto) {
-        System.out.println(dto);
-        Long id = userPrincipal.getId();
-        System.out.println(id);
-        userService.updateProfile(id, dto);
-        return ResponseEntity.ok(Map.of(
-                "message", "Profile updated successfully",
-                "updatedProfile", dto
-        ));
+    public ResponseEntity<ApiResponse<ProfileDTO>> updateProfile(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ProfileDTO request) {
+        userService.updateProfile(userPrincipal.getId(), request);
+        return ResponseEntity.ok(new ApiResponse<>("Profile updated successfully", request));
     }
 
     @GetMapping("/nearby-users")
-    public ResponseEntity<?> getNearbyUsers(@AuthenticationPrincipal UserPrincipal userPrincipal,
-                                            @RequestParam(value = "radius", defaultValue = "50") Integer radiusKm) {
-        if (userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
-        }
-
-        Long id = userPrincipal.getId();
-        User currentUser = userService.getUserById(id);
-
-        if (currentUser.getCoordinates() == null) {
-            return ResponseEntity.badRequest().body("User location not set");
-        }
-
-        // This would be a new method in your userService that just returns users within radius
-        // without all the other matching criteria
-        List<Long> nearbyUserIds = userService.findUsersWithinRadius(id, radiusKm);
-
-        if (nearbyUserIds.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(nearbyUserIds);
+    public ResponseEntity<ApiResponse<List<Long>>> getNearbyUsers(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid LocationParamsRequest request) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched nearby users:", userService.findUsersWithinRadius(userPrincipal.getId(), request.radius())));
     }
 
     @GetMapping("/pendingRequests")
-    public ResponseEntity<?> getPendingRequests(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-        }
-        Long id = userPrincipal.getId();
-        List<Long> pendingRequests = userService.getPendingRequestsById(id);
-        return ResponseEntity.ok(pendingRequests);
+    public ResponseEntity<ApiResponse<List<Long>>> getPendingRequests(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched all pending requests", userService.getPendingRequestsById(userPrincipal.getId())));
     }
 
     @GetMapping("/recommendations")
-    public ResponseEntity<?> getRecommendations(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
-        }
-        Long id = userPrincipal.getId();
-        List<Long> recommendedUserIds = userService.findMatches(id);
-        if (recommendedUserIds.isEmpty()) {
-            System.out.println("Recommendations empty");
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(recommendedUserIds);
+    public ResponseEntity<ApiResponse<List<Long>>> getRecommendations(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched recommendations", userService.findMatches(userPrincipal.getId())));
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public User register(@RequestBody User user) {return userService.register(user);
     }
 
     @PostMapping("/swiped")
-    public ResponseEntity<?> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam("matchId") Long matchId, @RequestParam("swipedRight") boolean swipedRight) {
-        if (userPrincipal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
-        }
-        Long id = userPrincipal.getId();
-        User currentUser = userService.getUserById(id);
-        User likedUser = userService.getUserById(matchId);
-        if (swipedRight) {
-            try {
-                userService.addLikedUserById(matchId, currentUser);
-                userService.addPendingRequestById(id, likedUser);
-                userService.addToSwipedUsers(matchId, currentUser);
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "User id added to liked user list");
-                return ResponseEntity.ok(response);
-            } catch (ResponseStatusException e) {
-                return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
-            }
-        } else {
-            try {
-                userService.addToSwipedUsers(matchId, currentUser);
-                return ResponseEntity.ok(Map.of("message", "User swiped to left"));
-            } catch (ResponseStatusException e) {
-                return ResponseEntity.status(e.getStatusCode()).body(Map.of("error", e.getReason()));
-            }
-        }
+    public ResponseEntity<ApiResponse<Void>> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid SwipeRequest request) {
+        userService.swiped(userPrincipal.getId(), request.matchId(), request.swipedRight());
+        return ResponseEntity.ok(new ApiResponse<>("User has been swiped"));
     }
 
     @GetMapping("/users")
-    public List<User> getUsers() {
-        return userRepository.findAll();
-    }
+    public ResponseEntity<ApiResponse<List<User>>> getUsers() { return ResponseEntity.ok(new ApiResponse<>("Fetched users", userService.getUsers())); }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UsernamePictureDTO> getUserById(@PathVariable Long id) {
-        UsernamePictureDTO usernamePictureDTO = userService.getUserNameAndPictureById(id);
-
-        return ResponseEntity.ok(usernamePictureDTO);
+    public ResponseEntity<ApiResponse<UsernamePictureDTO>> getUserById(@PathVariable @Positive Long id) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched username, picture for specified user", userService.getUserNameAndPictureById(id)));
     }
 
     @GetMapping("/users/{id}/bio")
-    public ResponseEntity<BioDTO> getUserBioById(@PathVariable Long id) {
-        BioDTO bioDTO = userService.getUserBioById(id);
-
-        return ResponseEntity.ok(bioDTO);
+    public ResponseEntity<ApiResponse<BioDTO>> getUserBioById(@PathVariable @Positive Long id) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched bio for specified user", userService.getUserBioById(id)));
     }
 
     @GetMapping("/users/{id}/profile")
-    public ResponseEntity<ProfileDTO> getUserProfileById(@PathVariable Long id) {
-        ProfileDTO profileDTO = userService.getUserProfileById(id);
-
-        return ResponseEntity.ok(profileDTO);
+    public ResponseEntity<ApiResponse<ProfileDTO>> getUserProfileById(@PathVariable @Positive Long id) {
+        return ResponseEntity.ok(new ApiResponse<>("Fetched profile for specified user", userService.getUserProfileById(id)));
     }
 
     @PostMapping("/validateToken")
-    public ResponseEntity<?> validateToken(@RequestHeader(value = "Authorization", required = false) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid token: Missing or incorrect format");
-        }
-        String token = authHeader.substring(7);
-        boolean isValid = userService.validate(token);
-        if (isValid) {
-            System.out.println("Token is valid");
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
-        }
+    public ResponseEntity<ApiResponse<Void>> validateToken(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        userService.validate(authHeader.substring(7));
+        return ResponseEntity.ok(new ApiResponse<>("Token is valid"));
     }
 }

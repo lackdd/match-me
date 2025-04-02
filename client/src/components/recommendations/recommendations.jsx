@@ -94,13 +94,13 @@ function Recommendations() {
 				});
 
 				// formatting data for dashboard form
-				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.idealMatchGender);
-				const idealMatchAge = matchAgeOptions.find(age => age.value === response.data.idealMatchAge);
-				const idealMatchLocation = matchLocationsOptions.find(location => location.value === response.data.idealMatchLocation);
-				const idealMatchYearsOfExperience = matchExperienceOptions.find(exp => exp.value === response.data.idealMatchYearsOfExperience);
-				const idealMatchGenres = backToObject(response.data.idealMatchGenres, genreOptions);
-				const idealMatchMethods = backToObject(response.data.idealMatchMethods, methodsOptions);
-				const idealMatchGoals = backToObject(response.data.idealMatchGoals, goalsOptions);
+				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.payload.idealMatchGender);
+				const idealMatchAge = matchAgeOptions.find(age => age.value === response.data.payload.idealMatchAge);
+				const idealMatchLocation = matchLocationsOptions.find(location => location.value === response.data.payload.idealMatchLocation);
+				const idealMatchYearsOfExperience = matchExperienceOptions.find(exp => exp.value === response.data.payload.idealMatchYearsOfExperience);
+				const idealMatchGenres = backToObject(response.data.payload.idealMatchGenres, genreOptions);
+				const idealMatchMethods = backToObject(response.data.payload.idealMatchMethods, methodsOptions);
+				const idealMatchGoals = backToObject(response.data.payload.idealMatchGoals, goalsOptions);
 
 				console.log("Response: ", response);
 
@@ -157,8 +157,8 @@ function Recommendations() {
 						});
 					// todo fetch matchIDs when creating an account (and additionally in the background when logging in) so fetching here can be skipped if matches are already available
 					// todo add matchIDs to database and check if available before fetching
-					setMatchIDs(response.data);
-					if (response.data.length === 0) {
+					setMatchIDs(response.data.payload);
+					if (response.data.payload.length === 0) {
 						setLoading(false);
 					}
 				} catch (error) {
@@ -168,7 +168,7 @@ function Recommendations() {
 						console.log("Fetch aborted");
 					} else {
 						if (error.response) {
-							console.error("Backend error:", error.response); // Server responded with an error
+							console.error("Backend error:", error.response.data); // Server responded with an error
 						} else {
 							console.error("Request failed:", error.message); // Network error or request issue
 						}
@@ -204,8 +204,8 @@ function Recommendations() {
 
 						// Return both promises for the same id
 						return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({
-							...profile.data,   // Merge profile data
-							...user.data       // Merge user data
+							...profile.data.payload,   // Merge profile data
+							...user.data.payload       // Merge user data
 						}));
 					});
 
@@ -273,11 +273,11 @@ function Recommendations() {
 			try {
 				axios.post(
 					`${VITE_BACKEND_URL}/api/swiped`,
-					null,
 					{
-						params: {
-							matchId : currentMatch.id,
-							swipedRight: swipedRight},
+						matchId: currentMatch.id,
+						swipedRight: swipedRight
+					},
+					{
 						headers: {
 							"Authorization": `Bearer ${tokenValue}`,
 							"Content-Type": "application/json"

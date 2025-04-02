@@ -48,7 +48,7 @@ export function ChangePassword() {
 
 			console.log("PasswordMatch: ", passwordMatch);
 
-			if (passwordMatch.data === "Password matches.") {
+			if (passwordMatch.data.payload === true) {
 				console.log("Password matches!");
 				clearErrors('currentPassword')
 			}

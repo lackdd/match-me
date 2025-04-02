@@ -1,7 +1,7 @@
 package com.app.matchme.services;
 
 import com.app.matchme.dtos.BioDTO;
-import com.app.matchme.dtos.LocationUpdateDTO;
+import com.app.matchme.dtos.apiRequestDtos.LocationRequest;
 import com.app.matchme.dtos.ProfileDTO;
 import com.app.matchme.dtos.UsernamePictureDTO;
 import com.app.matchme.entities.*;
@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -137,8 +138,11 @@ public class UserService {
     }
 
     public boolean checkPassword(Long id, String password) {
-        User currentUser = getUserById(id);
-        return encoder.matches(password, currentUser.getPassword());
+        if (encoder.matches(password, getUserById(id).getPassword())) {
+            return true;
+        } else {
+            throw new BusinessException("Password doesn't match");
+        }
     }
 
     @Transactional
@@ -149,12 +153,14 @@ public class UserService {
             connectedUser.getConnections().remove(currentUser.getId());
             userRepository.save(currentUser);
             userRepository.save(connectedUser);
+        } else {
+            throw new BusinessException("Couldn't delete connection");
         }
     }
 
     @Transactional
     public void deletePendingRequestById(Long pendingRequestId, User currentUser) {
-        User otherUser = userRepository.findById(pendingRequestId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        User otherUser = userRepository.findById(pendingRequestId).orElseThrow(() -> new BusinessException("Other user not found"));
         if (currentUser.getPendingRequests().contains(pendingRequestId)) {
             currentUser.getPendingRequests().remove(pendingRequestId);
             if (otherUser != null && otherUser.getLikedUsers().contains(currentUser.getId())) {
@@ -188,7 +194,7 @@ public class UserService {
                 // Get users near current user first
                 potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(), // Latitude
                         currentUser.getCoordinates().getX(), // Longitude
-                        radiusInMeters, currentUser.getId());
+                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new BusinessException("Nearby users not found"));
 
                 // Apply additional location text filtering
                 if ("same_city".equals(idealMatchLocation)) {
@@ -201,7 +207,7 @@ public class UserService {
                 // Just proximity-based without text filtering - "near me" type of matching
                 potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(), // Latitude
                         currentUser.getCoordinates().getX(), // Longitude
-                        radiusInMeters, currentUser.getId());
+                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new BusinessException("Nearby users not found"));
             }
         } else {
             // Fall back to traditional location text matching if no coordinates or "anywhere" is selected
@@ -238,21 +244,15 @@ public class UserService {
     @Transactional
     public List<Long> findUsersWithinRadius(Long userId, Integer radiusKm) {
         User currentUser = getUserById(userId);
-
-        if (currentUser == null || currentUser.getCoordinates() == null) {
-            return Collections.emptyList();
+        if (currentUser.getCoordinates() == null) {
+            throw new BusinessException("User location not set");
         }
-
-        // Convert km to meters for the database query
         int radiusInMeters = radiusKm * 1000;
+        List<User> nearbyUsers = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),
+                currentUser.getCoordinates().getX(),
+                radiusInMeters, userId).orElseThrow(() -> new BusinessException("Nearby users not found"));
 
-        // Use the userRepositorysitory method to find users within radius
-        List<User> nearbyUsers = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),  // Latitude
-                currentUser.getCoordinates().getX(),  // Longitude
-                radiusInMeters, userId);
-
-        // Map to IDs and filter out the current user (just in case)
-        return nearbyUsers.stream().map(User::getId).filter(id -> !id.equals(userId)).collect(Collectors.toList());
+        return nearbyUsers.stream().map(User::getId).filter(id -> !id.equals(userId)).toList();
     }
 
     public List<Long> getLikedUsersById(Long id) {
@@ -287,6 +287,10 @@ public class UserService {
         return userRepository.findById(id).map(UserMapper::toProfileDTO).orElseThrow(() -> new RepositoryException("No user found with id: " + id));
     }
 
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
     public User register(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new BusinessException("Email already exists.");
@@ -298,111 +302,65 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public void swiped(Long currentUserId, Long matchId, boolean swipedRight) {
+        User currentUser = getUserById(currentUserId);
+        if (swipedRight) {
+            addLikedUserById(matchId, currentUser);
+            addPendingRequestById(currentUserId, getUserById(matchId));
+            addToSwipedUsers(matchId, currentUser);
+        } else {
+            addToSwipedUsers(matchId, currentUser);
+        }
+    }
+
     public void updateBio(Long id, BioDTO dto) {
         User currentUser = getUserById(id);
-        if (dto.getIdealMatchGenres() != null) {
             currentUser.setIdealMatchGenres(dto.getIdealMatchGenres());
-        }
-        if (dto.getIdealMatchMethods() != null) {
             currentUser.setIdealMatchMethods(dto.getIdealMatchMethods());
-        }
-        if (dto.getIdealMatchGoals() != null) {
             currentUser.setIdealMatchGoals(dto.getIdealMatchGoals());
-        }
-        if (dto.getIdealMatchGender() != null) {
             currentUser.setIdealMatchGender(dto.getIdealMatchGender());
-        }
-        if (dto.getIdealMatchAge() != null) {
             currentUser.setIdealMatchAge(dto.getIdealMatchAge());
-        }
-        if (dto.getIdealMatchYearsOfExperience() != null) {
             currentUser.setIdealMatchYearsOfExperience(dto.getIdealMatchYearsOfExperience());
-        }
-        if (dto.getIdealMatchLocation() != null) {
             currentUser.setIdealMatchLocation(dto.getIdealMatchLocation());
-        }
         userRepository.save(currentUser);
     }
 
     public void updatePassword(Long id, String oldPassword, String newPassword) {
         User currentUser = getUserById(id);
         if (!encoder.matches(oldPassword, currentUser.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect.");
+            throw new BusinessException("Old password is incorrect.");
         }
-
-        if (newPassword == null || newPassword.trim().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty.");
-        }
-
         currentUser.setPassword(encoder.encode(newPassword));
         userRepository.save(currentUser);
     }
 
     public void updateProfile(Long id, ProfileDTO dto) {
         User currentUser = getUserById(id);
-
-        // Update existing fields as before
-        if (dto.getPreferredMusicGenres() != null) {
             currentUser.setPreferredMusicGenres(dto.getPreferredMusicGenres());
-        }
-
-        if (dto.getPreferredMethod() != null) {
             currentUser.setPreferredMethods(dto.getPreferredMethod());
-        }
-
-        if (dto.getAdditionalInterests() != null) {
             currentUser.setAdditionalInterests(dto.getAdditionalInterests());
-        }
-
-        if (dto.getPersonalityTraits() != null) {
             currentUser.setPersonalityTraits(dto.getPersonalityTraits());
-        }
-
-        if (dto.getGoalsWithMusic() != null) {
             currentUser.setGoalsWithMusic(dto.getGoalsWithMusic());
-        }
-
-        if (dto.getLinkToMusic() != null) {
             currentUser.setLinkToMusic(dto.getLinkToMusic());
-        }
-
-        if (dto.getLocation() != null) {
             currentUser.setLocation(dto.getLocation());
-        }
-
-        if (dto.getDescription() != null) {
             currentUser.setDescription(dto.getDescription());
-        }
-
-        if (dto.getYearsOfMusicExperience() != null) {
             currentUser.setYearsOfMusicExperience(dto.getYearsOfMusicExperience());
-        }
-
-        // Handle new geolocation fields
         if (dto.getLatitude() != null && dto.getLongitude() != null) {
             Point point = GeoUtils.createPoint(dto.getLatitude(), dto.getLongitude());
             currentUser.setCoordinates(point);
         }
-
-        if (dto.getMaxMatchRadius() != null) {
             currentUser.setMaxMatchRadius(dto.getMaxMatchRadius());
-        }
-
         userRepository.save(currentUser);
     }
 
     public void updateProfilePicture(Long id, String profilePicture) {
-        if (profilePicture == null || profilePicture.trim().isEmpty()) {
-            throw new IllegalArgumentException("Profile picture URL cannot be empty.");
-        }
-
         User currentUser = getUserById(id);
         currentUser.setProfilePicture(profilePicture);
         userRepository.save(currentUser);
     }
 
     // Update a user's location with coordinates
-    public void updateUserLocation(Long userId, LocationUpdateDTO locationData) {
+    public void updateUserLocation(Long userId, LocationRequest locationData) {
         User user = getUserById(userId);
 
         // Update text location if provided
@@ -424,9 +382,11 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean validate(String token) {
+    public void validate(String token) {
         String email = jwtService.extractUserName(token);
         UserDetails userdetails = userDetailsService.loadUserByUsername(email);
-        return jwtService.validateToken(token, userdetails);
+        if (!jwtService.validateToken(token, userdetails)) {
+            throw new BusinessException("Token is not valid");
+        }
     }
 }

@@ -24,27 +24,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(m.sender.id = c AND m.receiver.id = u.id)) DESC NULLS LAST")
     Optional<List<Long>> findUserConnectionsById(@Param("userId") Long userId);
 
-    @Query(value = "SELECT connection_id FROM connections WHERE user_id = (SELECT id FROM users WHERE username = :userUsername)", nativeQuery = true)
-    List<Long> findUserConnectionsByUsername(@Param("userUsername") String userUsername);
-
     @Query("SELECT u.likedUsers FROM User u WHERE u.id = :userId")
     Optional<List<Long>> findUserLikedUsersById(@Param("userId") Long userId);
 
     @Query("SELECT u.pendingRequests FROM User u WHERE u.id = :userId")
     Optional<List<Long>> findUserPendingRequestsById(@Param("userId") Long userId);
 
-
-    // Find users within a specific radius (in meters)
-    // ST_DWithin checks if two geometries are within a specified distance
     @Query(value = "SELECT u.* FROM users u WHERE ST_DWithin(u.coordinates, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography, :radius) AND u.id != :userId", nativeQuery = true)
-    List<User> findUsersWithinRadius(@Param("latitude") double latitude,
+    Optional<List<User>> findUsersWithinRadius(@Param("latitude") double latitude,
                                      @Param("longitude") double longitude,
                                      @Param("radius") int radius,
                                      @Param("userId") Long userId);
-
-    // Calculate distance between two points (in meters)
-    @Query(value = "SELECT ST_Distance(u.coordinates, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography) FROM users u WHERE u.id = :userId", nativeQuery = true)
-    Double calculateDistanceInMeters(@Param("userId") Long userId,
-                                     @Param("latitude") double latitude,
-                                     @Param("longitude") double longitude);
 }

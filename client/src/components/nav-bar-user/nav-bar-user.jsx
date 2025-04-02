@@ -44,8 +44,8 @@ function NavigatorUser() {
 				headers: { Authorization: `Bearer ${tokenValue}` },
 		});
 
-			setUsername(response.data.username.split(' ')[0]);
-			setProfilePicture(response.data.profilePicture);
+			setUsername(response.data.payload.username.split(' ')[0]);
+			setProfilePicture(response.data.payload.profilePicture);
 
 		} catch (error) {
 			if (error.response) {
@@ -65,11 +65,11 @@ function NavigatorUser() {
 				headers: { Authorization: `Bearer ${tokenValue}` },
 			});
 
-			setGender(response.data.gender);
+			setGender(response.data.payload.gender);
 
 		} catch (error) {
 			if (error.response) {
-				console.error("Backend error:", error.response.data); // Server responded with an error
+				console.error("Backend error:", error.response.data.payload); // Server responded with an error
 			} else {
 				console.error("Request failed:", error.message); // Network error or request issue
 			}
@@ -88,8 +88,8 @@ function NavigatorUser() {
 				});
 
 			// don't display 0
-			if (response.data.length > 0) {
-				setPendingReqNum(response.data.length)
+			if (response.data.payload.length > 0) {
+				setPendingReqNum(response.data.payload.length)
 			} else {
 				setPendingReqNum("")
 			}

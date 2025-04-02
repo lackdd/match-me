@@ -65,7 +65,7 @@ export function AuthProvider({ children }) {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 
-			const connections = response.data;
+			const connections = response.data.payload;
 			console.log("Broadcasting ACTIVE status to all connections:", connections);
 
 			// Send ACTIVE status update to each connection
@@ -100,7 +100,7 @@ export function AuthProvider({ children }) {
 				headers: { Authorization: `Bearer ${actualToken}` },
 			});
 
-			const connections = response.data;
+			const connections = response.data.payload;
 
 			// Send status update to each connection
 			connections.forEach(connectionId => {
@@ -183,7 +183,7 @@ export function AuthProvider({ children }) {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 
-				const user = userResponse.data;
+				const user = userResponse.data.payload;
 				setUsername(user.username);
 				setUserId(user.id);
 				setIsUserLoggedIn(true);
@@ -278,7 +278,7 @@ export function AuthProvider({ children }) {
 				headers: { Authorization: `Bearer ${token}` },
 			});
 
-			const user = userResponse.data;
+			const user = userResponse.data.payload;
 			setUsername(user.username);
 			setUserId(user.id);
 			setIsUserLoggedIn(true);

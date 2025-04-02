@@ -22,7 +22,7 @@ function App() {
                 const response = await axios.post(`${VITE_BACKEND_URL}/api/hello-backend`, {
                     message: "Hello from backend"
                 });
-                console.log(response.data);
+                console.log(response.data.payload);
             } catch (error) {
                 console.error("Failed to wake up backend: " + error.message);
             }

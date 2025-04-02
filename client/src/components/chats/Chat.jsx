@@ -154,10 +154,10 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
                         {
                             headers: { Authorization: `Bearer ${tokenValue}` },
                         });
-                    console.log("Logging in as:", response.data.username);
-                    setUsername(response.data.username);
-                    setUserId(response.data.id);
-                    console.log("user id: " + response.data.id);
+                    console.log("Logging in as:", response.data.payload.username);
+                    setUsername(response.data.payload.username);
+                    setUserId(response.data.payload.id);
+                    console.log("user id: " + response.data.payload.id);
                 } catch (error) {
                     console.log(error.message);
                 }
