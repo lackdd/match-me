@@ -1,3 +1,5 @@
+
+// buttons for registration page to move between steps
 export const PreviousNextButtons = ({DeductStep, text = "Next", errors = {}, isValid = {} }, ) => {
 	return (
 		<div className={'register-buttons-container'}>

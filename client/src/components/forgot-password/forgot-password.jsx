@@ -1,5 +1,4 @@
-import './forgot-password.scss'
-import {Link} from 'react-router-dom';
+import './forgot-password.scss';
 
 function ForgotPassword() {
 	return (

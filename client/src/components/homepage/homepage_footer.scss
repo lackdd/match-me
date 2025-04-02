@@ -13,31 +13,28 @@
   justify-content: space-around;
   align-items: center;
   //gap: 8rem;
-
   @media (min-width: 769px) {
-    bottom: 0;
+	bottom: 0;
   }
-
   @media (max-width: 768px) {
-    flex-direction: column;
-    right: 0;
-    background-color: transparent;
-    justify-content: center;
-    gap: 5rem;
-    width: fit-content;
-    height: 100%;
-    padding: 0.5rem;
+	flex-direction: column;
+	right: 0;
+	background-color: transparent;
+	justify-content: center;
+	gap: 5rem;
+	width: fit-content;
+	height: 100%;
+	padding: 0.5rem;
   }
 
   .icon {
-
-    @media (max-width: 440px) {
-      //filter: brightness(0) saturate(100%) invert(53%) sepia(26%) saturate(1191%) hue-rotate(307deg) brightness(102%) contrast(99%)
-      //filter: brightness(0) saturate(100%) invert(33%) sepia(76%) saturate(7455%) hue-rotate(230deg) brightness(97%) contrast(97%)
-    }
+	@media (max-width: 440px) {
+	  //filter: brightness(0) saturate(100%) invert(53%) sepia(26%) saturate(1191%) hue-rotate(307deg) brightness(102%) contrast(99%)
+	  //filter: brightness(0) saturate(100%) invert(33%) sepia(76%) saturate(7455%) hue-rotate(230deg) brightness(97%) contrast(97%)
+	}
   }
 
   .icon:hover {
-    filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
+	filter: brightness(0) saturate(100%) invert(64%) sepia(46%) saturate(3521%) hue-rotate(313deg) brightness(101%) contrast(99%);
   }
 }

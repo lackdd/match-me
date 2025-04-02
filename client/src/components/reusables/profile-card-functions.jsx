@@ -1,36 +1,28 @@
-// helped function to format match data
 import {uploadToCloudinary} from '../utils/cloudinary.jsx';
 import axios from 'axios';
-import {useAuth} from '../utils/AuthContext.jsx';
 
+// format data
 export const formatData = (data) => {
 	for (let i = 0; i < data.length; i++) {
-		data[i] = data[i].replaceAll("_", " ")
+		data[i] = data[i].replaceAll('_', ' ');
 
 		if (i < data.length - 1) {
-			data[i] = data[i] + ", "
+			data[i] = data[i] + ', ';
 		}
-
-		// console.log(data[i]);
 	}
 	return data;
-}
+};
 
 // helped function to format location data (remove "County")
 export const formatLocation = (data) => {
-	return data.replaceAll(" County", "")
-}
+	return data.replaceAll(' County', '');
+};
 
 // open settings popup
 export const openSettings = (event) => {
-	const settingsPopup = document.getElementById('settings-popup')
+	const settingsPopup = document.getElementById('settings-popup');
 	settingsPopup.style.display = 'flex';
-}
-
-export const openChangePicture = (event) => {
-	const picturePopup = document.getElementById('picture-popup')
-	picturePopup.style.display = 'flex';
-}
+};
 
 export const changeImage = async (event, setMyDataFormatted, setImage, tokenValue, setLoadingImage) => {
 	if (event.target.files && event.target.files[0]) {
@@ -41,54 +33,57 @@ export const changeImage = async (event, setMyDataFormatted, setImage, tokenValu
 		if (uploadedUrl) {
 			const publicId = uploadedUrl.split('/').pop().split('.')[0]; // Extract only the public ID
 			setMyDataFormatted((prev) => ({
-			...prev,
-					profilePicture: uploadedUrl,
+				...prev,
+				profilePicture: uploadedUrl
 			}));
-			console.log("Cloudinary image public ID:", publicId);
-			setImage(uploadedUrl)
+			console.log('Cloudinary image public ID:', publicId);
+			setImage(uploadedUrl);
 			await sendPictureToBackend(publicId, tokenValue);
 			/*setImageUrl(uploadedUrl); // store the uploaded image url
 			console.log("Cloudinary image url:", uploadedUrl);*/
 		} else {
-			console.log("Failed to upload image.");
+			console.log('Failed to upload image.');
 		}
 	}
 	setLoadingImage(false);
 };
 
-export const sendPictureToBackend = async(publicId, tokenValue) => {
+// function to send profile picture url to the server
+export const sendPictureToBackend = async (publicId, tokenValue) => {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	try {
 		const response = await axios.patch(`${VITE_BACKEND_URL}/api/me`,
-			{profilePicture: publicId},{
-			headers: {
-				Authorization: `Bearer ${tokenValue}`,
-				'Content-Type': 'application/json'}
+			{profilePicture: publicId}, {
+				headers: {
+					Authorization: `Bearer ${tokenValue}`,
+					'Content-Type': 'application/json'
+				}
 			}
-		)
-		console.log("Profile picture updated successfully");
-		return response.data.payload
+		);
+		console.log('Profile picture updated successfully');
+		return response.data;
 	} catch (error) {
 		if (error.response) {
-			console.error("Backend error:", error.response.data); // Server responded with an error
+			console.error('Backend error:', error.response.data); // Server responded with an error
 		} else {
-			console.error("Request failed:", error.message); // Network error or request issue
+			console.error('Request failed:', error.message); // Network error or request issue
 		}
 	}
-}
+};
 
 // close settings popup
 export const closeSettings = (event) => {
-	const settingsPopup = document.getElementById('settings-popup')
+	const settingsPopup = document.getElementById('settings-popup');
 	settingsPopup.style.display = 'none';
-}
+};
 
+// format string to object
 export const backToObject = (array, options) => {
 	const formattedArray = array.map(item => item.replaceAll(',', '').trim());
 	const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
 	return arrayOfObjects;
-}
+};
 
 // export const formatDataForView = (data, isDataFormatted) => {
 // 	if (data !== null && data && isDataFormatted === false) {

@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 
+// custom hook for googles places api
 export const useGooglePlacesApi = () => {
 	const autocompleteServiceRef = useRef(null);
 	const [apiLoaded, setApiLoaded] = useState(false);
@@ -10,7 +11,7 @@ export const useGooglePlacesApi = () => {
 			if (window.google?.maps?.places) {
 				autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
 				setApiLoaded(true);
-				console.log("Google API is loaded");
+				console.log('Google API is loaded');
 				clearInterval(checkGoogleApi);
 			}
 		}, 100);
@@ -25,7 +26,7 @@ export const useGooglePlacesApi = () => {
 			{
 				input,
 				types: ['administrative_area_level_1'],
-				componentRestrictions: { country: "est" },
+				componentRestrictions: {country: 'est'},
 				language: 'en'
 			},
 			(predictions, status) => {
@@ -33,7 +34,7 @@ export const useGooglePlacesApi = () => {
 					setOptions(
 						predictions.map((place) => ({
 							value: place.place_id,
-							label: place.description,
+							label: place.description
 						}))
 					);
 				} else {
@@ -44,4 +45,4 @@ export const useGooglePlacesApi = () => {
 	}, [apiLoaded]);
 
 	return {apiLoaded, autocompleteServiceRef, fetchPlaces, options};
-}
+};

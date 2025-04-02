@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './dashboard.scss';
 import '../reusables/settings-popup.scss'
 import '../reusables/profile-card.scss'
@@ -6,16 +6,14 @@ import '../reusables/loadingAnimation.scss'
 import { GiSettingsKnobs } from 'react-icons/gi';
 import { IoClose } from "react-icons/io5";
 import { FaSpotify } from 'react-icons/fa';
-import {useSwipe} from '../recommendations/useSwipe.jsx';
 import axios from 'axios';
 import { useAuth } from '../utils/AuthContext.jsx';
 import {
 	formatData,
 	formatLocation,
-	closeSettings,
 	openSettings,
 	changeImage,
-	backToObject
+	backToObject, sendPictureToBackend
 } from '../reusables/profile-card-functions.jsx';
 import {DashboardForm} from './dashboard-settings/dashboardForm.jsx';
 import {
@@ -25,12 +23,9 @@ import {
 	methodsOptions,
 	personalityTraitsOptions
 } from '../reusables/inputOptions.jsx';
-import {AdvancedImage} from '@cloudinary/react';
-import {getOptimizedImage} from '../utils/cloudinary.jsx';
 import {SettingsMenu} from './dashboard-settings/settings-menu.jsx';
 import {Stats} from './dashboard-settings/stats.jsx';
 import {ChangePassword} from './dashboard-settings/change-password.jsx';
-import {CloudinaryImage} from '@cloudinary/url-gen';
 
 function Dashboard() {
 	const [loading, setLoading] = useState(true)
@@ -40,11 +35,11 @@ function Dashboard() {
 	const [liked, setLiked] = useState(0);
 	const { tokenValue } = useAuth();
 	const [formOpen, setFormOpen] = useState(false);
-	const [imageUrl, setImageUrl] = useState(null); // todo if image is changed then change this. If this is available then use this to show image. Else you data from backend
 	const isDataFormatted = useRef(false);
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
 	const [settingsContent, setSettingsContent] = useState('profile') // 'statistics' and 'password'
+	const { setImageUrl, username } = useAuth();
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -76,21 +71,21 @@ function Dashboard() {
 					]);
 
 					// formatting data (mostly to objects) for dashboard form
-					const firstName = res1.data.payload.username.split(' ')[0];
-					const lastName = res1.data.payload.username.split(' ')[1];
-					const gender = genderOptions.find(gender => gender.value === res2.data.payload.gender);
-					const additionalInterests = backToObject(res2.data.payload.additionalInterests, interestsOptions);
-					const personalityTraits = backToObject(res2.data.payload.personalityTraits, personalityTraitsOptions);
-					const goalsWithMusic = backToObject(res2.data.payload.goalsWithMusic, goalsOptions);
-					const preferredMethod = backToObject(res2.data.payload.preferredMethod, methodsOptions);
-					const preferredMusicGenres = backToObject(res2.data.payload.preferredMusicGenres, genreOptions);
-					const location = res2.data.payload.location ? {value: res2.data.payload.location, label: res2.data.payload.location} : "";
+					const firstName = res1.data.username.split(' ')[0];
+					const lastName = res1.data.username.split(' ')[1];
+					const gender = genderOptions.find(gender => gender.value === res2.data.gender);
+					const additionalInterests = backToObject(res2.data.additionalInterests, interestsOptions);
+					const personalityTraits = backToObject(res2.data.personalityTraits, personalityTraitsOptions);
+					const goalsWithMusic = backToObject(res2.data.goalsWithMusic, goalsOptions);
+					const preferredMethod = backToObject(res2.data.preferredMethod, methodsOptions);
+					const preferredMusicGenres = backToObject(res2.data.preferredMusicGenres, genreOptions);
+					const location = res2.data.location ? {value: res2.data.location, label: res2.data.location} : "";
 
 
 					// data for the form
 					setMyData({
-                        ...res1.data.payload,
-                        ...res2.data.payload,
+                        ...res1.data,
+                        ...res2.data,
 						firstName: firstName,
 						lastName: lastName,
 						gender: gender,
@@ -100,23 +95,23 @@ function Dashboard() {
 						preferredMethod,
 						preferredMusicGenres,
 						location,
-						// gender: res2.data.payload.gender.charAt(0).toUpperCase() + res2.data.payload.gender.slice(1)
+						// gender: res2.data.gender.charAt(0).toUpperCase() + res2.data.gender.slice(1)
                         // bio: res3.data
                     });
 
-					// const formattedRes2 = formatDataForView(res2.data.payload);
+					// const formattedRes2 = formatDataForView(res2.data);
 
 					// data for dashboard itself
 					setMyDataFormatted( {
-							...res1.data.payload,
-							...formatDataForView(res2.data.payload),
+							...res1.data,
+							...formatDataForView(res2.data),
 					});
 
-					setImageUrl(...res1.data.payload.profilePicture)
+					// setImageUrl(...res1.data.profilePicture)
 
 					// liked users count
-					if (res3.data.payload.length) {
-						setLiked(res3.data.payload.length || 0);
+					if (res3.data.length) {
+						setLiked(res3.data.length || 0);
 					}
 
 
@@ -143,6 +138,7 @@ function Dashboard() {
 	}, [])
 
 
+	// format received data
 	const formatDataForView = (data) => {
 		if (data !== null && data && isDataFormatted.current === false) {
 			const updatedProfile = {
@@ -166,22 +162,9 @@ function Dashboard() {
 					: data.goalsWithMusic
 			};
 			return updatedProfile;
-
-			// Check if the profile data has changed before updating the state
-			// if (JSON.stringify(updatedProfile) !== JSON.stringify(data)) {
-			// 	setMyDataFormatted((prev) => ({
-			// 		...prev,
-			// 		...updatedProfile
-			// 	}));
-			// 	isDataFormatted.current = true;
-			// }
 		}
 		return data;
 	}
-
-	useEffect(() => {
-		console.log("MyDataFormatted: ", myDataFormatted);
-	}, [myDataFormatted])
 
 	return (
 
@@ -198,15 +181,6 @@ function Dashboard() {
 					{!loading && (
 						<>
 							<div className="extra-dashboard-container">
-
-								{/*<div className="settings-popup" id="picture-popup">*/}
-								{/*	<div className="settings-content">*/}
-								{/*		<div className='forms-container'>*/}
-								{/*			*/}
-								{/*		</div>*/}
-								{/*	</div>*/}
-								{/*</div>*/}
-
 								<div className="settings-popup" id="settings-popup">
 									<div className="settings-content">
 
@@ -236,11 +210,7 @@ function Dashboard() {
 									className="profile-card-container"
 								>
 									<div className="settings-container">
-										<button className="settings-button" onClick={() => {
-											openSettings();
-											setFormOpen(true);
-											// console.log("gender when opening settings: ", myData.gender);
-										}}>
+										<button className="settings-button" onClick={openSettings}>
 											<GiSettingsKnobs />
 										</button>
 									</div>
@@ -258,9 +228,6 @@ function Dashboard() {
 													</div>
 												)}
 
-												{/* todo fix so uploaded pictures are actually shown*/}
-												{/*{!loadingImage && imageUrl && <AdvancedImage cldImg={getOptimizedImage(myDataFormatted.profilePicture)} />}*/}
-												{/*{!loadingImage && imageUrl && <img src={"default_profile_picture.png"} alt={"default picture"}/>}*/}
 
 												{!loadingImage && (
 													<>
@@ -271,59 +238,31 @@ function Dashboard() {
 															   className='file-upload'
 															   title={'click to change picture'}
 														/>
-														{!myDataFormatted.profilePicture.endsWith("null") && (
-															// <AdvancedImage cldImg={new CloudinaryImage(myDataFormatted.profilePicture)} />
-															<img src={myDataFormatted.profilePicture} alt="Profile" className="profile-picture" />
-														)}
-														{myDataFormatted.profilePicture.endsWith("null") && (
-															<img
-																src="default_profile_picture.png"
-																alt="profile picture"
-																className="profile-picture"
-															/>
-														)}
+														{myDataFormatted.profilePicture && !myDataFormatted.profilePicture.endsWith("null") ? (
+															<img src={myDataFormatted.profilePicture} alt={myDataFormatted.username} className='profile-picture' />
+														) : (
+															<img src="default_profile_picture.png" alt={myDataFormatted.username} className='profile-picture' />
+														)
+														}
 													</>
 												)}
-
-												{/*{!loadingImage && (*/}
-												{/*	<>*/}
-												{/*		<input type='file'*/}
-												{/*			   accept={"image/*"}*/}
-												{/*			   name={'image'}*/}
-												{/*			   onChange={(event) => changeImage(event, setMyDataFormatted, setImageUrl, tokenValue, setLoadingImage)}*/}
-												{/*			   className='file-upload'*/}
-												{/*			   title={'click to change picture'}*/}
-												{/*		/>*/}
-												{/*		{myDataFormatted.gender === 'male' && (*/}
-												{/*			<img*/}
-												{/*				src="profile_pic_male.jpg"*/}
-												{/*				alt="profile picture"*/}
-												{/*				className="profile-picture"*/}
-												{/*				// onClick={changePicture(myDataFormatted, setMyDataFormatted)}*/}
-												{/*			/>*/}
-												{/*		)}*/}
-												{/*		{myDataFormatted.gender === 'female' && (*/}
-												{/*			<img*/}
-												{/*				src="profile_pic_female.jpg"*/}
-												{/*				alt="profile picture"*/}
-												{/*				className="profile-picture"*/}
-												{/*			/>*/}
-												{/*		)}*/}
-												{/*		{myDataFormatted.gender === 'other' && (*/}
-												{/*			<img*/}
-												{/*				src="default_profile_picture.png"*/}
-												{/*				alt="profile picture"*/}
-												{/*				className="profile-picture"*/}
-												{/*			/>*/}
-												{/*		)}*/}
-												{/*	</>*/}
-												{/*)}*/}
 
 												{myDataFormatted.linkToMusic && (
 													<div className="music-link">
 														<FaSpotify style={{ color: '#31D165' }} />
 													</div>
+
 												)}
+												<button className="remove-image" onClick={() => {
+													setMyDataFormatted(prev => ({
+														...prev,
+														profilePicture: "null",
+													}));
+													sendPictureToBackend("null", tokenValue);
+													setImageUrl("null");
+												}}>
+													<IoClose />
+												</button>
 											</div>
 										</div>
 
@@ -443,7 +382,7 @@ function Dashboard() {
 									<div className="description-container">{myDataFormatted.description}</div>
 
 									<div className="name-container">
-										<span className="name">{myDataFormatted.username}</span>
+										<span className="name">{username}</span>
 										<br />
 										<span>
 							{myDataFormatted.age}, {myDataFormatted.gender}
@@ -463,7 +402,6 @@ function Dashboard() {
 				<div className='api-error'>{errorMessage}</div>
 			)
 			}
-
 
 		</div>
 	);

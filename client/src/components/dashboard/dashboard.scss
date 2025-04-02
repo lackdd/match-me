@@ -7,112 +7,130 @@
   height: calc(100vh - 64px);
 
   .extra-dashboard-container {
-    @include variables.centered-column;
-    margin-bottom: 1.5rem;
-    max-width: 100%;
+	@include variables.centered-column;
+	margin-bottom: 1.5rem;
+	max-width: 100%;
   }
 
-  //@media (max-width: 768px) {
-  //  .picture-bio-container {
-  //    flex-direction: column;
-  //  }
-  //}
-
-
   .profile-card-container {
-    padding-bottom: 1rem !important;
-    margin-top: 1rem !important;
+	padding-bottom: 1rem !important;
+	margin-top: 1rem !important;
 
-    .extra-picture-container {
-      position: relative;
-      height: 100%;
-      width: 100%;
+	.extra-picture-container {
+	  position: relative;
+	  height: 100%;
+	  width: 100%;
 
-      .loading-image {
-        height: 80%;
-        width: 80%;
-        z-index: 1;
+	  .loading-image {
+		height: 80%;
+		width: 80%;
+		z-index: 1;
 
-        .spinner-container {
-          height: 100%;
-          width: 100%;
+		.spinner-container {
+		  height: 100%;
+		  width: 100%;
 
-          .spinner {
-            height: 100%;
-            width: 100%;
-            text-align: center;
-            font-size: 1.5rem;
+		  .spinner {
+			height: 100%;
+			width: 100%;
+			text-align: center;
+			font-size: 1.5rem;
 
-            &:before, &:after {
-              opacity: 0.5;
-            }
-          }
+			&:before, &:after {
+			  opacity: 0.5;
+			}
+		  }
+		}
+	  }
 
-        }
+	  .file-upload {
+		position: absolute;
+		text-align: right;
+		-moz-opacity: 0;
+		opacity: 0;
+		z-index: 2;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+		border-radius: 50%;
+		@media (max-width: 600px) {
+		  max-height: 80%;
+		  max-width: 80%;
+		}
 
-      }
+		&:hover + img.profile-picture {
+		  transform: scale(1.05);
+		}
+	  }
 
-      .file-upload {
-        position: absolute;
-        text-align: right;
-        -moz-opacity:0 ;
-        opacity: 0;
-        z-index: 2;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-        border-radius: 50%;
-
-        @media (max-width: 600px) {
-          max-height: 80%;
-          max-width: 80%;
-
-        }
-
-        &:hover + img.profile-picture {
-          transform: scale(1.05);
-        }
-      }
-      img.profile-picture {
-        cursor: pointer;
-        transition: all 0.1s;
-      }
-    }
+	  img.profile-picture {
+		cursor: pointer;
+		transition: all 0.1s;
+	  }
+	}
   }
 
   .settings-content {
-    overflow: hidden;
-    flex: 1;
-    width: 100% !important;
-    max-width: 40rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    position: relative;
+	overflow: hidden;
+	flex: 1;
+	width: 100% !important;
+	max-width: 40rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	position: relative;
 
-    .forms-container {
-      padding: 4rem 0 0 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      //overflow-x: hidden;
-      //overflow-y: scroll;
-    }
+	.forms-container {
+	  padding: 4rem 0 0 0;
+	  width: 100%;
+	  height: 100%;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: space-between;
+	  align-items: center;
+	  //overflow-x: hidden;
+	  //overflow-y: scroll;
+	}
 
-    .settings-buttons-container {
-      height: 10%;
-      width: 100% !important;
-      margin: 0.25rem 0 0.25rem 0 !important;
-      display: flex !important;
-      flex-direction: row !important;
-      justify-content: space-around !important;
-    }
+	.settings-buttons-container {
+	  height: 10%;
+	  width: 100% !important;
+	  margin: 0.25rem 0 0.25rem 0 !important;
+	  display: flex !important;
+	  flex-direction: row !important;
+	  justify-content: space-around !important;
+	}
   }
 
+  .remove-image {
+	all: unset;
+	position: absolute;
+	top: 10%;
+	left: 10%;
+	z-index: 5;
+	cursor: pointer;
+	border-radius: 50px;
+	background-color: rgba(255, 255, 255, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid black;
+	transition: all 0.1s ease;
+	@media (min-width: 768px) {
+	  top: 20%;
+	  left: 20%;
+	}
 
+	svg {
+	  width: 2rem;
+	  height: 2rem;
+	  color: black;
+	}
+
+	&:hover {
+	  scale: 1.1;
+	}
+  }
 }
 
 

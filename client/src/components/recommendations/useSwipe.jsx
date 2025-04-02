@@ -1,8 +1,7 @@
 import {useRef, useState} from 'react';
 
+// custom hook to handle swiping function on mobile
 export function useSwipe() {
-	// const [touchStartX, setTouchStartX] = useState(null);
-	// const [touchEndX, setTouchEndX] = useState(null);
 	const touchStartX = useRef(null);
 	const touchEndX = useRef(null);
 	const [swipeProgress, setSwipeProgress] = useState(0);
@@ -30,11 +29,11 @@ export function useSwipe() {
 
 		if (swipeDistance > minSwipeDistance) {
 			// right to left swipe
-			swipeFunction("like");
+			swipeFunction('like');
 			console.log('like swipe');
 		} else if (swipeDistance < -minSwipeDistance) {
 			// left to right swipe
-			swipeFunction("dislike");
+			swipeFunction('dislike');
 			console.log('dislike swipe');
 		}
 
@@ -49,6 +48,6 @@ export function useSwipe() {
 		handleTouchEnd,
 		handleTouchMove,
 		swipeProgress
-	}
+	};
 }
 

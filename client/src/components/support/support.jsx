@@ -1,5 +1,4 @@
-import './support.scss'
-import Navigator from '../nav-bar-guest/nav-bar-guest.jsx';
+import './support.scss';
 import {useState} from 'react';
 
 function Support() {
@@ -15,7 +14,7 @@ function Support() {
 		}
 		if (!email && message) {
 			setError('Please enter an email');
-            return;
+			return;
 		}
 
 		if (email && !message) {
@@ -24,13 +23,13 @@ function Support() {
 		}
 		if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
 			setError('Please enter a valid email');
-            return;
+			return;
 		}
 		setError('');
 		setEmail('');
 		setMessage('');
-		console.log("Submitted!");
-	}
+		console.log('Submitted!');
+	};
 
 	return (
 		<>
@@ -45,7 +44,7 @@ function Support() {
 							<textarea
 								maxLength={300}
 								id='support'
-								className={`not-react-select focus-highlight ${error && error !== "placeholder-error" ? 'error' : ''}`}
+								className={`not-react-select focus-highlight ${error && error !== 'placeholder-error' ? 'error' : ''}`}
 								placeholder={'Tell us about your problem...'}
 								value={message}
 								onChange={(e) => setMessage(e.target.value)}
@@ -57,19 +56,18 @@ function Support() {
 							<input
 								type='email'
 								id='email'
-								className={`not-react-select focus-highlight ${error && error !== "placeholder-error" ? 'error' : ''}`}
+								className={`not-react-select focus-highlight ${error && error !== 'placeholder-error' ? 'error' : ''}`}
 								placeholder={'Enter your email'}
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}/>
 						</label>
-						<p className={`error-message ${error && error !== "placeholder-error" ? 'visible' : 'hidden'}`}>
+						<p className={`error-message ${error && error !== 'placeholder-error' ? 'visible' : 'hidden'}`}>
 							{error}
 						</p>
 						<label>
 							<button
 								className='submit-button wide small'
-								type={"submit"}
-								// disabled={error}
+								type={'submit'}
 							>
 								Submit
 							</button>

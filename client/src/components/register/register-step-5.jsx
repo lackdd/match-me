@@ -1,14 +1,13 @@
-
 // step 5 of registration
 import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import {
 	genreOptions,
 	goalsOptions,
 	matchAgeOptions,
-	matchGenderOptions,
 	matchExperienceOptions,
-	methodsOptions, matchLocationsOptions
+	matchGenderOptions,
+	matchLocationsOptions,
+	methodsOptions
 } from '../reusables/inputOptions.jsx';
 import {customStyles} from '../reusables/customInputStyles.jsx';
 import {useForm} from 'react-hook-form';
@@ -18,7 +17,7 @@ import {ErrorElement} from '../reusables/errorElement.jsx';
 import {PreviousNextButtons} from '../reusables/previousNextButtons.jsx';
 
 const matchAgeToRange = (age) => {
-	age = parseInt(age)
+	age = parseInt(age);
 	return matchAgeOptions.find(option => {
 		const [min, max] = option.value.split('-').map(Number);
 		return age >= min && age <= max;
@@ -26,15 +25,17 @@ const matchAgeToRange = (age) => {
 };
 
 const matchExperienceToRange = (experience) => {
-	experience = parseInt(experience)
+	experience = parseInt(experience);
 	return matchExperienceOptions.find(option => {
 		const [min, max] = option.value.split('-').map(Number);
 		return experience >= min && experience <= max;
 	});
 };
 
-function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThreeData, stepFunctions, Submit,
-				   handleCloseMenu, onSubmit }) {
+function Step5({
+				   formFiveData, setFormFiveData, formOneData, formTwoData, formThreeData, stepFunctions, Submit,
+				   handleCloseMenu, onSubmit
+			   }) {
 
 
 	// Initialize react-hook-form with Yup schema
@@ -45,18 +46,18 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 		clearErrors,
 		setError,
 		trigger,
-		formState: { errors, isValid },
+		formState: {errors, isValid}
 	} = useForm({
 		defaultValues: formFiveData,
 		resolver: yupResolver(stepFiveSchema(formFiveData)),
-		mode: "onBlur",
+		mode: 'onBlur'
 	});
 
-	function handleAutoFillData(formFiveData, setFormFiveData, formThreeData, formTwoData, formOneData){
+	function handleAutoFillData(formFiveData, setFormFiveData, formThreeData, formTwoData, formOneData) {
 
-		const newMatchAge = { ...matchAgeToRange(formOneData.age) };
-		const newMatchGender = { ...formOneData.gender }; // Assuming gender is an object
-		const newMatchExperience = { ...matchExperienceToRange(formThreeData.experience) };
+		const newMatchAge = {...matchAgeToRange(formOneData.age)};
+		const newMatchGender = {...formOneData.gender}; // Assuming gender is an object
+		const newMatchExperience = {...matchExperienceToRange(formThreeData.experience)};
 
 		setFormFiveData((prev) => ({
 			...prev,
@@ -66,22 +67,22 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 			matchGender: formOneData.gender, // For React Select, use an object with value and label
 			matchAge: newMatchAge, // Match the age using predefined options
 			matchExperience: newMatchExperience, // Same for experience
-			matchLocation: matchLocationsOptions[1], // Same for location
+			matchLocation: matchLocationsOptions[1] // Same for location
 		}));
 
-		setValue("matchPreferredGenres", formTwoData.preferredGenres, { shouldValidate: true });
-		setValue("matchPreferredMethods", formTwoData.preferredMethods, { shouldValidate: true });
-		setValue("matchGoals", formTwoData.goals, { shouldValidate: true });
-		setValue("matchGender", newMatchGender, { shouldValidate: true });
-		setValue("matchAge", newMatchAge, { shouldValidate: true });
-		setValue("matchExperience", newMatchExperience, { shouldValidate: true });
-		setValue("matchLocation", matchLocationsOptions[1], { shouldValidate: true });
-		clearErrors()
+		setValue('matchPreferredGenres', formTwoData.preferredGenres, {shouldValidate: true});
+		setValue('matchPreferredMethods', formTwoData.preferredMethods, {shouldValidate: true});
+		setValue('matchGoals', formTwoData.goals, {shouldValidate: true});
+		setValue('matchGender', newMatchGender, {shouldValidate: true});
+		setValue('matchAge', newMatchAge, {shouldValidate: true});
+		setValue('matchExperience', newMatchExperience, {shouldValidate: true});
+		setValue('matchLocation', matchLocationsOptions[1], {shouldValidate: true});
+		clearErrors();
 	}
 
 
 	return (
-		<form className={"step-five"}
+		<form className={'step-five'}
 			  onSubmit={handleSubmit(async (data) => {
 				  await onSubmit(data, formFiveData, setFormFiveData);
 				  await Submit(); // Send the data to the database after onSubmit is done
@@ -112,7 +113,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						// // components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -124,7 +124,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						options={genreOptions}
 						isOptionDisabled={() => (watch('matchPreferredGenres') || []).length >= 3}
 						styles={customStyles}
-						value={ formFiveData.matchPreferredGenres|| []}
+						value={formFiveData.matchPreferredGenres || []}
 						isValid={!errors.matchPreferredGenres && (watch('matchPreferredGenres') || []).length > 0}
 						isError={errors.matchPreferredGenres} // Check if error exists
 						onChange={(selectedOption) => {
@@ -140,7 +140,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						}}
 						onBlur={() => trigger('matchPreferredGenres')} // Trigger validation when user leaves the field
 					/>
-					<ErrorElement errors={errors}  id={'matchPreferredGenres'}/>
+					<ErrorElement errors={errors} id={'matchPreferredGenres'}/>
 				</label>
 
 			</div>
@@ -152,7 +152,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -180,7 +179,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						}}
 						onBlur={() => trigger('matchPreferredMethods')} // Trigger validation when user leaves the field
 					/>
-					<ErrorElement errors={errors}  id={'matchPreferredMethods'}/>
+					<ErrorElement errors={errors} id={'matchPreferredMethods'}/>
 				</label>
 			</div>
 			<div className={'line large'}>
@@ -190,7 +189,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -218,7 +216,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						}}
 						onBlur={() => trigger('matchGoals')} // Trigger validation when user leaves the field
 					/>
-					<ErrorElement errors={errors}  id={'matchGoals'}/>
+					<ErrorElement errors={errors} id={'matchGoals'}/>
 				</label>
 			</div>
 			<div className={'line'}>
@@ -231,7 +229,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						// components={makeAnimated()}
 						name={'matchGender'}
 						placeholder='Select gender'
 						options={matchGenderOptions}
@@ -251,7 +248,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						}}
 						onBlur={() => trigger('matchGender')} // Trigger validation when user leaves the field
 					/>
-					<ErrorElement errors={errors}  id={'matchGender'}/>
+					<ErrorElement errors={errors} id={'matchGender'}/>
 				</label>
 				<label id='age' className={'short'}>
 					Age*
@@ -262,7 +259,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						// components={makeAnimated()}
 						name={'matchAge'}
 						placeholder='Select age gap'
 						options={matchAgeOptions}
@@ -282,7 +278,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						}}
 						onBlur={() => trigger('matchAge')} // Trigger validation when user leaves the field
 					/>
-					<ErrorElement errors={errors}  id={'matchAge'}/>
+					<ErrorElement errors={errors} id={'matchAge'}/>
 				</label>
 			</div>
 
@@ -296,7 +292,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						// components={makeAnimated()}
 						name={'matchExperience'}
 						placeholder='Select experience'
 						options={matchExperienceOptions}
@@ -316,7 +311,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						}}
 						onBlur={() => trigger('matchExperience')} // Trigger validation when user leaves the field
 					/>
-					<ErrorElement errors={errors}  id={'matchExperience'}/>
+					<ErrorElement errors={errors} id={'matchExperience'}/>
 				</label>
 				<label id='location' className={'short'}>
 					Location*
@@ -327,7 +322,6 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						// components={makeAnimated()}
 						name={'matchLocation'}
 						placeholder='Select proximity'
 						options={matchLocationsOptions}
@@ -347,7 +341,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 						}}
 						onBlur={() => trigger('matchLocation')} // Trigger validation when user leaves the field
 					/>
-					<ErrorElement errors={errors}  id={'matchLocation'}/>
+					<ErrorElement errors={errors} id={'matchLocation'}/>
 				</label>
 
 			</div>
@@ -359,7 +353,7 @@ function Step5({formFiveData, setFormFiveData, formOneData, formTwoData, formThr
 				text={'Register'}
 			/>
 		</form>
-	)
+	);
 }
 
 export default Step5;

@@ -1,7 +1,7 @@
-import './features.scss'
-import { SiMusicbrainz } from "react-icons/si";
-import { PiMusicNotesPlus } from "react-icons/pi";
-import { IoChatboxEllipsesOutline } from "react-icons/io5";
+import './features.scss';
+import {SiMusicbrainz} from 'react-icons/si';
+import {PiMusicNotesPlus} from 'react-icons/pi';
+import {IoChatboxEllipsesOutline} from 'react-icons/io5';
 
 
 function Features() {
@@ -14,24 +14,29 @@ function Features() {
 				<div className='features-list'>
 
 					<div className='feature default' id={'matches'}>
-						<SiMusicbrainz />
+						<SiMusicbrainz/>
 						<p className='text'>
-							Our algorithm matches you with other musicians based on your preferences such as age, gender, location, years of experience, the types of genres you prefer, the way you prefer to make music and what goals you have.
+							Our algorithm matches you with other musicians based on your preferences such as age,
+							gender, location, years of experience, the types of genres you prefer, the way you prefer to
+							make music and what goals you have.
 						</p>
 					</div>
 
 					<div className='feature reverse' id={'connections'}>
-						<PiMusicNotesPlus />
+						<PiMusicNotesPlus/>
 						<p className='text'>
-							Choose which of the suggested matches you'd like to connect with in a tinder-like manner. See the list of your current and pending connections. Accept pending connections to make more friends or decline them.
+							Choose which of the suggested matches you'd like to connect with in a tinder-like manner.
+							See the list of your current and pending connections. Accept pending connections to make
+							more friends or decline them.
 						</p>
 					</div>
 
 
 					<div className='feature default' id={'more-soon'}>
-						<IoChatboxEllipsesOutline />
+						<IoChatboxEllipsesOutline/>
 						<p className='text'>
-							Chat securely with your connections to share your passion and ideas. Arrange jam sessions and get to know your connections.
+							Chat securely with your connections to share your passion and ideas. Arrange jam sessions
+							and get to know your connections.
 						</p>
 					</div>
 
