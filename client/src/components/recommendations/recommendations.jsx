@@ -206,16 +206,16 @@ function Recommendations() {
 
 	}, [matchIDs]);
 
-	// just to log data
-	useEffect(() => {
-		console.log('Matches: ', matches);
-	}, [matches]);
-
-
-	// just to log data
-	useEffect(() => {
-		console.log('Current match data: ', currentMatch);
-	}, [currentMatch]);
+	// // just to log data
+	// useEffect(() => {
+	// 	console.log('Matches: ', matches);
+	// }, [matches]);
+	//
+	//
+	// // just to log data
+	// useEffect(() => {
+	// 	console.log('Current match data: ', currentMatch);
+	// }, [currentMatch]);
 
 
 	// logic when user swipes left or right (likes or dislikes)
@@ -318,7 +318,7 @@ function Recommendations() {
 	useEffect(() => {
 		const formattedMatch = formatMatchData(matches[currentMatchNum]);
 
-		console.log('formatted match', formattedMatch);
+		// console.log('formatted match', formattedMatch);
 
 		if (formattedMatch.id) {
 			setCurrentMatch(formattedMatch);
