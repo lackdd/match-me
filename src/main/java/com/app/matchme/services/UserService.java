@@ -4,6 +4,7 @@ import com.app.matchme.dtos.BioDTO;
 import com.app.matchme.dtos.apirequestdtos.LocationRequest;
 import com.app.matchme.dtos.ProfileDTO;
 import com.app.matchme.dtos.UsernamePictureDTO;
+import com.app.matchme.dtos.apirequestdtos.RegisterRequest;
 import com.app.matchme.entities.*;
 import com.app.matchme.exceptions.BusinessException;
 import com.app.matchme.exceptions.RepositoryException;
@@ -305,13 +306,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User register(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
+    public User register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new BusinessException("Email already exists.");
         }
-
-        user.setPassword(encoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        User currentUser = UserMapper.fromRegisterRequestToUser(request);
+        currentUser.setPassword(encoder.encode(currentUser.getPassword()));
+        return userRepository.save(currentUser);
     }
 
     public void swiped(Long currentUserId, Long matchId, boolean swipedRight) {

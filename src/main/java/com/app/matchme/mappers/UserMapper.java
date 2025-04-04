@@ -3,9 +3,12 @@ package com.app.matchme.mappers;
 import com.app.matchme.dtos.BioDTO;
 import com.app.matchme.dtos.ProfileDTO;
 import com.app.matchme.dtos.UsernamePictureDTO;
+import com.app.matchme.dtos.apirequestdtos.RegisterRequest;
 import com.app.matchme.entities.*;
 import com.app.matchme.utils.GeoUtils;
 import org.locationtech.jts.geom.Point;
+
+import java.util.ArrayList;
 
 public class UserMapper {
 
@@ -99,5 +102,47 @@ public class UserMapper {
         user.setIdealMatchAge(dto.getIdealMatchAge());
         user.setIdealMatchYearsOfExperience(dto.getIdealMatchYearsOfExperience());
         user.setIdealMatchLocation(dto.getIdealMatchLocation());
+    }
+
+    public static User fromRegisterRequestToUser(RegisterRequest request) {
+        User user = new User();
+
+        user.setEmail(request.email());
+        user.setPassword(request.password());
+        user.setUsername(request.username());
+        user.setProfilePicture(request.profilePicture());
+        user.setGender(request.gender());
+        user.setAge(request.age());
+
+        user.setPreferredMusicGenres(request.preferredMusicGenres());
+        user.setPreferredMethods(request.preferredMethods());
+        user.setAdditionalInterests(request.additionalInterests());
+        user.setPersonalityTraits(request.personalityTraits());
+        user.setGoalsWithMusic(request.goalsWithMusic());
+        user.setYearsOfMusicExperience(request.yearsOfMusicExperience());
+
+        user.setLocation(request.location());
+
+        if (request.latitude() != null && request.longitude() != null) {
+            Point point = GeoUtils.createPoint(request.latitude(), request.longitude());
+            user.setCoordinates(point);
+        }
+
+        user.setMaxMatchRadius(request.maxMatchRadius());
+
+        user.setIdealMatchGenres(request.idealMatchGenres());
+        user.setIdealMatchMethods(request.idealMatchMethods());
+        user.setIdealMatchGoals(request.idealMatchGoals());
+        user.setIdealMatchGender(request.idealMatchGender());
+        user.setIdealMatchAge(request.idealMatchAge());
+        user.setIdealMatchYearsOfExperience(request.idealMatchYearsOfExperience());
+        user.setIdealMatchLocation(request.idealMatchLocation());
+
+        user.setConnections(new ArrayList<>());
+        user.setLikedUsers(new ArrayList<>());
+        user.setPendingRequests(new ArrayList<>());
+        user.setSwipedUsers(new ArrayList<>());
+
+        return user;
     }
 }

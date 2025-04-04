@@ -142,7 +142,9 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {return userService.register(user);
+    public ResponseEntity<ApiResponse<Void>> register(@Valid @RequestBody RegisterRequest request) {
+        userService.register(request);
+        return ResponseEntity.ok(new ApiResponse<>("User account registered successfully"));
     }
 
     @PostMapping("/swiped")
