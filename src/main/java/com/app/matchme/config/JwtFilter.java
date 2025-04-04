@@ -1,7 +1,7 @@
 package com.app.matchme.config;
 
-import com.app.matchme.services.JWTService;
 import com.app.matchme.services.CustomUserDetailsService;
+import com.app.matchme.services.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

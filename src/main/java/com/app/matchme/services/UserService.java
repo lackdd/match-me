@@ -12,31 +12,33 @@ import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.utils.GeoUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
     private final JWTService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    private static final String USER_NOT_FOUND = "User not found";
+    private static final String NEARBY_USERS_NOT_FOUND = "Nearby users not found";
+    private static final String SAME_CITY = "same_city";
 
     public void addConnectionById(Long id, User currentUser) {
         if (!currentUser.getPendingRequests().contains(id)) {
-            System.out.println("You don't have this user in your pending requests, adding connection stopped.");
-            return;
+            throw new BusinessException("You don't have this user in your pending request list");
         }
         User likedUser = getUserById(id);
         currentUser.getConnections().add(id);
@@ -46,41 +48,41 @@ public class UserService {
     }
 
     public void addLikedUserById(Long id, User currentUser) {
-        if (!currentUser.getLikedUsers().contains(id)) {
-            currentUser.getLikedUsers().add(id);
-            userRepository.save(currentUser);
-        } else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User already in list");
+        if (currentUser.getLikedUsers().contains(id)) {
+            throw new BusinessException("User already in list");
         }
+        currentUser.getLikedUsers().add(id);
+        userRepository.save(currentUser);
     }
 
     public void addPendingRequestById(Long id, User likedUser) {
-        if (!likedUser.getPendingRequests().contains(id)) {
-            likedUser.getPendingRequests().add(id);
-            userRepository.save(likedUser);
+        if (likedUser.getPendingRequests().contains(id)) {
+            throw new BusinessException("Pending request list already contains id");
         }
+        likedUser.getPendingRequests().add(id);
+        userRepository.save(likedUser);
     }
 
     public void addToSwipedUsers(Long matchId, User currentUser) {
-        if (!currentUser.getSwipedUsers().contains(matchId)) {
-            currentUser.getSwipedUsers().add(matchId);
-            userRepository.save(currentUser);
+        if (currentUser.getSwipedUsers().contains(matchId)) {
+            throw new BusinessException("Swiped users list already contains id");
         }
+        currentUser.getSwipedUsers().add(matchId);
+        userRepository.save(currentUser);
     }
 
     @Transactional
     public boolean areUsersConnected(String sender, String receiver) {
-        User senderUser = userRepository.findByUsername(sender).orElseThrow(() -> new RuntimeException("User not found"));
+        User senderUser = userRepository.findByUsername(sender).orElseThrow(() -> new RepositoryException(USER_NOT_FOUND));
         Long senderId = senderUser.getId();
-        User receiverUser = userRepository.findByUsername(receiver).orElseThrow(() -> new RuntimeException("User not found"));
+        User receiverUser = userRepository.findByUsername(receiver).orElseThrow(() -> new RepositoryException(USER_NOT_FOUND));
         Long receiverId = receiverUser.getId();
 
         if (senderUser.getConnections().contains(receiverId) && receiverUser.getConnections().contains(senderId)) {
-            System.out.println("Users are confirmed to be connected");
+            log.info("Users are confirmed to be connected");
             return true;
         }
-        System.out.println("Failed to confirm that users are connected");
-        return false;
+        throw new BusinessException("Failed to confirm that users are connected");
     }
 
     public Integer calculatePoints(User user, User currentUser) {
@@ -91,7 +93,7 @@ public class UserService {
         Integer experience = user.getYearsOfMusicExperience();
 
         Integer idealMatchExperienceMin;
-        Integer idealMatchExperienceMax;
+        int idealMatchExperienceMax;
         if (currentUser.getIdealMatchYearsOfExperience().length() == 5) {
             idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 2));
             idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(3, 5));
@@ -105,7 +107,7 @@ public class UserService {
             idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
             idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
         } else {
-            throw new IllegalArgumentException("Ideal match years of experience not in bounds.");
+            throw new BusinessException("Ideal match years of experience not in bounds.");
         }
 
         for (String item : musicGenres) {
@@ -126,7 +128,7 @@ public class UserService {
             }
         }
 
-        if (currentUser.getIdealMatchYearsOfExperience() == "any" || (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax)) {
+        if (currentUser.getIdealMatchYearsOfExperience().equals("any") || (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax)) {
             points++;
         }
         return points;
@@ -137,16 +139,12 @@ public class UserService {
     }
 
     public boolean checkPassword(Long id, String password) {
-        if (encoder.matches(password, getUserById(id).getPassword())) {
-            return true;
-        } else {
-            throw new BusinessException("Password doesn't match");
-        }
+        return encoder.matches(password, getUserById(id).getPassword());
     }
 
     @Transactional
     public void deleteConnectionById(Long connectionId, User currentUser) {
-        User connectedUser = userRepository.findById(connectionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        User connectedUser = userRepository.findById(connectionId).orElseThrow(() -> new RepositoryException(USER_NOT_FOUND));
         if (currentUser.getConnections().contains(connectionId) && connectedUser.getConnections().contains(currentUser.getId())) {
             currentUser.getConnections().remove(connectionId);
             connectedUser.getConnections().remove(currentUser.getId());
@@ -159,10 +157,10 @@ public class UserService {
 
     @Transactional
     public void deletePendingRequestById(Long pendingRequestId, User currentUser) {
-        User otherUser = userRepository.findById(pendingRequestId).orElseThrow(() -> new BusinessException("Other user not found"));
+        User otherUser = userRepository.findById(pendingRequestId).orElseThrow(() -> new RepositoryException("Other user not found"));
         if (currentUser.getPendingRequests().contains(pendingRequestId)) {
             currentUser.getPendingRequests().remove(pendingRequestId);
-            if (otherUser != null && otherUser.getLikedUsers().contains(currentUser.getId())) {
+            if (otherUser != null) {
                 otherUser.getLikedUsers().remove(currentUser.getId());
             }
         }
@@ -177,45 +175,54 @@ public class UserService {
     @Transactional
     public List<Long> findMatches(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        User currentUser = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
+        User currentUser = optionalUser.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         String idealMatchLocation = currentUser.getIdealMatchLocation();
 
-        // Potential matches list - will be filtered based on location criteria
         List<User> potentialMatches;
 
-        // Use proximity-based matching if coordinates are available and location preference isn't "anywhere"
         if (currentUser.getCoordinates() != null && !"anywhere".equals(idealMatchLocation)) {
-            // If user has coordinates and wants location-based matching
-            int radiusInMeters = currentUser.getMaxMatchRadius() * 1000; // Convert km to meters
+            int radiusInMeters = currentUser.getMaxMatchRadius() * 1000;
 
-            // Get users within the radius for proximity matching
-            if ("same_city".equals(idealMatchLocation) || "same_country".equals(idealMatchLocation)) {
-                // Get users near current user first
-                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(), // Latitude
-                        currentUser.getCoordinates().getX(), // Longitude
-                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new BusinessException("Nearby users not found"));
+            if (SAME_CITY.equals(idealMatchLocation) || "same_country".equals(idealMatchLocation)) {
+                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),
+                        currentUser.getCoordinates().getX(),
+                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new RepositoryException(NEARBY_USERS_NOT_FOUND));
 
-                // Apply additional location text filtering
-                if ("same_city".equals(idealMatchLocation)) {
-                    potentialMatches = potentialMatches.stream().filter(user -> Objects.equals(user.getLocation(), currentUser.getLocation())).collect(Collectors.toList());
-                } else if ("same_country".equals(idealMatchLocation)) {
-                    // Extract country part from location (after the last comma)
-                    potentialMatches = potentialMatches.stream().filter(user -> user.getLocation() != null && currentUser.getLocation() != null).filter(user -> Objects.equals(user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(), currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim())).collect(Collectors.toList());
+                if (SAME_CITY.equals(idealMatchLocation)) {
+                    potentialMatches = potentialMatches.stream().filter(user ->
+                            Objects.equals(user.getLocation(), currentUser.getLocation())).toList();
+                } else {
+                    potentialMatches = potentialMatches.stream().filter(user -> user.getLocation() != null && currentUser.getLocation() != null)
+                            .filter(user -> Objects.equals(user.getLocation()
+                                    .substring(user.getLocation().lastIndexOf(",") + 1)
+                                    .trim(), currentUser.getLocation()
+                                    .substring(currentUser.getLocation().lastIndexOf(",") + 1).trim())).toList();
                 }
             } else {
-                // Just proximity-based without text filtering - "near me" type of matching
-                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(), // Latitude
-                        currentUser.getCoordinates().getX(), // Longitude
-                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new BusinessException("Nearby users not found"));
+                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),
+                        currentUser.getCoordinates().getX(),
+                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new BusinessException(NEARBY_USERS_NOT_FOUND));
             }
         } else {
-            // Fall back to traditional location text matching if no coordinates or "anywhere" is selected
-            potentialMatches = userRepository.findAll().stream().filter(user -> !Objects.equals(user.getId(), currentUser.getId())).filter(user -> "anywhere".equals(idealMatchLocation) || ("same_city".equals(idealMatchLocation) && Objects.equals(user.getLocation(), currentUser.getLocation())) || "same_country".equals(idealMatchLocation) && user.getLocation() != null && currentUser.getLocation() != null && Objects.equals(user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(), currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim())).collect(Collectors.toList());
+            potentialMatches = userRepository.findAll().stream()
+                    .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
+                    .filter(user ->
+                            "anywhere".equals(idealMatchLocation) ||
+                                    (SAME_CITY.equals(idealMatchLocation) &&
+                                            Objects.equals(user.getLocation(), currentUser.getLocation())) ||
+                                    "same_country".equals(idealMatchLocation) &&
+                                            user.getLocation() != null &&
+                                            currentUser.getLocation() != null &&
+                                            Objects.equals(
+                                                    user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(),
+                                                    currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim()
+                                            )
+                    )
+                    .toList();
         }
 
-        // Apply the remaining matching criteria (same logic as original method)
         Integer idealMatchAgeMin;
-        Integer idealMatchAgeMax;
+        int idealMatchAgeMax;
         if (currentUser.getIdealMatchAge().length() == 5) {
             idealMatchAgeMin = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2));
             idealMatchAgeMax = Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 5));
@@ -232,12 +239,20 @@ public class UserService {
             idealMatchAgeMin = 120;
             idealMatchAgeMax = 1000;
         } else {
-            throw new IllegalArgumentException("Ideal match age not in bounds.");
+            throw new BusinessException("Ideal match age not in bounds.");
         }
 
-        Map<User, Integer> userPointsMap = potentialMatches.stream().filter(user -> !currentUser.getSwipedUsers().contains(user.getId())).filter(user -> "any".equals(currentUser.getIdealMatchAge()) || (user.getAge() >= idealMatchAgeMin && user.getAge() <= idealMatchAgeMax)).filter(user -> "any".equals(currentUser.getIdealMatchGender()) || Objects.equals(user.getGender(), currentUser.getIdealMatchGender())).collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
+        Map<User, Integer> userPointsMap = potentialMatches.stream()
+                .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
+                .filter(user -> "any".equals(currentUser.getIdealMatchAge()) ||
+                        (user.getAge() >= idealMatchAgeMin && user.getAge() <= idealMatchAgeMax))
+                .filter(user -> "any".equals(currentUser.getIdealMatchGender()) ||
+                        Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
+                .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
 
-        return userPointsMap.entrySet().stream().sorted(Map.Entry.<User, Integer>comparingByValue().reversed()).limit(10).map(entry -> entry.getKey().getId()).collect(Collectors.toList());
+        return userPointsMap.entrySet().stream()
+                .sorted(Map.Entry.<User, Integer>comparingByValue().reversed()).limit(10)
+                .map(entry -> entry.getKey().getId()).toList();
     }
 
     @Transactional
@@ -249,25 +264,25 @@ public class UserService {
         int radiusInMeters = radiusKm * 1000;
         List<User> nearbyUsers = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),
                 currentUser.getCoordinates().getX(),
-                radiusInMeters, userId).orElseThrow(() -> new BusinessException("Nearby users not found"));
+                radiusInMeters, userId).orElseThrow(() -> new RepositoryException(NEARBY_USERS_NOT_FOUND));
 
         return nearbyUsers.stream().map(User::getId).filter(id -> !id.equals(userId)).toList();
     }
 
     public List<Long> getLikedUsersById(Long id) {
-        return userRepository.findUserLikedUsersById(id).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
+        return userRepository.findUserLikedUsersById(id).orElseThrow(() -> new RepositoryException(USER_NOT_FOUND));
     }
 
     public List<Long> getPendingRequestsById(Long id) {
-        return userRepository.findUserPendingRequestsById(id).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
+        return userRepository.findUserPendingRequestsById(id).orElseThrow(() -> new RepositoryException(USER_NOT_FOUND));
     }
 
     public BioDTO getUserBioById(Long id) {
-        return userRepository.findById(id).map(UserMapper::toBioDTO).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
+        return userRepository.findById(id).map(UserMapper::toBioDTO).orElseThrow(() -> new RepositoryException(USER_NOT_FOUND));
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RepositoryException("User not found with id: " + id));
+        return userRepository.findById(id).orElseThrow(() -> new RepositoryException(USER_NOT_FOUND));
     }
 
     public User getUserByEmail(String email) {
@@ -296,8 +311,6 @@ public class UserService {
         }
 
         user.setPassword(encoder.encode(user.getPassword()));
-
-
         return userRepository.save(user);
     }
 
@@ -314,13 +327,7 @@ public class UserService {
 
     public void updateBio(Long id, BioDTO dto) {
         User currentUser = getUserById(id);
-            currentUser.setIdealMatchGenres(dto.getIdealMatchGenres());
-            currentUser.setIdealMatchMethods(dto.getIdealMatchMethods());
-            currentUser.setIdealMatchGoals(dto.getIdealMatchGoals());
-            currentUser.setIdealMatchGender(dto.getIdealMatchGender());
-            currentUser.setIdealMatchAge(dto.getIdealMatchAge());
-            currentUser.setIdealMatchYearsOfExperience(dto.getIdealMatchYearsOfExperience());
-            currentUser.setIdealMatchLocation(dto.getIdealMatchLocation());
+        UserMapper.fromBioDTOtoUser(currentUser, dto);
         userRepository.save(currentUser);
     }
 
@@ -335,20 +342,7 @@ public class UserService {
 
     public void updateProfile(Long id, ProfileDTO dto) {
         User currentUser = getUserById(id);
-            currentUser.setPreferredMusicGenres(dto.getPreferredMusicGenres());
-            currentUser.setPreferredMethods(dto.getPreferredMethod());
-            currentUser.setAdditionalInterests(dto.getAdditionalInterests());
-            currentUser.setPersonalityTraits(dto.getPersonalityTraits());
-            currentUser.setGoalsWithMusic(dto.getGoalsWithMusic());
-            currentUser.setLinkToMusic(dto.getLinkToMusic());
-            currentUser.setLocation(dto.getLocation());
-            currentUser.setDescription(dto.getDescription());
-            currentUser.setYearsOfMusicExperience(dto.getYearsOfMusicExperience());
-        if (dto.getLatitude() != null && dto.getLongitude() != null) {
-            Point point = GeoUtils.createPoint(dto.getLatitude(), dto.getLongitude());
-            currentUser.setCoordinates(point);
-        }
-            currentUser.setMaxMatchRadius(dto.getMaxMatchRadius());
+        UserMapper.fromProfileDTOtoUser(currentUser, dto);
         userRepository.save(currentUser);
     }
 
@@ -358,26 +352,21 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
-    // Update a user's location with coordinates
     public void updateUserLocation(Long userId, LocationRequest locationData) {
         User user = getUserById(userId);
 
-        // Update text location if provided
         if (locationData.location() != null && !locationData.location().trim().isEmpty()) {
             user.setLocation(locationData.location());
         }
 
-        // Update coordinates if both lat and long are provided
         if (locationData.latitude() != null && locationData.longitude() != null) {
             Point point = GeoUtils.createPoint(locationData.latitude(), locationData.longitude());
             user.setCoordinates(point);
         }
 
-        // Update max match radius if provided
         if (locationData.maxMatchRadius() != null) {
             user.setMaxMatchRadius(locationData.maxMatchRadius());
         }
-
         userRepository.save(user);
     }
 

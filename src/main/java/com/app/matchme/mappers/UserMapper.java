@@ -4,6 +4,8 @@ import com.app.matchme.dtos.BioDTO;
 import com.app.matchme.dtos.ProfileDTO;
 import com.app.matchme.dtos.UsernamePictureDTO;
 import com.app.matchme.entities.*;
+import com.app.matchme.utils.GeoUtils;
+import org.locationtech.jts.geom.Point;
 
 public class UserMapper {
 
@@ -44,6 +46,23 @@ public class UserMapper {
         return profileDTO;
     }
 
+    public static void fromProfileDTOtoUser(User user, ProfileDTO dto) {
+        user.setPreferredMusicGenres(dto.getPreferredMusicGenres());
+        user.setPreferredMethods(dto.getPreferredMethod());
+        user.setAdditionalInterests(dto.getAdditionalInterests());
+        user.setPersonalityTraits(dto.getPersonalityTraits());
+        user.setGoalsWithMusic(dto.getGoalsWithMusic());
+        user.setLinkToMusic(dto.getLinkToMusic());
+        user.setLocation(dto.getLocation());
+        user.setDescription(dto.getDescription());
+        user.setYearsOfMusicExperience(dto.getYearsOfMusicExperience());
+        if (dto.getLatitude() != null && dto.getLongitude() != null) {
+            Point point = GeoUtils.createPoint(dto.getLatitude(), dto.getLongitude());
+            user.setCoordinates(point);
+        }
+        user.setMaxMatchRadius(dto.getMaxMatchRadius());
+    }
+
     public static BioDTO toBioDTO(User user) {
         BioDTO bioDTO = new BioDTO();
 
@@ -70,5 +89,15 @@ public class UserMapper {
             bioDTO.setLongitude(user.getCoordinates().getX());
         }
         return bioDTO;
+    }
+
+    public static void fromBioDTOtoUser(User user, BioDTO dto) {
+        user.setIdealMatchGenres(dto.getIdealMatchGenres());
+        user.setIdealMatchMethods(dto.getIdealMatchMethods());
+        user.setIdealMatchGoals(dto.getIdealMatchGoals());
+        user.setIdealMatchGender(dto.getIdealMatchGender());
+        user.setIdealMatchAge(dto.getIdealMatchAge());
+        user.setIdealMatchYearsOfExperience(dto.getIdealMatchYearsOfExperience());
+        user.setIdealMatchLocation(dto.getIdealMatchLocation());
     }
 }

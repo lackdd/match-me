@@ -1,5 +1,7 @@
 package com.app.matchme.controllers;
 
+import com.app.matchme.dtos.ApiResponse;
+import com.app.matchme.dtos.apirequestdtos.LoginRequest;
 import com.app.matchme.services.JWTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -23,17 +23,12 @@ public class AuthController {
     private final JWTService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String password = request.get("password");
-
+    public ResponseEntity<ApiResponse<String>> authenticateUser(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwt = jwtService.generateToken(userDetails);
-
-        return ResponseEntity.ok(Map.of("token", jwt));
+        String jwt = jwtService.generateToken((UserDetails) authentication.getPrincipal());
+        return ResponseEntity.ok(new ApiResponse<>("Fetched token", jwt));
     }
 }

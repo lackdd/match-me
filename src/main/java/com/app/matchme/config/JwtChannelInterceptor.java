@@ -1,7 +1,7 @@
 package com.app.matchme.config;
 
-import com.app.matchme.services.JWTService;
 import com.app.matchme.services.CustomUserDetailsService;
+import com.app.matchme.services.JWTService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;

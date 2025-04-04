@@ -12,7 +12,8 @@ import com.app.matchme.mappers.ChatMessageMapper;
 import com.app.matchme.repositories.ChatMessageRepository;
 import com.app.matchme.repositories.UnreadMessageRepository;
 import com.app.matchme.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,31 +37,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/chat")
+@RequiredArgsConstructor
+@Slf4j
 public class ChatController {
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private static final String USER_NOT_AUTHENTICATED = "User is not authenticated";
+    private static final String STATUS_QUEUE = "/queue/status";
+    private static final String MESSAGES_QUEUE = "/queue/messages";
+    private static final String NOTIFICATIONS_QUEUE = "/queue/notifications";
+    private static final int MESSAGE_PREVIEW_LENGTH = 30;
+    private static final int PREVIEW_TRUNCATE_LENGTH = 27;
+    private static final long HEARTBEAT_CHECK_INTERVAL = 300000;
+    private static final long INACTIVITY_TIMEOUT = 600000;
 
-    @Autowired
-    private UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final UserService userService;
+    private final ChatMessageRepository chatMessageRepository;
+    private final UnreadMessageRepository unreadMessageRepository;
 
-    @Autowired
-    private ChatMessageRepository repo;
-
-    @Autowired
-    private UnreadMessageRepository unreadMessageRepository;
-
-    // Store user status in memory
     private static final Map<Long, Status> userStatusMap = new ConcurrentHashMap<>();
-
-    // Store last heartbeat timestamp for each user
     private static final Map<Long, Long> userLastHeartbeat = new ConcurrentHashMap<>();
-
-    // Store WebSocket session IDs linked to user IDs
     private static final Map<String, Long> sessionUserMap = new ConcurrentHashMap<>();
 
     public enum Status {
@@ -79,85 +78,79 @@ public class ChatController {
             @RequestParam(defaultValue= "20") int limit,
             @RequestParam(required = false) Long beforeId
     ) {
-        if (userPrincipal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
-        }
+        validateUserAuthenticated(userPrincipal);
+
         Long currentUserId = userPrincipal.getId();
         Pageable pageable = PageRequest.of(0, limit, Sort.by("id").descending());
-
-        List<ChatMessage> messages = repo.findChatMessages(currentUserId, userId, beforeId, pageable);
+        List<ChatMessage> messages = chatMessageRepository.findChatMessages(currentUserId, userId, beforeId, pageable);
 
         Collections.reverse(messages);
-
         return messages.stream()
                 .map(ChatMessageMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/notifications")
     public List<NotificationDTO> getUserNotifications(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if (userPrincipal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
-        }
+        validateUserAuthenticated(userPrincipal);
 
         Long userId = userPrincipal.getId();
         User currentUser = userService.getUserById(userId);
 
-        // Get senders with unread messages
         List<Long> senderIds = unreadMessageRepository.findDistinctSendersWithUnreadMessages(userId);
         List<NotificationDTO> notifications = new ArrayList<>();
 
         for (Long senderId : senderIds) {
-            User sender = userService.getUserById(senderId);
-            long count = unreadMessageRepository.countUnreadMessagesFromSender(userId, senderId);
-
-            // Get the latest unread message
-            List<UnreadMessage> unreadMessages = unreadMessageRepository.findByUserAndReadFalseOrderByMessageTimestampDesc(currentUser)
-                    .stream()
-                    .filter(um -> um.getSender().getId().equals(senderId))
-                    .collect(Collectors.toList());
-
-            if (!unreadMessages.isEmpty()) {
-                UnreadMessage latestUnread = unreadMessages.get(0);
-                ChatMessage latestMessage = latestUnread.getMessage();
-
-                // Create a message preview (first 30 chars)
-                String preview = latestMessage.getContent();
-                if (preview.length() > 30) {
-                    preview = preview.substring(0, 27) + "...";
-                }
-
-                NotificationDTO notification = new NotificationDTO(
-                        senderId,
-                        sender.getUsername(),
-                        latestMessage.getId(),
-                        preview,
-                        count,
-                        latestMessage.getTimestamp()
-                );
-
-                notifications.add(notification);
-            }
+            addSenderNotification(currentUser, userId, senderId, notifications);
         }
 
-        // Sort by most recent message
         notifications.sort((a, b) -> b.lastMessageTime().compareTo(a.lastMessageTime()));
-
         return notifications;
+    }
+
+    private void addSenderNotification(User currentUser, Long userId, Long senderId, List<NotificationDTO> notifications) {
+        User sender = userService.getUserById(senderId);
+        long count = unreadMessageRepository.countUnreadMessagesFromSender(userId, senderId);
+
+        List<UnreadMessage> unreadMessages = unreadMessageRepository.findByUserAndReadFalseOrderByMessageTimestampDesc(currentUser)
+                .stream()
+                .filter(um -> um.getSender().getId().equals(senderId))
+                .toList();
+
+        if (!unreadMessages.isEmpty()) {
+            UnreadMessage latestUnread = unreadMessages.get(0);
+            ChatMessage latestMessage = latestUnread.getMessage();
+            String preview = createMessagePreview(latestMessage.getContent());
+
+            NotificationDTO notification = new NotificationDTO(
+                    senderId,
+                    sender.getUsername(),
+                    latestMessage.getId(),
+                    preview,
+                    count,
+                    latestMessage.getTimestamp()
+            );
+
+            notifications.add(notification);
+        }
+    }
+
+    private String createMessagePreview(String content) {
+        if (content.length() > MESSAGE_PREVIEW_LENGTH) {
+            return content.substring(0, PREVIEW_TRUNCATE_LENGTH) + "...";
+        }
+        return content;
     }
 
     @GetMapping("/unread-count")
     public Map<String, Long> getUnreadCount(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if (userPrincipal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
-        }
+        validateUserAuthenticated(userPrincipal);
 
         Long userId = userPrincipal.getId();
         long count = unreadMessageRepository.countUnreadMessagesForUser(userId);
 
         Map<String, Long> response = new HashMap<>();
         response.put("count", count);
-
         return response;
     }
 
@@ -167,59 +160,33 @@ public class ChatController {
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long senderId
     ) {
-        if (userPrincipal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
-        }
+        validateUserAuthenticated(userPrincipal);
 
         Long userId = userPrincipal.getId();
         unreadMessageRepository.markMessagesAsRead(userId, senderId);
     }
 
-    // Endpoint to explicitly set a user's status to INACTIVE/offline
     @PostMapping("/status/offline/{userId}")
     public void setUserOffline(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long userId
     ) {
         if (userPrincipal == null || !userPrincipal.getId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated or not authorized");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, USER_NOT_AUTHENTICATED);
         }
 
-        // Update user status to INACTIVE
         userStatusMap.put(userId, Status.INACTIVE);
 
-        // Broadcast status to all connections
         User user = userService.getUserById(userId);
-        List<Long> connections = user.getConnections();
-
-        StatusResponse response = new StatusResponse(
-                userId,
-                user.getUsername(),
-                Status.INACTIVE
-        );
-
-        for (Long connectionId : connections) {
-            User connection = userService.getUserById(connectionId);
-            if (connection != null) {
-                messagingTemplate.convertAndSendToUser(
-                        connection.getUsername().trim().replace(" ", "_"),
-                        "/queue/status",
-                        response
-                );
-                System.out.println("Sent OFFLINE status update about " + user.getUsername() + " to " + connection.getUsername());
-            }
-        }
+        broadcastStatusToConnections(user, Status.INACTIVE);
     }
 
-    // Get a user's current status
     @GetMapping("/status/{userId}")
     public StatusResponse getUserStatus(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long userId
     ) {
-        if (userPrincipal == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
-        }
+        validateUserAuthenticated(userPrincipal);
 
         User user = userService.getUserById(userId);
         Status status = userStatusMap.getOrDefault(userId, Status.INACTIVE);
@@ -232,11 +199,11 @@ public class ChatController {
     }
 
     @MessageMapping("/status")
-    public void handleStatusupdate(SimpMessageHeaderAccessor headerAccessor, @Payload StatusMessage statusMessage) {
+    public void handleStatusUpdate(SimpMessageHeaderAccessor headerAccessor, @Payload StatusMessage statusMessage) {
         Principal principal = headerAccessor.getUser();
 
-        if(principal == null) {
-            System.out.println("Status update blocked: User not authenticated.");
+        if (principal == null) {
+            log.error("Status update blocked: User not authenticated");
             return;
         }
 
@@ -246,23 +213,17 @@ public class ChatController {
         String senderUsername = sender.getUsername();
         String receiverUsername = receiver.getUsername();
 
-        // Update status in the map
         Status status = statusMessage.status();
         userStatusMap.put(sender.getId(), status);
 
-        // If status is ACTIVE, update the heartbeat timestamp
         if (status == Status.ACTIVE) {
             userLastHeartbeat.put(sender.getId(), System.currentTimeMillis());
         }
 
-        // Store session ID for this user
         String sessionId = headerAccessor.getSessionId();
         if (sessionId != null) {
             sessionUserMap.put(sessionId, sender.getId());
-            System.out.println("Associated session " + sessionId + " with user " + sender.getId());
         }
-
-        System.out.println("Updated status for user " + sender.getId() + " to " + status);
 
         StatusResponse response = new StatusResponse(
                 sender.getId(),
@@ -270,71 +231,37 @@ public class ChatController {
                 status
         );
 
-        System.out.println("Status update from " + senderUsername + " to " + receiverUsername + ": " + status);
-
-        messagingTemplate.convertAndSendToUser(
-                receiverUsername.trim().replace(" ", "_"),
-                "/queue/status",
-                response
-        );
+        sendToUser(receiverUsername, STATUS_QUEUE, response);
     }
 
-    // Global status update - broadcasts to all connections
     @MessageMapping("/status/global")
     public void handleGlobalStatusUpdate(SimpMessageHeaderAccessor headerAccessor, @Payload StatusMessage statusMessage) {
         Principal principal = headerAccessor.getUser();
 
-        if(principal == null) {
-            System.out.println("Global status update blocked: User not authenticated.");
+        if (principal == null) {
+            log.error("Global status update blocked: User not authenticated");
             return;
         }
 
         String email = principal.getName();
         User sender = userService.getUserByEmail(email);
-        String senderUsername = sender.getUsername();
 
-        // Update status in the map
         Status status = statusMessage.status();
         userStatusMap.put(sender.getId(), status);
 
-        // If status is ACTIVE, update the heartbeat timestamp
         if (status == Status.ACTIVE) {
             userLastHeartbeat.put(sender.getId(), System.currentTimeMillis());
         }
 
-        System.out.println("Global status update for user " + sender.getId() + ": " + status);
-
-        // Create status response
-        StatusResponse response = new StatusResponse(
-                sender.getId(),
-                senderUsername,
-                status
-        );
-
-        // Get all connections for this user
-        List<Long> connections = sender.getConnections();
-
-        // Send the status to all connections
-        for (Long connectionId : connections) {
-            User connection = userService.getUserById(connectionId);
-            if (connection != null) {
-                messagingTemplate.convertAndSendToUser(
-                        connection.getUsername().trim().replace(" ", "_"),
-                        "/queue/status",
-                        response
-                );
-                System.out.println("Sent global " + status + " status from " + senderUsername + " to " + connection.getUsername());
-            }
-        }
+        broadcastStatusToConnections(sender, status);
     }
 
-    // Request status updates from other users
     @MessageMapping("/status/request")
     public void requestStatusUpdate(SimpMessageHeaderAccessor headerAccessor, @Payload StatusMessage statusMessage) {
         Principal principal = headerAccessor.getUser();
 
-        if(principal == null) {
-            System.out.println("Status request blocked: User not authenticated.");
+        if (principal == null) {
+            log.error("Status request blocked: User not authenticated");
             return;
         }
 
@@ -342,220 +269,153 @@ public class ChatController {
         User requester = userService.getUserByEmail(email);
         User target = userService.getUserById(statusMessage.receiverId());
 
-        // Get the current status of the target user
         Status currentStatus = userStatusMap.getOrDefault(target.getId(), Status.INACTIVE);
 
-        // Send the status back to the requester
         StatusResponse response = new StatusResponse(
                 target.getId(),
                 target.getUsername(),
                 currentStatus
         );
 
-        messagingTemplate.convertAndSendToUser(
-                requester.getUsername().trim().replace(" ", "_"),
-                "/queue/status",
-                response
-        );
-
-        System.out.println("Sent status of " + target.getUsername() + " (" + currentStatus + ") to " + requester.getUsername());
+        sendToUser(requester.getUsername(), STATUS_QUEUE, response);
     }
 
-    // Handle heartbeat to keep track of active users - IMPROVED
     @MessageMapping("/heartbeat")
     public void handleHeartbeat(SimpMessageHeaderAccessor headerAccessor) {
         Principal principal = headerAccessor.getUser();
-        if(principal == null) return;
+        if (principal == null) return;
 
         String email = principal.getName();
         User user = userService.getUserByEmail(email);
-        if(user == null) return;
+        if (user == null) return;
 
-        // Update last heartbeat timestamp
         userLastHeartbeat.put(user.getId(), System.currentTimeMillis());
 
-        // Always set user as ACTIVE when heartbeat is received
+        Status previousStatus = userStatusMap.getOrDefault(user.getId(), Status.INACTIVE);
         userStatusMap.put(user.getId(), Status.ACTIVE);
 
-        // Only broadcast if status changed from INACTIVE to ACTIVE
-        if (userStatusMap.getOrDefault(user.getId(), Status.INACTIVE) != Status.ACTIVE) {
-            // Broadcast the ACTIVE status to all connections
-            StatusResponse response = new StatusResponse(
-                    user.getId(),
-                    user.getUsername(),
-                    Status.ACTIVE
-            );
-
-            List<Long> connections = user.getConnections();
-            for (Long connectionId : connections) {
-                User connection = userService.getUserById(connectionId);
-                if (connection != null) {
-                    messagingTemplate.convertAndSendToUser(
-                            connection.getUsername().trim().replace(" ", "_"),
-                            "/queue/status",
-                            response
-                    );
-                }
-            }
+        if (previousStatus != Status.ACTIVE) {
+            broadcastStatusToConnections(user, Status.ACTIVE);
         }
     }
 
-    // Periodically check for inactive users - MODIFIED
-    // Increase the inactivity timeout to avoid false offline statuses
-    @Scheduled(fixedRate = 300000) // Run every 5 minutes
+    @Scheduled(fixedRate = HEARTBEAT_CHECK_INTERVAL)
     public void checkInactiveUsers() {
         long currentTime = System.currentTimeMillis();
         userLastHeartbeat.forEach((userId, timestamp) -> {
-            // If no heartbeat in 10 minutes, consider user offline
-            if (currentTime - timestamp > 600000) { // 10 minutes (increased from 2 minutes)
-                // Only update if user is not already set to INACTIVE
+            if (currentTime - timestamp > INACTIVITY_TIMEOUT) {
                 if (userStatusMap.getOrDefault(userId, Status.ACTIVE) != Status.INACTIVE) {
                     userStatusMap.put(userId, Status.INACTIVE);
-                    System.out.println("User " + userId + " set to INACTIVE due to inactivity");
 
-                    // Broadcast offline status to connections
                     User user = userService.getUserById(userId);
                     if (user != null) {
-                        List<Long> connections = user.getConnections();
-
-                        StatusResponse response = new StatusResponse(
-                                userId,
-                                user.getUsername(),
-                                Status.INACTIVE
-                        );
-
-                        for (Long connectionId : connections) {
-                            User connection = userService.getUserById(connectionId);
-                            if (connection != null) {
-                                messagingTemplate.convertAndSendToUser(
-                                        connection.getUsername().trim().replace(" ", "_"),
-                                        "/queue/status",
-                                        response
-                                );
-                            }
-                        }
+                        broadcastStatusToConnections(user, Status.INACTIVE);
                     }
                 }
 
-                // Remove from heartbeat map to avoid continuous processing
                 userLastHeartbeat.remove(userId);
             }
         });
     }
 
-    // Handle WebSocket session disconnect
     @EventListener
     public void handleSessionDisconnect(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
         Long userId = sessionUserMap.remove(sessionId);
 
-        if (userId != null) {
-            // Check if this was the user's last active session
-            boolean hasOtherActiveSessions = false;
-            for (Long sessionUserId : sessionUserMap.values()) {
-                if (sessionUserId.equals(userId)) {
-                    hasOtherActiveSessions = true;
-                    break;
-                }
-            }
+        if (userId != null && !hasOtherActiveSessions(userId)) {
+            userStatusMap.put(userId, Status.INACTIVE);
 
-            // Only set to INACTIVE if this was their last active session
-            if (!hasOtherActiveSessions) {
-                // Set user to INACTIVE
-                userStatusMap.put(userId, Status.INACTIVE);
-
-                // Broadcast status to connections
-                User user = userService.getUserById(userId);
-                if (user != null) {
-                    System.out.println("User " + user.getUsername() + " disconnected, setting to INACTIVE");
-
-                    StatusResponse response = new StatusResponse(
-                            userId,
-                            user.getUsername(),
-                            Status.INACTIVE
-                    );
-
-                    List<Long> connections = user.getConnections();
-                    for (Long connectionId : connections) {
-                        User connection = userService.getUserById(connectionId);
-                        if (connection != null) {
-                            messagingTemplate.convertAndSendToUser(
-                                    connection.getUsername().trim().replace(" ", "_"),
-                                    "/queue/status",
-                                    response
-                            );
-                        }
-                    }
-                }
-            } else {
-                System.out.println("User " + userId + " still has other active sessions, not marking as INACTIVE");
+            User user = userService.getUserById(userId);
+            if (user != null) {
+                log.info("User {} disconnected, setting to INACTIVE", user.getUsername());
+                broadcastStatusToConnections(user, Status.INACTIVE);
             }
         }
     }
 
-    // Private message handling
+    private boolean hasOtherActiveSessions(Long userId) {
+        return sessionUserMap.values().stream().anyMatch(id -> id.equals(userId));
+    }
+
     @MessageMapping("/private-message")
     public void sendPrivateMessage(SimpMessageHeaderAccessor headerAccessor, @Payload ChatMessageDTO messageDTO) {
         Principal principal = headerAccessor.getUser();
 
         if (principal == null) {
-            System.out.println("Message blocked: User not authenticated.");
+            log.error("Message blocked: User not authenticated");
             return;
         }
 
         String email = principal.getName();
-        System.out.println("Principal email: " + email);
         User sender = userService.getUserByEmail(email);
         User receiver = userService.getUserById(messageDTO.receiverId());
         String senderUsername = sender.getUsername();
         String receiverUsername = receiver.getUsername();
 
         if (!userService.areUsersConnected(senderUsername, receiverUsername)) {
-            System.out.println("Message blocked: Users are not connected.");
+            log.error("Message blocked: Users are not connected");
             return;
         }
 
         ChatMessage chatMessage = new ChatMessage(sender, receiver, messageDTO.content());
-        ChatMessage savedMessage = repo.save(chatMessage);
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
 
-        // Track as unread message for receiver (only if they're not actively in the chat)
+        saveUnreadMessage(sender, receiver, savedMessage);
+
+        ChatMessageDTO responseDTO = ChatMessageMapper.toDTO(savedMessage);
+
+        sendToUser(receiverUsername, MESSAGES_QUEUE, responseDTO);
+        sendToUser(senderUsername, MESSAGES_QUEUE, responseDTO);
+
+        log.info("Message sent from {} to {}", senderUsername, receiverUsername);
+    }
+
+    private void saveUnreadMessage(User sender, User receiver, ChatMessage savedMessage) {
         UnreadMessage unreadMessage = new UnreadMessage(receiver, sender, savedMessage);
         unreadMessageRepository.save(unreadMessage);
 
-        // Create notification for the unread message
         long unreadCount = unreadMessageRepository.countUnreadMessagesFromSender(receiver.getId(), sender.getId());
+        String preview = createMessagePreview(savedMessage.getContent());
+
         NotificationDTO notification = new NotificationDTO(
                 sender.getId(),
-                senderUsername,
+                sender.getUsername(),
                 savedMessage.getId(),
-                messageDTO.content().length() > 30 ? messageDTO.content().substring(0, 27) + "..." : messageDTO.content(),
+                preview,
                 unreadCount,
                 savedMessage.getTimestamp()
         );
 
-        ChatMessageDTO responseDTO = ChatMessageMapper.toDTO(savedMessage);
+        sendToUser(receiver.getUsername(), NOTIFICATIONS_QUEUE, notification);
+    }
 
-        System.out.println("Sending private message from " + senderUsername + " to " + receiverUsername + " Message content: " + messageDTO.content());
+    private void validateUserAuthenticated(UserPrincipal userPrincipal) {
+        if (userPrincipal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, USER_NOT_AUTHENTICATED);
+        }
+    }
 
-        // send message to receiver's private queue
-        messagingTemplate.convertAndSendToUser(
-                receiverUsername.trim().replace(" ", "_"),
-                "/queue/messages",
-                responseDTO
+    private void broadcastStatusToConnections(User user, Status status) {
+        if (user == null) return;
+
+        StatusResponse response = new StatusResponse(
+                user.getId(),
+                user.getUsername(),
+                status
         );
 
-        // Send notification about unread message
-        messagingTemplate.convertAndSendToUser(
-                receiverUsername.trim().replace(" ", "_"),
-                "/queue/notifications",
-                notification
-        );
+        List<Long> connections = user.getConnections();
+        for (Long connectionId : connections) {
+            User connection = userService.getUserById(connectionId);
+            if (connection != null) {
+                sendToUser(connection.getUsername(), STATUS_QUEUE, response);
+            }
+        }
+    }
 
-        messagingTemplate.convertAndSendToUser(
-                senderUsername.trim().replace(" ", "_"),
-                "/queue/messages",
-                responseDTO
-        );
-        System.out.println("🚀 Message sent to /user/" + receiverUsername.trim().replace(" ", "_") + "/queue/messages");
+    private void sendToUser(String username, String destination, Object payload) {
+        String sanitizedUsername = username.trim().replace(" ", "_");
+        messagingTemplate.convertAndSendToUser(sanitizedUsername, destination, payload);
     }
 }

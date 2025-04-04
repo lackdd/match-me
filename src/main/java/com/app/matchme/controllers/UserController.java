@@ -3,7 +3,6 @@ package com.app.matchme.controllers;
 import com.app.matchme.dtos.*;
 import com.app.matchme.dtos.apirequestdtos.*;
 import com.app.matchme.entities.*;
-import com.app.matchme.services.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +45,7 @@ public class UserController {
 
     @PostMapping("/check-password")
     public ResponseEntity<ApiResponse<Boolean>> checkPassword(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody PasswordCheckRequest request) {
-        userService.checkPassword(userPrincipal.getId(), request.password());
-        return ResponseEntity.ok(new ApiResponse<>("Password verified", true));
+        return ResponseEntity.ok(new ApiResponse<>("Password checked", userService.checkPassword(userPrincipal.getId(), request.password())));
     }
 
     @GetMapping("/connections")

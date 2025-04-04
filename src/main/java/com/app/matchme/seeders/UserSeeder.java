@@ -4,49 +4,51 @@ import com.app.matchme.entities.User;
 import com.app.matchme.repositories.UserRepository;
 import com.app.matchme.utils.GeoUtils;
 import com.github.javafaker.Faker;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class UserSeeder implements CommandLineRunner {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     private final Faker faker = new Faker();
     private static final Random random = new Random();
 
-    // Map of Estonian locations with their approximate coordinates
-    private final Map<String, double[]> estonianLocationCoordinates = new HashMap<String, double[]>() {{
-        put("Harju County, Estonia", new double[]{59.4370, 24.7536});  // Tallinn area
-        put("Tartu County, Estonia", new double[]{58.3780, 26.7290});  // Tartu area
-        put("Ida-Viru County, Estonia", new double[]{59.3560, 27.4138}); // Narva area
-        put("Pärnu County, Estonia", new double[]{58.3859, 24.4971});  // Pärnu area
-        put("Viljandi County, Estonia", new double[]{58.3642, 25.5965}); // Viljandi area
-        put("Lääne-Viru County, Estonia", new double[]{59.3534, 26.3595}); // Rakvere area
-        put("Lääne County, Estonia", new double[]{58.9294, 23.5416}); // Haapsalu area
-        put("Järva County, Estonia", new double[]{58.7869, 25.5600}); // Paide area
-        put("Valga County, Estonia", new double[]{57.7770, 26.0475}); // Valga area
-        put("Rapla County, Estonia", new double[]{58.9964, 24.7895}); // Rapla area
-        put("Saare County, Estonia", new double[]{58.2528, 22.5039}); // Kuressaare area
-        put("Võru County, Estonia", new double[]{57.8334, 27.0156}); // Võru area
-        put("Põlva County, Estonia", new double[]{58.0603, 27.0684}); // Põlva area
-    }};
+    private static final Map<String, double[]> estonianLocationCoordinates = Map.ofEntries(
+            Map.entry("Harju County, Estonia", new double[]{59.4370, 24.7536}),
+            Map.entry("Tartu County, Estonia", new double[]{58.3780, 26.7290}),
+            Map.entry("Ida-Viru County, Estonia", new double[]{59.3560, 27.4138}),
+            Map.entry("Pärnu County, Estonia", new double[]{58.3859, 24.4971}),
+            Map.entry("Viljandi County, Estonia", new double[]{58.3642, 25.5965}),
+            Map.entry("Lääne-Viru County, Estonia", new double[]{59.3534, 26.3595}),
+            Map.entry("Lääne County, Estonia", new double[]{58.9294, 23.5416}),
+            Map.entry("Järva County, Estonia", new double[]{58.7869, 25.5600}),
+            Map.entry("Valga County, Estonia", new double[]{57.7770, 26.0475}),
+            Map.entry("Rapla County, Estonia", new double[]{58.9964, 24.7895}),
+            Map.entry("Saare County, Estonia", new double[]{58.2528, 22.5039}),
+            Map.entry("Võru County, Estonia", new double[]{57.8334, 27.0156}),
+            Map.entry("Põlva County, Estonia", new double[]{58.0603, 27.0684})
+    );
 
     private final List<String> estonianCityLocations = new ArrayList<>(estonianLocationCoordinates.keySet());
+    private static final String OTHER = "other";
 
-    private final List<String> genderOptions = Arrays.asList("male", "female", "other");
+    private final List<String> genderOptions = Arrays.asList("male", "female", OTHER);
 
     public static String getWeightedRandomGender() {
         double rand = random.nextDouble();
@@ -54,13 +56,13 @@ public class UserSeeder implements CommandLineRunner {
         if (rand < 0.45) return "any";
         else if (rand < 0.7) return "male";
         else if (rand < 0.95) return "female";
-        else return "other";
+        else return OTHER;
     }
 
     private final List<String> musicGenres = Arrays.asList(
             "rock", "pop", "jazz", "hip-hop", "classical", "blues", "reggae", "metal",
             "country", "electronic", "folk", "funk", "soul", "punk", "rnb", "house",
-            "techno", "indie", "gospel", "ska", "other"
+            "techno", "indie", "gospel", "ska", OTHER
     );
 
     private final List<String> methods = Arrays.asList(
@@ -70,7 +72,7 @@ public class UserSeeder implements CommandLineRunner {
             "midi", "vocoder", "electronic_drums", "beatboxing", "acapella", "rapping",
             "screaming", "falsetto", "head_voice", "harmonizing", "whispering", "voice_processing",
             "melismatic_singing", "field_recording", "found_sounds", "sound_collage",
-            "live_instrumentation", "foley", "other"
+            "live_instrumentation", "foley", OTHER
     );
 
     private final List<String> interests = Arrays.asList(
@@ -82,7 +84,7 @@ public class UserSeeder implements CommandLineRunner {
             "social_media", "entrepreneurship", "marketing", "finance", "investing",
             "real_estate", "board_games", "esports", "virtual_reality", "fashion_design",
             "interior_design", "architecture", "astronomy", "space", "robotics",
-            "fishing", "hiking", "cycling", "other"
+            "fishing", "hiking", "cycling", OTHER
     );
 
     private final List<String> personalityTraits = Arrays.asList(
@@ -120,7 +122,7 @@ public class UserSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (userRepository.count() > 0) {
-            System.out.println("users already exist, stopping seeder");
+            log.info("users already exist, stopping seeder");
             return;
         }
 
@@ -135,36 +137,32 @@ public class UserSeeder implements CommandLineRunner {
             user.setAge(faker.number().numberBetween(16, 120));
             user.setProfilePicture(null);
 
-            // Set location with coordinates
             String locationText = randomCityCountryFromEstonia();
             user.setLocation(locationText);
 
-            // Set coordinates based on location
             double[] coordinates = estonianLocationCoordinates.get(locationText);
             if (coordinates != null) {
-                // Add some randomness to coordinates to spread users around
-                double lat = coordinates[0] + (random.nextDouble() - 0.5) * 0.1; // +/- 0.05 degrees (approx 5km)
-                double lng = coordinates[1] + (random.nextDouble() - 0.5) * 0.1; // +/- 0.05 degrees
+                double lat = coordinates[0] + (random.nextDouble() - 0.5) * 0.1;
+                double lng = coordinates[1] + (random.nextDouble() - 0.5) * 0.1;
                 Point point = GeoUtils.createPoint(lat, lng);
                 user.setCoordinates(point);
             }
 
-            // Set max match radius - random between 10-200km
-            user.setMaxMatchRadius(random.nextInt(191) + 10); // 10-200km
+            user.setMaxMatchRadius(random.nextInt(191) + 10);
 
             user.setDescription(faker.lorem().sentence());
             user.setLinkToMusic(faker.internet().url());
             user.setYearsOfMusicExperience(faker.number().numberBetween(0, 10));
 
-            user.setPreferredMusicGenres(randomList(musicGenres, 1, 3));
-            user.setPreferredMethods(randomList(methods, 1, 3));
-            user.setAdditionalInterests(randomList(interests, 1, 3));
-            user.setPersonalityTraits(randomList(personalityTraits, 1, 3));
-            user.setGoalsWithMusic(randomList(goals, 1, 3));
+            user.setPreferredMusicGenres(randomList(musicGenres));
+            user.setPreferredMethods(randomList(methods));
+            user.setAdditionalInterests(randomList(interests));
+            user.setPersonalityTraits(randomList(personalityTraits));
+            user.setGoalsWithMusic(randomList(goals));
 
-            user.setIdealMatchGenres(randomList(musicGenres, 1, 3));
-            user.setIdealMatchMethods(randomList(methods, 1, 3));
-            user.setIdealMatchGoals(randomList(goals, 1, 3));
+            user.setIdealMatchGenres(randomList(musicGenres));
+            user.setIdealMatchMethods(randomList(methods));
+            user.setIdealMatchGoals(randomList(goals));
 
             user.setIdealMatchGender(getWeightedRandomGender());
             user.setIdealMatchAge(getWeightedRandomAgeRange());
@@ -175,15 +173,15 @@ public class UserSeeder implements CommandLineRunner {
         }
 
         userRepository.saveAll(users);
-        System.out.println("100 users successfully inserted with geolocation data");
+        log.info("100 users successfully inserted with geolocation data");
     }
 
     private String randomChoice(List<String> options) {
         return options.get(random.nextInt(options.size()));
     }
 
-    private List<String> randomList(List<String> options, int min, int max) {
-        int count = random.nextInt(max - min + 1) + min;
+    private List<String> randomList(List<String> options) {
+        int count = random.nextInt(3) + 1;
         List<String> subset = new ArrayList<>();
         while (subset.size() < count) {
             String choice = randomChoice(options);
@@ -194,26 +192,31 @@ public class UserSeeder implements CommandLineRunner {
         return subset;
     }
 
-    private String randomAgeRange() {
-        List<String> ageRanges = Arrays.asList("12-21", "22-31", "32-41", "42-51", "52-61");
-        return randomChoice(ageRanges);
-    }
-
     public static String getWeightedRandomAgeRange() {
+        List<Map.Entry<String, Double>> weightedRanges = List.of(
+                Map.entry("any", 0.50),
+                Map.entry("12-21", 0.58),
+                Map.entry("22-31", 0.66),
+                Map.entry("32-41", 0.74),
+                Map.entry("42-51", 0.82),
+                Map.entry("52-61", 0.90),
+                Map.entry("62-71", 0.92),
+                Map.entry("72-81", 0.94),
+                Map.entry("82-91", 0.96),
+                Map.entry("92-101", 0.98),
+                Map.entry("102-111", 0.99),
+                Map.entry("112-120", 1.0)
+        );
+
         double rand = random.nextDouble();
 
-        if (rand < 0.5) return "any";
-        else if (rand < 0.58) return "12-21";
-        else if (rand < 0.66) return "22-31";
-        else if (rand < 0.74) return "32-41";
-        else if (rand < 0.82) return "42-51";
-        else if (rand < 0.9) return "52-61";
-        else if (rand < 0.92) return "62-71";
-        else if (rand < 0.94) return "72-81";
-        else if (rand < 0.96) return "82-91";
-        else if (rand < 0.98) return "92-101";
-        else if (rand < 0.99) return "102-111";
-        else return "112-120";
+        for (Map.Entry<String, Double> range : weightedRanges) {
+            if (rand < range.getValue()) {
+                return range.getKey();
+            }
+        }
+
+        return "any";
     }
 
     private String randomExperienceRange() {
