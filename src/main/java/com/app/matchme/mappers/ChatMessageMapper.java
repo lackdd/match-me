@@ -2,9 +2,11 @@ package com.app.matchme.mappers;
 
 import com.app.matchme.entities.ChatMessage;
 import com.app.matchme.dtos.ChatMessageDTO;
-import com.app.matchme.entities.User;
 
 public class ChatMessageMapper {
+
+    private ChatMessageMapper() {}
+
     public static ChatMessageDTO toDTO(ChatMessage chatMessage) {
         return new ChatMessageDTO(
                 chatMessage.getId(),
@@ -15,8 +17,5 @@ public class ChatMessageMapper {
                 chatMessage.getContent(),
                 chatMessage.getTimestamp()
         );
-    }
-    public static ChatMessage toEntity(ChatMessageDTO chatMessageDTO, User sender, User receiver) {
-        return new ChatMessage(sender, receiver, chatMessageDTO.content());
     }
 }

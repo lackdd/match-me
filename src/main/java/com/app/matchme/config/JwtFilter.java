@@ -1,13 +1,14 @@
 package com.app.matchme.config;
 
 import com.app.matchme.services.JWTService;
-import com.app.matchme.services.UserDetailsService;
+import com.app.matchme.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,44 +19,24 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JWTService jwtService;
-
-    @Autowired
-    ApplicationContext context;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final JWTService jwtService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        System.out.println("Request received: " + request.getRequestURI());
-
-
-        String requestURI = request.getRequestURI();
-
-        // Skip JWT validation for registration and public routes
-        /*if (requestURI.equals("/api/register") || requestURI.equals("/api/auth/login") || requestURI.startsWith("/ws") || requestURI.startsWith("/api/check-email") || requestURI.startsWith("/api/hello-backend") || requestURI.startsWith("/api/addLikedUser") ) {
-            filterChain.doFilter(request, response);
-            return;
-        }*/
-
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String email = null;
+        String token;
+        String email;
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             email = jwtService.extractUserName(token);
-        }
-
-        if (token == null || email == null) {
-            /*System.out.println("Invalid or missing token");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not found or invalid");*/
+        } else {
             filterChain.doFilter(request, response);
             return;
         }
@@ -68,8 +49,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
-                System.out.println("Token validation failed");
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND); // 404 Not Found
+                log.error("Token validation failed");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 response.getWriter().write("Token is invalid or expired");
                 return;
             }

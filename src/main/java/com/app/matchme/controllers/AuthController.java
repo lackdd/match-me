@@ -1,9 +1,7 @@
 package com.app.matchme.controllers;
 
-import com.app.matchme.entities.User;
 import com.app.matchme.services.JWTService;
-import com.app.matchme.services.UserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,16 +16,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JWTService jwtService;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody Map<String, String> request) {

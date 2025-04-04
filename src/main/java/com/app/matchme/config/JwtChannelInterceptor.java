@@ -1,8 +1,10 @@
 package com.app.matchme.config;
 
 import com.app.matchme.services.JWTService;
-import com.app.matchme.services.UserDetailsService;
+import com.app.matchme.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -13,16 +15,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtChannelInterceptor implements ChannelInterceptor {
 
     private final JWTService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
-    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+    public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
+        if (accessor == null) {
+            log.warn("StompHeaderAccessor is null for message");
+            return message;
+        }
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String authHeader = accessor.getFirstNativeHeader("Authorization");
@@ -40,17 +50,13 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
 
                         accessor.setUser(auth);
                         SecurityContextHolder.getContext().setAuthentication(auth);
-                        accessor.getSessionAttributes().put("user", auth);
+                        Objects.requireNonNull(accessor.getSessionAttributes()).put("user", auth);
                     }
                 }
             }
-        } else if (accessor != null && accessor.getUser() == null) {
-            // for non-CONNECT commands, retrieve the authentication from session attributes
-            if (accessor.getSessionAttributes() != null && accessor.getSessionAttributes().containsKey("user")) {
-                accessor.setUser((UsernamePasswordAuthenticationToken) accessor.getSessionAttributes().get("user"));
-            }
+        } else if (accessor.getUser() == null && accessor.getSessionAttributes() != null && accessor.getSessionAttributes().containsKey("user")) {
+            accessor.setUser((UsernamePasswordAuthenticationToken) accessor.getSessionAttributes().get("user"));
         }
-
         return message;
     }
 }

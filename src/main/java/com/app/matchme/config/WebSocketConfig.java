@@ -5,18 +5,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.lang.NonNull;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.server.HandshakeInterceptor;
-import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
-import java.security.Principal;
 import java.util.Map;
 
 @Configuration
@@ -28,10 +25,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/queue", "/user");  // web broker endpoint that manages how messages are delivered
-        registry.setApplicationDestinationPrefixes("/app"); // used by client to send message to server
-
-        // for private user
+        registry.enableSimpleBroker("/queue", "/user");
+        registry.setApplicationDestinationPrefixes("/app");
         registry.setUserDestinationPrefix("/user");
     }
 
@@ -47,16 +42,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public HandshakeInterceptor httpSessionHandshakeInterceptor() {
         return new HandshakeInterceptor() {
             @Override
-            public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                           WebSocketHandler wsHandler, Map<String, Object> attributes) {
-                // the JwtChannelInterceptor will handle authentication for the STOMP connection
+            public boolean beforeHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
+                                           @NonNull WebSocketHandler wsHandler, @NonNull Map<String, Object> attributes) {
                 return true;
             }
 
             @Override
-            public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
-                                       WebSocketHandler wsHandler, Exception exception) {
-                // nothing to do after handshake
+            public void afterHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
+                                       @NonNull WebSocketHandler wsHandler, Exception exception) {
+                // Method is empty since we only need to change beforeHandshake(), HandshakeInterceptor is an interface
             }
         };
     }

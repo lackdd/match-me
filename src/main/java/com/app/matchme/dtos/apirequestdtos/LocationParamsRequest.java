@@ -1,4 +1,4 @@
-package com.app.matchme.dtos.apiRequestDtos;
+package com.app.matchme.dtos.apirequestdtos;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

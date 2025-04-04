@@ -6,28 +6,24 @@ import com.app.matchme.dtos.UsernamePictureDTO;
 import com.app.matchme.entities.*;
 
 public class UserMapper {
-    public static UsernamePictureDTO toUsernamePictureDTO(User user) {
-        if (user == null) {
-            return null;
-        }
 
+    private UserMapper() {}
+
+    public static UsernamePictureDTO toUsernamePictureDTO(User user) {
         String cloudinaryBaseUrl = "https://res.cloudinary.com/djfqpfthj/image/upload/";
         String profilePictureUrl = cloudinaryBaseUrl + user.getProfilePicture();
 
         UsernamePictureDTO dto = new UsernamePictureDTO();
+
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
         dto.setProfilePicture(profilePictureUrl);
-
         return dto;
     }
 
     public static ProfileDTO toProfileDTO(User user) {
-        if (user == null) {
-            return null;
-        }
-
         ProfileDTO profileDTO = new ProfileDTO();
+
         profileDTO.setId(user.getId());
         profileDTO.setGender(user.getGender());
         profileDTO.setAge(user.getAge());
@@ -45,16 +41,12 @@ public class UserMapper {
             profileDTO.setLatitude(user.getCoordinates().getY());
             profileDTO.setLongitude(user.getCoordinates().getX());
         }
-
         return profileDTO;
     }
 
     public static BioDTO toBioDTO(User user) {
-        if (user == null) {
-            return null;
-        }
-
         BioDTO bioDTO = new BioDTO();
+
         bioDTO.setId(user.getId());
         bioDTO.setGender(user.getGender());
         bioDTO.setAge(user.getAge());
@@ -77,7 +69,6 @@ public class UserMapper {
             bioDTO.setLatitude(user.getCoordinates().getY());
             bioDTO.setLongitude(user.getCoordinates().getX());
         }
-
         return bioDTO;
     }
 }

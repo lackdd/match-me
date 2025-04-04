@@ -1,7 +1,7 @@
 package com.app.matchme.controllers;
 
 import com.app.matchme.dtos.*;
-import com.app.matchme.dtos.apiRequestDtos.*;
+import com.app.matchme.dtos.apirequestdtos.*;
 import com.app.matchme.entities.*;
 import com.app.matchme.services.UserService;
 import jakarta.validation.Valid;

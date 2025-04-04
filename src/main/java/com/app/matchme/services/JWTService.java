@@ -1,10 +1,12 @@
 package com.app.matchme.services;
 
 import com.app.matchme.dtos.UserPrincipal;
+import com.app.matchme.exceptions.BusinessException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -18,18 +20,19 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@Slf4j
 public class JWTService {
 
-    private String secretKey = "";
+    private final String secretKey;
 
-    public JWTService(){
+    public JWTService() {
 
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sk = keyGen.generateKey();
             secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException("Failed to generate a secret key", e);
         }
     }
 
@@ -41,15 +44,12 @@ public class JWTService {
             claims.put("id", userPrincipal.getUser().getId());
         }
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+        return Jwts.builder().claims(claims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getKey())
                 .compact();
-
-
     }
 
     private SecretKey getKey() {
@@ -58,39 +58,24 @@ public class JWTService {
     }
 
     public String extractUserName(String token) {
-        // extract the username from jwt token
         if (token == null || token.trim().isEmpty()) {
-            System.out.println("Token is missing or empty!");
+            log.error("Token is missing or empty!");
             return null;
         }
         try {
             return extractClaim(token, Claims::getSubject);
         } catch (Exception e) {
-            System.out.println("Invalid token: " + e.getMessage());
+            log.error("Invalid token: {}", e.getMessage());
             return null;
         }
     }
 
-    public Long extractUserId(String token) {
-        return extractClaim(token, claims -> claims.get("id", Long.class));
-    }
-
-
-    private <T> T extractClaim(String token, Function<Claims, T> claimResolver){
+    private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
 
-    /*private Claims extractAllClaims(String token){
-        return Jwts.parserBuilder()
-                .setSigningKey(getKey())  // ✅ Correct method
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }*/
-
-
-    private Claims extractAllClaims(String token){
+    private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()
@@ -103,7 +88,7 @@ public class JWTService {
             final String userName = extractUserName(token);
             return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } catch (Exception e) {
-            System.out.println("JWT validation failed: " + e.getMessage());
+            log.error("JWT validation failed: {}", e.getMessage());
             return false;
         }
     }

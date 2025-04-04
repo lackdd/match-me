@@ -1,4 +1,4 @@
-package com.app.matchme.dtos.apiRequestDtos;
+package com.app.matchme.dtos.apirequestdtos;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

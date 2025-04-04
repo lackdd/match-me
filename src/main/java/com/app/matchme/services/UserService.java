@@ -1,7 +1,7 @@
 package com.app.matchme.services;
 
 import com.app.matchme.dtos.BioDTO;
-import com.app.matchme.dtos.apiRequestDtos.LocationRequest;
+import com.app.matchme.dtos.apirequestdtos.LocationRequest;
 import com.app.matchme.dtos.ProfileDTO;
 import com.app.matchme.dtos.UsernamePictureDTO;
 import com.app.matchme.entities.*;
@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

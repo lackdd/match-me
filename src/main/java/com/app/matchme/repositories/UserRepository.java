@@ -30,9 +30,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.pendingRequests FROM User u WHERE u.id = :userId")
     Optional<List<Long>> findUserPendingRequestsById(@Param("userId") Long userId);
 
-    @Query(value = "SELECT u.* FROM users u WHERE ST_DWithin(u.coordinates, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography, :radius) AND u.id != :userId", nativeQuery = true)
+    @Query(value = "SELECT u.* FROM users u WHERE ST_DWithin(u.coordinates, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography, :radius)" +
+            " AND u.id != :userId", nativeQuery = true)
     Optional<List<User>> findUsersWithinRadius(@Param("latitude") double latitude,
-                                     @Param("longitude") double longitude,
-                                     @Param("radius") int radius,
-                                     @Param("userId") Long userId);
+                                               @Param("longitude") double longitude,
+                                               @Param("radius") int radius,
+                                               @Param("userId") Long userId);
 }
