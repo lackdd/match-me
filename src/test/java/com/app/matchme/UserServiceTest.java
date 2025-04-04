@@ -1,5 +1,6 @@
 package com.app.matchme;
 
+import com.app.matchme.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
