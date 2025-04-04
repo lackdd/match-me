@@ -27,7 +27,7 @@ function Login() {
 
 			const response = await axios.post(`${VITE_BACKEND_URL}/api/auth/login`, {email, password});
 			setError('');
-			const token = response.data.payload.token;
+			const token = response.data.payload;
 			await login(token);
 			console.log('Login successful: ', token);
 			// Navigate to dashboard or other protected route
