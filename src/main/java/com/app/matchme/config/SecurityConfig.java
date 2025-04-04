@@ -2,7 +2,6 @@ package com.app.matchme.config;
 
 import com.app.matchme.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,8 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Value("${spring.frontend.url}")
-    private String frontendUrl;
     private final CustomUserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 

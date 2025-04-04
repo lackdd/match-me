@@ -92,47 +92,41 @@ public class UserService {
         List<String> methods = user.getPreferredMethods();
         List<String> goals = user.getGoalsWithMusic();
         Integer experience = user.getYearsOfMusicExperience();
+        int[] experienceRange = calculateExperienceRange(currentUser.getIdealMatchYearsOfExperience());
+        int idealMatchExperienceMin = experienceRange[0];
+        int idealMatchExperienceMax = experienceRange[1];
 
-        Integer idealMatchExperienceMin;
-        int idealMatchExperienceMax;
-        if (currentUser.getIdealMatchYearsOfExperience().length() == 5) {
-            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 2));
-            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(3, 5));
-        } else if (currentUser.getIdealMatchYearsOfExperience().length() == 4) {
-            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
-            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 4));
-        } else if (currentUser.getIdealMatchYearsOfExperience().trim().equals("any")) {
-            idealMatchExperienceMin = 0;
-            idealMatchExperienceMax = 100;
-        } else if (currentUser.getIdealMatchYearsOfExperience().length() == 3) {
-            idealMatchExperienceMin = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(0, 1));
-            idealMatchExperienceMax = Integer.parseInt(currentUser.getIdealMatchYearsOfExperience().substring(2, 3));
-        } else {
-            throw new BusinessException("Ideal match years of experience not in bounds.");
-        }
+        Map<List<String>, List<String>> matchPairs = Map.of(
+                musicGenres, currentUser.getIdealMatchGenres(),
+                methods, currentUser.getIdealMatchMethods(),
+                goals, currentUser.getIdealMatchGoals()
+        );
 
-        for (String item : musicGenres) {
-            if (currentUser.getIdealMatchGenres().contains(item)) {
-                points++;
-            }
-        }
-
-        for (String item : methods) {
-            if (currentUser.getIdealMatchMethods().contains(item)) {
-                points++;
-            }
-        }
-
-        for (String item : goals) {
-            if (currentUser.getIdealMatchGoals().contains(item)) {
-                points++;
-            }
-        }
+        points += matchPairs.entrySet().stream()
+                .mapToInt(entry -> countMatches(entry.getKey(), entry.getValue()))
+                .sum();
 
         if (currentUser.getIdealMatchYearsOfExperience().equals("any") || (experience >= idealMatchExperienceMin && experience <= idealMatchExperienceMax)) {
             points++;
         }
         return points;
+    }
+
+    private int[] calculateExperienceRange(String experience) {
+        if (experience.equals("any")) {
+            return new int[]{0, 100};
+        }
+
+        if (experience.contains("-")) {
+            String[] parts = experience.split("-");
+            if (parts.length == 2) {
+                int min = Integer.parseInt(parts[0]);
+                int max = Integer.parseInt(parts[1]);
+                return new int[]{min, max};
+            }
+        }
+
+        throw new BusinessException("Ideal match uears of experience not in bounds");
     }
 
     public boolean checkEmail(String email) {
@@ -141,6 +135,12 @@ public class UserService {
 
     public boolean checkPassword(Long id, String password) {
         return encoder.matches(password, getUserById(id).getPassword());
+    }
+
+    private int countMatches(List<String> userItems, List<String> preferredItems) {
+        return (int) userItems.stream()
+                .filter(preferredItems::contains)
+                .count();
     }
 
     @Transactional
@@ -173,54 +173,15 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
+    private String extractCountry(String location) {
+        return location.substring(location.lastIndexOf(",") + 1).trim();
+    }
+
     @Transactional
     public List<Long> findMatches(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        String idealMatchLocation = currentUser.getIdealMatchLocation();
-
-        List<User> potentialMatches;
-
-        if (currentUser.getCoordinates() != null && !"anywhere".equals(idealMatchLocation)) {
-            int radiusInMeters = currentUser.getMaxMatchRadius() * 1000;
-
-            if (SAME_CITY.equals(idealMatchLocation) || "same_country".equals(idealMatchLocation)) {
-                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),
-                        currentUser.getCoordinates().getX(),
-                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new RepositoryException(NEARBY_USERS_NOT_FOUND));
-
-                if (SAME_CITY.equals(idealMatchLocation)) {
-                    potentialMatches = potentialMatches.stream().filter(user ->
-                            Objects.equals(user.getLocation(), currentUser.getLocation())).toList();
-                } else {
-                    potentialMatches = potentialMatches.stream().filter(user -> user.getLocation() != null && currentUser.getLocation() != null)
-                            .filter(user -> Objects.equals(user.getLocation()
-                                    .substring(user.getLocation().lastIndexOf(",") + 1)
-                                    .trim(), currentUser.getLocation()
-                                    .substring(currentUser.getLocation().lastIndexOf(",") + 1).trim())).toList();
-                }
-            } else {
-                potentialMatches = userRepository.findUsersWithinRadius(currentUser.getCoordinates().getY(),
-                        currentUser.getCoordinates().getX(),
-                        radiusInMeters, currentUser.getId()).orElseThrow(() -> new BusinessException(NEARBY_USERS_NOT_FOUND));
-            }
-        } else {
-            potentialMatches = userRepository.findAll().stream()
-                    .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
-                    .filter(user ->
-                            "anywhere".equals(idealMatchLocation) ||
-                                    (SAME_CITY.equals(idealMatchLocation) &&
-                                            Objects.equals(user.getLocation(), currentUser.getLocation())) ||
-                                    "same_country".equals(idealMatchLocation) &&
-                                            user.getLocation() != null &&
-                                            currentUser.getLocation() != null &&
-                                            Objects.equals(
-                                                    user.getLocation().substring(user.getLocation().lastIndexOf(",") + 1).trim(),
-                                                    currentUser.getLocation().substring(currentUser.getLocation().lastIndexOf(",") + 1).trim()
-                                            )
-                    )
-                    .toList();
-        }
+        List<User> potentialMatches = findPotentialMatchesByLocation(currentUser);
 
         Integer idealMatchAgeMin;
         int idealMatchAgeMax;
@@ -254,6 +215,68 @@ public class UserService {
         return userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed()).limit(10)
                 .map(entry -> entry.getKey().getId()).toList();
+    }
+
+    private List<User> findPotentialMatchesByLocation(User currentUser) {
+        String idealMatchLocation = currentUser.getIdealMatchLocation();
+
+        if (currentUser.getCoordinates() != null && !"anywhere".equals(idealMatchLocation)) {
+            return findMatchesWithCoordinates(currentUser, idealMatchLocation);
+        } else {
+            return findMatchesWithoutCoordinates(currentUser, idealMatchLocation);
+        }
+    }
+
+    private List<User> findMatchesWithCoordinates(User currentUser, String idealMatchLocation) {
+        int radiusInMeters = currentUser.getMaxMatchRadius() * 1000;
+        List<User> potentialMatches;
+
+        if (SAME_CITY.equals(idealMatchLocation) || "same_country".equals(idealMatchLocation)) {
+            potentialMatches = userRepository.findUsersWithinRadius(
+                            currentUser.getCoordinates().getY(),
+                            currentUser.getCoordinates().getX(),
+                            radiusInMeters,
+                            currentUser.getId())
+                    .orElseThrow(() -> new RepositoryException(NEARBY_USERS_NOT_FOUND));
+
+            if (SAME_CITY.equals(idealMatchLocation)) {
+                return potentialMatches.stream()
+                        .filter(user -> Objects.equals(user.getLocation(), currentUser.getLocation()))
+                        .toList();
+            } else {
+                return potentialMatches.stream()
+                        .filter(user -> user.getLocation() != null && currentUser.getLocation() != null)
+                        .filter(user -> Objects.equals(
+                                extractCountry(user.getLocation()),
+                                extractCountry(currentUser.getLocation())))
+                        .toList();
+            }
+        } else {
+            return userRepository.findUsersWithinRadius(
+                            currentUser.getCoordinates().getY(),
+                            currentUser.getCoordinates().getX(),
+                            radiusInMeters,
+                            currentUser.getId())
+                    .orElseThrow(() -> new BusinessException(NEARBY_USERS_NOT_FOUND));
+        }
+    }
+
+    private List<User> findMatchesWithoutCoordinates(User currentUser, String idealMatchLocation) {
+        return userRepository.findAll().stream()
+                .filter(user -> !Objects.equals(user.getId(), currentUser.getId()))
+                .filter(user ->
+                        "anywhere".equals(idealMatchLocation) ||
+                                (SAME_CITY.equals(idealMatchLocation) &&
+                                        Objects.equals(user.getLocation(), currentUser.getLocation())) ||
+                                "same_country".equals(idealMatchLocation) &&
+                                        user.getLocation() != null &&
+                                        currentUser.getLocation() != null &&
+                                        Objects.equals(
+                                                extractCountry(user.getLocation()),
+                                                extractCountry(currentUser.getLocation())
+                                        )
+                )
+                .toList();
     }
 
     @Transactional
