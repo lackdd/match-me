@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,6 +117,7 @@ public class UserController {
     }
 
     @GetMapping("/me/profile")
+    @Transactional(readOnly = true)
     public ResponseEntity<ApiResponse<ProfileDTO>> getUserProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched User profile", userService.getUserProfileById(userPrincipal.getId())));
     }

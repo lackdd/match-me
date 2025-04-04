@@ -122,7 +122,7 @@ public class UserSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (userRepository.count() > 0) {
-            log.info("users already exist, stopping seeder");
+            log.info("Users already exist in database, stopping user generation");
             return;
         }
 

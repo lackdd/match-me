@@ -306,13 +306,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw new BusinessException("Email already exists.");
         }
         User currentUser = UserMapper.fromRegisterRequestToUser(request);
         currentUser.setPassword(encoder.encode(currentUser.getPassword()));
-        return userRepository.save(currentUser);
+        userRepository.save(currentUser);
     }
 
     public void swiped(Long currentUserId, Long matchId, boolean swipedRight) {

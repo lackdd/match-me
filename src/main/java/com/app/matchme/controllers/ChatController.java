@@ -1,13 +1,9 @@
 package com.app.matchme.controllers;
 
-import com.app.matchme.dtos.NotificationDTO;
-import com.app.matchme.dtos.StatusMessage;
-import com.app.matchme.dtos.StatusResponse;
+import com.app.matchme.dtos.*;
 import com.app.matchme.entities.ChatMessage;
-import com.app.matchme.dtos.ChatMessageDTO;
 import com.app.matchme.entities.UnreadMessage;
 import com.app.matchme.entities.User;
-import com.app.matchme.dtos.UserPrincipal;
 import com.app.matchme.mappers.ChatMessageMapper;
 import com.app.matchme.repositories.ChatMessageRepository;
 import com.app.matchme.repositories.UnreadMessageRepository;
@@ -19,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -72,7 +69,7 @@ public class ChatController {
     }
 
     @GetMapping("/history/{userId}")
-    public List<ChatMessageDTO> getChatHistory(
+    public ResponseEntity<ApiResponse<List<ChatMessageDTO>>> getChatHistory(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long userId,
             @RequestParam(defaultValue= "20") int limit,
@@ -85,13 +82,14 @@ public class ChatController {
         List<ChatMessage> messages = chatMessageRepository.findChatMessages(currentUserId, userId, beforeId, pageable);
 
         Collections.reverse(messages);
-        return messages.stream()
+        List<ChatMessageDTO> messagesDTO = messages.stream()
                 .map(ChatMessageMapper::toDTO)
                 .toList();
+        return ResponseEntity.ok(new ApiResponse<>("Chat history retrieved successfully", messagesDTO));
     }
 
     @GetMapping("/notifications")
-    public List<NotificationDTO> getUserNotifications(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<ApiResponse<List<NotificationDTO>>> getUserNotifications(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         validateUserAuthenticated(userPrincipal);
 
         Long userId = userPrincipal.getId();
@@ -105,7 +103,7 @@ public class ChatController {
         }
 
         notifications.sort((a, b) -> b.lastMessageTime().compareTo(a.lastMessageTime()));
-        return notifications;
+        return ResponseEntity.ok(new ApiResponse<>("User notifications retrieved successfully", notifications));
     }
 
     private void addSenderNotification(User currentUser, Long userId, Long senderId, List<NotificationDTO> notifications) {
@@ -143,20 +141,20 @@ public class ChatController {
     }
 
     @GetMapping("/unread-count")
-    public Map<String, Long> getUnreadCount(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<ApiResponse<Map<String, Long>>> getUnreadCount(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         validateUserAuthenticated(userPrincipal);
 
         Long userId = userPrincipal.getId();
         long count = unreadMessageRepository.countUnreadMessagesForUser(userId);
 
-        Map<String, Long> response = new HashMap<>();
-        response.put("count", count);
-        return response;
+        Map<String, Long> countMap = new HashMap<>();
+        countMap.put("count", count);
+        return ResponseEntity.ok(new ApiResponse<>("Unread message count retrieved", countMap));
     }
 
     @PostMapping("/mark-as-read/{senderId}")
     @Transactional
-    public void markMessagesAsRead(
+    public ResponseEntity<ApiResponse<Void>> markMessagesAsRead(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long senderId
     ) {
@@ -164,10 +162,11 @@ public class ChatController {
 
         Long userId = userPrincipal.getId();
         unreadMessageRepository.markMessagesAsRead(userId, senderId);
+        return ResponseEntity.ok(new ApiResponse<>("Messages marked as read successfully"));
     }
 
     @PostMapping("/status/offline/{userId}")
-    public void setUserOffline(
+    public ResponseEntity<ApiResponse<Void>> setUserOffline(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long userId
     ) {
@@ -179,10 +178,11 @@ public class ChatController {
 
         User user = userService.getUserById(userId);
         broadcastStatusToConnections(user, Status.INACTIVE);
+        return ResponseEntity.ok(new ApiResponse<>("User status set to offline"));
     }
 
     @GetMapping("/status/{userId}")
-    public StatusResponse getUserStatus(
+    public ResponseEntity<ApiResponse<StatusResponse>> getUserStatus(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable Long userId
     ) {
@@ -191,11 +191,13 @@ public class ChatController {
         User user = userService.getUserById(userId);
         Status status = userStatusMap.getOrDefault(userId, Status.INACTIVE);
 
-        return new StatusResponse(
+        StatusResponse statusResponse = new StatusResponse(
                 userId,
                 user.getUsername(),
                 status
         );
+
+        return ResponseEntity.ok(new ApiResponse<>("User status retrieved", statusResponse));
     }
 
     @MessageMapping("/status")
