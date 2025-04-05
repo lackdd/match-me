@@ -23,8 +23,7 @@ import {closeSettings} from '../../reusables/profile-card-functions.jsx';
 export function RecommendationsForm({preferencesData, setPreferencesData, setLoading, resetMatches}) {
 	const { tokenValue } = useAuth();
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-	const [maxMatchRadius, setMaxMatchRadius] = useState(preferencesData.maxMatchRadius || 50);
-
+	// const [maxMatchRadius, setMaxMatchRadius] = useState(preferencesData.maxMatchRadius || 50);
 
 	// Initialize react-hook-form with Yup schema
 	const {
@@ -68,7 +67,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 	const handleMaxDistanceChange = (e) => {
 		const value = parseInt(e.target.value, 10);
 		setValue('maxMatchRadius', value, { shouldValidate: true });
-		setMaxMatchRadius(value)
+		// setMaxMatchRadius(value)
 		setPreferencesData((prev) => ({
 			...prev,
 			maxMatchRadius: value
@@ -152,7 +151,7 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					</div>
 					<div className="distance-labels">
 						<span>5 km</span>
-						<div className="distance-value">{maxMatchRadius} km</div>
+						<div className="distance-value">{watch('maxMatchRadius')} km</div>
 						<span>500 km</span>
 					</div>
 					<ErrorElement errors={errors} id={'maxMatchRadius'}/>

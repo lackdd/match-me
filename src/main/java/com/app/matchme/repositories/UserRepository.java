@@ -36,4 +36,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
                                                @Param("longitude") double longitude,
                                                @Param("radius") int radius,
                                                @Param("userId") Long userId);
+
+
 }

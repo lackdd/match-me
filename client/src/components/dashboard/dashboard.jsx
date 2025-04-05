@@ -60,15 +60,17 @@ function Dashboard() {
 							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
 						}),
-						// axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
-						// 	headers: { Authorization: `Bearer ${tokenValue}` },
-						// 	signal
-						// }),
+						axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
+							headers: { Authorization: `Bearer ${tokenValue}` },
+							signal
+						}),
 						axios.get(`${VITE_BACKEND_URL}/api/likedUsers`, {
 							headers: { Authorization: `Bearer ${tokenValue}` },
 							signal
 						})
 					]);
+
+					console.log("me/bio: " + res3)
 
 					// formatting data (mostly to objects) for dashboard form
 					const firstName = res1.data.payload.username.split(' ')[0];
@@ -108,7 +110,7 @@ function Dashboard() {
 
 					// liked users count
 					if (res3.data.payload.length) {
-						setLiked(res3.data.payload.length || 0);
+						setLiked(res4.data.payload.length || 0);
 					}
 
 				} catch (error) {

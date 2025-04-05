@@ -36,7 +36,8 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        String jwt = jwtService.generateToken((UserDetails) authentication.getPrincipal());
+        // Add the second parameter "USER" to specify the role
+        String jwt = jwtService.generateToken((UserDetails) authentication.getPrincipal(), "USER");
         return ResponseEntity.ok(new ApiResponse<>("Fetched token", jwt));
     }
 
@@ -52,14 +53,19 @@ public class AuthController {
         }
 
         // Create a service user without looking it up in the database
-        UserDetails serviceAccount = User.withUsername(request.email())
+        UserDetails serviceAccount = User.withUsername("service@app.com")
                 .password("not-used")
                 .roles("SERVICE")
                 .build();
 
-        String serviceToken = jwtService.generateToken(serviceAccount, "SERVICE");
-
-        return ResponseEntity.ok(new ApiResponse<>("Service token generated", serviceToken));
+        try {
+            String serviceToken = jwtService.generateToken(serviceAccount, "SERVICE");
+            log.info("Generated service token with role: SERVICE");
+            return ResponseEntity.ok(new ApiResponse<>("Service token generated", serviceToken));
+        } catch (Exception e) {
+            log.error("Error generating service token: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating service token");
+        }
     }
 
     record ServiceTokenRequest(String email) {}

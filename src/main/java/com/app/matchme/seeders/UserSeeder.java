@@ -7,6 +7,7 @@ import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Point;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class UserSeeder implements CommandLineRunner {
+
+
+    @Value("${user.generation.number}")
+    private int numberOfUsers;
+
 
     private final UserRepository userRepository;
 
@@ -128,7 +134,7 @@ public class UserSeeder implements CommandLineRunner {
 
         List<User> users = new ArrayList<>();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < numberOfUsers; i++) {
             User user = new User();
             user.setEmail(faker.internet().emailAddress());
             user.setPassword(encoder.encode("111"));
@@ -173,7 +179,7 @@ public class UserSeeder implements CommandLineRunner {
         }
 
         userRepository.saveAll(users);
-        log.info("100 users successfully inserted with geolocation data");
+        log.info(numberOfUsers + " users successfully created");
     }
 
     private String randomChoice(List<String> options) {

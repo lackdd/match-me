@@ -35,7 +35,7 @@ function Recommendations() {
 	const [currentMatchNum, setCurrentMatchNum] = useState(0);
 	const [currentMatch, setCurrentMatch] = useState(null);
 	const [fetchMoreMatches, setFetchMoreMatches] = useState(false);
-	const {tokenValue} = useAuth();
+	const {tokenValue, fetchWithToken} = useAuth();
 	const [preferencesData, setPreferencesData] = useState(null);
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
@@ -66,6 +66,10 @@ function Recommendations() {
 					headers: {Authorization: `Bearer ${tokenValue}`}
 				});
 
+				// const response = fetchWithToken(`/api/me/bio`, {}, false);
+
+				console.log("Full response: " + response);
+
 				// formatting data for the recommendations form
 				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.payload.idealMatchGender);
 				const idealMatchAge = matchAgeOptions.find(age => age.value === response.data.payload.idealMatchAge);
@@ -83,8 +87,12 @@ function Recommendations() {
 					idealMatchMethods: idealMatchMethods,
 					idealMatchYearsOfExperience: idealMatchYearsOfExperience,
 					idealMatchGoals: idealMatchGoals,
-					maxMatchRadius: response.data.payload.maxMatchRadius
+					maxMatchRadius: response.data.maxMatchRadius
 				});
+
+				console.log("idealMatchAge radius when fetched: " + response.data.payload.idealMatchAge);
+				console.log("Max match radius when fetched: " + response.data.payload.maxMatchRadius);
+
 			} catch (error) {
 				setError(true);
 				setErrorMessage(error.message);
@@ -119,8 +127,9 @@ function Recommendations() {
 					headers: {Authorization: `Bearer ${tokenValue}`},
 					signal
 				});
-				setMatchIDs(response.data.payload);
-				if (response.data.payload.length === 0) {
+				// const response = fetchWithToken(`/api/recommendations`, {}, true);
+				setMatchIDs(response.data);
+				if (response.data.length === 0) {
 					setLoading(false);
 				}
 			} catch (error) {
@@ -160,6 +169,8 @@ function Recommendations() {
 						const userPromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
 							headers: {Authorization: `Bearer ${tokenValue}`}
 						});
+						// const profilePromise = fetchWithToken(`/api/users/${id}/profile`, {}, true); // true = use service token
+						// const userPromise = fetchWithToken(`/api/users/${id}`, {}, true); // true = use service token
 
 						// Return both promises for the same id
 						return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({

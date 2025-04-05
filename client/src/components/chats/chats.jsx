@@ -82,7 +82,7 @@ function Chats() {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/unread-count`, {
 				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
-			setTotalUnreadCount(response.data.count);
+			setTotalUnreadCount(response.data.payload.count);
 		} catch (error) {
 			console.error('Error fetching unread count:', error);
 		}
@@ -94,11 +94,11 @@ function Chats() {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/chat/notifications`, {
 				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
-			setNotifications(response.data);
+			setNotifications(response.data.payload);
 
 			// Also update unread counts per sender
 			const unreadCounts = {};
-			response.data.forEach(notification => {
+			response.data.payload.forEach(notification => {
 				unreadCounts[notification.senderId] = notification.count;
 			});
 			setUnreadMessages(unreadCounts);

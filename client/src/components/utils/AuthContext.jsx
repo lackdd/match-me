@@ -21,11 +21,11 @@ export function AuthProvider({children}) {
 	const getServiceToken = async () => {
 		try {
 			// Check if we have a cached service token
-			let cachedToken = sessionStorage.getItem('serviceToken');
+			/*let cachedToken = sessionStorage.getItem('serviceToken');
 			if (cachedToken) {
 				setServiceTokenValue(cachedToken);
 				return cachedToken;
-			}
+			}*/
 
 			// If not, request a new one
 			const response = await axios.post(
@@ -39,6 +39,7 @@ export function AuthProvider({children}) {
 			);
 
 			const newToken = response.data.payload;
+			console.log("Service token obtained successfully");
 			sessionStorage.setItem('serviceToken', newToken);
 			setServiceTokenValue(newToken);
 			return newToken;
@@ -53,9 +54,18 @@ export function AuthProvider({children}) {
 		let token;
 
 		if (useServiceToken) {
+			console.log("Using service token for request to:", url);
 			token = serviceTokenValue || await getServiceToken();
+			if (!token) {
+				console.error("Could not obtain service token");
+				throw new Error('No service token available');
+			}
 		} else {
 			token = tokenValue;
+			if (!token) {
+				console.error("No user token available");
+				throw new Error('No user token available');
+			}
 		}
 
 		if (!token) {
@@ -66,7 +76,7 @@ export function AuthProvider({children}) {
 			...(options.headers || {}),
 			Authorization: `Bearer ${token}`
 		};
-
+		console.log(`Request to ${url} with token type: ${useServiceToken ? 'SERVICE' : 'USER'}`);
 		return axios({
 			url: `${VITE_BACKEND_URL}${url}`,
 			...options,
@@ -141,7 +151,9 @@ export function AuthProvider({children}) {
 
 		try {
 			// Get all connections first
-			const response = await fetchWithToken('/api/connections');
+			const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
+				headers: {Authorization: `Bearer ${token}`}
+			});
 
 			const connections = response.data.payload;
 			console.log('Broadcasting ACTIVE status to all connections:', connections);

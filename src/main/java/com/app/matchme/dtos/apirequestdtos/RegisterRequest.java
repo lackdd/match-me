@@ -10,7 +10,7 @@ public record RegisterRequest(
         @Size(max = 50, message = "Email length cannot exceed 50 characters")
         String email,
         @NotBlank(message = "Password cannot be empty")
-        @Size(min = 6, max = 30, message = "Password must be between 6 and 30 characters")
+        @Size(min = 3, max = 50, message = "Password must be between 6 and 30 characters")
         String password,
         @NotBlank(message = "Username cannot be empty")
         String username,
@@ -19,7 +19,8 @@ public record RegisterRequest(
         String gender,
         @NotNull(message = "Age cannot be null")
         @PositiveOrZero(message = "Age cannot be negative")
-        @Size(min = 16, max = 120, message = "Age must be between 16 and 120")
+        @Min(value = 16, message = "Age must be at least 16")
+        @Max(value = 120, message = "Age cannot be more than 120")
         Integer age,
         @NotNull(message = "Preferred music genres is missing")
         @NotEmpty(message = "Preferred music genres cannot be empty")

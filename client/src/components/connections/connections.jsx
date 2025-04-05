@@ -60,14 +60,10 @@ function Connections() {
 						'Content-Type': 'application/json'
 					}*/
 					signal
-				}, true),
-				axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {
-					headers: {
-						'Authorization': `Bearer ${tokenValue}`,
-						'Content-Type': 'application/json'
-					},
+				}, false),
+				fetchWithToken(`/api/pendingRequests`, {
 					signal
-				})
+				}, false)
 			]);
 
 			const currentIds = currentConnectionsResponse.data.payload || [];
@@ -124,9 +120,11 @@ function Connections() {
 		if (isDeleting === false) {
 			try {
 				const connections = ids.map(id => {
+					const profilePromise = fetchWithToken(`/api/users/${id}/profile`, {}, true); // true = use service token
+					const userPromise = fetchWithToken(`/api/users/${id}`, {}, true); // true = use service token
 
 					// fetch profile pic and name
-					const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
+					/*const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
 						headers: {
 							'Authorization': `Bearer ${tokenValue}`,
 							'Content-Type': 'application/json',
@@ -141,7 +139,7 @@ function Connections() {
 							'Content-Type': 'application/json',
 							signal
 						}
-					});
+					});*/
 
 					// Return both promises for the same id
 					return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({

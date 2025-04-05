@@ -46,7 +46,7 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 
 				setMessages((prev) => {
 					// Ensure no duplicate messages when switching
-					const newMessages = response.data.filter(msg => !prev.some(m => m.id === msg.id));
+					const newMessages = response.data.payload.filter(msg => !prev.some(m => m.id === msg.id));
 					return [...newMessages, ...prev];
 				});
 			}

@@ -47,6 +47,8 @@ public class SecurityConfig {
                                 "/api/hello-backend"
                         )
                         .permitAll()
+                        /*.requestMatchers("/api/users/**").hasRole("SERVICE")*/
+//                        .requestMatchers("/api/me/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
