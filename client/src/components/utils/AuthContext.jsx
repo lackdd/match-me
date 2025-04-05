@@ -8,35 +8,94 @@ const AuthContext = createContext();
 export function AuthProvider({children}) {
 	const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 	const [tokenValue, setTokenValue] = useState('');
+	const [serviceTokenValue, setServiceTokenValue] = useState(''); // New state for service token
 	const [isLoading, setIsLoading] = useState(true);
 	const [username, setUsername] = useState('');
 	const [userId, setUserId] = useState(null);
 	const [webSocketClient, setWebSocketClient] = useState(null);
 	const [imageUrl, setImageUrl] = useState('null');
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+	const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY; // Add this to your .env file
+
+	// Get or refresh the service token
+	const getServiceToken = async () => {
+		try {
+			// Check if we have a cached service token
+			let cachedToken = sessionStorage.getItem('serviceToken');
+			if (cachedToken) {
+				setServiceTokenValue(cachedToken);
+				return cachedToken;
+			}
+
+			// If not, request a new one
+			const response = await axios.post(
+				`${VITE_BACKEND_URL}/api/auth/service-token`,
+				{ email: "service@app.com" }, // Use a service account email
+				{
+					headers: {
+						'X-Service-Key': SERVICE_KEY
+					}
+				}
+			);
+
+			const newToken = response.data.payload;
+			sessionStorage.setItem('serviceToken', newToken);
+			setServiceTokenValue(newToken);
+			return newToken;
+		} catch (error) {
+			console.error('Failed to get service token:', error);
+			return null;
+		}
+	};
+
+	// Fetch data with the appropriate token based on the request type
+	const fetchWithToken = async (url, options = {}, useServiceToken = false) => {
+		let token;
+
+		if (useServiceToken) {
+			token = serviceTokenValue || await getServiceToken();
+		} else {
+			token = tokenValue;
+		}
+
+		if (!token) {
+			throw new Error('No token available');
+		}
+
+		const headers = {
+			...(options.headers || {}),
+			Authorization: `Bearer ${token}`
+		};
+
+		return axios({
+			url: `${VITE_BACKEND_URL}${url}`,
+			...options,
+			headers
+		});
+	};
 
 	// mainly to get profile image url
 	useEffect(() => {
 		const getProfileInfo = async () => {
-
 			console.log('Getting username and profile picture');
 
 			try {
-				const response = await axios.get(`${VITE_BACKEND_URL}/api/me`, {
-					headers: {Authorization: `Bearer ${tokenValue}`}
-				});
+				// Use user token for personal data
+				const response = await fetchWithToken('/api/me');
 				setImageUrl(response.data.payload.profilePicture);
-
 			} catch (error) {
 				if (error.response) {
-					console.error('Backend error:', error.response.data); // Server responded with an error
+					console.error('Backend error:', error.response.data);
 				} else {
-					console.error('Request failed:', error.message); // Network error or request issue
+					console.error('Request failed:', error.message);
 				}
 			}
 		};
-		getProfileInfo();
-	});
+
+		if (tokenValue) {
+			getProfileInfo();
+		}
+	}, [tokenValue]);
 
 	// Function to set up WebSocket connection
 	const setupWebSocket = async (token, user) => {
@@ -82,9 +141,7 @@ export function AuthProvider({children}) {
 
 		try {
 			// Get all connections first
-			const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
-				headers: {Authorization: `Bearer ${token}`}
-			});
+			const response = await fetchWithToken('/api/connections');
 
 			const connections = response.data.payload;
 			console.log('Broadcasting ACTIVE status to all connections:', connections);
@@ -117,9 +174,7 @@ export function AuthProvider({children}) {
 
 		try {
 			// Get all connections first
-			const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
-				headers: {Authorization: `Bearer ${actualToken}`}
-			});
+			const response = await fetchWithToken('/api/connections');
 
 			const connections = response.data.payload;
 
@@ -213,6 +268,9 @@ export function AuthProvider({children}) {
 
 				// Set up WebSocket for online status
 				await setupWebSocket(token, user);
+
+				// Get a service token
+				await getServiceToken();
 
 			} catch (error) {
 				console.error('Failed to validate token:', error);
@@ -309,6 +367,9 @@ export function AuthProvider({children}) {
 			// The status will be broadcast in the onConnect callback
 			await setupWebSocket(token, user);
 
+			// Get a service token
+			await getServiceToken();
+
 			// navigate('/dashboard');
 		} catch (error) {
 			console.error('Error during login process:', error);
@@ -324,8 +385,10 @@ export function AuthProvider({children}) {
 		}
 
 		sessionStorage.removeItem('token');
+		sessionStorage.removeItem('serviceToken'); // Clear service token too
 		setIsUserLoggedIn(false);
 		setTokenValue('');
+		setServiceTokenValue('');
 		setUsername('');
 		setUserId(null);
 		setWebSocketClient(null);
@@ -339,6 +402,8 @@ export function AuthProvider({children}) {
 			logout,
 			isLoading,
 			tokenValue,
+			serviceTokenValue,
+			fetchWithToken, // Expose the new helper method
 			username,
 			userId,
 			webSocketClient,

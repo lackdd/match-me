@@ -24,7 +24,7 @@ function Connections() {
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const [toDeleteName, setToDeleteName] = useState('');
-	const {tokenValue} = useAuth();
+	const {tokenValue, fetchWithToken } = useAuth();
 	const [toDisplay, setToDisplay] = useState(null);
 	const isDataFormatted = useRef(false);
 
@@ -54,13 +54,13 @@ function Connections() {
 
 		try {
 			const [currentConnectionsResponse, pendingConnectionsResponse] = await Promise.all([
-				axios.get(`${VITE_BACKEND_URL}/api/connections`, {
-					headers: {
+				fetchWithToken(`/api/connections`, {
+					/*headers: {
 						'Authorization': `Bearer ${tokenValue}`,
 						'Content-Type': 'application/json'
-					},
+					}*/
 					signal
-				}),
+				}, true),
 				axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {
 					headers: {
 						'Authorization': `Bearer ${tokenValue}`,
