@@ -38,7 +38,6 @@ function Chats() {
 						// Subscribe to status updates for all connections
 						webSocketClient.subscribe(`/user/${normalizedUsername}/queue/status`, (statusMsg) => {
 							const status = JSON.parse(statusMsg.body);
-							console.log('Status update received in Chats:', status);
 
 							setUserStatuses(prev => ({
 								...prev,
@@ -49,7 +48,6 @@ function Chats() {
 						// Subscribe to notifications for unread messages
 						webSocketClient.subscribe(`/user/${normalizedUsername}/queue/notifications`, (notificationMsg) => {
 							const notification = JSON.parse(notificationMsg.body);
-							console.log('Notification received:', notification);
 
 							// If this is from the currently selected user, mark it as read immediately
 							if (notification.senderId === selectedUserId) {
@@ -69,11 +67,9 @@ function Chats() {
 							// Update notifications list
 							fetchNotifications();
 						});
-
-						console.log('Subscribed to status updates and notifications');
 					}
 				} catch (error) {
-					console.log(error.message);
+					console.error(error.message);
 				}
 			};
 			fetchUsername();
@@ -126,7 +122,6 @@ function Chats() {
 			await axios.post(`${VITE_BACKEND_URL}/api/chat/mark-as-read/${senderId}`, {}, {
 				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
-			console.log('Marked messages from', senderId, 'as read');
 
 			// Update local state to show messages as read
 			setUnreadMessages(prev => ({
@@ -149,7 +144,6 @@ function Chats() {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/connections`, {
 					headers: {Authorization: `Bearer ${tokenValue}`}
 				});
-				console.log('Setting connections:', response.data.payload);
 				setConnections(response.data.payload);
 
 				// Get user details for all connections
@@ -181,7 +175,6 @@ function Chats() {
 									receiverId: connectionId
 								})
 							});
-							console.log(`Requested status update from user ${connectionId}`);
 						});
 					}
 				}
@@ -193,7 +186,7 @@ function Chats() {
 			} catch (error) {
 				setError(true);
 				setErrorMessage(error.message);
-				console.log(error.message);
+				console.error(error.message);
 			} finally {
 				setLoading(false);
 			}
@@ -298,7 +291,6 @@ function Chats() {
 		const chat = document.getElementById('chat');
 
 		if (!chat || !connections) {
-			console.log('chat or connections not found');
 			return;
 		}
 

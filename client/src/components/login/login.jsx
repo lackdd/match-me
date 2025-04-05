@@ -29,7 +29,6 @@ function Login() {
 			setError('');
 			const token = response.data.payload;
 			await login(token);
-			console.log('Login successful: ', token);
 			// Navigate to dashboard or other protected route
 			history('/dashboard');
 		} catch (error) {
@@ -92,7 +91,7 @@ function Login() {
 				{/*		name='remember'*/}
 				{/*		id='remember-me-input'/>*/}
 				{/*	&nbsp;*/}
-				{/*	/!* todo add functionality to keep token in storagr for 30 days *!/*/}
+				{/*	/!* todo add functionality to keep token in storage for 30 days *!/*/}
 				{/*	Remember for 30 days*/}
 				{/*</label>*/}
 				<label>

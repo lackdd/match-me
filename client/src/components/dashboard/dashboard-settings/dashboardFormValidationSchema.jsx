@@ -18,11 +18,11 @@ export const dashboardFormValidationSchema =
 			})
 			.required('Required'),
 		// .typeError("Required"),
-		age: yup.number()
-			.required('Required')
-			.typeError('Required')
-			.min(16, 'Minimum age is 16')
-			.max(120, 'Maximum age is 120'),
+		// age: yup.number()
+		// 	.required('Required')
+		// 	.typeError('Required')
+		// 	.min(16, 'Minimum age is 16')
+		// 	.max(120, 'Maximum age is 120'),
 
 		// step 2
 		preferredMethod:

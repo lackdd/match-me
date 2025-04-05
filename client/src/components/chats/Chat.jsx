@@ -63,7 +63,6 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 			await axios.post(`${VITE_BACKEND_URL}/api/chat/mark-as-read/${receiverUserId}`, {}, {
 				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
-			console.log('Marked messages from', receiverUsername, 'as read');
 
 			// Notify parent component that messages are read
 			if (onMessagesRead) {
@@ -186,7 +185,6 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 				// subscribe to private messages for the logged in user
 				stompClient.subscribe(`/user/${normalizedUsername}/queue/messages`, (msg) => {
 					const newMsg = JSON.parse(msg.body);
-					console.log('📩 Incoming message:', msg.body);
 					setMessages((prev) => {
 						const exists = prev.some(m => m.id === newMsg.id);
 						return exists ? prev : [...prev, newMsg];
@@ -201,21 +199,17 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 				// Subscribe to status updates
 				stompClient.subscribe(`/user/${normalizedUsername}/queue/status`, (statusMsg) => {
 					const status = JSON.parse(statusMsg.body);
-					console.log('👤 Status update received:', status);
 
 					// Only process if it's from the currently selected user
 					if (status.userId === receiverUserId) {
 						if (status.status === 'TYPING') {
-							console.log(`User ${status.username} is typing...`);
 							setPeerIsTyping(true);
 						} else {
 							setPeerIsTyping(false);
 
 							if (status.status === 'ACTIVE') {
-								console.log(`User ${status.username} is online`);
 								setPeerIsOnline(true);
 							} else {
-								console.log(`User ${status.username} is offline`);
 								setPeerIsOnline(false);
 							}
 						}
@@ -234,7 +228,6 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 							status: 'ACTIVE'
 						})
 					});
-					console.log(`Sent ACTIVE status to user ${receiverUserId}`);
 
 					// Mark messages from this sender as read when opening the chat
 					markMessagesAsRead();
@@ -258,7 +251,6 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 						status: 'INACTIVE'
 					})
 				});
-				console.log(`Sent INACTIVE status to user ${receiverUserId} before disconnecting`);
 			}
 			stompClient.deactivate();
 		};
@@ -266,7 +258,6 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 
 	// send message in chat
 	const sendMessage = () => {
-		console.log('user id:', userId);
 		if (client && message.trim() && receiverUsername) {
 			client.publish({
 				destination: '/app/private-message',
@@ -299,7 +290,6 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 							status: 'ACTIVE'
 						})
 					});
-					console.log(`Sent ACTIVE status after sending message to clear typing indicator`);
 				}, 100); // Small delay to ensure message is processed first
 			}
 		}
@@ -366,7 +356,6 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 		const chat = document.getElementById('chat');
 
 		if (!chat || !connections) {
-			console.log('chat or connections not found');
 			return;
 		}
 

@@ -75,8 +75,6 @@ function Main() {
 	);
 }
 
-
-// todo disable strict mode in production
 createRoot(document.getElementById('root')).render(
 	// <StrictMode>
 	//     <Main />

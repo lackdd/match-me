@@ -26,7 +26,6 @@ export const openSettings = (event) => {
 
 export const changeImage = async (event, setMyDataFormatted, setImage, tokenValue, setLoadingImage) => {
 	if (event.target.files && event.target.files[0]) {
-		// const imageUrl = (URL.createObjectURL(event.target.files[0])); // show local preview before upload
 		setLoadingImage(true);
 		// upload to cloudinary
 		const uploadedUrl = await uploadToCloudinary(event.target.files[0]);
@@ -36,11 +35,8 @@ export const changeImage = async (event, setMyDataFormatted, setImage, tokenValu
 				...prev,
 				profilePicture: uploadedUrl
 			}));
-			console.log('Cloudinary image public ID:', publicId);
 			setImage(uploadedUrl);
 			await sendPictureToBackend(publicId, tokenValue);
-			/*setImageUrl(uploadedUrl); // store the uploaded image url
-			console.log("Cloudinary image url:", uploadedUrl);*/
 		} else {
 			console.log('Failed to upload image.');
 		}
@@ -61,7 +57,6 @@ export const sendPictureToBackend = async (publicId, tokenValue) => {
 				}
 			}
 		);
-		console.log('Profile picture updated successfully');
 		return response.data.payload;
 	} catch (error) {
 		if (error.response) {
@@ -84,39 +79,3 @@ export const backToObject = (array, options) => {
 	const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
 	return arrayOfObjects;
 };
-
-// export const formatDataForView = (data, isDataFormatted) => {
-// 	if (data !== null && data && isDataFormatted === false) {
-// 		const updatedProfile = {
-// 			...data,
-// 			location: formatLocation(data.location),
-// 			// location: myDataFormatted.location,
-// 			preferredMusicGenres: Array.isArray(data.preferredMusicGenres)
-// 				? formatData(data.preferredMusicGenres)
-// 				: data.preferredMusicGenres,
-// 			preferredMethod: Array.isArray(data.preferredMethod)
-// 				? formatData(data.preferredMethod)
-// 				: data.preferredMethod,
-// 			additionalInterests: Array.isArray(data.additionalInterests)
-// 				? formatData(data.additionalInterests)
-// 				: data.additionalInterests,
-// 			personalityTraits: Array.isArray(data.personalityTraits)
-// 				? formatData(data.personalityTraits)
-// 				: data.personalityTraits,
-// 			goalsWithMusic: Array.isArray(data.goalsWithMusic)
-// 				? formatData(data.goalsWithMusic)
-// 				: data.goalsWithMusic
-// 		};
-// 		return updatedProfile;
-//
-// 		// Check if the profile data has changed before updating the state
-// 		// if (JSON.stringify(updatedProfile) !== JSON.stringify(data)) {
-// 		// 	setMyDataFormatted((prev) => ({
-// 		// 		...prev,
-// 		// 		...updatedProfile
-// 		// 	}));
-// 		// 	isDataFormatted.current = true;
-// 		// }
-// 	}
-// 	return data;
-// }

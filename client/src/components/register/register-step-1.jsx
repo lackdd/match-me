@@ -264,9 +264,7 @@ function Step1({formOneData, setFormOneData, onSubmit}) {
 				{/* Submit Button */}
 				<div className='register-buttons-container'>
 					<button
-						// className={`next wide small ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
 						type='submit'
-						// disabled={Object.keys(errors).length > 0}
 						className={`next wide small ${!isValid ? 'disabled' : ''}`} // Disabled by default
 						disabled={!isValid} // Only enabled when the form is valid
 					>

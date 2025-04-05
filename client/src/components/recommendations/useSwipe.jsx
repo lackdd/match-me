@@ -30,11 +30,9 @@ export function useSwipe() {
 		if (swipeDistance > minSwipeDistance) {
 			// right to left swipe
 			swipeFunction('like');
-			console.log('like swipe');
 		} else if (swipeDistance < -minSwipeDistance) {
 			// left to right swipe
 			swipeFunction('dislike');
-			console.log('dislike swipe');
 		}
 
 		touchStartX.current = null;

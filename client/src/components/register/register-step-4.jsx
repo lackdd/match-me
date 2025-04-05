@@ -19,7 +19,7 @@ function Step4({stepFunctions, image, imageUrl, onImageChange}) {
 			<div className='form-title picture-title'>
 				<h1>Choose a profile picture</h1>
 			</div>
-			{/* todo add loading animaton to picture upload */}
+
 			{/*todo add ability to move picture, zoom in and out*/}
 			<div className={'photo-container'}>
 
