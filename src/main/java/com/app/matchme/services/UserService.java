@@ -86,6 +86,38 @@ public class UserService {
         throw new BusinessException("Failed to confirm that users are connected");
     }
 
+    private int[] calculateIdealMatchAgeRange(String ageRange) {
+        if (ageRange.equals("any")) {
+            return new int[]{0, 150};
+        }
+        if (ageRange.contains("-")) {
+            String[] parts = ageRange.split("-");
+            if (parts.length == 2) {
+                int min = Integer.parseInt(parts[0]);
+                int max = Integer.parseInt(parts[1]);
+                return new int[]{min, max};
+            }
+        }
+        throw new BusinessException("Ideal match age not in bounds");
+    }
+
+    private int[] calculateExperienceRange(String experience) {
+        if (experience.equals("any")) {
+            return new int[]{0, 100};
+        }
+
+        if (experience.contains("-")) {
+            String[] parts = experience.split("-");
+            if (parts.length == 2) {
+                int min = Integer.parseInt(parts[0]);
+                int max = Integer.parseInt(parts[1]);
+                return new int[]{min, max};
+            }
+        }
+
+        throw new BusinessException("Ideal match uears of experience not in bounds");
+    }
+
     public Integer calculatePoints(User user, User currentUser) {
         int points = 0;
         List<String> musicGenres = user.getPreferredMusicGenres();
@@ -110,23 +142,6 @@ public class UserService {
             points++;
         }
         return points;
-    }
-
-    private int[] calculateExperienceRange(String experience) {
-        if (experience.equals("any")) {
-            return new int[]{0, 100};
-        }
-
-        if (experience.contains("-")) {
-            String[] parts = experience.split("-");
-            if (parts.length == 2) {
-                int min = Integer.parseInt(parts[0]);
-                int max = Integer.parseInt(parts[1]);
-                return new int[]{min, max};
-            }
-        }
-
-        throw new BusinessException("Ideal match uears of experience not in bounds");
     }
 
     public boolean checkEmail(String email) {
@@ -183,26 +198,9 @@ public class UserService {
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
         List<User> potentialMatches = findPotentialMatchesByLocation(currentUser);
 
-        Integer idealMatchAgeMin;
-        int idealMatchAgeMax;
-        if (currentUser.getIdealMatchAge().length() == 5) {
-            idealMatchAgeMin = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2));
-            idealMatchAgeMax = Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 5));
-        } else if (currentUser.getIdealMatchAge().length() == 6) {
-            idealMatchAgeMin = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 2));
-            idealMatchAgeMax = Integer.parseInt(currentUser.getIdealMatchAge().substring(3, 6));
-        } else if (currentUser.getIdealMatchAge().trim().equals("any")) {
-            idealMatchAgeMin = 0;
-            idealMatchAgeMax = 150;
-        } else if (currentUser.getIdealMatchAge().length() == 7) {
-            idealMatchAgeMin = Integer.parseInt(currentUser.getIdealMatchAge().substring(0, 3));
-            idealMatchAgeMax = Integer.parseInt(currentUser.getIdealMatchAge().substring(4, 7));
-        } else if (currentUser.getIdealMatchAge().equals("120+")) {
-            idealMatchAgeMin = 120;
-            idealMatchAgeMax = 1000;
-        } else {
-            throw new BusinessException("Ideal match age not in bounds.");
-        }
+        int[] ageRange = calculateIdealMatchAgeRange(currentUser.getIdealMatchAge());
+        int idealMatchAgeMin = ageRange[0];
+        int idealMatchAgeMax = ageRange[1];
 
         Map<User, Integer> userPointsMap = potentialMatches.stream()
                 .filter(user -> !currentUser.getSwipedUsers().contains(user.getId()))
