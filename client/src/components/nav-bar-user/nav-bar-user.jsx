@@ -120,7 +120,6 @@ function NavigatorUser() {
 							`profile-link ${isActive ? 'current' : ''}`
 						}>
 							{!imageUrl.endsWith('null') && (
-								// <AdvancedImage cldImg={new CloudinaryImage(myDataFormatted.profilePicture)} />
 								<img src={imageUrl} alt='Profile' className='profile-picture'/>
 							)}
 							{imageUrl.endsWith('null') && (

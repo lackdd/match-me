@@ -63,14 +63,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 		mode: 'onChange'
 	});
 
-	useEffect(() => {
-		console.log('Errors:', errors);
-	}, [errors]);
-
-	useEffect(() => {
-		console.log('myData: ', myData);
-	}, [myData]);
-
 	// Update form data when geolocation is available
 	useEffect(() => {
 		if (useCurrentLocation && geolocation.loaded && geolocation.coordinates.lat) {
@@ -121,16 +113,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 		}
 	}, [geolocation, useCurrentLocation, setValue, setMyData, googleApiKey]);
 
-	// // Handle max distance change
-	// const handleMaxDistanceChange = (e) => {
-	// 	const value = parseInt(e.target.value, 10);
-	// 	setMaxMatchRadius(value);
-	// 	setValue('maxMatchRadius', value, { shouldValidate: true });
-	// 	setMyData((prev) => ({
-	// 		...prev,
-	// 		maxMatchRadius: value
-	// 	}));
-	// };
 
 	useEffect(() => {
 		if (!geolocation?.loaded) {
@@ -143,7 +125,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 
 	// on submit send data to backend
 	const Submit = async (formattedData) => {
-		// console.log('Sending:', JSON.stringify(formattedData, null, 2));
 		try {
 			const response = await
 				axios.patch(`${VITE_BACKEND_URL}/api/me/profile`, formattedData, {
@@ -153,8 +134,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					}
 
 				});
-			// console.log('User data edited successfully');
-			// console.log('Data: ', response.data);
 		} catch (error) {
 			if (error.response) {
 				console.error('Backend error:', error.response.data); // Server responded with an error
@@ -216,10 +195,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					  };
 
 					  const locationData = {
-						  /*location: data.location.label,*/
 						  latitude: data.latitude,
 						  longitude: data.longitude,
-						  /*maxMatchRadius: data.maxMatchRadius || 50*/
 					  }
 
 					  SubmitLocation(locationData);
@@ -288,35 +265,36 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 
 				{/* Gender and Age */}
 				<div className='line'>
-					<label className='long'>
-						Gender*
-						<Select
-							className={`basic-single long`}
-							classNamePrefix='select'
-							wideMenu={false}
-							name={'gender'}
-							isValid={!errors.gender && watch('gender') !== ''}
-							isError={errors.gender} // Set error if cleared
-							isClearable
-							isSearchable
-							styles={customStyles}
-							menuTop={false}
-							options={genderOptions}
-							placeholder='Select gender'
-							// value={watch('gender') || myData.gender}
-							value={watch('gender')}
-							autoComplete={'off'}
-							onChange={(selectedOption) => {
-								setValue('gender', selectedOption, {shouldValidate: true});  // ✅ Set entire object, not just string
-								// setMyData((prev) => ({ ...prev, gender: selectedOption }));
-								clearErrors('gender');
-							}}
+					{/* todo add changing age to backend */}
+					{/*<label className='long'>*/}
+					{/*	Gender**/}
+					{/*	<Select*/}
+					{/*		className={`basic-single long`}*/}
+					{/*		classNamePrefix='select'*/}
+					{/*		wideMenu={false}*/}
+					{/*		name={'gender'}*/}
+					{/*		isValid={!errors.gender && watch('gender') !== ''}*/}
+					{/*		isError={errors.gender} // Set error if cleared*/}
+					{/*		isClearable*/}
+					{/*		isSearchable*/}
+					{/*		styles={customStyles}*/}
+					{/*		menuTop={false}*/}
+					{/*		options={genderOptions}*/}
+					{/*		placeholder='Select gender'*/}
+					{/*		// value={watch('gender') || myData.gender}*/}
+					{/*		value={watch('gender')}*/}
+					{/*		autoComplete={'off'}*/}
+					{/*		onChange={(selectedOption) => {*/}
+					{/*			setValue('gender', selectedOption, {shouldValidate: true});  // ✅ Set entire object, not just string*/}
+					{/*			// setMyData((prev) => ({ ...prev, gender: selectedOption }));*/}
+					{/*			clearErrors('gender');*/}
+					{/*		}}*/}
 
-							onBlur={() => trigger('gender')} // Trigger validation when user leaves the field
-						/>
+					{/*		onBlur={() => trigger('gender')} // Trigger validation when user leaves the field*/}
+					{/*	/>*/}
 
-						<ErrorElement errors={errors} id={'gender'}/>
-					</label>
+					{/*	<ErrorElement errors={errors} id={'gender'}/>*/}
+					{/*</label>*/}
 
 					<label className='long'>
 						Age*
@@ -329,7 +307,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 								${errors.age ? 'error' : ''}
 								${!errors.age && watch('age') ? 'valid' : ''}`}
 								{...register('age')}
-								// value={watch('age') || myData.age}
 								value={watch('age')}
 								autoComplete={'off'}
 								min={0}
@@ -338,7 +315,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 								onChange={(e) => {
 									const value = e.target.value ? parseInt(e.target.value, 10) : 0;
 									setValue('age', value, {shouldValidate: true});
-									// setMyData((prev) => ({ ...prev, age: value}));
 								}}
 							/>
 							<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger}/>
@@ -369,7 +345,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					errors={errors}
 					setError={setError}
 					clearErrors={clearErrors}
-					// setFormTwoData={setMyData}
 				/>
 
 				<CustomSelect
@@ -386,7 +361,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					errors={errors}
 					setError={setError}
 					clearErrors={clearErrors}
-					// setFormTwoData={setMyData}
 				/>
 
 				<CustomSelect
@@ -403,7 +377,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					errors={errors}
 					setError={setError}
 					clearErrors={clearErrors}
-					// setFormTwoData={setMyData}
 				/>
 
 				<CustomSelect
@@ -419,7 +392,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					errors={errors}
 					setError={setError}
 					clearErrors={clearErrors}
-					// setFormTwoData={setMyData}
 				/>
 
 				<CustomSelect
@@ -435,7 +407,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					errors={errors}
 					setError={setError}
 					clearErrors={clearErrors}
-					// setFormTwoData={setMyData}
 				/>
 
 
@@ -458,7 +429,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 								${errors.yearsOfMusicExperience ? 'error' : ''}
 								${!errors.yearsOfMusicExperience && (watch('yearsOfMusicExperience') || watch('yearsOfMusicExperience') === 0) ? 'valid' : ''}`}
 								{...register('yearsOfMusicExperience')}
-								// value={watch('yearsOfMusicExperience') || myData.yearsOfMusicExperience}
 								value={watch('yearsOfMusicExperience')}
 								autoComplete={'off'}
 								min={0}
@@ -473,7 +443,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 										return;
 									}
 									setValue('yearsOfMusicExperience', value, {shouldValidate: true});
-									// setMyData((prev) => ({ ...prev, yearsOfMusicExperience: value}));
 								}}
 							/>
 							<IncrementDecrementButtons id={'yearsOfMusicExperience'} watch={watch} setValue={setValue}
@@ -495,7 +464,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							${errors.linkToMusic ? 'error' : ''}
 							${!errors.linkToMusic && watch('linkToMusic') ? 'valid' : ''}`}
 							placeholder='Link to your Spotify etc'
-							// value={watch('linkToMusic') || myData.linkToMusic}
 							value={watch('linkToMusic')}
 							{...register('linkToMusic')}
 							autoComplete={'off'}
@@ -503,79 +471,12 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							onChange={(e) => {
 								const value = e.target.value;
 								setValue('linkToMusic', value, {shouldValidate: true});
-								// setMyData((prev) => ({ ...prev, linkToMusic: value }));
 							}}
 						/>
 						<ErrorElement errors={errors} id={'linkToMusic'}/>
 					</label>
 
 				</div>
-				{/*<div className={'line large'}>*/}
-
-				{/*	/!* todo  inital value not set and valid disappears when cancelled*!/*/}
-				{/*	<label id='location' className={'long'}>*/}
-				{/*		Location**/}
-				{/*		<br/>*/}
-				{/*		<Select*/}
-				{/*			options={options}*/}
-				{/*			onInputChange={(val) => {*/}
-				{/*				// setInputValue(val);*/}
-				{/*				fetchPlaces(val);*/}
-				{/*			}}*/}
-				{/*			placeholder='Search for your city'*/}
-				{/*			isClearable={true}*/}
-				{/*			styles={customStyles}*/}
-				{/*			wideMenu={true}*/}
-				{/*			closeMenuOnSelect={true}*/}
-				{/*			value={watch('location')}*/}
-				{/*			autoComplete={'off'}*/}
-				{/*			isValid={*/}
-				{/*				!errors.location &&*/}
-				{/*				watch('location') &&*/}
-				{/*				watch('location').label &&*/}
-				{/*				watch('location').value*/}
-				{/*			}*/}
-				{/*			isError={!!errors.location} // Check if error exists*/}
-				{/*			onChange={(selectedOption) => {*/}
-				{/*				if (!selectedOption) {*/}
-				{/*					// Clear the location value in both the form state and component state*/}
-				{/*					setValue('location', null, { shouldValidate: true });*/}
-				{/*					clearErrors('location'); // Optionally clear the error state for location*/}
-				{/*				} else {*/}
-				{/*					// Handle setting the location from the Google API*/}
-				{/*					fetch(`https://maps.googleapis.com/maps/api/geocode/json?place_id=${selectedOption.value}&key=${googleApiKey}&language=en`)*/}
-				{/*						.then(response => response.json())*/}
-				{/*						.then(data => {*/}
-				{/*							if (data.status === "OK" && data.results.length > 0) {*/}
-				{/*								const addressComponents = data.results[0].address_components;*/}
-
-				{/*								let region = "";*/}
-				{/*								let country = "";*/}
-
-				{/*								// Extract administrative area and country explicitly*/}
-				{/*								addressComponents.forEach(component => {*/}
-				{/*									if (component.types.includes("administrative_area_level_1")) {*/}
-				{/*										region = component.long_name;*/}
-				{/*									}*/}
-				{/*									if (component.types.includes("country")) {*/}
-				{/*										country = component.long_name;*/}
-				{/*									}*/}
-				{/*								});*/}
-
-				{/*								const properName = `${region}${country ? `, ${country}` : ""}`;*/}
-
-				{/*								// Set the location value in the form state with value and label*/}
-				{/*								setValue('location', { value: selectedOption.value, label: properName }, { shouldValidate: true });*/}
-				{/*							}*/}
-				{/*						})*/}
-				{/*						.catch(error => console.error("Geocoding error:", error));*/}
-				{/*				}*/}
-				{/*			}}*/}
-				{/*			onBlur={() => trigger('location')} // Trigger validation when user leaves the field*/}
-				{/*		/>*/}
-				{/*		<ErrorElement errors={errors}  id={'location'}/>*/}
-				{/*	</label>*/}
-				{/*</div>*/}
 
 				<div className={'line large'}>
 					<label id='location' className={'long'}>
@@ -712,34 +613,6 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					</label>
 				</div>
 
-				{/*/!* Max match radius slider *!/*/}
-				{/*<div className={'line large'}>*/}
-				{/*	<label id='maxMatchRadius' className={'long'}>*/}
-				{/*		Maximum matching distance*/}
-				{/*		<br/>*/}
-				{/*		<div className="distance-slider-container">*/}
-				{/*			<input*/}
-				{/*				type="range"*/}
-				{/*				min="5"*/}
-				{/*				max="500"*/}
-				{/*				step="5"*/}
-				{/*				value={watch('maxMatchRadius')}*/}
-				{/*				// value={myData.maxMatchRadius || watch('maxMatchRadius')}*/}
-				{/*				className="distance-slider"*/}
-				{/*				onChange={handleMaxDistanceChange}*/}
-				{/*				{...register('maxMatchRadius')}*/}
-				{/*			/>*/}
-
-				{/*		</div>*/}
-				{/*		<div className="distance-labels">*/}
-				{/*			<span>5 km</span>*/}
-				{/*			<div className="distance-value">{watch('maxMatchRadius')} km</div>*/}
-				{/*			<span>500 km</span>*/}
-				{/*		</div>*/}
-				{/*		<ErrorElement errors={errors} id={'maxMatchRadius'}/>*/}
-				{/*	</label>*/}
-				{/*</div>*/}
-
 				{/* Hidden inputs for latitude and longitude */}
 				<input
 					type='hidden'
@@ -765,12 +638,10 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							placeholder='Say a few words about yourself...'
 							{...register('description')}
 							autoComplete={'off'}
-							// value={watch('description') || myData.description}
 							value={watch('description')}
 							onChange={(e) => {
 								const value = e.target.value;
 								setValue('description', value, {shouldValidate: true});
-								// setMyData((prev) => ({ ...prev, description: value }));
 							}}
 						/>
 						<ErrorElement errors={errors} id={'description'}/>
@@ -786,9 +657,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					Cancel
 				</button>
 				<button
-					// className={`save ${Object.keys(errors).length > 0 ? 'disabled' : ''}`}
 					className={`save ${isValid ? '' : 'disabled'}`} // Disabled by default
-					//disabled={errors.length > 0} // Only enabled when the form is valid
 					onClick={closeSettings}
 					type={'submit'}
 					form={'dashboard-form'}

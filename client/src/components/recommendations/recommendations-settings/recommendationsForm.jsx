@@ -34,7 +34,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 		clearErrors,
 		trigger,
 		reset,
-		register,
 		formState: { errors },
 	} = useForm({
 		defaultValues: preferencesData,
@@ -53,8 +52,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						'Content-Type': 'application/json'}
 
 				});
-			console.log("User preferences edited successfully");
-			console.log("Data: ", response.data);
 
 			resetMatches();
 
@@ -96,8 +93,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					}
 
 				});
-			console.log('Max radius data edited successfully');
-			console.log('Data: ', response.data);
 		} catch (error) {
 			if (error.response) {
 				console.error('Backend error:', error.response.data); // Server responded with an error
@@ -129,8 +124,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 
 				  SubmitLocation(data.maxMatchRadius)
 
-				  // console.log("Formatted data", formattedData);
-
 				  Submit(formattedData);
 			  })}
 			  autoComplete={'off'}
@@ -152,7 +145,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 							max="500"
 							step="5"
 							value={watch('maxMatchRadius')}
-							// value={myData.maxMatchRadius || watch('maxMatchRadius')}
 							className="distance-slider"
 							onChange={handleMaxDistanceChange}
 						/>
@@ -174,7 +166,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						// // components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -187,19 +178,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						isOptionDisabled={() => (watch('idealMatchGenres') || []).length >= 3}
 						styles={customStyles}
 						value={watch('idealMatchGenres')}
-						// value={watch('idealMatchGenres') || preferencesData.idealMatchGenres}
 						isValid={!errors.idealMatchGenres && (watch('idealMatchGenres') || []).length > 0}
 						isError={errors.idealMatchGenres} // Check if error exists
 						onChange={(selectedOption) => {
 							setValue('idealMatchGenres', selectedOption, {shouldValidate: true});
-							// setPreferencesData((prev) => ({...prev, idealMatchGenres: selectedOption})); // Persist data correctly
 							handleCloseMenu(selectedOption);
-
-							// if (!selectedOption || selectedOption.length === 0) {
-							// 	setError('idealMatchGenres', {message: 'Required'});
-							// } else {
-							// 	clearErrors('idealMatchGenres');
-							// }
 						}}
 						onBlur={() => trigger(name)} // Trigger validation when user leaves the field
 					/>
@@ -215,7 +198,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -228,19 +210,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						isOptionDisabled={() => (watch('idealMatchMethods') || []).length >= 3}
 						styles={customStyles}
 						value={watch('idealMatchMethods')}
-						// value={watch('idealMatchMethods') || preferencesData.idealMatchMethods}
 						isValid={!errors.idealMatchMethods && (watch('idealMatchMethods') || []).length > 0}
 						isError={errors.idealMatchMethods} // Check if error exists
 						onChange={(selectedOption) => {
 							setValue('idealMatchMethods', selectedOption, {shouldValidate: true});
-							// setPreferencesData((prev) => ({...prev, matchPreferredMethods: selectedOption})); // Persist data correctly
 							handleCloseMenu(selectedOption);
-
-							// if (!selectedOption || selectedOption.length === 0) {
-							// 	setError('idealMatchMethods', {message: 'Required'});
-							// } else {
-							// 	clearErrors('idealMatchMethods');
-							// }
 						}}
 						onBlur={() => trigger('idealMatchMethods')} // Trigger validation when user leaves the field
 					/>
@@ -254,7 +228,6 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 					<Select
 						className='basic-multi-select long'
 						classNamePrefix='select'
-						// components={makeAnimated()}
 						closeMenuOnSelect={false}
 						isClearable={true}
 						isSearchable={true}
@@ -267,19 +240,11 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						isOptionDisabled={() => (watch('idealMatchGoals') || []).length >= 3}
 						styles={customStyles}
 						value={watch('idealMatchGoals')}
-						// value={watch('idealMatchGoals') || preferencesData.idealMatchGoals}
 						isValid={!errors.idealMatchGoals && (watch('idealMatchGoals') || []).length > 0}
 						isError={errors.idealMatchGoals} // Check if error exists
 						onChange={(selectedOption) => {
 							setValue('idealMatchGoals', selectedOption, {shouldValidate: true});
-							// setPreferencesData((prev) => ({...prev, idealMatchGoals: selectedOption})); // Persist data correctly
 							handleCloseMenu(selectedOption);
-
-							// if (!selectedOption || selectedOption.length === 0) {
-							// 	setError('idealMatchGoals', {message: 'Required'});
-							// } else {
-							// 	clearErrors('idealMatchGoals');
-							// }
 						}}
 						onBlur={() => trigger('idealMatchGoals')} // Trigger validation when user leaves the field
 					/>
@@ -296,24 +261,15 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						menuWidth='short'
 						isClearable={true}
 						isSearchable={true}
-						// components={makeAnimated()}
 						name={'idealMatchGender'}
 						placeholder='Select gender'
 						options={matchGenderOptions}
 						styles={customStyles}
 						value={watch('idealMatchGender')}
-						// value={watch('idealMatchGender') || preferencesData.idealMatchGender}
 						isValid={!errors.idealMatchGender && watch('idealMatchGender')}
 						isError={errors.idealMatchGender} // Check if error exists
 						onChange={(selectedOption) => {
 							setValue('idealMatchGender', selectedOption, {shouldValidate: true});
-							// setPreferencesData((prev) => ({...prev, idealMatchGender: selectedOption})); // Persist data correctly
-
-							// if (!selectedOption || Object.keys(selectedOption).length === 0) {
-							// 	setError('idealMatchGender', {message: 'Required'});
-							// } else {
-							// 	clearErrors('idealMatchGender');
-							// }
 						}}
 						onBlur={() => trigger('idealMatchGender')} // Trigger validation when user leaves the field
 					/>
@@ -330,24 +286,15 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						isSearchable={true}
 						menuTop={true}
 						menuPlacement={'top'}
-						// components={makeAnimated()}
 						name={'idealMatchAge'}
 						placeholder='Select age gap'
 						options={matchAgeOptions}
 						styles={customStyles}
 						value={watch('idealMatchAge')}
-						// value={watch('idealMatchAge') || preferencesData.idealMatchAge}
 						isValid={!errors.idealMatchAge && watch('idealMatchAge')}
 						isError={errors.idealMatchAge} // Check if error exists
 						onChange={(selectedOption) => {
 							setValue('idealMatchAge', selectedOption, {shouldValidate: true});
-							// setPreferencesData((prev) => ({...prev, idealMatchAge: selectedOption})); // Persist data correctly
-
-							// if (!selectedOption || Object.keys(selectedOption).length === 0) {
-							// 	setError('idealMatchAge', {message: 'Required'});
-							// } else {
-							// 	clearErrors('idealMatchAge');
-							// }
 						}}
 						onBlur={() => trigger('idealMatchAge')} // Trigger validation when user leaves the field
 					/>
@@ -367,24 +314,15 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						isSearchable={true}
 						menuTop={true}
 						menuPlacement={'top'}
-						// components={makeAnimated()}
 						name={'idealMatchYearsOfExperience'}
 						placeholder='Select experience'
 						options={matchExperienceOptions}
 						styles={customStyles}
 						value={watch('idealMatchYearsOfExperience')}
-						// value={watch('idealMatchYearsOfExperience') || preferencesData.idealMatchYearsOfExperience}
 						isValid={!errors.idealMatchYearsOfExperience && watch('idealMatchYearsOfExperience')}
 						isError={errors.idealMatchYearsOfExperience} // Check if error exists
 						onChange={(selectedOption) => {
 							setValue('idealMatchYearsOfExperience', selectedOption, {shouldValidate: true});
-							// setPreferencesData((prev) => ({...prev, idealMatchYearsOfExperience: selectedOption})); // Persist data correctly
-
-							// if (!selectedOption || Object.keys(selectedOption).length === 0) {
-							// 	setError('idealMatchYearsOfExperience', {message: 'Required'});
-							// } else {
-							// 	clearErrors('idealMatchYearsOfExperience');
-							// }
 						}}
 						onBlur={() => trigger('idealMatchYearsOfExperience')} // Trigger validation when user leaves the field
 					/>
@@ -401,26 +339,16 @@ export function RecommendationsForm({preferencesData, setPreferencesData, setLoa
 						isSearchable={true}
 						menuTop={true}
 						menuPlacement={'top'}
-						// components={makeAnimated()}
 						name={'idealMatchLocation'}
 						placeholder='Select proximity'
 						options={matchLocationsOptions}
 						styles={customStyles}
 						value={watch('idealMatchLocation')}
-						// value={watch('idealMatchLocation') || preferencesData.idealMatchLocation}
 						isValid={!errors.idealMatchLocation && watch('idealMatchLocation')}
 						isError={errors.idealMatchLocation} // Check if error exists
 						onChange={(selectedOption) => {
 							setValue('idealMatchLocation', selectedOption);
 							clearErrors("idealMatchLocation");
-							console.log("New selection:", selectedOption); // Debugging
-							// setPreferencesData((prev) => ({...prev, idealMatchLocation: selectedOption})); // Persist data correctly
-
-							// if (!selectedOption || Object.keys(selectedOption).length === 0) {
-							// 	setError('idealMatchLocation', {message: 'Required'});
-							// } else {
-							// 	clearErrors('idealMatchLocation');
-							// }
 						}}
 						onBlur={() => trigger('idealMatchLocation')} // Trigger validation when user leaves the field
 					/>

@@ -99,7 +99,6 @@ function Dashboard() {
                         // bio: res3.data.payload
                     });
 
-					// const formattedRes2 = formatDataForView(res2.data.payload);
 
 					// data for dashboard itself
 					setMyDataFormatted( {
@@ -107,15 +106,11 @@ function Dashboard() {
 							...formatDataForView(res2.data.payload),
 					});
 
-					// setImageUrl(...res1.data.payload.profilePicture)
-
 					// liked users count
 					if (res3.data.payload.length) {
 						setLiked(res3.data.payload.length || 0);
 					}
 
-
-					console.log("Data fetched!");
 				} catch (error) {
 					setError(true);
 					setErrorMessage(error.message);

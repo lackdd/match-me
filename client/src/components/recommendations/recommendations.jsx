@@ -53,17 +53,9 @@ function Recommendations() {
 
 	// reset current match number and fetch more matches
 	const resetMatches = () => {
-		console.log('Getting new matches...');
 		setCurrentMatchNum(0);
 		setFetchMoreMatches(prev => !prev);
 	};
-
-	// // convert data back to objects
-	// const backToObject = (array, options) => {
-	// 	const formattedArray = array.map(item => item.replaceAll(',', '').trim());
-	// 	const arrayOfObjects = formattedArray.map(item => options.find(option => option.value === item)).filter(Boolean);
-	// 	return arrayOfObjects;
-	// };
 
 	// fetch preferences data
 	useEffect(() => {
@@ -83,8 +75,6 @@ function Recommendations() {
 				const idealMatchMethods = backToObject(response.data.payload.idealMatchMethods, methodsOptions);
 				const idealMatchGoals = backToObject(response.data.payload.idealMatchGoals, goalsOptions);
 
-				console.log('Response: ', response);
-
 				setPreferencesData({
 					idealMatchGender: idealMatchGender,
 					idealMatchAge: idealMatchAge,
@@ -95,8 +85,6 @@ function Recommendations() {
 					idealMatchGoals: idealMatchGoals,
 					maxMatchRadius: response.data.payload.maxMatchRadius
 				});
-
-				console.log('Data fetched!');
 			} catch (error) {
 				setError(true);
 				setErrorMessage(error.message);
@@ -199,23 +187,10 @@ function Recommendations() {
 			getMatchData();
 		} else {
 			// setLoading(false); // disable loading state
-			console.log('No match IDs to fetch data for');
-			// setLoading(false);
 		}
 
 
 	}, [matchIDs]);
-
-	// // just to log data
-	// useEffect(() => {
-	// 	console.log('Matches: ', matches);
-	// }, [matches]);
-	//
-	//
-	// // just to log data
-	// useEffect(() => {
-	// 	console.log('Current match data: ', currentMatch);
-	// }, [currentMatch]);
 
 
 	// logic when user swipes left or right (likes or dislikes)
@@ -227,17 +202,13 @@ function Recommendations() {
 		setSwipedCount(prev => prev + 1);
 
 		if (likeOrDislike === 'like') {
-			console.log('Like!');
 			matchContainer.classList.add('like-animation');
 		}
 
 		if (likeOrDislike === 'dislike') {
-			console.log('Dislike!');
 			swipedRight = false;
 			matchContainer.classList.add('dislike-animation');
 		}
-
-		console.log('current match id: ', currentMatch.id);
 
 		// send data to backend
 		const swipedUser = () => {
@@ -325,23 +296,6 @@ function Recommendations() {
 		}
 
 	}, [currentMatchNum, matches]);
-
-
-	// function to reset button styles
-	// const resetButtons = () => {
-	// 	console.log(
-	// 		"Resetting buttons...123"
-	// 	);
-	// 	//reset buttons styles
-	// 	const dislikeButton = document.getElementById('dislike-button');
-	// 	const likeButton = document.getElementById('like-button');
-	// 	const arrows = document.getElementsByClassName('arrow')
-	// 	dislikeButton.classList.remove('hidden');
-	// 	dislikeButton.classList.remove('swiping');
-	// 	likeButton.classList.remove('hidden');
-	// 	likeButton.classList.remove('swiping');
-	// 	[...arrows].map(arrow => {arrow.classList.remove('hidden');});
-	// }
 
 	// function to toggle button styles
 	const toggleDislikeButtons = () => {
@@ -619,7 +573,6 @@ function Recommendations() {
 												toggleDislikeButtons();
 											}}
 											style={{
-												// width: `calc(4rem + ${swipeProgress * 100}px)`, // Expands with swipe
 												transition: swipeProgress > 0 ? 'all 0.1s ease-out' : 'all 0.2s ease-in',
 												width: swipeProgress === 0
 													? '3rem'// Expands only when swipeProgress > 1

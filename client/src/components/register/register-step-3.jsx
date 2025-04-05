@@ -28,20 +28,6 @@ function Step3({formThreeData, setFormThreeData, stepFunctions, formOneData, onS
 		timeout: 27000 // 27 seconds
 	});
 
-// // Only call requestLocation when the user clicks a button
-// 	return (
-// 		<div>
-// 			<button onClick={requestLocation}>Get Location</button>
-// 			{location.loaded && (
-// 				location.error ? (
-// 					<p>Error: {location.error.message}</p>
-// 				) : (
-// 					<p>Latitude: {location.coordinates.lat}, Longitude: {location.coordinates.lng}</p>
-// 				)
-// 			)}
-// 		</div>
-// 	);
-
 	// Initialize react-hook-form with Yup schema
 	const {
 		register,

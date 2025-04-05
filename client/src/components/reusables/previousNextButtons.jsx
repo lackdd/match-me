@@ -10,9 +10,7 @@ export const PreviousNextButtons = ({DeductStep, text = "Next", errors = {}, isV
 				Previous
 			</button>
 			<button
-				// className={`next wide narrow ${Object.keys(errors).length > 0 ? "disabled" : ""}`}
 				type={'submit'}
-				// disabled={Object.keys(errors).length > 0}
 				className={`next wide narrow ${!isValid ? 'disabled' : ''}`} // Disabled by default
 				disabled={!isValid} // Only enabled when the form is valid
 			>

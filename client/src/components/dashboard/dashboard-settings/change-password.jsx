@@ -49,7 +49,6 @@ export function ChangePassword() {
 			console.log('PasswordMatch: ', passwordMatch);
 
 			if (passwordMatch.data.payload === 'Password matches.') {
-				console.log('Password matches!');
 				clearErrors('currentPassword');
 			}
 		} catch (error) {
@@ -76,13 +75,11 @@ export function ChangePassword() {
 					headers: {Authorization: `Bearer ${tokenValue}`}
 				});
 
-			console.log('Password updated: ', response);
 			reset();
 			clearErrors(); // trigger form validation
 		} catch (error) {
 			if (error.response) {
 				console.error('Backend error:', error.response.data); // Server responded with an error
-				// todo display error to user
 			} else {
 				console.error('Request failed:', error.message); // Network error or request issue
 			}

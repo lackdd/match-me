@@ -18,9 +18,6 @@ export function AuthProvider({children}) {
 	// mainly to get profile image url
 	useEffect(() => {
 		const getProfileInfo = async () => {
-
-			console.log('Getting username and profile picture');
-
 			try {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/me`, {
 					headers: {Authorization: `Bearer ${tokenValue}`}
@@ -54,7 +51,6 @@ export function AuthProvider({children}) {
 				},
 				reconnectDelay: 5000,
 				onConnect: async () => {
-					console.log('Connected to WebSocket in AuthContext');
 
 					// Get all connections first, then broadcast status to each
 					await broadcastActiveStatus(client, user.id, token);
@@ -87,7 +83,6 @@ export function AuthProvider({children}) {
 			});
 
 			const connections = response.data.payload;
-			console.log('Broadcasting ACTIVE status to all connections:', connections);
 
 			// Send ACTIVE status update to each connection
 			connections.forEach(connectionId => {
@@ -101,7 +96,6 @@ export function AuthProvider({children}) {
 						status: 'ACTIVE'
 					})
 				});
-				console.log(`Sent ACTIVE status to user ${connectionId}`);
 			});
 		} catch (error) {
 			console.error('Error broadcasting ACTIVE status:', error);
@@ -135,7 +129,6 @@ export function AuthProvider({children}) {
 						status: status
 					})
 				});
-				console.log(`Sent ${status} status to user ${connectionId}`);
 			});
 		} catch (error) {
 			console.error(`Error broadcasting ${status} status:`, error);

@@ -153,9 +153,6 @@ function Connections() {
 				// Wait for all promises to resolve
 				const responses = await Promise.all(connections);
 
-				console.log('Responses: ', responses);
-
-
 				setState(responses);
 				setFetchedState(true); // Indicate that data has been fetched
 
@@ -250,13 +247,6 @@ function Connections() {
 		}
 	}, [currentDataFetched, pendingDataFetched]);
 
-
-	// log current connections
-	useEffect(() => {
-		console.log('Current connections: ', currentConnections);
-		console.log('Pending connections: ', pendingConnections);
-	}, [pendingConnections, currentConnections]);
-
 	// delete connection
 	const deleteConnection = (connectionId, connectionName) => { // connectionId, setConnections, setConnectionsIds
 		// setIsDeleting(true);
@@ -300,9 +290,6 @@ function Connections() {
 				},
 				params: {[paramKey]: toDeleteId.current} // Include request parameters here
 			});
-			// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
-			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
-			console.log('Connection deleted!');
 		} catch (error) {
 			setError(true);
 			setErrorMessage(error.message);
@@ -358,9 +345,6 @@ function Connections() {
 			setPendingConnections((prevConnections) => prevConnections.filter((connection) => connection.id !== requestId));
 			setPendingConnectionIds((prevIds) => prevIds.filter((id) => id !== requestId));
 
-			// 	setConnections(prev => prev.filter(conn => conn._id !== connectionId));
-			// 	setConnectionsIds(prevIds => prevIds.filter(id => id !== connectionId))
-			console.log('Pending request deleted!');
 		} catch (error) {
 			setError(true);
 			setErrorMessage(error.message);

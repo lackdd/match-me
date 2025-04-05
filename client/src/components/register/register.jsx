@@ -17,7 +17,6 @@ export const handleCloseMenu = (selected) => {
 	}
 };
 
-
 function Register() {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 	const [currentStep, setCurrentStep] = useState(1);
@@ -72,7 +71,6 @@ function Register() {
 	// Handle form submission
 	const onSubmit = (data, form, setForm) => {
 		setForm(data);
-		console.log('Valid form data:', form);
 		stepFunctions.AddStep();
 	};
 
@@ -88,9 +86,6 @@ function Register() {
 			if (uploadedUrl) {
 				const publicId = uploadedUrl.split('/').pop().split('.')[0]; // Extract only the public ID
 				setImageUrl(publicId); // Store only the Cloudinary image public ID
-				console.log('Cloudinary image public ID:', publicId);
-				/*setImageUrl(uploadedUrl); // store the uploaded image url
-				console.log("Cloudinary image url:", uploadedUrl);*/
 			} else {
 				setError('Failed to upload image.');
 				setLoadingImage(false);
@@ -101,7 +96,6 @@ function Register() {
 
 	// move to next step of registration
 	function AddStep(e) {
-		// e.preventDefault();
 		setCurrentStep(currentStep + 1);
 	}
 
@@ -162,7 +156,6 @@ function Register() {
 		try {
 			const response = await
 				axios.post(`${VITE_BACKEND_URL}/api/register`, userDetails);
-			console.log('User created successfully');
 		} catch (error) {
 			if (error.response && error.response.status === 400) {
 				console.log('Failed to register:', error.response.data);

@@ -28,7 +28,6 @@ function Support() {
 		setError('');
 		setEmail('');
 		setMessage('');
-		console.log('Submitted!');
 	};
 
 	return (
