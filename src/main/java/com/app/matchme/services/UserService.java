@@ -220,7 +220,7 @@ public class UserService {
         log.info("findpotentialmatchesbylocation   max match radius: " + currentUser.getMaxMatchRadius());
         String idealMatchLocation = currentUser.getIdealMatchLocation();
 
-        if (currentUser.getCoordinates() != null && !"anywhere".equals(idealMatchLocation)) {
+        if (currentUser.getCoordinates() != null && currentUser.getMaxMatchRadius() != null && !"anywhere".equals(idealMatchLocation)) {
             return findMatchesWithCoordinates(currentUser, idealMatchLocation);
         } else {
             return findMatchesWithoutCoordinates(currentUser, idealMatchLocation);
