@@ -70,6 +70,7 @@ public class UserController {
             return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ROLE_SERVICE')")
     @PostMapping("/getUsersByIds")
     public ResponseEntity<ApiResponse<List<UsernamePictureDTO>>> getUsersByIds(@Valid @RequestBody UserIdsRequest request) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched users by IDs", request.ids().stream().map(userService::getUserNameAndPictureById).toList()));
@@ -131,6 +132,7 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse<>("Profile updated successfully", request));
     }
 
+    @PreAuthorize("hasRole('ROLE_SERVICE')")
     @GetMapping("/nearby-users")
     public ResponseEntity<ApiResponse<List<Long>>> getNearbyUsers(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid LocationParamsRequest request) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched nearby users:", userService.findUsersWithinRadius(userPrincipal.getId(), request.radius())));
@@ -143,9 +145,7 @@ public class UserController {
 
     @GetMapping("/recommendations")
     public ResponseEntity<ApiResponse<List<Long>>> getRecommendations(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        log.info("in controller    max match radius: " + userService.getUserById(userPrincipal.getId()).getMaxMatchRadius());
         List<Long> recommendations = userService.findMatches(userPrincipal.getId());
-        log.info("Last point in backend before returning value to frontend, recommendations: " + recommendations);
         return ResponseEntity.ok(new ApiResponse<>("Fetched recommendations", recommendations));
     }
 
@@ -156,44 +156,28 @@ public class UserController {
     }
 
     @PostMapping("/swiped")
-    public ResponseEntity<ApiResponse<Void>> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid SwipeRequest request) {
-        log.info("swipedRight: " + request.swipedRight());
+    public ResponseEntity<ApiResponse<Void>> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody SwipeRequest request) {
         userService.swiped(userPrincipal.getId(), request.matchId(), request.swipedRight());
         return ResponseEntity.ok(new ApiResponse<>("User has been swiped"));
     }
 
-    /*@PreAuthorize("hasRole('SERVICE')")*/
+    @PreAuthorize("hasRole('ROLE_SERVICE')")
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<List<User>>> getUsers() { return ResponseEntity.ok(new ApiResponse<>("Fetched users", userService.getUsers())); }
 
-    /*@PreAuthorize("hasRole('SERVICE')")*/
+    @PreAuthorize("hasRole('ROLE_SERVICE') or #id == authentication.principal.id")
     @GetMapping("/users/{id}")
-    public ResponseEntity<ApiResponse<UsernamePictureDTO>> getUserById(
-            @PathVariable @Positive Long id,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        // Allow service role to access any user
-        if (userPrincipal == null || userPrincipal.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_SERVICE"))) {
-            return ResponseEntity.ok(new ApiResponse<>("Fetched username, picture for specified user", userService.getUserNameAndPictureById(id)));
-        }
-
-        // Allow user to access only their own data
-        if (!userPrincipal.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
+    public ResponseEntity<ApiResponse<UsernamePictureDTO>> getUserById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched username, picture for current user", userService.getUserNameAndPictureById(id)));
     }
 
-
-    /*@PreAuthorize("hasRole('SERVICE')")*/
+    @PreAuthorize("hasRole('ROLE_SERVICE') or #id == authentication.principal.id")
     @GetMapping("/users/{id}/bio")
     public ResponseEntity<ApiResponse<BioDTO>> getUserBioById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched bio for specified user", userService.getUserBioById(id)));
     }
 
-    /*@PreAuthorize("hasRole('SERVICE')")*/
+    @PreAuthorize("hasRole('ROLE_SERVICE') or #id == authentication.principal.id")
     @GetMapping("/users/{id}/profile")
     public ResponseEntity<ApiResponse<ProfileDTO>> getUserProfileById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched profile for specified user", userService.getUserProfileById(id)));

@@ -44,7 +44,7 @@ public class JWTService {
         Map<String, Object> claims = new HashMap<>();
 
         if (userDetails instanceof UserPrincipal userPrincipal) {
-            claims.put("id", userPrincipal.getUser().getId());
+            claims.put("id", userPrincipal.user().getId());
         }
 
         claims.put("role", role);
@@ -59,79 +59,49 @@ public class JWTService {
                 .compact();
     }
 
-    // Add method to get the user key
     private SecretKey getUserKey() {
         byte[] keyBytes = Decoders.BASE64.decode(userSecretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Modify to get the service key
     private SecretKey getServiceKey() {
-        // Decode from Base64
         byte[] keyBytes = Base64.getDecoder().decode(serviceSecretKey);
-        // Ensure key is at least 256 bits
         if (keyBytes.length < 32) {
             throw new BusinessException("Service key is too weak - must be at least 256 bits");
         }
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // Use in place of current getKey() method
-    // This method has an issue
-//    private SecretKey getKey(String token) {
-//        try {
-//            // This won't work correctly for JWS tokens
-//            Claims claims = Jwts.parser()
-//                    .unsecured()
-//                    .build().parseUnsecuredClaims(token.substring(0, token.lastIndexOf('.') + 1))
-//                    .getPayload();
-//
-//            String role = claims.get("role", String.class);
-//            return "SERVICE".equals(role) ? getServiceKey() : getUserKey();
-//        } catch (Exception e) {
-//            log.error("Error determining key type: {}", e.getMessage());
-//            // Default to user key if we can't determine
-//            return getUserKey();
-//        }
-//    }
+    private SecretKey determineKeyByRole(String token, SecretKey userKey) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(userKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+
+            String role = claims.get("role", String.class);
+            return "SERVICE".equals(role) ? getServiceKey() : userKey;
+        } catch (JwtException e) {
+            return getServiceKey();
+        }
+    }
 
     private SecretKey getKey(String token) {
         try {
-            // First, get the header to check the algorithm
             String[] parts = token.split("\\.");
             if (parts.length < 2) {
                 throw new JwtException("Invalid token format");
             }
 
-            // Decode the header (first part)
-            String headerJson = new String(Base64.getUrlDecoder().decode(parts[0]));
-            // You may need to use a JSON parser here to extract the algorithm
-
-            // For simplicity, since we know we need a key for HS256
             SecretKey userKey = getUserKey();
-
-            // Try to parse with user key first to check roles
-            try {
-                Claims claims = Jwts.parser()
-                        .verifyWith(userKey)
-                        .build()
-                        .parseSignedClaims(token)
-                        .getPayload();
-
-                String role = claims.get("role", String.class);
-                return "SERVICE".equals(role) ? getServiceKey() : userKey;
-            } catch (JwtException e) {
-                // If user key fails, try service key
-                return getServiceKey();
-            }
+            return determineKeyByRole(token, userKey);
         } catch (Exception e) {
             log.error("Error determining key type: {}", e.getMessage());
-            // Default to user key if we can't determine
             return getUserKey();
         }
     }
 
-    // Update existing methods to use the correct key
     public String extractUserName(String token) {
         if (token == null || token.trim().isEmpty()) {
             log.error("Token is missing or empty!");
@@ -139,7 +109,6 @@ public class JWTService {
         }
 
         try {
-            // Try with user key first
             return Jwts.parser()
                     .verifyWith(getUserKey())
                     .build()
@@ -147,7 +116,6 @@ public class JWTService {
                     .getPayload()
                     .getSubject();
         } catch (Exception e) {
-            // If that fails, try with service key
             try {
                 return Jwts.parser()
                         .verifyWith(getServiceKey())
@@ -169,7 +137,6 @@ public class JWTService {
 
     public String extractRole(String token) {
         try {
-            // Try with user key first
             return Jwts.parser()
                     .verifyWith(getUserKey())
                     .build()
@@ -177,7 +144,6 @@ public class JWTService {
                     .getPayload()
                     .get("role", String.class);
         } catch (Exception e) {
-            // If that fails, try with service key
             try {
                 return Jwts.parser()
                         .verifyWith(getServiceKey())
@@ -191,9 +157,10 @@ public class JWTService {
             }
         }
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getKey(token))  // Use the correct key based on token type
+                .verifyWith(getKey(token))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -207,7 +174,6 @@ public class JWTService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // Update validation method
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
             final String userName = extractUserName(token);

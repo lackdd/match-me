@@ -8,17 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
-public class UserPrincipal implements UserDetails {
-
-    private User user;
-
-    public UserPrincipal(User user) {
-        this.user = user;
-    }
-
-    public User getUser() {
-        return user;
-    }
+public record UserPrincipal(User user) implements UserDetails {
 
     public Long getId() {
         return user.getId();
@@ -39,23 +29,4 @@ public class UserPrincipal implements UserDetails {
         return user.getEmail();
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

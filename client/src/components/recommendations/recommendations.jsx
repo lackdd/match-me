@@ -30,7 +30,7 @@ function Recommendations() {
 	const [swipedCount, setSwipedCount] = useState(0);
 	const [loading, setLoading] = useState(true);
 	const [loadingSettings, setLoadingSettings] = useState(false);
-	const [matchIDs, setMatchIDs] = useState(['']);
+	const [matchIDs, setMatchIDs] = useState([]);
 	const [matches, setMatches] = useState({});
 	const [currentMatchNum, setCurrentMatchNum] = useState(0);
 	const [currentMatch, setCurrentMatch] = useState(null);
@@ -127,9 +127,12 @@ function Recommendations() {
 					headers: {Authorization: `Bearer ${tokenValue}`},
 					signal
 				});
-				// const response = fetchWithToken(`/api/recommendations`, {}, true);
-				setMatchIDs(response.data);
-				if (response.data.length === 0) {
+
+				// Access the payload property of the response data
+				setMatchIDs(response.data.payload);
+
+				// Check if payload is empty
+				if (response.data.payload.length === 0) {
 					setLoading(false);
 				}
 			} catch (error) {
@@ -139,11 +142,12 @@ function Recommendations() {
 					console.log('Fetch aborted');
 				} else {
 					if (error.response) {
-						console.error('Backend error:', error.response); // Server responded with an error
+						console.error('Backend error:', error.response);
 					} else {
-						console.error('Request failed:', error.message); // Network error or request issue
+						console.error('Request failed:', error.message);
 					}
 				}
+				setLoading(false); // Always set loading to false on error
 			}
 		};
 		getAllMatches();
@@ -161,14 +165,10 @@ function Recommendations() {
 					const matchPromises = matchIDs.map(id => {
 
 						// fetch profile pic and name
-						const profilePromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}/profile`, {
-							headers: {Authorization: `Bearer ${tokenValue}`}
-						});
+						const profilePromise = fetchWithToken(`/api/users/${id}/profile`, {}, true);
 
 						// fetch other bio data
-						const userPromise = axios.get(`${VITE_BACKEND_URL}/api/users/${id}`, {
-							headers: {Authorization: `Bearer ${tokenValue}`}
-						});
+						const userPromise = fetchWithToken(`/api/users/${id}`, {}, true);
 						// const profilePromise = fetchWithToken(`/api/users/${id}/profile`, {}, true); // true = use service token
 						// const userPromise = fetchWithToken(`/api/users/${id}`, {}, true); // true = use service token
 
@@ -196,8 +196,9 @@ function Recommendations() {
 				}
 			};
 			getMatchData();
-		} else {
+		} else if (matchIDs.length === 0 && matchIDs.length !== null){
 			// setLoading(false); // disable loading state
+			setLoading(false);
 		}
 
 
@@ -222,29 +223,36 @@ function Recommendations() {
 		}
 
 		// send data to backend
-		const swipedUser = () => {
+		const swipedUser = async () => {
 			try {
-				axios.post(
-					`${VITE_BACKEND_URL}/api/swiped`,
-					{
-						matchId: currentMatch.id,
-						swipedRight: swipedRight
+				// Create a direct JSON object with primitive values
+				const requestData = {
+					matchId: Number(currentMatch.id), // Ensure it's a number
+					swipedRight: swipedRight === true // Ensure it's a boolean
+				};
+
+				console.log("Sending swipe data:", JSON.stringify(requestData));
+
+				// Use a direct axios call with explicit JSON
+				const response = await axios({
+					method: 'POST',
+					url: `${VITE_BACKEND_URL}/api/swiped`,
+					headers: {
+						'Authorization': `Bearer ${tokenValue}`,
+						'Content-Type': 'application/json'
 					},
-					{
-						headers: {
-							'Authorization': `Bearer ${tokenValue}`,
-							'Content-Type': 'application/json'
-						}
-					}
-				);
+					data: JSON.stringify(requestData)
+				});
+
+				console.log("Swipe response:", response);
 			} catch (error) {
-				setError(true);
-				setErrorMessage(error.message);
+				console.error('Swipe error full:', error);
 				if (error.response) {
-					console.error('Backend error:', error.response.data); // Server responded with an error
-				} else {
-					console.error('Request failed:', error.message); // Network error or request issue
+					console.error('Swipe error response:', error.response);
+					console.error('Swipe error data:', error.response.data);
 				}
+				setError(true);
+				setErrorMessage(error.response?.data?.message || error.message);
 			}
 		};
 

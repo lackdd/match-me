@@ -2,7 +2,6 @@ package com.app.matchme.controllers;
 
 import com.app.matchme.dtos.ApiResponse;
 import com.app.matchme.dtos.apirequestdtos.LoginRequest;
-import com.app.matchme.services.CustomUserDetailsService;
 import com.app.matchme.services.JWTService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private final CustomUserDetailsService userDetailsService;
 
     @Value("${app.service.secret-key}")
     private String serviceSecretKey;
@@ -36,23 +34,18 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        // Add the second parameter "USER" to specify the role
         String jwt = jwtService.generateToken((UserDetails) authentication.getPrincipal(), "USER");
         return ResponseEntity.ok(new ApiResponse<>("Fetched token", jwt));
     }
 
     @PostMapping("/service-token")
     public ResponseEntity<ApiResponse<String>> generateServiceToken(
-            @RequestHeader("X-Service-Key") String serviceKey,
-            @RequestBody ServiceTokenRequest request) {
-        log.info("Backend service key: " + serviceSecretKey);
-        log.info("Frontend service key: " + serviceKey);
-        // Validate the service key
+            @RequestHeader("X-Service-Key") String serviceKey) {
         if (!serviceKey.equals(serviceSecretKey)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid service key");
         }
 
-        // Create a service user without looking it up in the database
+        // Frontend service account with admin rights
         UserDetails serviceAccount = User.withUsername("service@app.com")
                 .password("not-used")
                 .roles("SERVICE")
@@ -60,13 +53,9 @@ public class AuthController {
 
         try {
             String serviceToken = jwtService.generateToken(serviceAccount, "SERVICE");
-            log.info("Generated service token with role: SERVICE");
             return ResponseEntity.ok(new ApiResponse<>("Service token generated", serviceToken));
         } catch (Exception e) {
-            log.error("Error generating service token: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating service token");
         }
     }
-
-    record ServiceTokenRequest(String email) {}
 }

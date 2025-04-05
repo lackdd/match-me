@@ -29,52 +29,70 @@ public class JwtFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
+        String token = extractTokenFromHeader(request);
+
+        if (token != null) {
+            authenticateWithToken(token, request);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    private String extractTokenFromHeader(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        String token;
-        String email;
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            email = jwtService.extractUserName(token);
+            return authHeader.substring(7);
+        }
+        return null;
+    }
 
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                String role = jwtService.extractRole(token); // Ensure this extracts the role properly
-                log.debug("Request to: {}, extracted email: {}, extracted role: {}",
-                        request.getRequestURI(), email, role);
+    private void authenticateWithToken(String token, HttpServletRequest request) {
+        String email = jwtService.extractUserName(token);
 
-                if (email.equals("service@app.com")) {
-                    // For service token, don't try to load from DB
-                    List<SimpleGrantedAuthority> authorities =
-                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_SERVICE"));
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            String role = jwtService.extractRole(token);
+            log.debug("Request to: {}, extracted email: {}, extracted role: {}",
+                    request.getRequestURI(), email, role);
 
-                    UserDetails serviceUser = org.springframework.security.core.userdetails.User
-                            .withUsername("service@app.com")
-                            .password("not-used")
-                            .authorities(authorities)
-                            .build();
-
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(serviceUser, null, authorities);
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                } else {
-                    // Normal user flow
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-                    if (jwtService.validateToken(token, userDetails)) {
-                        List<SimpleGrantedAuthority> authorities =
-                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + (role != null ? role : "USER")));
-
-                        UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                    }
-                }
+            if (email.equals("service@app.com")) {
+                authenticateServiceUser(request);
+            } else {
+                authenticateRegularUser(email, token, role, request);
             }
         }
-        filterChain.doFilter(request, response);
+    }
+
+    private void authenticateServiceUser(HttpServletRequest request) {
+        List<SimpleGrantedAuthority> authorities =
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_SERVICE"));
+
+        UserDetails serviceUser = org.springframework.security.core.userdetails.User
+                .withUsername("service@app.com")
+                .password("not-used")
+                .authorities(authorities)
+                .build();
+
+        setAuthentication(serviceUser, authorities, request);
+    }
+
+    private void authenticateRegularUser(String email, String token, String role, HttpServletRequest request) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+        if (jwtService.validateToken(token, userDetails)) {
+            List<SimpleGrantedAuthority> authorities =
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + (role != null ? role : "USER")));
+
+            setAuthentication(userDetails, authorities, request);
+        }
+    }
+
+    private void setAuthentication(UserDetails userDetails, List<SimpleGrantedAuthority> authorities, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 }
