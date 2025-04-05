@@ -36,7 +36,7 @@ public class JWTService {
         }
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, String role) {
 
         Map<String, Object> claims = new HashMap<>();
 
@@ -44,12 +44,22 @@ public class JWTService {
             claims.put("id", userPrincipal.getUser().getId());
         }
 
+        claims.put("role", role);
+
         return Jwts.builder().claims(claims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(getKey())
                 .compact();
+    }
+
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(userDetails, "USER");
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     private SecretKey getKey() {

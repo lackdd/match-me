@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -155,19 +156,23 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse<>("User has been swiped"));
     }
 
+    @PreAuthorize("hasRole('SERVICE')")
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<List<User>>> getUsers() { return ResponseEntity.ok(new ApiResponse<>("Fetched users", userService.getUsers())); }
 
+    @PreAuthorize("hasRole('SERVICE')")
     @GetMapping("/users/{id}")
     public ResponseEntity<ApiResponse<UsernamePictureDTO>> getUserById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched username, picture for specified user", userService.getUserNameAndPictureById(id)));
     }
 
+    @PreAuthorize("hasRole('SERVICE')")
     @GetMapping("/users/{id}/bio")
     public ResponseEntity<ApiResponse<BioDTO>> getUserBioById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched bio for specified user", userService.getUserBioById(id)));
     }
 
+    @PreAuthorize("hasRole('SERVICE')")
     @GetMapping("/users/{id}/profile")
     public ResponseEntity<ApiResponse<ProfileDTO>> getUserProfileById(@PathVariable @Positive Long id) {
         return ResponseEntity.ok(new ApiResponse<>("Fetched profile for specified user", userService.getUserProfileById(id)));
