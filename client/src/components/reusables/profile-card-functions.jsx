@@ -49,6 +49,7 @@ export const sendPictureToBackend = async (publicId, tokenValue) => {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 	try {
+		console.log("Sending profilePicture to backend: " + publicId);
 		const response = await axios.patch(`${VITE_BACKEND_URL}/api/me`,
 			{profilePicture: publicId}, {
 				headers: {
