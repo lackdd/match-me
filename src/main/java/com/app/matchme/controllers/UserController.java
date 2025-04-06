@@ -146,6 +146,7 @@ public class UserController {
     @GetMapping("/recommendations")
     public ResponseEntity<ApiResponse<List<Long>>> getRecommendations(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         List<Long> recommendations = userService.findMatches(userPrincipal.getId());
+        log.info("Fetching recommendations: " + recommendations);
         return ResponseEntity.ok(new ApiResponse<>("Fetched recommendations", recommendations));
     }
 
@@ -158,6 +159,7 @@ public class UserController {
     @PostMapping("/swiped")
     public ResponseEntity<ApiResponse<Void>> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody SwipeRequest request) {
         userService.swiped(userPrincipal.getId(), request.matchId(), request.swipedRight());
+        log.info("User with id: " + userPrincipal.getId() + " swiped");
         return ResponseEntity.ok(new ApiResponse<>("User has been swiped"));
     }
 

@@ -39,17 +39,18 @@ function Recommendations() {
 	const [preferencesData, setPreferencesData] = useState(null);
 	const [error, setError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [buttonDisabled, setButtonDisabled] = useState(false);
 
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 	const {handleTouchStart, handleTouchEnd, handleTouchMove, swipeProgress} = useSwipe();
 
-	useEffect(() => {
-
-		if (currentMatchNum === 10) {
-			resetMatches();
-		}
-
-	}, [currentMatch]);
+	// useEffect(() => {
+	//
+	// 	 if (currentMatchNum === 10) {
+	// 	 	resetMatches();
+	// 	}
+	//
+	// }, [currentMatch]);
 
 
 	useEffect(() => {
@@ -76,6 +77,8 @@ function Recommendations() {
 	function resetMatches() {
 		console.log("Resetting match id list");
 		setCurrentMatchNum(0);
+		setMatches({}); // Clear existing matches
+		setMatchIDs([]);
 		setFetchMoreMatches(prev => !prev);
 	}
 
@@ -241,6 +244,8 @@ function Recommendations() {
 		if (!matchContainer) return;
 		let swipedRight = true;
 
+		setButtonDisabled(true);
+
 		setSwipedCount(prev => prev + 1);
 
 		if (likeOrDislike === 'like') {
@@ -276,6 +281,10 @@ function Recommendations() {
 					data: JSON.stringify(requestData)
 				});
 
+				if (currentMatchNum === 10) {
+					resetMatches();
+				}
+
 				// console.log("Swipe response:", response);
 			} catch (error) {
 				console.error('Swipe error full:', error);
@@ -309,6 +318,10 @@ function Recommendations() {
 		void matchContainer.offsetWidth;
 
 		// Load next match
+		/*setTimeout(() => {
+			console.log("Loading next match")
+			loadNextMatch();
+		}, 6000);*/
 		loadNextMatch();
 	}, []);
 
@@ -346,13 +359,19 @@ function Recommendations() {
 
 	// set current match data
 	useEffect(() => {
+		if (!matches || !matches[currentMatchNum]) {
+			setCurrentMatch(null);
+			return;
+		}
 		const formattedMatch = formatMatchData(matches[currentMatchNum]);
 
 		// console.log('formatted match', formattedMatch);
 
-		if (formattedMatch.id) {
+		if (formattedMatch?.id) {
 			console.log("Setting current match");
 			setCurrentMatch(formattedMatch);
+		} else {
+			setCurrentMatch(null);
 		}
 
 	}, [currentMatchNum, matches]);
@@ -390,6 +409,9 @@ function Recommendations() {
 		});
 	};
 
+	useEffect(() => {
+		setButtonDisabled(false)
+	}, [currentMatch])
 
 	return (
 		<>
@@ -587,11 +609,11 @@ function Recommendations() {
 								{/*	default buttons */}
 								<div
 									className='match-buttons-container default'>
-									<button className='dislike-button' onClick={() => swipe('dislike')}>
+									<button className='dislike-button' disabled={buttonDisabled} onClick={() => swipe('dislike')}>
 										<IoPlaySkipForward style={{color: 'white', width: '70%', height: '70%'}}
 														   id={'svg-dislike'}/>
 									</button>
-									<button className='like-button' onClick={() => swipe('like')}>
+									<button className='like-button' disabled={buttonDisabled} onClick={() => swipe('like')}>
 										<FaPlay style={{color: 'white', width: '55%', height: '55%'}} id={'svg-like'}/>
 									</button>
 								</div>

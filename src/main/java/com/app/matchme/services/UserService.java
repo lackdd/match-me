@@ -211,7 +211,6 @@ public class UserService {
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
         return userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed()).limit(10)
-                .peek(it -> System.out.println(it.getKey().getId()))
                 .map(entry -> entry.getKey().getId()).toList();
     }
 
