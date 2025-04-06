@@ -336,10 +336,8 @@ public class UserService {
     }
 
     public void swiped(Long currentUserId, Long matchId, boolean swipedRight) {
-        System.out.println(swipedRight);
         User currentUser = getUserById(currentUserId);
         if (swipedRight) {
-            addLikedUserById(matchId, currentUser);
             addPendingRequestById(currentUserId, getUserById(matchId));
             addToSwipedUsers(matchId, currentUser);
         } else {
