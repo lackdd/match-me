@@ -45,7 +45,7 @@ function Recommendations() {
 
 	useEffect(() => {
 
-		if (currentMatchNum === 9) {
+		if (currentMatchNum === 10) {
 			resetMatches();
 		}
 
@@ -55,10 +55,17 @@ function Recommendations() {
 	useEffect(() => {
 
 		if (currentMatch) {
-			console.log("Current match id: " + currentMatch.id);
 			console.log("Current match num: " + currentMatchNum);
 		}
 	}, [currentMatchNum]);
+
+	useEffect(() => {
+
+		if (currentMatch) {
+			console.log("Current match id: " + currentMatch.id);
+		}
+	}, [currentMatch]);
+
 
 	// reset current match number and fetch more matches
 	// const resetMatches = () => {
@@ -67,7 +74,8 @@ function Recommendations() {
 	// };
 
 	function resetMatches() {
-		setCurrentMatchNum(1);
+		console.log("Resetting match id list");
+		setCurrentMatchNum(0);
 		setFetchMoreMatches(prev => !prev);
 	}
 
@@ -307,6 +315,7 @@ function Recommendations() {
 	// format data
 	const formatMatchData = (matchData) => {
 		const newMatch = {...matchData};  // Clone to avoid mutations
+		console.log("Formatting match data");
 
 		for (let key in newMatch) {
 			if (key === 'location') {
@@ -331,7 +340,8 @@ function Recommendations() {
 		// console.log("Current match number: " + currentMatchNum);
 
 		// Logic to update match profile with new data
-		setCurrentMatchNum(currentMatchNum+1);
+		// setCurrentMatchNum(currentMatchNum+1);
+		setCurrentMatchNum(prevState => prevState + 1);
 	});
 
 	// set current match data
@@ -341,6 +351,7 @@ function Recommendations() {
 		// console.log('formatted match', formattedMatch);
 
 		if (formattedMatch.id) {
+			console.log("Setting current match");
 			setCurrentMatch(formattedMatch);
 		}
 
