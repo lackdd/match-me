@@ -196,7 +196,6 @@ public class UserService {
     public List<Long> findMatches(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         User currentUser = optionalUser.orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
-        log.info("findmatches     max match radius: " + currentUser.getMaxMatchRadius());
         List<User> potentialMatches = findPotentialMatchesByLocation(currentUser);
 
         int[] ageRange = calculateIdealMatchAgeRange(currentUser.getIdealMatchAge());
@@ -210,14 +209,13 @@ public class UserService {
                 .filter(user -> "any".equals(currentUser.getIdealMatchGender()) ||
                         Objects.equals(user.getGender(), currentUser.getIdealMatchGender()))
                 .collect(Collectors.toMap(user -> user, user -> calculatePoints(user, currentUser)));
-        log.info("just before return statement in findMatches service");
         return userPointsMap.entrySet().stream()
                 .sorted(Map.Entry.<User, Integer>comparingByValue().reversed()).limit(10)
+                .peek(it -> System.out.println(it.getKey().getId()))
                 .map(entry -> entry.getKey().getId()).toList();
     }
 
     private List<User> findPotentialMatchesByLocation(User currentUser) {
-        log.info("findpotentialmatchesbylocation   max match radius: " + currentUser.getMaxMatchRadius());
         String idealMatchLocation = currentUser.getIdealMatchLocation();
 
         if (currentUser.getCoordinates() != null && currentUser.getMaxMatchRadius() != null && !"anywhere".equals(idealMatchLocation)) {
@@ -228,7 +226,6 @@ public class UserService {
     }
 
     private List<User> findMatchesWithCoordinates(User currentUser, String idealMatchLocation) {
-        log.info("findmatcheswithcoordinates    max match radius: " + currentUser.getMaxMatchRadius());
         Integer radiusInMeters = currentUser.getMaxMatchRadius() * 1000;
         List<User> potentialMatches;
 

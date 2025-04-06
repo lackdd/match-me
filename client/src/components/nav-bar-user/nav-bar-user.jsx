@@ -28,7 +28,7 @@ function NavigatorUser() {
 	// todo make into socket connection to get live updates
 	const getPendingRequests = async () => {
 
-		console.log('Getting pending requests length');
+		// console.log('Getting pending requests length');
 
 		try {
 			const response = await axios.get(`${VITE_BACKEND_URL}/api/pendingRequests`, {

@@ -30,7 +30,7 @@ function Recommendations() {
 	const [swipedCount, setSwipedCount] = useState(0);
 	const [loading, setLoading] = useState(true);
 	const [loadingSettings, setLoadingSettings] = useState(false);
-	const [matchIDs, setMatchIDs] = useState([]);
+	const [matchIDs, setMatchIDs] = useState(['']);
 	const [matches, setMatches] = useState({});
 	const [currentMatchNum, setCurrentMatchNum] = useState(0);
 	const [currentMatch, setCurrentMatch] = useState(null);
@@ -51,11 +51,25 @@ function Recommendations() {
 
 	}, [currentMatch]);
 
+
+	useEffect(() => {
+
+		if (currentMatch) {
+			console.log("Current match id: " + currentMatch.id);
+			console.log("Current match num: " + currentMatchNum);
+		}
+	}, [currentMatchNum]);
+
 	// reset current match number and fetch more matches
-	const resetMatches = () => {
-		setCurrentMatchNum(0);
+	// const resetMatches = () => {
+	// 	setCurrentMatchNum(1);
+	// 	setFetchMoreMatches(prev => !prev);
+	// };
+
+	function resetMatches() {
+		setCurrentMatchNum(1);
 		setFetchMoreMatches(prev => !prev);
-	};
+	}
 
 	// fetch preferences data
 	useEffect(() => {
@@ -68,7 +82,7 @@ function Recommendations() {
 
 				// const response = fetchWithToken(`/api/me/bio`, {}, false);
 
-				console.log("Full response: " + response);
+				// console.log("Full response: " + response);
 
 				// formatting data for the recommendations form
 				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.payload.idealMatchGender);
@@ -90,8 +104,8 @@ function Recommendations() {
 					maxMatchRadius: response.data.maxMatchRadius
 				});
 
-				console.log("idealMatchAge radius when fetched: " + response.data.payload.idealMatchAge);
-				console.log("Max match radius when fetched: " + response.data.payload.maxMatchRadius);
+				// console.log("idealMatchAge radius when fetched: " + response.data.payload.idealMatchAge);
+				// console.log("Max match radius when fetched: " + response.data.payload.maxMatchRadius);
 
 			} catch (error) {
 				setError(true);
@@ -130,6 +144,14 @@ function Recommendations() {
 
 				// Access the payload property of the response data
 				setMatchIDs(response.data.payload);
+
+
+				// setMatchIDs(prev => ({
+				// 		...prev,
+				// 		...response.data.payload
+				// }))
+
+				console.log("response ids: " + response.data.payload);
 
 				// Check if payload is empty
 				if (response.data.payload.length === 0) {
@@ -231,7 +253,9 @@ function Recommendations() {
 					swipedRight: swipedRight === true // Ensure it's a boolean
 				};
 
-				console.log("Sending swipe data:", JSON.stringify(requestData));
+				// console.log("Sending swipe data:", JSON.stringify(requestData));
+
+				console.log("Swiped user: " + currentMatch.id);
 
 				// Use a direct axios call with explicit JSON
 				const response = await axios({
@@ -244,7 +268,7 @@ function Recommendations() {
 					data: JSON.stringify(requestData)
 				});
 
-				console.log("Swipe response:", response);
+				// console.log("Swipe response:", response);
 			} catch (error) {
 				console.error('Swipe error full:', error);
 				if (error.response) {
@@ -265,7 +289,7 @@ function Recommendations() {
 
 	// logic to reset the position of matchContainer after like and dislike animation
 	const resetPosition = useCallback((event) => {
-		console.log('Resetting position...');
+		// console.log('Resetting position...');
 		const matchContainer = matchContainerRef.current;
 
 		if (!matchContainer || event.target !== matchContainer) return;
@@ -296,13 +320,19 @@ function Recommendations() {
 	};
 
 	// load next match data
-	const loadNextMatch = useCallback(() => {
-		console.log('Loading next match...');
+	// const loadNextMatch = useCallback(() => {
+	//
+	// 	// Logic to update match profile with new data
+	// 	setCurrentMatchNum(prevState => prevState + 1);
+	//
+	// }, []);
+
+	const loadNextMatch = (() => {
+		// console.log("Current match number: " + currentMatchNum);
 
 		// Logic to update match profile with new data
-		setCurrentMatchNum(prevState => prevState + 1);
-
-	}, []);
+		setCurrentMatchNum(currentMatchNum+1);
+	});
 
 	// set current match data
 	useEffect(() => {

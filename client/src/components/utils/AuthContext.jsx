@@ -39,7 +39,7 @@ export function AuthProvider({children}) {
 			);
 
 			const newToken = response.data.payload;
-			console.log("Service token obtained successfully");
+			// console.log("Service token obtained successfully");
 			sessionStorage.setItem('serviceToken', newToken);
 			setServiceTokenValue(newToken);
 			return newToken;
@@ -54,7 +54,7 @@ export function AuthProvider({children}) {
 		let token;
 
 		if (useServiceToken) {
-			console.log("Using service token for request to:", url);
+			// console.log("Using service token for request to:", url);
 			token = serviceTokenValue || await getServiceToken();
 			if (!token) {
 				console.error("Could not obtain service token");
@@ -76,7 +76,7 @@ export function AuthProvider({children}) {
 			...(options.headers || {}),
 			Authorization: `Bearer ${token}`
 		};
-		console.log(`Request to ${url} with token type: ${useServiceToken ? 'SERVICE' : 'USER'}`);
+		// console.log(`Request to ${url} with token type: ${useServiceToken ? 'SERVICE' : 'USER'}`);
 		return axios({
 			url: `${VITE_BACKEND_URL}${url}`,
 			...options,
@@ -87,7 +87,7 @@ export function AuthProvider({children}) {
 	// mainly to get profile image url
 	useEffect(() => {
 		const getProfileInfo = async () => {
-			console.log('Getting username and profile picture');
+			// console.log('Getting username and profile picture');
 
 			try {
 				// Use user token for personal data
@@ -123,7 +123,7 @@ export function AuthProvider({children}) {
 				},
 				reconnectDelay: 5000,
 				onConnect: async () => {
-					console.log('Connected to WebSocket in AuthContext');
+					// console.log('Connected to WebSocket in AuthContext');
 
 					// Get all connections first, then broadcast status to each
 					await broadcastActiveStatus(client, user.id, token);
@@ -156,7 +156,7 @@ export function AuthProvider({children}) {
 			});
 
 			const connections = response.data.payload;
-			console.log('Broadcasting ACTIVE status to all connections:', connections);
+			// console.log('Broadcasting ACTIVE status to all connections:', connections);
 
 			// Send ACTIVE status update to each connection
 			connections.forEach(connectionId => {
@@ -170,7 +170,7 @@ export function AuthProvider({children}) {
 						status: 'ACTIVE'
 					})
 				});
-				console.log(`Sent ACTIVE status to user ${connectionId}`);
+				// console.log(`Sent ACTIVE status to user ${connectionId}`);
 			});
 		} catch (error) {
 			console.error('Error broadcasting ACTIVE status:', error);
