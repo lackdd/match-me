@@ -38,10 +38,10 @@ const Chat = ({receiverUsername, receiverUserId, onMessagesRead}) => {
 				headers: {Authorization: `Bearer ${tokenValue}`}
 			});
 
-			if (response.data.length === 0) {
+			if (response.data.payload.length === 0) {
 				setHasMore(false);
 			} else {
-				const oldestMessageId = response.data[0]?.id;
+				const oldestMessageId = response.data.payload[0]?.id;
 				setBeforeId(oldestMessageId);
 
 				setMessages((prev) => {
