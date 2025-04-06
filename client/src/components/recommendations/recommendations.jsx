@@ -249,6 +249,7 @@ function Recommendations() {
 		setSwipedCount(prev => prev + 1);
 
 		if (likeOrDislike === 'like') {
+			swipedRight = true;
 			matchContainer.classList.add('like-animation');
 		}
 
@@ -263,24 +264,50 @@ function Recommendations() {
 				// Create a direct JSON object with primitive values
 				const requestData = {
 					matchId: Number(currentMatch.id), // Ensure it's a number
-					swipedRight: swipedRight === true // Ensure it's a boolean
+					swipedRight: swipedRight // Ensure it's a boolean
 				};
 
 				// console.log("Sending swipe data:", JSON.stringify(requestData));
 
 				console.log("Swiped user: " + currentMatch.id);
 
-				// Use a direct axios call with explicit JSON
-				const response = await axios({
-					method: 'POST',
-					url: `${VITE_BACKEND_URL}/api/swiped`,
-					headers: {
-						'Authorization': `Bearer ${tokenValue}`,
-						'Content-Type': 'application/json'
-					},
-					data: JSON.stringify(requestData)
-				});
+				console.log("SwipedRight: " + swipedRight);
 
+				const isLastMatch = currentMatchNum === 9;
+
+				console.log("CurrentMatchNum before /swiped request: ", currentMatchNum);
+
+				// Use a direct axios call with explicit JSON
+				// const response = await axios({
+				// 	method: 'POST',
+				// 	url: `${VITE_BACKEND_URL}/api/swiped`,
+				// 	headers: {
+				// 		'Authorization': `Bearer ${tokenValue}`,
+				// 		'Content-Type': 'application/json'
+				// 	},
+				// 	data: JSON.stringify(requestData)
+				// });
+
+				await axios.post(
+					`${VITE_BACKEND_URL}/api/swiped`,
+					requestData,
+					{headers: {
+							'Authorization': `Bearer ${tokenValue}`,
+							'Content-Type': 'application/json'}
+					}
+				);
+
+
+				if (isLastMatch) {
+					console.log("Last match swiped, fetching new recommendations");
+					setLoading(true);
+					resetMatches();
+				}
+				// else {
+				// 	setCurrentMatchNum(prevState => prevState + 1);
+				// }
+
+				console.log("CurrentMatchNum after /swiped request: ", currentMatchNum);
 				if (currentMatchNum === 10) {
 					resetMatches();
 				}

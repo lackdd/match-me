@@ -158,8 +158,11 @@ public class UserController {
 
     @PostMapping("/swiped")
     public ResponseEntity<ApiResponse<Void>> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody SwipeRequest request) {
+        log.info("Is swipedRight not null: " + request.swipedRight());
+        log.info("Is swipedRight not null: {}", request.swipedRight());
+        System.out.println(request.swipedRight());
         userService.swiped(userPrincipal.getId(), request.matchId(), request.swipedRight());
-        log.info("User with id: " + userPrincipal.getId() + " swiped");
+        log.info("Got through swiped service");
         return ResponseEntity.ok(new ApiResponse<>("User has been swiped"));
     }
 
