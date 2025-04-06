@@ -93,7 +93,6 @@ public class UserController {
 
     @PatchMapping("/me")
     public ResponseEntity<ApiResponse<Void>> updateProfilePicture(@Valid @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody ProfilePictureRequest request) {
-        log.info("Profile pciture: " + request.profilePicture());
         userService.updateProfilePicture(userPrincipal.getId(), request.profilePicture());
         return ResponseEntity.ok(new ApiResponse<>("Profile picture updated successfully"));
     }
@@ -147,7 +146,6 @@ public class UserController {
     @GetMapping("/recommendations")
     public ResponseEntity<ApiResponse<List<Long>>> getRecommendations(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         List<Long> recommendations = userService.findMatches(userPrincipal.getId());
-        log.info("Fetching recommendations: " + recommendations);
         return ResponseEntity.ok(new ApiResponse<>("Fetched recommendations", recommendations));
     }
 
@@ -159,11 +157,7 @@ public class UserController {
 
     @PostMapping("/swiped")
     public ResponseEntity<ApiResponse<Void>> swiped(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody SwipeRequest request) {
-        log.info("Is swipedRight not null: " + request.swipedRight());
-        log.info("Is swipedRight not null: {}", request.swipedRight());
-        System.out.println(request.swipedRight());
         userService.swiped(userPrincipal.getId(), request.matchId(), request.swipedRight());
-        log.info("Got through swiped service");
         return ResponseEntity.ok(new ApiResponse<>("User has been swiped"));
     }
 

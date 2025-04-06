@@ -330,7 +330,6 @@ public class ChatController {
 
             User user = userService.getUserById(userId);
             if (user != null) {
-                log.info("User {} disconnected, setting to INACTIVE", user.getUsername());
                 broadcastStatusToConnections(user, Status.INACTIVE);
             }
         }
