@@ -1,5 +1,7 @@
 # Welcome to Jammer!
 
+My role in this project was back-end but i also did some stuff in the frontend like i set up cloudinary and helped set up chat functionality in the frontend.
+
 Jammer is a full-stack recommendation application to connect users based on their mutual musical interests such as preferred genres, methods to make music, years of experience with music and other biographical data.
 
 <details>
@@ -8,6 +10,32 @@ Jammer is a full-stack recommendation application to connect users based on thei
 
 Alternatively test the application at our [live website](https://match-me-20pb.onrender.com). \
 **NB! Give the frontend and backend servers a minute to wake up!**
+
+To start the project manually yourself you have to set up postgres database and also create .env file in both root folder and client folder with following info:
+
+1) Backend .env:
+#postgres
+POSTGRES_URL=
+POSTGRES_PASSWORD=
+POSTGRES_USERNAME=
+
+#backend
+VITE_BACKEND_URL=http://localhost:8080
+
+#service key
+SERVICE_KEY=
+
+#number of test users to generate
+NUMBER_OF_USERS=100
+
+2) Frontend .env:
+#front-end
+VITE_GOOGLE_API=
+VITE_GOOGLE_API_KEY=
+SPRING_FRONTEND_URL=http://localhost:5173
+
+#service key
+VITE_SERVICE_KEY=
 
 <ol>
 <li>Clone the repository</li>
