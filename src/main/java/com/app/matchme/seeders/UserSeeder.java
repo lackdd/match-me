@@ -23,7 +23,6 @@ import java.util.Map;
 @Slf4j
 public class UserSeeder implements CommandLineRunner {
 
-
     @Value("${user.generation.number}")
     private int numberOfUsers;
 
@@ -128,8 +127,10 @@ public class UserSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (userRepository.count() > 0) {
-            log.info("Users already exist in database, stopping user generation");
+            log.info("\u001B[32m" + "Users already exist in database, stopping user generation" +"\u001B[0m");
             return;
+        } else {
+            log.info("\u001B[32m" + "Generating users..." + "\u001B[0m");
         }
 
         List<User> users = new ArrayList<>();
@@ -179,7 +180,7 @@ public class UserSeeder implements CommandLineRunner {
         }
 
         userRepository.saveAll(users);
-        log.info(numberOfUsers + " users successfully created");
+        log.info("\u001B[32m" + numberOfUsers + " users successfully created" + "\u001B[0m");
     }
 
     private String randomChoice(List<String> options) {
