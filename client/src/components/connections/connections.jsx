@@ -311,12 +311,13 @@ function Connections() {
 
 		// add to connections
 		try {
-			axios.post(`${VITE_BACKEND_URL}/api/addConnection`, null, {
+			axios.post(`${VITE_BACKEND_URL}/api/addConnection`, {
+				matchId: requestId
+			}, {
 				headers: {
 					'Authorization': `Bearer ${tokenValue}`,
 					'Content-Type': 'application/json'
 				},
-				params: {matchId: requestId} // Correct parameter name
 			});
 
 		} catch (error) {

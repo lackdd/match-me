@@ -49,16 +49,11 @@ public class UserService {
     }
 
     public void addLikedUserById(Long id, User currentUser) {
-        log.info("inside addlikeduserby id line 5");
         if (currentUser.getLikedUsers().contains(id)) {
             throw new BusinessException("User already in list");
         }
-        log.info("inside addlikeduserby id line 6");
         currentUser.getLikedUsers().add(id);
-        log.info("inside addlikeduserby id line 7");
-        log.info("Currentuser: {}", currentUser);
         userRepository.save(currentUser);
-        log.info("inside addlikeduserby id line 8");
     }
 
     public void addPendingRequestById(Long id, User likedUser) {
@@ -341,18 +336,10 @@ public class UserService {
     }
 
     public void swiped(Long currentUserId, Long matchId, boolean swipedRight) {
-        log.info("Is swipedRight not null: " + swipedRight);
-        log.info("Is swipedRight not null: {}", swipedRight);
-        System.out.println(swipedRight);
         User currentUser = getUserById(currentUserId);
         if (swipedRight) {
-            log.info("Got inside swipedRight line 1");
-            addLikedUserById(matchId, currentUser);
-            log.info("Got inside swipedRight line 2");
             addPendingRequestById(currentUserId, getUserById(matchId));
-            log.info("Got inside swipedRight line 3");
             addToSwipedUsers(matchId, currentUser);
-            log.info("Got inside swipedRight line 4");
         } else {
             addToSwipedUsers(matchId, currentUser);
         }

@@ -8,7 +8,7 @@ import {FaBell} from 'react-icons/fa';
 function Chats() {
 	const [loading, setLoading] = useState(true);
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-	const {tokenValue, userId, webSocketClient, broadcastStatus} = useAuth();
+	const {tokenValue, userId, webSocketClient, broadcastStatus, fetchWithToken} = useAuth();
 	const [connections, setConnections] = useState([]);
 	const [connectionDetails, setConnectionDetails] = useState([]);
 	const [selectedUser, setSelectedUser] = useState(null);
@@ -148,11 +148,12 @@ function Chats() {
 
 				// Get user details for all connections
 				if (response.data.payload.length > 0) {
-					const userDetailsResponse = await axios.post(`${VITE_BACKEND_URL}/api/getUsersByIds`,
-						{ids: response.data.payload },
+					const userDetailsResponse = await fetchWithToken(`/api/getUsersByIds`,
 						{
-							headers: {Authorization: `Bearer ${tokenValue}`}
-						}
+							method: 'POST',
+							data: {ids: response.data.payload}
+						},
+					 true
 					);
 					setConnectionDetails(userDetailsResponse.data.payload);
 

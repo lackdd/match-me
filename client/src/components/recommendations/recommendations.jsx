@@ -56,7 +56,7 @@ function Recommendations() {
 	useEffect(() => {
 
 		if (currentMatch) {
-			console.log("Current match num: " + currentMatchNum);
+			/*console.log("Current match num: " + currentMatchNum);*/
 		}
 	}, [currentMatchNum]);
 
@@ -269,11 +269,8 @@ function Recommendations() {
 
 				console.log("Swiped user: " + currentMatch.id);
 
-				console.log("SwipedRight: " + swipedRight);
 
 				const isLastMatch = currentMatchNum === 9;
-
-				console.log("CurrentMatchNum before /swiped request: ", currentMatchNum);
 
 				// Use a direct axios call with explicit JSON
 				// const response = await axios({
@@ -305,7 +302,6 @@ function Recommendations() {
 				// 	setCurrentMatchNum(prevState => prevState + 1);
 				// }
 
-				console.log("CurrentMatchNum after /swiped request: ", currentMatchNum);
 				if (currentMatchNum === 10) {
 					resetMatches();
 				}
@@ -353,7 +349,6 @@ function Recommendations() {
 	// format data
 	const formatMatchData = (matchData) => {
 		const newMatch = {...matchData};  // Clone to avoid mutations
-		console.log("Formatting match data");
 
 		for (let key in newMatch) {
 			if (key === 'location') {
@@ -393,7 +388,6 @@ function Recommendations() {
 		// console.log('formatted match', formattedMatch);
 
 		if (formattedMatch?.id) {
-			console.log("Setting current match");
 			setCurrentMatch(formattedMatch);
 		} else {
 			setCurrentMatch(null);
