@@ -338,8 +338,8 @@ public class UserService {
     public void swiped(Long currentUserId, Long matchId, boolean swipedRight) {
         User currentUser = getUserById(currentUserId);
         if (swipedRight) {
-            addPendingRequestById(currentUserId, getUserById(matchId));
             addToSwipedUsers(matchId, currentUser);
+            addPendingRequestById(currentUserId, getUserById(matchId));
         } else {
             addToSwipedUsers(matchId, currentUser);
         }
