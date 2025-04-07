@@ -45,7 +45,6 @@ function Recommendations() {
 	const {handleTouchStart, handleTouchEnd, handleTouchMove, swipeProgress} = useSwipe();
 
 	function resetMatches() {
-		console.log("Resetting match id list");
 		setCurrentMatchNum(0);
 		setMatches({}); // Clear existing matches
 		setMatchIDs(['']);
@@ -102,14 +101,6 @@ function Recommendations() {
 
 	}, []);
 
-	useEffect(() => {
-
-		if (currentMatch) {
-			console.log("Current match id: " + currentMatch.id);
-		}
-	}, [currentMatch]);
-
-
 	// fetch IDs of matched users
 	useEffect(() => {
 		const controller = new AbortController(); // Create an abort controller
@@ -125,8 +116,6 @@ function Recommendations() {
 
 				// Access the payload property of the response data
 				setMatchIDs(response.data.payload);
-
-				console.log("response ids: " + response.data.payload);
 
 				// Check if payload is empty
 				if (response.data.payload.length === 0) {
@@ -230,10 +219,9 @@ function Recommendations() {
 
 				const isLastMatch = currentMatchNum === 9;
 
-				console.log("CurrentMatchNum: " + currentMatchNum);
-				console.log("isLastMatch: ", isLastMatch);
-
-				console.log("Before swiped request");
+				if (isLastMatch) {
+					setLoading(true);
+				}
 
 				await axios.post(
 					`${VITE_BACKEND_URL}/api/swiped`,
@@ -244,12 +232,7 @@ function Recommendations() {
 					}
 				);
 
-
-				console.log("After swiped request");
-
 				if (isLastMatch) {
-					console.log("Last match swiped, fetching new recommendations");
-					setLoading(true);
 					resetMatches();
 				}
 
@@ -316,10 +299,6 @@ function Recommendations() {
 			setCurrentMatch(formattedMatch);
 		} else {
 			setCurrentMatch(null);
-		}
-
-		if (currentMatchNum === 9) {
-			setLoading(true);
 		}
 
 	}, [currentMatchNum, matches]);
