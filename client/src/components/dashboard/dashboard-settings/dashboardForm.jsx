@@ -181,8 +181,8 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 					  console.log('Data at submit: ', data);
 
 					  const formattedData = {
-						  age: data.age,
-						  gender: data.gender.value,
+						  // age: data.age,
+						  // gender: data.gender.value,
 						  location: data.location.label,
 						  description: data.description,
 						  yearsOfMusicExperience: data.yearsOfMusicExperience,
@@ -214,9 +214,9 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				  id={'dashboard-form'}>
 
 				{/* step 1 */}
-				<div className='form-title'>
-					<h1>Basic info</h1>
-				</div>
+				{/*<div className='form-title'>*/}
+				{/*	<h1>Basic info</h1>*/}
+				{/*</div>*/}
 
 				{/*/!* First Name *!/*/}
 				{/*<div className="line">*/}
@@ -263,72 +263,73 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				{/*	</label>*/}
 				{/*</div>*/}
 
+				{/* todo add changing gender to backend */}
 				{/* Gender and Age */}
-				<div className='line'>
+				{/*<div className='line'>*/}
+				{/*	<label className='long'>*/}
+				{/*		Gender**/}
+				{/*		<Select*/}
+				{/*			className={`basic-single long`}*/}
+				{/*			classNamePrefix='select'*/}
+				{/*			wideMenu={false}*/}
+				{/*			name={'gender'}*/}
+				{/*			isValid={!errors.gender && watch('gender') !== ''}*/}
+				{/*			isError={errors.gender} // Set error if cleared*/}
+				{/*			isClearable*/}
+				{/*			isSearchable*/}
+				{/*			styles={customStyles}*/}
+				{/*			menuTop={false}*/}
+				{/*			options={genderOptions}*/}
+				{/*			placeholder='Select gender'*/}
+				{/*			// value={watch('gender') || myData.gender}*/}
+				{/*			value={watch('gender')}*/}
+				{/*			autoComplete={'off'}*/}
+				{/*			onChange={(selectedOption) => {*/}
+				{/*				setValue('gender', selectedOption, {shouldValidate: true});  // ✅ Set entire object, not just string*/}
+				{/*				// setMyData((prev) => ({ ...prev, gender: selectedOption }));*/}
+				{/*				clearErrors('gender');*/}
+				{/*			}}*/}
+
+				{/*			onBlur={() => trigger('gender')} // Trigger validation when user leaves the field*/}
+				{/*		/>*/}
+
+				{/*		<ErrorElement errors={errors} id={'gender'}/>*/}
+				{/*	</label>*/}
+
 					{/* todo add changing age to backend */}
 					{/*<label className='long'>*/}
-					{/*	Gender**/}
-					{/*	<Select*/}
-					{/*		className={`basic-single long`}*/}
-					{/*		classNamePrefix='select'*/}
-					{/*		wideMenu={false}*/}
-					{/*		name={'gender'}*/}
-					{/*		isValid={!errors.gender && watch('gender') !== ''}*/}
-					{/*		isError={errors.gender} // Set error if cleared*/}
-					{/*		isClearable*/}
-					{/*		isSearchable*/}
-					{/*		styles={customStyles}*/}
-					{/*		menuTop={false}*/}
-					{/*		options={genderOptions}*/}
-					{/*		placeholder='Select gender'*/}
-					{/*		// value={watch('gender') || myData.gender}*/}
-					{/*		value={watch('gender')}*/}
-					{/*		autoComplete={'off'}*/}
-					{/*		onChange={(selectedOption) => {*/}
-					{/*			setValue('gender', selectedOption, {shouldValidate: true});  // ✅ Set entire object, not just string*/}
-					{/*			// setMyData((prev) => ({ ...prev, gender: selectedOption }));*/}
-					{/*			clearErrors('gender');*/}
-					{/*		}}*/}
+					{/*	Age**/}
+					{/*	<div className={'with-button'}>*/}
+					{/*		<input*/}
+					{/*			id={'age'}*/}
+					{/*			type='number'*/}
+					{/*			placeholder='Enter your age'*/}
+					{/*			className={`not-react-select long focus-highlight */}
+					{/*			${errors.age ? 'error' : ''}*/}
+					{/*			${!errors.age && watch('age') ? 'valid' : ''}`}*/}
+					{/*			{...register('age')}*/}
+					{/*			value={watch('age')}*/}
+					{/*			autoComplete={'off'}*/}
+					{/*			min={0}*/}
+					{/*			max={120}*/}
+					{/*			onBlur={() => trigger('age')} // Trigger validation when user leaves the field*/}
+					{/*			onChange={(e) => {*/}
+					{/*				const value = e.target.value ? parseInt(e.target.value, 10) : 0;*/}
+					{/*				setValue('age', value, {shouldValidate: true});*/}
+					{/*			}}*/}
+					{/*		/>*/}
+					{/*		<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger}/>*/}
+					{/*	</div>*/}
 
-					{/*		onBlur={() => trigger('gender')} // Trigger validation when user leaves the field*/}
-					{/*	/>*/}
-
-					{/*	<ErrorElement errors={errors} id={'gender'}/>*/}
+					{/*	<ErrorElement errors={errors} id={'age'}/>*/}
 					{/*</label>*/}
-
-					<label className='long'>
-						Age*
-						<div className={'with-button'}>
-							<input
-								id={'age'}
-								type='number'
-								placeholder='Enter your age'
-								className={`not-react-select long focus-highlight 
-								${errors.age ? 'error' : ''}
-								${!errors.age && watch('age') ? 'valid' : ''}`}
-								{...register('age')}
-								value={watch('age')}
-								autoComplete={'off'}
-								min={0}
-								max={120}
-								onBlur={() => trigger('age')} // Trigger validation when user leaves the field
-								onChange={(e) => {
-									const value = e.target.value ? parseInt(e.target.value, 10) : 0;
-									setValue('age', value, {shouldValidate: true});
-								}}
-							/>
-							<IncrementDecrementButtons id={'age'} watch={watch} setValue={setValue} trigger={trigger}/>
-						</div>
-
-						<ErrorElement errors={errors} id={'age'}/>
-					</label>
-				</div>
+				{/*</div>*/}
 
 
 				{/* step 2 */}
-				<div className='form-title'>
-					<h1>Other info</h1>
-				</div>
+				{/*<div className='form-title'>*/}
+				{/*	<h1>Other info</h1>*/}
+				{/*</div>*/}
 
 				<CustomSelect
 					autoFocus={'on'}
