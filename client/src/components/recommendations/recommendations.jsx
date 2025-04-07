@@ -233,6 +233,8 @@ function Recommendations() {
 				console.log("CurrentMatchNum: " + currentMatchNum);
 				console.log("isLastMatch: ", isLastMatch);
 
+				console.log("Before swiped request");
+
 				await axios.post(
 					`${VITE_BACKEND_URL}/api/swiped`,
 					requestData,
@@ -242,6 +244,8 @@ function Recommendations() {
 					}
 				);
 
+
+				console.log("After swiped request");
 
 				if (isLastMatch) {
 					console.log("Last match swiped, fetching new recommendations");
@@ -312,6 +316,10 @@ function Recommendations() {
 			setCurrentMatch(formattedMatch);
 		} else {
 			setCurrentMatch(null);
+		}
+
+		if (currentMatchNum === 9) {
+			setLoading(true);
 		}
 
 	}, [currentMatchNum, matches]);
