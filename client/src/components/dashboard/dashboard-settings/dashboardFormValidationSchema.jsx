@@ -3,20 +3,20 @@ import * as yup from 'yup';
 export const dashboardFormValidationSchema =
 	// step 1
 	yup.object().shape({
-		firstName: yup.string()
-			.required('Required')
-			.matches(/[a-zA-Z]+/g, 'Must use letters')
-			.max(30, 'Max 30 characters'),
-		lastName: yup.string()
-			.required('Required')
-			.matches(/[a-zA-Z]+/g, 'Must use letters')
-			.max(30, 'Max 30 characters'),
-		gender: yup.object()
-			.shape({
-				label: yup.string(),
-				value: yup.string()
-			})
-			.required('Required'),
+		// firstName: yup.string()
+		// 	.required('Required')
+		// 	.matches(/[a-zA-Z]+/g, 'Must use letters')
+		// 	.max(30, 'Max 30 characters'),
+		// lastName: yup.string()
+		// 	.required('Required')
+		// 	.matches(/[a-zA-Z]+/g, 'Must use letters')
+		// 	.max(30, 'Max 30 characters'),
+		// gender: yup.object()
+		// 	.shape({
+		// 		label: yup.string(),
+		// 		value: yup.string()
+		// 	})
+		// 	.required('Required'),
 		// .typeError("Required"),
 		// age: yup.number()
 		// 	.required('Required')
