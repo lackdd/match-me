@@ -337,6 +337,10 @@ public class UserService {
 
     public void swiped(Long currentUserId, Long matchId, boolean swipedRight) {
         User currentUser = getUserById(currentUserId);
+        if (currentUser.getSwipedUsers().contains(matchId)) {
+            return;
+        }
+
         if (swipedRight) {
             addToSwipedUsers(matchId, currentUser);
             addPendingRequestById(currentUserId, getUserById(matchId));
