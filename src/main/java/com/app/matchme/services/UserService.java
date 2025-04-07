@@ -48,14 +48,6 @@ public class UserService {
         userRepository.save(likedUser);
     }
 
-    public void addLikedUserById(Long id, User currentUser) {
-        if (currentUser.getLikedUsers().contains(id)) {
-            throw new BusinessException("User already in list");
-        }
-        currentUser.getLikedUsers().add(id);
-        userRepository.save(currentUser);
-    }
-
     public void addPendingRequestById(Long id, User likedUser) {
         if (likedUser.getPendingRequests().contains(id)) {
             throw new BusinessException("Pending request list already contains id");
