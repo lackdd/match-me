@@ -70,7 +70,7 @@ function Dashboard() {
 						})
 					]);
 
-					console.log("me/bio: " + res3)
+					console.log("me: ", res1.data.payload)
 
 					// formatting data (mostly to objects) for dashboard form
 					const firstName = res1.data.payload.username.split(' ')[0];
@@ -255,7 +255,7 @@ function Dashboard() {
 														...prev,
 														profilePicture: "null",
 													}));
-													sendPictureToBackend("null", tokenValue);
+													sendPictureToBackend(null, tokenValue);
 													setImageUrl("null");
 												}}>
 													<IoClose />
