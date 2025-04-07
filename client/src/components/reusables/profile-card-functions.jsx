@@ -36,6 +36,7 @@ export const changeImage = async (event, setMyDataFormatted, setImage, tokenValu
 				profilePicture: uploadedUrl
 			}));
 			setImage(uploadedUrl);
+			console.log("Sending picture to backend: "  + publicId);
 			await sendPictureToBackend(publicId, tokenValue);
 		} else {
 			console.log('Failed to upload image.');
@@ -48,6 +49,7 @@ export const changeImage = async (event, setMyDataFormatted, setImage, tokenValu
 export const sendPictureToBackend = async (publicId, tokenValue) => {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
+	console.log("Public id: " + publicId);
 	try {
 		const response = await axios.patch(`${VITE_BACKEND_URL}/api/me`,
 			{profilePicture: publicId}, {
