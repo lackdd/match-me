@@ -36,7 +36,9 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 	// const [maxMatchRadius, setMaxMatchRadius] = useState(myData.maxMatchRadius || 50);
 	const [dots, setDots] = useState('.');
 	const [inputValue, setInputValue] = useState('');
+	const [geoLoading, setGeoLoading] = useState(false);
 
+	// console.log('myData changed');
 
 	// Use our geolocation hook
 	const {location: geolocation, requestLocation} = useGeolocation({
@@ -69,11 +71,11 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 			setValue('latitude', geolocation.coordinates.lat, {shouldValidate: true});
 			setValue('longitude', geolocation.coordinates.lng, {shouldValidate: true});
 
-			setMyData((prev) => ({
-				...prev,
-				latitude: geolocation.coordinates.lat,
-				longitude: geolocation.coordinates.lng
-			}));
+			// setMyData((prev) => ({
+			// 	...prev,
+			// 	latitude: geolocation.coordinates.lat,
+			// 	longitude: geolocation.coordinates.lng
+			// }));
 
 			// Get location name using reverse geocoding
 			if (geolocation.coordinates.lat && geolocation.coordinates.lng) {
@@ -105,7 +107,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							};
 
 							setValue('location', locationObj, {shouldValidate: true});
-							setMyData((prev) => ({...prev, location: locationObj}));
+							// setMyData((prev) => ({...prev, location: locationObj}));
 						}
 					})
 					.catch(error => console.error('Geocoding error:', error));
@@ -115,13 +117,18 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 
 
 	useEffect(() => {
-		if (!geolocation?.loaded) {
+		if (!geolocation?.loaded && geoLoading) {
 			const interval = setInterval(() => {
 				setDots(prev => (prev.length < 3 ? prev + '.' : '.'));
 			}, 200);
 			return () => clearInterval(interval);
 		}
-	}, [geolocation?.loaded]);
+
+		if (geolocation.loaded && geoLoading) {
+			setGeoLoading(false);
+		}
+
+	}, [geoLoading, geolocation]);
 
 	// on submit send data to backend
 	const Submit = async (formattedData) => {
@@ -171,6 +178,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 			<button className='close-settings' type={'button'} onClick={() => {
 				reset();
 				closeSettings();
+				setGeoLoading(false);
 			}}><IoClose/></button>
 
 			{/* todo add animation to show users data change was successful (like an animated checkmark)*/}
@@ -217,6 +225,10 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				{/*<div className='form-title'>*/}
 				{/*	<h1>Basic info</h1>*/}
 				{/*</div>*/}
+
+				<div className='form-title'>
+					<h1>About you</h1>
+				</div>
 
 				{/*/!* First Name *!/*/}
 				{/*<div className="line">*/}
@@ -492,6 +504,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 							<div className={`location-option ${useCurrentLocation ? 'active' : ''}`} onClick={() => {
 								requestLocation();
 								setUseCurrentLocation(true);
+								setGeoLoading(true);
 							}}>
 								My current location
 							</div>
@@ -521,7 +534,7 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 								onChange={(selectedOption) => {
 									if (!selectedOption) {
 										setValue('location', null, {shouldValidate: true});
-										setMyData((prev) => ({...prev, location: null}));
+										// setMyData((prev) => ({...prev, location: null}));
 										return;
 									}
 
@@ -560,14 +573,14 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 													setValue('latitude', geometry.location.lat, {shouldValidate: true});
 													setValue('longitude', geometry.location.lng, {shouldValidate: true});
 
-													setMyData((prev) => ({
-														...prev,
-														location: locationObj,
-														latitude: geometry.location.lat,
-														longitude: geometry.location.lng
-													}));
+													// setMyData((prev) => ({
+													// 	...prev,
+													// 	location: locationObj,
+													// 	latitude: geometry.location.lat,
+													// 	longitude: geometry.location.lng
+													// }));
 												} else {
-													setMyData((prev) => ({...prev, location: locationObj}));
+													// setMyData((prev) => ({...prev, location: locationObj}));
 												}
 											}
 										})
@@ -654,12 +667,16 @@ export function DashboardForm({myData, setMyData, setMyDataFormatted, formatData
 				<button className='cancel' onClick={() => {
 					reset();
 					closeSettings();
+					setGeoLoading(false);
 				}} type={'button'}>
 					Cancel
 				</button>
 				<button
 					className={`save ${isValid ? '' : 'disabled'}`} // Disabled by default
-					onClick={closeSettings}
+					onClick={() => {
+						closeSettings();
+						setGeoLoading(false);
+					}}
 					type={'submit'}
 					form={'dashboard-form'}
 					disabled={Object.keys(errors).length > 0}
