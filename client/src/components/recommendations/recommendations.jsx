@@ -44,36 +44,6 @@ function Recommendations() {
 	const VITE_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 	const {handleTouchStart, handleTouchEnd, handleTouchMove, swipeProgress} = useSwipe();
 
-	// useEffect(() => {
-	//
-	// 	 if (currentMatchNum === 10) {
-	// 	 	resetMatches();
-	// 	}
-	//
-	// }, [currentMatch]);
-
-
-	useEffect(() => {
-
-		if (currentMatch) {
-			/*console.log("Current match num: " + currentMatchNum);*/
-		}
-	}, [currentMatchNum]);
-
-	useEffect(() => {
-
-		if (currentMatch) {
-			console.log("Current match id: " + currentMatch.id);
-		}
-	}, [currentMatch]);
-
-
-	// reset current match number and fetch more matches
-	// const resetMatches = () => {
-	// 	setCurrentMatchNum(1);
-	// 	setFetchMoreMatches(prev => !prev);
-	// };
-
 	function resetMatches() {
 		console.log("Resetting match id list");
 		setCurrentMatchNum(0);
@@ -90,10 +60,6 @@ function Recommendations() {
 				const response = await axios.get(`${VITE_BACKEND_URL}/api/me/bio`, {
 					headers: {Authorization: `Bearer ${tokenValue}`}
 				});
-
-				// const response = fetchWithToken(`/api/me/bio`, {}, false);
-
-				console.log("Full response: " + response);
 
 				// formatting data for the recommendations form
 				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.payload.idealMatchGender);
@@ -136,6 +102,13 @@ function Recommendations() {
 
 	}, []);
 
+	useEffect(() => {
+
+		if (currentMatch) {
+			console.log("Current match id: " + currentMatch.id);
+		}
+	}, [currentMatch]);
+
 
 	// fetch IDs of matched users
 	useEffect(() => {
@@ -152,12 +125,6 @@ function Recommendations() {
 
 				// Access the payload property of the response data
 				setMatchIDs(response.data.payload);
-
-
-				// setMatchIDs(prev => ({
-				// 		...prev,
-				// 		...response.data.payload
-				// }))
 
 				console.log("response ids: " + response.data.payload);
 
@@ -188,7 +155,7 @@ function Recommendations() {
 	// if match ids are fetched from server then fetch the data for all the ids
 	useEffect(() => {
 
-		if (matchIDs.length > 1) {
+		if (matchIDs.length > 0 && matchIDs[0] !== '') {
 			const getMatchData = async () => {
 				try {
 					// Create an array of promises that fetch both profile and user data for each match
@@ -199,8 +166,6 @@ function Recommendations() {
 
 						// fetch other bio data
 						const userPromise = fetchWithToken(`/api/users/${id}`, {}, true);
-						// const profilePromise = fetchWithToken(`/api/users/${id}/profile`, {}, true); // true = use service token
-						// const userPromise = fetchWithToken(`/api/users/${id}`, {}, true); // true = use service token
 
 						// Return both promises for the same id
 						return Promise.all([profilePromise, userPromise]).then(([profile, user]) => ({
@@ -227,8 +192,6 @@ function Recommendations() {
 			};
 			getMatchData();
 		} else if (matchIDs.length === 0 && matchIDs.length !== null){
-			// setLoading(false); // disable loading state
-			console.log("Setting loading false");
 			setLoading(false);
 		}
 
@@ -265,23 +228,10 @@ function Recommendations() {
 					swipedRight: swipedRight // Ensure it's a boolean
 				};
 
-				// console.log("Sending swipe data:", JSON.stringify(requestData));
-
-				console.log("Swiped user: " + currentMatch.id);
-
-
 				const isLastMatch = currentMatchNum === 9;
 
-				// Use a direct axios call with explicit JSON
-				// const response = await axios({
-				// 	method: 'POST',
-				// 	url: `${VITE_BACKEND_URL}/api/swiped`,
-				// 	headers: {
-				// 		'Authorization': `Bearer ${tokenValue}`,
-				// 		'Content-Type': 'application/json'
-				// 	},
-				// 	data: JSON.stringify(requestData)
-				// });
+				console.log("CurrentMatchNum: " + currentMatchNum);
+				console.log("isLastMatch: ", isLastMatch);
 
 				await axios.post(
 					`${VITE_BACKEND_URL}/api/swiped`,
@@ -298,15 +248,7 @@ function Recommendations() {
 					setLoading(true);
 					resetMatches();
 				}
-				// else {
-				// 	setCurrentMatchNum(prevState => prevState + 1);
-				// }
 
-				if (currentMatchNum === 10) {
-					resetMatches();
-				}
-
-				// console.log("Swipe response:", response);
 			} catch (error) {
 				console.error('Swipe error full:', error);
 				if (error.response) {
@@ -327,7 +269,6 @@ function Recommendations() {
 
 	// logic to reset the position of matchContainer after like and dislike animation
 	const resetPosition = useCallback((event) => {
-		// console.log('Resetting position...');
 		const matchContainer = matchContainerRef.current;
 
 		if (!matchContainer || event.target !== matchContainer) return;
@@ -337,12 +278,6 @@ function Recommendations() {
 
 		// Force reflow to apply the changes instantly
 		void matchContainer.offsetWidth;
-
-		// Load next match
-		/*setTimeout(() => {
-			console.log("Loading next match")
-			loadNextMatch();
-		}, 6000);*/
 		loadNextMatch();
 	}, []);
 
@@ -361,19 +296,7 @@ function Recommendations() {
 		return newMatch;
 	};
 
-	// load next match data
-	// const loadNextMatch = useCallback(() => {
-	//
-	// 	// Logic to update match profile with new data
-	// 	setCurrentMatchNum(prevState => prevState + 1);
-	//
-	// }, []);
-
 	const loadNextMatch = (() => {
-		// console.log("Current match number: " + currentMatchNum);
-
-		// Logic to update match profile with new data
-		// setCurrentMatchNum(currentMatchNum+1);
 		setCurrentMatchNum(prevState => prevState + 1);
 	});
 
@@ -384,8 +307,6 @@ function Recommendations() {
 			return;
 		}
 		const formattedMatch = formatMatchData(matches[currentMatchNum]);
-
-		// console.log('formatted match', formattedMatch);
 
 		if (formattedMatch?.id) {
 			setCurrentMatch(formattedMatch);
@@ -447,9 +368,12 @@ function Recommendations() {
 							<div className='settings-popup' id={'settings-popup'}>
 								<div className='settings-content'>
 									<div className='forms-container'>
-										<RecommendationsForm preferencesData={preferencesData}
-															 setPreferencesData={setPreferencesData}
-															 setLoading={setLoading} resetMatches={resetMatches}/>
+										{preferencesData &&
+											<RecommendationsForm preferencesData={preferencesData}
+																 setPreferencesData={setPreferencesData}
+																 setLoading={setLoading} resetMatches={resetMatches}/>
+										}
+
 									</div>
 								</div>
 							</div>
