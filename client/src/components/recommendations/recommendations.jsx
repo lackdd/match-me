@@ -78,7 +78,7 @@ function Recommendations() {
 		console.log("Resetting match id list");
 		setCurrentMatchNum(0);
 		setMatches({}); // Clear existing matches
-		setMatchIDs([]);
+		setMatchIDs(['']);
 		setFetchMoreMatches(prev => !prev);
 	}
 
@@ -93,7 +93,7 @@ function Recommendations() {
 
 				// const response = fetchWithToken(`/api/me/bio`, {}, false);
 
-				// console.log("Full response: " + response);
+				console.log("Full response: " + response);
 
 				// formatting data for the recommendations form
 				const idealMatchGender = matchGenderOptions.find(gender => gender.value === response.data.payload.idealMatchGender);
@@ -112,11 +112,8 @@ function Recommendations() {
 					idealMatchMethods: idealMatchMethods,
 					idealMatchYearsOfExperience: idealMatchYearsOfExperience,
 					idealMatchGoals: idealMatchGoals,
-					maxMatchRadius: response.data.maxMatchRadius
+					maxMatchRadius: response.data.payload.maxMatchRadius
 				});
-
-				// console.log("idealMatchAge radius when fetched: " + response.data.payload.idealMatchAge);
-				// console.log("Max match radius when fetched: " + response.data.payload.maxMatchRadius);
 
 			} catch (error) {
 				setError(true);
@@ -231,6 +228,7 @@ function Recommendations() {
 			getMatchData();
 		} else if (matchIDs.length === 0 && matchIDs.length !== null){
 			// setLoading(false); // disable loading state
+			console.log("Setting loading false");
 			setLoading(false);
 		}
 
