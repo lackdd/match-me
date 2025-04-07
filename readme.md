@@ -28,6 +28,12 @@ cd match-me/client
 npm install
 ```
 
+<li>Set number of test users in .env file</li>
+
+```bash
+NUMBER_OF_USERS
+```
+
 <li>Run the application</li>
 
 ```bash
@@ -38,7 +44,7 @@ npm start
 
 [Go to localhost:5173](http://localhost:5173)
 
-<li>Enjoy!</li>
+<li>Give it time to generate test users (see logs in the console). Enjoy!</li>
 
 
 </ol>
@@ -91,9 +97,4 @@ npm start
 
 ### General Tools
 - ![Docker](https://img.shields.io/badge/Docker-28.0.0-blue)
-</details>
-
-<details>
-<h1>Notes</h1>
-<summary>🗒️ Notes</summary>
 </details>
