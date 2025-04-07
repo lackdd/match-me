@@ -101,6 +101,8 @@ function Dashboard() {
                         // bio: res3.data.payload
                     });
 
+					console.log("My data set");
+
 
 					// data for dashboard itself
 					setMyDataFormatted( {
