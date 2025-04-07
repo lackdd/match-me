@@ -21,7 +21,7 @@ function Login() {
 
 		try {
 			if (!email || !password) {
-				setError('Please enter a username and a password');
+				setError('Please enter an email and a password');
 				return;
 			}
 
@@ -32,6 +32,7 @@ function Login() {
 			// Navigate to dashboard or other protected route
 			history('/dashboard');
 		} catch (error) {
+			setError('Invalid email or password');
 			if (error.response) {
 				console.error('Backend error:', error.response.data); // Server responded with an error
 			} else {
@@ -57,7 +58,7 @@ function Login() {
 						className={`not-react-select focus-highlight ${error && error !== 'placeholder-error' ? 'error' : ''}`}
 						value={email}
 						onChange={(e) => setEmail(e.target.value)}
-						autoComplete={'on'}
+						// autoComplete={'on'}
 						autoFocus={true}
 						required
 					/>
@@ -73,7 +74,7 @@ function Login() {
 							placeholder='Enter your password'
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
-							autoComplete={'on'}
+							// autoComplete={'on'}
 							required
 						/>
 						<ShowPasswordButton showPassword={showPassword} setShowPassword={setShowPassword} login={true}/>

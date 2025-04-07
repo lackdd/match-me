@@ -207,4 +207,8 @@
 	  //color: black;
 	}
   }
+
+  input.error:-webkit-autofill {
+	background-color: variables.$error-red !important;
+  }
 }
